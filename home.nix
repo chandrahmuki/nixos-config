@@ -3,7 +3,7 @@
 {
   home.username = "david";
   home.homeDirectory = "/home/david";
-  home.stateVersion = "24.11"; 
+  home.stateVersion = "24.11";
 
   # On importe ici les fichiers qu'on va créer dans le dossier modules
   imports = [
@@ -13,6 +13,7 @@
     ./modules/fastfetch.nix
     ./modules/brave.nix
     ./modules/vscode.nix
+    ./wm/niri.nix
   ];
 
   programs.home-manager.enable = true;

@@ -14,6 +14,7 @@
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./modules/font.nix
+    ./modules/steam.nix
   ];
 
   # Bootloader.
@@ -124,6 +125,10 @@
     ];
   };
 
+  programs.niri = {
+    enable = true;
+    package = pkgs.niri-unstable;
+  };
   # Install firefox.
   programs.firefox.enable = true;
 
