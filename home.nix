@@ -1,0 +1,19 @@
+{ config, pkgs, ... }: # <-- N'oublie pas d'ajouter { config, pkgs, ... }: en haut !
+
+{
+  home.username = "david";
+  home.homeDirectory = "/home/david";
+  home.stateVersion = "24.11"; 
+
+  # On importe ici les fichiers qu'on va créer dans le dossier modules
+  imports = [
+    ./modules/btop.nix
+    ./modules/terminal.nix
+    ./modules/git.nix
+    ./modules/fastfetch.nix
+    ./modules/brave.nix
+    ./modules/vscode.nix
+  ];
+
+  programs.home-manager.enable = true;
+}
