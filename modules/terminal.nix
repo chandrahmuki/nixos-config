@@ -77,9 +77,12 @@
     '';
     shellAliases = {
       nix-switch = "sudo nixos-rebuild switch --flake .#muggy-nix-desktop";
-      nos = "nh os switch muggy-nix-desktop";
-      nob = "nh os boot muggy-nix-desktop";
-      noc = "nh clean all muggy-nix-desktop";
+    };
+    programs.fish.functions = {
+      nos = ''
+        cd /home/david/nixos-config
+        nh os switch
+      '';
     };
   };
 }
