@@ -68,7 +68,6 @@
     # Screenshots avec Ctrl+Mod+S
     "Ctrl+Mod+S".action = screenshot; # Fenêtre active
     "Ctrl+Mod+Shift+S".action = screenshot-screen; # Écran complet
-    "Ctrl+Mod+Alt+S".action = screenshot-window; # Sélection de fenêtre
 
   };
 }
