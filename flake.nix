@@ -19,7 +19,7 @@
     dms = {
       url = "github:AvengeMedia/DankMaterialShell";
       inputs = {
-        nixpkgs.follows = "nixpkgs";
+        nixpkgs.follows = "nixpkgs-unstable";
         quickshell.inputs.nixpkgs.follows = "nixpkgs-unstable";
       };
     };
