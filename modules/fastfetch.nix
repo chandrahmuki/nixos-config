@@ -7,10 +7,10 @@
       logo = {
         source = "/home/david/Pictures/nixos.png";
         type = "chafa";
-        width = 30;
-        height = 15;
+        width = 20;
+        height = 12;
         padding = {
-          top = 2;
+          top = 1;
           left = 2;
           right = 4;
         };
