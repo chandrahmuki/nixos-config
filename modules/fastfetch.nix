@@ -1,60 +1,62 @@
 { pkgs, ... }:
 
 {
-  # 1. On installe l'outil pour traiter l'image
-  home.packages = [
-    pkgs.imagemagick
-    pkgs.chafa
-  ];
+  # Obligatoire pour le rendu d'image avec Chafa
+  home.packages = [ pkgs.chafa ];
 
   programs.fastfetch = {
     enable = true;
     settings = {
       logo = {
-        source = "/home/david/Pictures/nixos.png"; # <--- METS TON CHEMIN ICI
-        type = "chafa"; # Protocole image pour Foot
-        width = 28;
-        height = 12;
+        source = "/home/david/Pictures/nixos.png";
+        type = "chafa";
+        width = 22;
+        height = 10;
         padding = {
           top = 1;
-          left = 2;
-          right = 4;
+          left = 1;
+          right = 3;
         };
+        chafaParams = [
+          "--symbols"
+          "vhalf"
+          "--colors"
+          "full"
+          "--bg"
+          "none"
+        ];
       };
       display = {
         separator = "  ";
+        color = {
+          keys = "magenta";
+        };
       };
       modules = [
-        # "title" supprimé pour cacher david@muggy-nixos
         {
           type = "os";
           key = "OS";
-          keyColor = "blue";
         }
         {
           type = "kernel";
           key = "KR";
-          keyColor = "magenta";
         }
         {
           type = "shell";
           key = "SH";
-          keyColor = "yellow";
         }
         {
           type = "wm";
           key = "WM";
-          keyColor = "cyan";
         }
         {
           type = "uptime";
           key = "UP";
-          keyColor = "green";
         }
         "break"
         {
           type = "colors";
-          symbol = "circle"; # Tes petits points de couleur
+          symbol = "circle";
         }
       ];
     };
