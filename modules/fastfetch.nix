@@ -14,8 +14,6 @@
           left = 1;
           right = 3;
         };
-        # Correction : utiliser chafaSymbols au lieu de chafaParams
-        chafaSymbols = "vhalf";
       };
       display = {
         separator = "  ";
