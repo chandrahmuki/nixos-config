@@ -9,13 +9,23 @@
       logo = {
         source = "/home/david/Pictures/nixos.png";
         type = "chafa";
+        # On utilise la structure exacte validée par le schéma
         width = 22;
         height = 10;
-        # On simplifie : on vire le bloc 'padding' qui cause souvent l'erreur
-        # et on utilise les clés directes si ta version est très récente
-        paddingTop = 1;
-        paddingLeft = 1;
-        paddingRight = 3;
+        padding = {
+          top = 1;
+          left = 1;
+          right = 3;
+        };
+        # On passe les paramètres chafa
+        chafaParams = [
+          "--symbols"
+          "vhalf"
+          "--colors"
+          "full"
+          "--bg"
+          "none"
+        ];
       };
       display = {
         separator = "  ";
