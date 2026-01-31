@@ -77,6 +77,9 @@
     '';
     shellAliases = {
       nix-switch = "sudo nixos-rebuild switch --flake .#muggy-nix-desktop";
+      nos = "nh os switch";
+      nob = "nh os boot";
+      noc = "nh clean all";
     };
   };
 }
