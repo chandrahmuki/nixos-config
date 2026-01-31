@@ -82,7 +82,7 @@
     functions = {
       nos = ''
         cd /home/david/nixos-config
-        nh os switch
+        nh os switch .
       '';
     };
   };
