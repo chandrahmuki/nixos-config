@@ -7,13 +7,14 @@
       "run"
     ];
     "Mod+D".action = spawn "fuzzel";
-    "Mod+Shift+Q".action = close-window;
+    "Mod+Q".action = close-window;
     "Mod+F".action = fullscreen-window;
     "Mod+T".action = spawn "foot";
     "Mod+Shift+E".action = quit { skip-confirmation = false; };
     "Mod+Shift+Slash".action = show-hotkey-overlay;
     "Mod+Shift+Space".action = toggle-window-floating;
     "Mod+Space".action = switch-focus-between-floating-and-tiling;
+    "Mod+O".action.toggle-overview = [ ];
 
     "Mod+W".action = switch-preset-column-width;
     "Mod+H".action = switch-preset-window-height;
@@ -53,6 +54,16 @@
     "Mod+Shift+7".action = move-column-to-index 7;
     "Mod+Shift+8".action = move-column-to-index 8;
     "Mod+Shift+9".action = move-column-to-index 9;
+
+    # Passer à la fenêtre de DROITE avec Mod + Molette vers le BAS
+    "Mod+WheelScrollDown".action = focus-column-right;
+
+    # Passer à la fenêtre de GAUCHE avec Mod + Molette vers le HAUT
+    "Mod+WheelScrollUp".action = focus-column-left;
+
+    # Si tu veux que ça déplace carrément la fenêtre (Shift en plus)
+    "Mod+Shift+WheelScrollDown".action = focus-workspace-down;
+    "Mod+Shift+WheelScrollUp".action = focus-workspace-up;
 
   };
 }

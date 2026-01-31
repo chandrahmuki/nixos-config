@@ -16,11 +16,6 @@
 
     prefer-no-csd = true;
 
-    input.warp-mouse-to-focus = {
-      enable = true;
-      mode = "center-xy-always";
-    };
-
     spawn-at-startup = [
       { command = [ "sleep 15; systemctl --user restart swaybg" ]; }
       { command = [ "xwayland-satellite" ]; }

@@ -13,12 +13,15 @@
     # Flake niri
     niri = {
       url = "github:sodiboo/niri-flake";
+      inputs.niri.follows = "niri";
     };
 
     dms = {
       url = "github:AvengeMedia/DankMaterialShell";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.niri.follows = "niri";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        quickshell.inputs.nixpkgs.follows = "nixpkgs";
+      };
     };
 
   };

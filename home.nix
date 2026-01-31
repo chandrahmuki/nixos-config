@@ -14,6 +14,8 @@
     ./modules/brave.nix
     ./modules/vscode.nix
     ./wm/niri.nix
+    ./modules/fuzzel.nix
+    ./modules/dms.nix
   ];
 
   programs.home-manager.enable = true;
