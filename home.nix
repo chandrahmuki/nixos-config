@@ -16,6 +16,9 @@
     ./wm/niri.nix
     ./modules/fuzzel.nix
     ./modules/dms.nix
+    ./modules/nh.nix
+    ./modules/parsec.nix
+
   ];
 
   programs.home-manager.enable = true;
