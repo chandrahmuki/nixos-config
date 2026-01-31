@@ -4,6 +4,7 @@
   # 1. On installe l'outil pour traiter l'image
   home.packages = [
     pkgs.imagemagick
+    pkgs.chafa
   ];
 
   programs.fastfetch = {
@@ -11,7 +12,7 @@
     settings = {
       logo = {
         source = "/home/david/Pictures/nixos.png"; # <--- METS TON CHEMIN ICI
-        type = "kitty-direct"; # Protocole image pour Foot
+        type = "chafa"; # Protocole image pour Foot
         width = 28;
         height = 12;
         padding = {
