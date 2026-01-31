@@ -65,9 +65,9 @@
     "Mod+Shift+WheelScrollDown".action = focus-workspace-down;
     "Mod+Shift+WheelScrollUp".action = focus-workspace-up;
 
-    # Screenshots avec Ctrl+Mod+S
-    "Ctrl+Mod+S".action = screenshot; # Fenêtre active
-    "Ctrl+Mod+Shift+S".action = screenshot-screen; # Écran complet
+    # Screenshots avec la syntaxe correcte
+    "Ctrl+Mod+S".action.screenshot = [ ]; # Fenêtre active
+    "Ctrl+Mod+Shift+S".action.screenshot-screen = [ ]; # Écran complet
 
   };
 }
