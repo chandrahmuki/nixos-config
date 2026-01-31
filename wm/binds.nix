@@ -42,8 +42,8 @@
     #Move
     "Mod+Shift+Left".action = move-column-left-or-to-monitor-left;
     "Mod+Shift+Right".action = move-column-right-or-to-monitor-right;
-    "Mod+Shift+Up".action = move-window-down-or-to-workspace-up;
-    "Mod+Shift+Down".action = move-window-up-or-to-workspace-down;
+    "Mod+Shift+Up".action = move-window-up-or-to-workspace-up; # ✅ CORRIGÉ
+    "Mod+Shift+Down".action = move-window-down-or-to-workspace-down; # ✅ CORRIGÉ
 
     "Mod+Shift+1".action = move-column-to-index 1;
     "Mod+Shift+2".action = move-column-to-index 2;
