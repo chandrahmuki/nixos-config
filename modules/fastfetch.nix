@@ -3,32 +3,40 @@
 {
   programs.fastfetch = {
     enable = true;
-    # On utilise 'settings' qui générera automatiquement le config.jsonc
     settings = {
+      logo = {
+        source = "nixos_small"; # Utilise le logo NixOS compact
+        padding = {
+          right = 1;
+        };
+      };
       display = {
-        separator = " ➜  ";
+        separator = " ➜ ";
+        color = {
+          keys = "magenta";
+        };
       };
       modules = [
         "title"
         {
           type = "os";
-          key = "  OS";
-          keyColor = "blue";
+          key = "OS";
         }
         {
           type = "kernel";
-          key = "  ⚙ ";
-          keyColor = "magenta";
+          key = "KR";
         }
         {
           type = "shell";
-          key = "  󱆃 ";
-          keyColor = "yellow";
+          key = "SH";
         }
         {
-          type = "gpu";
-          key = "  󰢮 ";
-          keyColor = "green";
+          type = "wm";
+          key = "WM";
+        }
+        {
+          type = "uptime";
+          key = "UP";
         }
         "break"
         "colors"
