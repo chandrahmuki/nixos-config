@@ -8,7 +8,7 @@
         source = "/home/david/Pictures/nixos.png";
         type = "chafa";
         width = 20;
-        height = 5;
+        height = 8;
         padding = {
           top = 1;
           left = 2;
