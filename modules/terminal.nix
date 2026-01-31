@@ -78,7 +78,8 @@
     shellAliases = {
       nix-switch = "sudo nixos-rebuild switch --flake .#muggy-nix-desktop";
     };
-    programs.fish.functions = {
+    # Fonction pour rebuild avec nh
+    functions = {
       nos = ''
         cd /home/david/nixos-config
         nh os switch
