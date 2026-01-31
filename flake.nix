@@ -13,7 +13,7 @@
     # Flake niri
     niri = {
       url = "github:sodiboo/niri-flake";
-      inputs.niri.follows = "niri";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     dms = {
