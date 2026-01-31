@@ -1,7 +1,6 @@
 { pkgs, ... }:
 
 {
-  # Chafa est indispensable pour le rendu terminal
   home.packages = [ pkgs.chafa ];
 
   programs.fastfetch = {
@@ -10,24 +9,13 @@
       logo = {
         source = "/home/david/Pictures/nixos.png";
         type = "chafa";
-        # Dimensions directes (clés standards Fastfetch)
         width = 22;
         height = 10;
-        # Padding structuré correctement
-        padding = {
-          top = 1;
-          left = 1;
-          right = 3;
-        };
-        # Paramètres spécifiques à Chafa
-        chafaParams = [
-          "--symbols"
-          "vhalf"
-          "--colors"
-          "full"
-          "--bg"
-          "none"
-        ];
+        # On simplifie : on vire le bloc 'padding' qui cause souvent l'erreur
+        # et on utilise les clés directes si ta version est très récente
+        paddingTop = 1;
+        paddingLeft = 1;
+        paddingRight = 3;
       };
       display = {
         separator = "  ";
