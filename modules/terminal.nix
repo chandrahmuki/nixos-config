@@ -73,7 +73,7 @@
     interactiveShellInit = ''
       fastfetch
       starship init fish | source
-      shellGreeting = ""
+      set -g fish_greeting ""
     '';
     shellAliases = {
       nix-switch = "sudo nixos-rebuild switch --flake .#muggy-nix-desktop";
