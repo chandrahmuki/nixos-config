@@ -1,6 +1,11 @@
 { pkgs, ... }:
 
 {
+  # 1. On installe l'outil pour traiter l'image
+  home.packages = [
+    pkgs.imagemagick
+  ];
+
   programs.fastfetch = {
     enable = true;
     settings = {
