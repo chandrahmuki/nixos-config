@@ -5,17 +5,21 @@
     enable = true;
     settings = {
       logo = {
-        source = "nixos_small";
+        source = "/home/david/Pictures/nixos.png"; # <--- METS TON CHEMIN ICI
+        type = "kitty-direct"; # Protocole image pour Foot
+        width = 28;
+        height = 12;
         padding = {
           top = 1;
           left = 2;
+          right = 4;
         };
       };
       display = {
         separator = "  ";
       };
       modules = [
-        # Module "title" supprimé pour enlever david@muggy-nixos
+        # "title" supprimé pour cacher david@muggy-nixos
         {
           type = "os";
           key = "OS";
@@ -44,7 +48,7 @@
         "break"
         {
           type = "colors";
-          symbol = "circle"; # Remplace les carrés par des ronds
+          symbol = "circle"; # Tes petits points de couleur
         }
       ];
     };
