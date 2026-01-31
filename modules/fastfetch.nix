@@ -7,45 +7,53 @@
       logo = {
         source = "/home/david/Pictures/nixos.png";
         type = "chafa";
-        width = 22;
-        height = 10;
+        width = 30;
+        height = 15;
         padding = {
-          top = 1;
-          left = 1;
-          right = 3;
+          top = 2;
+          left = 2;
+          right = 4;
         };
       };
       display = {
-        separator = "  ";
+        separator = " → ";
         color = {
           keys = "magenta";
+          separator = "cyan";
         };
       };
       modules = [
+        "break"
         {
           type = "os";
-          key = "OS";
+          key = "╭─ OS";
+          format = "{3}";
         }
         {
           type = "kernel";
-          key = "KR";
+          key = "├─ Kernel";
         }
         {
           type = "shell";
-          key = "SH";
+          key = "├─ Shell";
         }
         {
           type = "wm";
-          key = "WM";
+          key = "├─ WM";
+        }
+        {
+          type = "terminal";
+          key = "├─ Terminal";
         }
         {
           type = "uptime";
-          key = "UP";
+          key = "╰─ Uptime";
         }
         "break"
         {
           type = "colors";
           symbol = "circle";
+          paddingLeft = 2;
         }
       ];
     };
