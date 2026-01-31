@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+{ pkgs, ... }:
 
 {
   programs.brave = {
@@ -10,16 +10,12 @@
     ];
   };
 
-  # Cache l'icône par défaut du système
-  home.file.".local/share/applications/brave-browser.desktop".text = ''
+  # Écrase complètement com.brave.Browser.desktop pour qu'il soit caché
+  home.file.".local/share/applications/com.brave.Browser.desktop".text = ''
     [Desktop Entry]
     Type=Application
-    Name=Brave Web Browser
-    Exec=${config.programs.brave.package}/bin/brave %U --enable-features=UseOzonePlatform --ozone-platform=wayland --unlimited-storage
-    Icon=brave-browser
-    Categories=Network;WebBrowser;
-    MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;
-    StartupWMClass=brave-browser
-    StartupNotify=true
+    Name=Brave Browser (Hidden)
+    NoDisplay=true
+    Hidden=true
   '';
 }
