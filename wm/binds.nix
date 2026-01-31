@@ -42,8 +42,8 @@
     #Move
     "Mod+Shift+Left".action = move-column-left-or-to-monitor-left;
     "Mod+Shift+Right".action = move-column-right-or-to-monitor-right;
-    "Mod+Shift+Up".action = move-window-down-or-to-workspace-down;
-    "Mod+Shift+Down".action = move-window-up-or-to-workspace-up;
+    "Mod+Shift+Up".action = move-window-down-or-to-workspace-up;
+    "Mod+Shift+Down".action = move-window-up-or-to-workspace-down;
 
     "Mod+Shift+1".action = move-column-to-index 1;
     "Mod+Shift+2".action = move-column-to-index 2;
@@ -64,6 +64,11 @@
     # Si tu veux que ça déplace carrément la fenêtre (Shift en plus)
     "Mod+Shift+WheelScrollDown".action = focus-workspace-down;
     "Mod+Shift+WheelScrollUp".action = focus-workspace-up;
+
+    # Screenshots avec Ctrl+Mod+S
+    "Ctrl+Mod+S".action = screenshot; # Fenêtre active
+    "Ctrl+Mod+Shift+S".action = screenshot-screen; # Écran complet
+    "Ctrl+Mod+Alt+S".action = screenshot-window; # Sélection de fenêtre
 
   };
 }
