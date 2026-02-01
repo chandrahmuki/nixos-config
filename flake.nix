@@ -36,7 +36,7 @@
       ...
     }@inputs:
     {
-      nixosConfigurations.muggy-nix-desktop = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.muggy-nixos = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = { inherit inputs; };
         modules = [

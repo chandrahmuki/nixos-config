@@ -76,13 +76,13 @@
       set -g fish_greeting ""
     '';
     shellAliases = {
-      nix-switch = "sudo nixos-rebuild switch --flake .#muggy-nix-desktop";
+      nix-switch = "sudo nixos-rebuild switch --flake .#muggy-nixos";
     };
     # Fonction pour rebuild avec nh
     functions = {
       nos = ''
         cd /home/david/nixos-config
-        nh os switch . --hostname muggy-nix-desktop
+        nh os switch . --hostname muggy-nixos
       '';
     };
   };
