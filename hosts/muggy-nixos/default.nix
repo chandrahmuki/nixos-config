@@ -124,11 +124,19 @@
       #  thunderbird
     ];
   };
-
+  # niri setup using unstable
   programs.niri = {
     enable = true;
     package = pkgs.niri-unstable;
   };
+
+  # XDG Desktop Portal pour Niri
+  xdg.portal = {
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-gnome ];
+    config.common.default = "*";
+  };
+
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
