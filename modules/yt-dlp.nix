@@ -1,8 +1,9 @@
-{ _pkgs, ... }:
+{ _pkgs, inputs, ... }:
 
 {
   programs.yt-dlp = {
     enable = true;
+    package = inputs.nixpkgs-master.legacyPackages.${_pkgs.system}.yt-dlp;
     settings = {
       embed-thumbnail = true;
       add-metadata = true;

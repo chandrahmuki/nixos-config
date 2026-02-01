@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-master.url = "github:nixos/nixpkgs/master";
 
     # Home Manager pointant sur la branche unstable
     home-manager = {
@@ -35,6 +36,7 @@
     {
       self,
       nixpkgs,
+      nixpkgs-master,
       home-manager,
       niri,
       antigravity,
