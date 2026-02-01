@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ _pkgs, ... }:
 
 {
   programs.nh = {
@@ -14,5 +14,12 @@
       # Garde les générations des 7 derniers jours
       extraArgs = "--keep-since 7d --keep 5";
     };
+  };
+
+  programs.fish.functions = {
+    nos = ''
+      cd /home/david/nixos-config
+      nh os switch . --hostname muggy-nixos
+    '';
   };
 }

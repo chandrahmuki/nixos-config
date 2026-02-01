@@ -20,6 +20,7 @@
     ./modules/parsec.nix
     ./modules/antigravity.nix
     ./modules/direnv.nix
+    ./modules/yt-dlp.nix
 
   ];
 
