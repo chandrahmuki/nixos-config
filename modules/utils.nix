@@ -30,11 +30,15 @@
         return 1
       end
 
-      # Use sudo if permission denied issues are annoying, 
-      # but standard fd handles errors gracefully usually.
-      # Searching / can be noisy with permission denied, 
-      # so we redirect stderr to null or use fd's built-in ignore.
-      ${pkgs.fd}/bin/fd $argv / 2>/dev/null
+      # Launch fzf in interactive mode
+      # --disabled: Do not let fzf filter the results, let fd handle it via reload
+      # --query: Pre-fill with the user's argument
+      # --bind: Reload fd whenever the query string changes
+      # --preview: Optional but nice, shows file content with bat
+      ${pkgs.fzf}/bin/fzf --disabled --query "$argv" \
+        --bind "start:reload:${pkgs.fd}/bin/fd {q} / 2>/dev/null" \
+        --bind "change:reload:${pkgs.fd}/bin/fd {q} / 2>/dev/null" \
+        --preview "${pkgs.bat}/bin/bat --color=always --style=numbers --line-range=:500 {}"
     '';
 
     # Alternative if they want to fzf the results:
