@@ -40,7 +40,7 @@
         system = "x86_64-linux";
         specialArgs = { inherit inputs; };
         modules = [
-          ./configuration.nix
+          ./hosts/muggy-nixos/default.nix
           ./overlays.nix
 
           # Le module DMS se charge au niveau SYSTEME
