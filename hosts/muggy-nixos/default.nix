@@ -108,6 +108,8 @@
 
   #default to fish !
   programs.fish.enable = true;
+  # Indispensable pour les binaires
+  programs.nix-ld.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.david = {
