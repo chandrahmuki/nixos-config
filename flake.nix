@@ -30,9 +30,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Maintained CachyOS Kernel Flake
+    # Maintained CachyOS Kernel Flake (NO follows to get binary cache!)
     nix-cachyos.url = "github:xddxdd/nix-cachyos-kernel";
-    nix-cachyos.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
