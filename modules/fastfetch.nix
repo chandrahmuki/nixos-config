@@ -5,10 +5,8 @@
     enable = true;
     settings = {
       logo = {
-        source = "/home/david/Pictures/nixos.png";
-        type = "sixel";
-        width = 30;
-        height = 14;
+        source = "${pkgs.chafa}/bin/chafa -f sixel -s 30x14 /home/david/Pictures/nixos.png";
+        type = "command";
         padding = {
           top = 1;
           left = 2;
