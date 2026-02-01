@@ -179,6 +179,20 @@
     scheduler = "scx_rusty";
   };
 
+  # 7. Advanced: CachyOS Kernel via Chaotic Nyx
+  boot.kernelPackages = pkgs.linuxPackages_cachyos;
+
+  # 8. Advanced: Build in RAM (tmpfs) - 62GB RAM required
+  boot.tmp.useTmpfs = true;
+  boot.tmp.tmpfsSize = "75%"; # Use up to 75% of RAM for build
+
+  # 9. Advanced: TCP BBR (Better network speed/latency)
+  boot.kernel.sysctl = {
+    "net.core.default_qdisc" = "cake";
+    "net.ipv4.tcp_congestion_control" = "bbr";
+  };
+  boot.kernelModules = [ "tcp_bbr" ];
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;

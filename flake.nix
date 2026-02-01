@@ -30,6 +30,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
   };
 
   outputs =
@@ -41,6 +42,7 @@
       niri,
       antigravity,
       dms,
+      chaotic,
       ...
     }@inputs:
     {
@@ -50,6 +52,9 @@
         modules = [
           ./hosts/muggy-nixos/default.nix
           ./overlays.nix
+
+          # Module Chaotic Nyx (CachyOS)
+          chaotic.nixosModules.default
 
           # Le module DMS se charge au niveau SYSTEME
           dms.nixosModules.dank-material-shell
