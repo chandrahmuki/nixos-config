@@ -21,6 +21,8 @@
     ./modules/antigravity.nix
     ./modules/direnv.nix
     ./modules/yt-dlp.nix
+    ./modules/yazi.nix
+    ./modules/utils.nix
 
   ];
 
