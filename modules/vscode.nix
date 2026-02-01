@@ -3,7 +3,7 @@
 {
   # On installe les outils nécessaires au fonctionnement de l'IDE
   home.packages = with pkgs; [
-    nixfmt-rfc-style # Le formateur officiel (RFC style)
+    nixfmt # Le formateur officiel (RFC style)
     nil # Le "cerveau" (Language Server) pour Nix
   ];
 
@@ -44,7 +44,7 @@
         "nix.serverSettings" = {
           "nil" = {
             "formatting" = {
-              "command" = [ "${pkgs.nixfmt-rfc-style}/bin/nixfmt" ];
+              "command" = [ "${pkgs.nixfmt}/bin/nixfmt" ];
             };
             # Ajout pour améliorer la détection des imports
             "diagnostics" = {
