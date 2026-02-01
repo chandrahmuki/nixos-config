@@ -182,8 +182,8 @@
 
   # 7. Advanced: CachyOS Latest Kernel via xddxdd
   nix.settings = {
-    substituters = [ "https://lantian.pub/nix-cache" ];
-    trusted-public-keys = [ "lantian.pub-1:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
+    substituters = [ "https://attic.xuyh0120.win/lantian" ];
+    trusted-public-keys = [ "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
     trusted-users = [
       "root"
       "@wheel"
