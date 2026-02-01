@@ -7,6 +7,7 @@
     settings = {
       embed-thumbnail = true;
       add-metadata = true;
+      output = "%(title)s.%(ext)s";
     };
   };
 
