@@ -1,20 +1,14 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 {
   home.packages = [ pkgs.chafa ];
-
-  # Generate the sixel logo on activation to ensure it exists and is up to date
-  home.activation.generateFastfetchLogo = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    mkdir -p /home/david/.config/fastfetch
-    ${pkgs.chafa}/bin/chafa -f sixel -s 30x14 /home/david/Pictures/nixos.png > /home/david/.config/fastfetch/logo.sixel
-  '';
 
   programs.fastfetch = {
     enable = true;
     settings = {
       logo = {
-        source = "/home/david/.config/fastfetch/logo.sixel";
-        type = "file-raw";
-        width = 1;
+        source = "/home/david/Pictures/nixos.png";
+        type = "sixel";
+        width = 30;
         height = 14;
         padding = {
           top = 1;
