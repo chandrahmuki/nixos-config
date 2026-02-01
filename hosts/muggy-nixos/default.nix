@@ -37,8 +37,15 @@
   #Activate KornFlakes
   nix.settings.experimental-features = [
     "nix-command"
+    "nix-command"
     "flakes"
   ];
+
+  # Force Chaotic Nyx Cache
+  nix.settings = {
+    substituters = [ "https://nyx.chaotic.cx" ];
+    trusted-public-keys = [ "nyx.chaotic.cx-1:dH64k/1uwt14U2vfxH5Q5t364L8f/qM7QY8kCt08Z+A=" ];
+  };
 
   # Use latest kernel via Chaotic Nyx definition below
   # boot.kernelPackages = pkgs.linuxPackages_latest; # Removed to favor CachyOS kernel
