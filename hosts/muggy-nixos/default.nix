@@ -180,6 +180,7 @@
   };
 
   # 7. Advanced: CachyOS Kernel via Chaotic Nyx
+  chaotic.nyx.cache.enable = true; # Force usage of binary cache
   boot.kernelPackages = pkgs.linuxPackages_cachyos;
 
   # 8. Advanced: Build in RAM (tmpfs) - 62GB RAM required
