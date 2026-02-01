@@ -3,7 +3,7 @@
 {
   programs.yt-dlp = {
     enable = true;
-    package = inputs.nixpkgs-master.legacyPackages.${pkgs.system}.yt-dlp;
+    package = inputs.nixpkgs-master.legacyPackages.${pkgs.stdenv.hostPlatform.system}.yt-dlp;
     settings = {
       embed-thumbnail = true;
       add-metadata = true;
