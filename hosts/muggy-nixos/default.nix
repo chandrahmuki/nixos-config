@@ -150,7 +150,34 @@
     #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     #  wget
     xwayland-satellite
+    nvtopPackages.amd
   ];
+
+  # --- OPTIMIZATIONS ---
+
+  # 1. Memory Management (ZRAM)
+  zramSwap.enable = true;
+
+  # 2. SSD Maintenance (Trim)
+  services.fstrim.enable = true;
+
+  # 3. Store Optimization (Deduplication)
+  nix.settings.auto-optimise-store = true;
+
+  # 4. Gaming & GPU
+  programs.gamemode.enable = true;
+
+  # 5. Process Priority (CachyOS-like)
+  services.ananicy = {
+    enable = true;
+    package = pkgs.ananicy-cpp;
+  };
+
+  # 6. Kernel Scheduler (SCX - CachyOS-like)
+  services.scx = {
+    enable = true;
+    scheduler = "scx_rusty";
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
