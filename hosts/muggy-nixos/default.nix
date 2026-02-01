@@ -45,6 +45,10 @@
   nix.settings = {
     substituters = [ "https://nyx.chaotic.cx" ];
     trusted-public-keys = [ "nyx.chaotic.cx-1:dH64k/1uwt14U2vfxH5Q5t364L8f/qM7QY8kCt08Z+A=" ];
+    trusted-users = [
+      "root"
+      "@wheel"
+    ]; # Allow sudo users to manage caches
   };
 
   # Use latest kernel via Chaotic Nyx definition below
