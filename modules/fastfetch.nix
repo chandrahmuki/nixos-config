@@ -8,7 +8,7 @@
       logo = {
         source = "/home/david/Pictures/nixos.png";
         type = "kitty";
-        width = 30;
+        width = 24;
         height = 13;
         padding = {
           top = 1;
