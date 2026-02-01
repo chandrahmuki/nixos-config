@@ -41,16 +41,6 @@
     "flakes"
   ];
 
-  # Force Chaotic Nyx Cache
-  nix.settings = {
-    substituters = [ "https://nyx.chaotic.cx" ];
-    trusted-public-keys = [ "nyx.chaotic.cx-1:dH64k/1uwt14U2vfxH5Q5t364L8f/qM7QY8kCt08Z+A=" ];
-    trusted-users = [
-      "root"
-      "@wheel"
-    ]; # Allow sudo users to manage caches
-  };
-
   # Use latest kernel via Chaotic Nyx definition below
   # boot.kernelPackages = pkgs.linuxPackages_latest; # Removed to favor CachyOS kernel
 
@@ -190,9 +180,19 @@
     scheduler = "scx_rusty";
   };
 
-  # 7. Advanced: CachyOS Kernel via Chaotic Nyx
-  chaotic.nyx.cache.enable = true; # Force usage of binary cache
-  boot.kernelPackages = pkgs.linuxPackages_cachyos;
+  # 7. Advanced: CachyOS Kernel via xddxdd (Maintained)
+  nix.settings = {
+    substituters = [ "https://setup.lantian.pub" ];
+    trusted-public-keys = [ "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
+    trusted-users = [
+      "root"
+      "@wheel"
+    ];
+  };
+
+  boot.kernelPackages =
+    pkgs.linuxPackagesFor
+      inputs.nix-cachyos.packages.${pkgs.system}.linux-cachyos;
 
   # 8. Advanced: Build in RAM (tmpfs) - 62GB RAM required
   boot.tmp.useTmpfs = true;

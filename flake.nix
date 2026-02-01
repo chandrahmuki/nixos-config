@@ -30,7 +30,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
+    # Maintained CachyOS Kernel Flake
+    nix-cachyos.url = "github:xddxdd/nix-cachyos-kernel";
+    nix-cachyos.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -42,7 +44,7 @@
       niri,
       antigravity,
       dms,
-      chaotic,
+      nix-cachyos,
       ...
     }@inputs:
     {
@@ -53,8 +55,9 @@
           ./hosts/muggy-nixos/default.nix
           ./overlays.nix
 
-          # Module Chaotic Nyx (CachyOS)
-          chaotic.nixosModules.default
+          # Module CachyOS Kernel
+          # Note: this flake usually exposes packages, not a full module like nyx.
+          # We'll use the package directly in default.nix via inputs.
 
           # Le module DMS se charge au niveau SYSTEME
           dms.nixosModules.dank-material-shell
