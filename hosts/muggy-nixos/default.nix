@@ -40,8 +40,8 @@
     "flakes"
   ];
 
-  # Use latest kernel.
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  # Use latest kernel via Chaotic Nyx definition below
+  # boot.kernelPackages = pkgs.linuxPackages_latest; # Removed to favor CachyOS kernel
 
   networking.hostName = "muggy-nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
