@@ -23,6 +23,11 @@
         quickshell.inputs.nixpkgs.follows = "nixpkgs";
       };
     };
+    antigravity = {
+      url = "github:antigravity-community/antigravity-nix";
+      # C'est ici que la magie opère :
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
   };
 
@@ -32,6 +37,7 @@
       nixpkgs,
       home-manager,
       niri,
+      antigravity,
       dms,
       ...
     }@inputs:
@@ -46,6 +52,7 @@
           # Le module DMS se charge au niveau SYSTEME
           dms.nixosModules.dank-material-shell
           niri.nixosModules.niri # Le module Niri Système (Sodiboo)
+          antigravity.nixosModules.default
 
           # Import du module Home Manager
           home-manager.nixosModules.home-manager
