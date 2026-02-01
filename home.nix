@@ -18,6 +18,7 @@
     ./modules/dms.nix
     ./modules/nh.nix
     ./modules/parsec.nix
+    ./modules/antigravity.nix
 
   ];
 
