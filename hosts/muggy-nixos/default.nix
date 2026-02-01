@@ -190,9 +190,7 @@
     ];
   };
 
-  boot.kernelPackages =
-    pkgs.linuxPackagesFor
-      inputs.nix-cachyos.packages.${pkgs.system}.linux-cachyos;
+  boot.kernelPackages = pkgs.linuxPackagesFor inputs.nix-cachyos.packages.${pkgs.system}.default;
 
   # 8. Advanced: Build in RAM (tmpfs) - 62GB RAM required
   boot.tmp.useTmpfs = true;
