@@ -10,6 +10,7 @@
         pad = "15x15";
       };
       colors = {
+        alpha = "0.9";
         background = "282a36";
         foreground = "f8f8f2";
         regular0 = "21222c"; # black
