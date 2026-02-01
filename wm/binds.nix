@@ -8,7 +8,8 @@
     ];
     "Mod+D".action = spawn "fuzzel";
     "Mod+Q".action = close-window;
-    "Mod+F".action = fullscreen-window;
+    "Mod+Shift+F".action = fullscreen-window;
+    "Mod+F".action = maximize-column;
     "Mod+T".action = spawn "foot";
     "Mod+Shift+E".action = quit { skip-confirmation = false; };
     "Mod+Shift+Slash".action = show-hotkey-overlay;
