@@ -136,6 +136,8 @@
     extraPortals = [ pkgs.xdg-desktop-portal-gnome ];
     config.common.default = "*";
   };
+  # Polkit for niri using the gnome one.
+  security.polkit.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;

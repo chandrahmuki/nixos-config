@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   imports = [
     ./binds.nix
@@ -19,6 +19,8 @@
     spawn-at-startup = [
       { command = [ "sleep 15; systemctl --user restart swaybg" ]; }
       { command = [ "xwayland-satellite" ]; }
+      { command = [ "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1" ]; }
+
     ];
 
     environment."DISPLAY" = ":0";
