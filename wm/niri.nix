@@ -7,11 +7,13 @@
 
   programs.niri.settings = {
 
+    # deactivate niri hotkey pannel at startup
+    hotkey-overlay.skip-at-startup = true;
+
     input.keyboard.xkb = {
       layout = "us";
       model = "pc104";
       variant = "intl";
-      options = "grp:alt_space_toggle";
     };
 
     prefer-no-csd = true;
