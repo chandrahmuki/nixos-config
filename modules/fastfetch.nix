@@ -40,6 +40,7 @@
         {
           type = "wm";
           key = "├─ WM";
+          format = "{1}";
         }
         {
           type = "terminal";
