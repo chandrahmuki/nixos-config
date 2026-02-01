@@ -52,7 +52,7 @@
           # Le module DMS se charge au niveau SYSTEME
           dms.nixosModules.dank-material-shell
           niri.nixosModules.niri # Le module Niri Système (Sodiboo)
-          antigravity.nixosModules.default
+          inputs.antigravity.nixosModules.antigravity
 
           # Import du module Home Manager
           home-manager.nixosModules.home-manager
