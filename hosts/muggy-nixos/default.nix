@@ -180,17 +180,19 @@
     scheduler = "scx_rusty";
   };
 
-  # 7. Advanced: CachyOS Kernel via xddxdd (Maintained)
+  # 7. Advanced: CachyOS Kernel via drakon64 (with Cachix!)
   nix.settings = {
-    substituters = [ "https://setup.lantian.pub" ];
-    trusted-public-keys = [ "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
+    substituters = [ "https://drakon64-nixos-cachyos-kernel.cachix.org" ];
+    trusted-public-keys = [
+      "drakon64-nixos-cachyos-kernel.cachix.org-1:J3gjZ9N6S05pyLA/P0M5y7jXpSxO/i0rshrieQJi5D0="
+    ];
     trusted-users = [
       "root"
       "@wheel"
     ];
   };
 
-  boot.kernelPackages = pkgs.linuxPackagesFor inputs.nix-cachyos.packages.x86_64-linux.linux-cachyos-bore;
+  # boot.kernelPackages is set by the nix-cachyos module automatically
 
   # 8. Advanced: Build in RAM (tmpfs) - 62GB RAM required
   boot.tmp.useTmpfs = true;

@@ -210,9 +210,7 @@
         "cachyos-kernel-patches": "cachyos-kernel-patches",
         "flake-compat": "flake-compat",
         "flake-parts": "flake-parts",
-        "nixpkgs": [
-          "nixpkgs"
-        ]
+        "nixpkgs": "nixpkgs"
       },
       "locked": {
         "lastModified": 1769968495,
@@ -230,16 +228,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1769789167,
-        "narHash": "sha256-kKB3bqYJU5nzYeIROI82Ef9VtTbu4uA3YydSk/Bioa8=",
-        "owner": "nixos",
+        "lastModified": 1769944092,
+        "narHash": "sha256-yX+M8Bv4uu7I43tTx9Po/5MTgGZ9l3i+juPEY+oeYSE=",
+        "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "62c8382960464ceb98ea593cb8321a2cf8f9e3e5",
+        "rev": "8e883f431f048f270b4c62dcea2e751b124210d7",
         "type": "github"
       },
       "original": {
-        "owner": "nixos",
-        "ref": "nixos-unstable",
+        "owner": "NixOS",
+        "ref": "nixos-unstable-small",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -261,11 +259,11 @@
     },
     "nixpkgs-master": {
       "locked": {
-        "lastModified": 1769980539,
-        "narHash": "sha256-qEFhWC93D2YjgiGGfDBXz+zWZIJ7PKR+Hca+wMaXcqg=",
+        "lastModified": 1769981049,
+        "narHash": "sha256-6WVRAaCco4bvnFrrfOm8Xqu0ZnNb3CLUomxJ9DH1xRw=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "316b15b3302e28da62d2bd78f006ade0e6873560",
+        "rev": "7630fd5ffc3ccf406f0a4271ba8ad2f36085395c",
         "type": "github"
       },
       "original": {
@@ -287,6 +285,22 @@
       "original": {
         "owner": "NixOS",
         "ref": "nixos-25.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1769789167,
+        "narHash": "sha256-kKB3bqYJU5nzYeIROI82Ef9VtTbu4uA3YydSk/Bioa8=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "62c8382960464ceb98ea593cb8321a2cf8f9e3e5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -319,7 +333,7 @@
         "home-manager": "home-manager",
         "niri": "niri",
         "nix-cachyos": "nix-cachyos",
-        "nixpkgs": "nixpkgs",
+        "nixpkgs": "nixpkgs_2",
         "nixpkgs-master": "nixpkgs-master"
       }
     },

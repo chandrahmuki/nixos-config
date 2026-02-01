@@ -30,8 +30,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Maintained CachyOS Kernel Flake (NO follows to get binary cache!)
-    nix-cachyos.url = "github:xddxdd/nix-cachyos-kernel";
+    # CachyOS Kernel with Cachix binary cache
+    nix-cachyos.url = "github:drakon64/nixos-cachyos-kernel";
   };
 
   outputs =
@@ -54,9 +54,8 @@
           ./hosts/muggy-nixos/default.nix
           ./overlays.nix
 
-          # Module CachyOS Kernel
-          # Note: this flake usually exposes packages, not a full module like nyx.
-          # We'll use the package directly in default.nix via inputs.
+          # Module CachyOS Kernel (drakon64 with Cachix)
+          nix-cachyos.nixosModules.default
 
           # Le module DMS se charge au niveau SYSTEME
           dms.nixosModules.dank-material-shell
