@@ -14,6 +14,8 @@
       logo = {
         source = "/home/david/.config/fastfetch/logo.sixel";
         type = "file-raw";
+        width = 30;
+        height = 14;
         padding = {
           top = 1;
           left = 2;
