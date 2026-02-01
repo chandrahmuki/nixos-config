@@ -30,8 +30,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # CachyOS Kernel with Cachix binary cache
-    nix-cachyos.url = "github:drakon64/nixos-cachyos-kernel";
+    # CachyOS Latest Kernel (xddxdd - has lantian cache)
+    nix-cachyos.url = "github:xddxdd/nix-cachyos-kernel";
   };
 
   outputs =
@@ -54,8 +54,7 @@
           ./hosts/muggy-nixos/default.nix
           ./overlays.nix
 
-          # Module CachyOS Kernel (drakon64 with Cachix)
-          nix-cachyos.nixosModules.default
+          # CachyOS kernel is set via boot.kernelPackages in default.nix
 
           # Le module DMS se charge au niveau SYSTEME
           dms.nixosModules.dank-material-shell
