@@ -12,6 +12,20 @@
       window-padding-x = 15;
       window-padding-y = 15;
       window-decoration = false;
+
+      # Raccourcis Zoom
+      keybind = [
+        "ctrl+plus=increase_font_size:1"
+        "ctrl+equal=increase_font_size:1"
+        "ctrl+minus=decrease_font_size:1"
+        "ctrl+0=reset_font_size"
+
+        # User request: Shift+Alt+Wheel
+        # Note: Mouse binding support in Ghostty is experimental/limited.
+        # If wheel doesn't work, use the Shift+Alt+Plus/Minus shortcuts below.
+        "shift+alt+plus=increase_font_size:1"
+        "shift+alt+minus=decrease_font_size:1"
+      ];
     };
   };
 
