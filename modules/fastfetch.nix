@@ -6,7 +6,7 @@
     settings = {
       logo = {
         source = "/home/david/Pictures/nixos.png";
-        type = "chafa";
+        type = "sixel";
         width = 30;
         height = 14;
         padding = {
