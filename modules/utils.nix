@@ -3,6 +3,7 @@
 {
   home.packages = with pkgs; [
     fd # Used for the search function
+    playerctl # MPRIS media player control (required for DMS media widget)
   ];
 
   programs.bat = {
