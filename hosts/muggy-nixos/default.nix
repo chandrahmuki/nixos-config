@@ -4,6 +4,7 @@
 
 {
   config,
+  lib,
   pkgs,
   inputs,
   ...
@@ -87,6 +88,22 @@
   # Enable the GNOME Desktop Environment.
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
+
+  # GDM Customization (HiDPI scaling)
+  programs.dconf.profiles.gdm.databases = [
+    {
+      settings = {
+        "org/gnome/desktop/interface" = {
+          scaling-factor = lib.gvariant.mkUint32 2; # 2x scale for HiDPI
+          text-scaling-factor = 1.25; # Slightly larger text
+        };
+        "org/gnome/login-screen" = {
+          banner-message-enable = false;
+          disable-user-list = false; # Show user list
+        };
+      };
+    }
+  ];
 
   # Configure keymap in X11
   services.xserver.xkb = {
