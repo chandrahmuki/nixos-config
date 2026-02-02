@@ -105,6 +105,11 @@
     }
   ];
 
+  # Make GDM monitor configuration permanent
+  systemd.tmpfiles.rules = [
+    "L+ /run/gdm/.config/monitors.xml - - - - /home/david/.config/monitors.xml"
+  ];
+
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
