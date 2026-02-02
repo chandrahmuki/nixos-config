@@ -4,6 +4,8 @@
   home.packages = with pkgs; [
     fd # Used for the search function
     playerctl # MPRIS media player control (required for DMS media widget)
+    nvd # Differenz between builds (shows package changes)
+    manix # Fast Nix documentation searcher
   ];
 
   programs.bat = {
