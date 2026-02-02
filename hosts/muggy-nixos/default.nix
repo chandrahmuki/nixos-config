@@ -15,6 +15,7 @@
     ./hardware-configuration.nix
     ../../modules/font.nix
     ../../modules/steam.nix
+    ../../modules/lact.nix
   ];
 
   # Bootloader.
