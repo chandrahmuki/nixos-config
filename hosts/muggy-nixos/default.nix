@@ -17,7 +17,6 @@
     ../../modules/font.nix
     ../../modules/steam.nix
     ../../modules/lact.nix
-    ../../modules/neovim.nix
   ];
 
   # Bootloader.

@@ -23,7 +23,7 @@
     ./modules/yt-dlp.nix
     ./modules/yazi.nix
     ./modules/utils.nix
-
+    ./modules/neovim.nix
   ];
 
   programs.home-manager.enable = true;
