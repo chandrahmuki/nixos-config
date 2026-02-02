@@ -20,7 +20,15 @@
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
+  boot.loader.systemd-boot.configurationLimit = 5; # Keep only 5 generations in boot menu
   boot.loader.efi.canTouchEfiVariables = true;
+
+  # Automatic garbage collection (weekly, keep 5 days of builds)
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 7d";
+  };
 
   #AMD
   boot.initrd.kernelModules = [ "amdgpu" ];
