@@ -15,12 +15,12 @@
       unzip
       wget
       curl
-      git
+      # git (Managed by git.nix)
 
       # Runtime dependencies
       ripgrep
-      fd
-      fzf
+      # fd (Managed by utils.nix)
+      # fzf (Managed by utils.nix)
       nodejs
       python3
       lua-language-server
