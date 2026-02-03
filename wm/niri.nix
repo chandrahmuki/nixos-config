@@ -64,7 +64,7 @@
           height = 2160;
           refresh = 60.0;
         };
-        scale = 1.5; # Scale pour 4K (optionnel, ajuste si besoin)
+        scale = 2.0; # Scale 2x pour 4K
         position = {
           x = 2560; # À droite de l'écran 2K
           y = 0;
