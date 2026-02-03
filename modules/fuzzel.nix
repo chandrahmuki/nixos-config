@@ -1,14 +1,22 @@
 { pkgs, ... }:
 
 {
+  home.packages = with pkgs; [
+    papirus-icon-theme
+  ];
+
   programs.fuzzel = {
     enable = true;
     settings = {
       main = {
-        font = "Hack:size=12";
-        terminal = "${pkgs.foot}/bin/foot"; # Lance les apps terminal dans Foot
+        font = "Hack Nerd Font:size=18";
+        terminal = "${pkgs.ghostty}/bin/ghostty";
         prompt = "'❯ '";
         layer = "overlay";
+        icons-enabled = "yes";
+        icon-theme = "Papirus-Dark";
+        width = 40;
+        lines = 15;
       };
 
       colors = {
