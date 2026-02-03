@@ -12,9 +12,9 @@
     # Configuration Noctalia (basée sur la doc)
     settings = {
       bar = {
-        position = "top";
+        position = "left"; # Barre sur le côté gauche
         floating = true;
-        backgroundOpacity = 0.7; # Plus de transparence
+        backgroundOpacity = 0.5; # Transparence 50%
         margin = 10;
         radius = 12;
         output = "DP-2"; # Afficher uniquement sur l'écran 2K (AOC)
