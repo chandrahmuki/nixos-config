@@ -53,27 +53,6 @@
         "type": "github"
       }
     },
-    "dms": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "quickshell": "quickshell"
-      },
-      "locked": {
-        "lastModified": 1770055085,
-        "narHash": "sha256-6jcRZ4fjRAot34wEhn+X0YjJAYVBKr12Hth2gn/Yzj0=",
-        "owner": "AvengeMedia",
-        "repo": "DankMaterialShell",
-        "rev": "eaa6a664c89f776f406d74d29eb8f7d1b4411e3d",
-        "type": "github"
-      },
-      "original": {
-        "owner": "AvengeMedia",
-        "repo": "DankMaterialShell",
-        "type": "github"
-      }
-    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -305,36 +284,35 @@
         "type": "github"
       }
     },
-    "quickshell": {
+    "noctalia": {
       "inputs": {
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1766725085,
-        "narHash": "sha256-O2aMFdDUYJazFrlwL7aSIHbUSEm3ADVZjmf41uBJfHs=",
-        "ref": "refs/heads/master",
-        "rev": "41828c4180fb921df7992a5405f5ff05d2ac2fff",
-        "revCount": 715,
-        "type": "git",
-        "url": "https://git.outfoxxed.me/quickshell/quickshell"
+        "lastModified": 1770145348,
+        "narHash": "sha256-lxr7TyizeNMnDuo2x3NC1UndTEE2jMaU3ZZcrN+it6I=",
+        "owner": "noctalia-dev",
+        "repo": "noctalia-shell",
+        "rev": "3e876e88bb05d597373a874eab7a9c41a364549a",
+        "type": "github"
       },
       "original": {
-        "rev": "41828c4180fb921df7992a5405f5ff05d2ac2fff",
-        "type": "git",
-        "url": "https://git.outfoxxed.me/quickshell/quickshell"
+        "owner": "noctalia-dev",
+        "repo": "noctalia-shell",
+        "type": "github"
       }
     },
     "root": {
       "inputs": {
         "antigravity": "antigravity",
-        "dms": "dms",
         "home-manager": "home-manager",
         "niri": "niri",
         "nix-cachyos": "nix-cachyos",
         "nixpkgs": "nixpkgs_2",
-        "nixpkgs-master": "nixpkgs-master"
+        "nixpkgs-master": "nixpkgs-master",
+        "noctalia": "noctalia"
       }
     },
     "systems": {

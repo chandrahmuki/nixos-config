@@ -42,5 +42,35 @@
       { proportion = 2. / 3.; }
     ];
 
+    # Configuration des écrans
+    # Pour que la souris aille de 2K (gauche) vers 4K (droite)
+    outputs = {
+      "HDMI-A-1" = {
+        # Écran 2K (celui que tu veux à gauche)
+        mode = {
+          width = 2560;
+          height = 1440;
+          refresh = 59.951;
+        };
+        position = {
+          x = 0;
+          y = 0;
+        };
+      };
+      "DP-2" = {
+        # Écran 4K (à droite du 2K)
+        mode = {
+          width = 3840;
+          height = 2160;
+          refresh = 60.0;
+        };
+        scale = 1.5; # Scale pour 4K (optionnel, ajuste si besoin)
+        position = {
+          x = 2560; # À droite de l'écran 2K
+          y = 0;
+        };
+      };
+    };
+
   };
 }
