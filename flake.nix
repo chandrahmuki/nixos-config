@@ -17,12 +17,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    dms = {
-      url = "github:AvengeMedia/DankMaterialShell";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        quickshell.inputs.nixpkgs.follows = "nixpkgs";
-      };
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     antigravity = {
       url = "github:jacopone/antigravity-nix";
@@ -42,7 +39,7 @@
       home-manager,
       niri,
       antigravity,
-      dms,
+      noctalia,
       nix-cachyos,
       ...
     }@inputs:
@@ -56,8 +53,8 @@
 
           # CachyOS kernel is set via boot.kernelPackages in default.nix
 
-          # Le module DMS se charge au niveau SYSTEME
-          dms.nixosModules.dank-material-shell
+          # Le module Noctalia se charge au niveau SYSTEME (si besoin, mais on va surtout l'utiliser dans Home Manager)
+          noctalia.nixosModules.default
           niri.nixosModules.niri # Le module Niri Système (Sodiboo)
 
           # Import du module Home Manager

@@ -1,4 +1,4 @@
-{ config, pkgs, ... }: # <-- N'oublie pas d'ajouter { config, pkgs, ... }: en haut !
+{ ... }: # <-- N'oublie pas d'ajouter { config, pkgs, ... }: en haut !
 
 {
   home.username = "david";
@@ -15,7 +15,7 @@
     ./modules/vscode.nix
     ./wm/niri.nix
     ./modules/fuzzel.nix
-    ./modules/dms.nix
+    ./modules/noctalia.nix
     ./modules/nh.nix
     ./modules/parsec.nix
     ./modules/antigravity.nix
