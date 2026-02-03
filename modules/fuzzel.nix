@@ -20,12 +20,12 @@
       };
 
       colors = {
-        background = "1a1b26ff"; # Sombre (Tokyo Night style)
-        text = "c0caf5ff";
-        match = "bb9af7ff"; # Couleur des lettres filtrées
-        selection = "33467cff";
+        background = "282a36ff"; # Dracula Background
+        text = "f8f8f2ff"; # Dracula Foreground
+        match = "8be9fdff"; # Dracula Cyan (for matches)
+        selection = "44475aff"; # Dracula Selection
         selection-text = "ffffffff";
-        border = "bb9af7ff";
+        border = "bd93f9ff"; # Dracula Purple
       };
 
       border = {
