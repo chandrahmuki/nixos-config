@@ -43,31 +43,31 @@
     ];
 
     # Configuration des écrans
-    # 2K à gauche, 4K à droite
+    # DP-2 (2K) à gauche, HDMI-A-1 (4K) à droite
     outputs = {
-      "HDMI-A-1" = {
-        # Écran 2K à gauche (pas de scale)
+      "DP-2" = {
+        # Écran 2K AOC (à gauche, avec 75Hz)
         mode = {
           width = 2560;
           height = 1440;
-          refresh = 59.951;
+          refresh = 74.968;
         };
-        scale = 1.0; # Pas de scale sur le 2K
+        scale = 1.0;
         position = {
           x = 0;
           y = 0;
         };
       };
-      "DP-2" = {
-        # Écran 4K à droite
+      "HDMI-A-1" = {
+        # Écran 4K LG (à droite)
         mode = {
           width = 3840;
           height = 2160;
           refresh = 60.0;
         };
-        scale = 2.0; # Scale 2x pour 4K (1920x1080 logique)
+        scale = 2.0; # Scale 2x pour 4K
         position = {
-          x = 2560; # Juste après le 2K (2560 pixels logiques)
+          x = 2560; # Juste après le 2K
           y = 0;
         };
       };

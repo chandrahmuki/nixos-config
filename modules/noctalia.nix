@@ -17,7 +17,7 @@
         backgroundOpacity = 0.7; # Plus de transparence
         margin = 10;
         radius = 12;
-        output = "HDMI-A-1"; # Afficher uniquement sur l'écran 2K
+        output = "DP-2"; # Afficher uniquement sur l'écran 2K (AOC)
       };
 
       general = {
