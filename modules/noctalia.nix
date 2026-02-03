@@ -13,11 +13,14 @@
     settings = {
       bar = {
         position = "left"; # Barre sur le côté gauche
+        barType = "floating"; # Style flottant
         floating = true;
         backgroundOpacity = 0.5; # Transparence 50%
+        useSeparateOpacity = true;
+        monitors = [ "DP-2" ]; # Afficher uniquement sur l'écran 2K (AOC)
         margin = 10;
-        radius = 12;
-        output = "DP-2"; # Afficher uniquement sur l'écran 2K (AOC)
+        marginVertical = 10;
+        marginHorizontal = 10;
       };
 
       general = {
