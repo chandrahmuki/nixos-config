@@ -3,6 +3,8 @@
 {
   home.packages = with pkgs; [
     papirus-icon-theme
+    adwaita-icon-theme # Fallback for apps missing in Papirus
+    hicolor-icon-theme # Base icon theme (fallback)
   ];
 
   programs.fuzzel = {
