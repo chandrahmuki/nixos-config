@@ -23,10 +23,7 @@
       { command = [ "xwayland-satellite" ]; }
     ];
 
-    environment = {
-      "DISPLAY" = ":0";
-      "XDG_CURRENT_DESKTOP" = "gnome"; # Required for xdg-desktop-portal-gnome screen sharing
-    };
+    environment."DISPLAY" = ":0";
 
     layout.default-column-width = {
       proportion = 1. / 2.;

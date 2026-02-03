@@ -164,12 +164,10 @@
     package = pkgs.niri-unstable;
   };
 
-  # XDG Desktop Portal pour Niri
-  xdg.portal = {
-    enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gnome ];
-    config.common.default = "*";
-  };
+  # XDG Desktop Portal is handled by Sodiboo's Niri module
+  # xdg.portal.enable = true;
+  # xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gnome ];
+
   # Polkit for niri using the gnome one.
   security.polkit.enable = true;
 
