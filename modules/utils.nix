@@ -20,6 +20,9 @@
 
   programs.mpv = {
     enable = true;
+    scripts = with pkgs.mpvScripts; [
+      mpris # MPRIS support for media player detection (DMS, playerctl)
+    ];
   };
 
   programs.fzf = {
