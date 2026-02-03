@@ -6,6 +6,9 @@
     playerctl # MPRIS media player control (required for DMS media widget)
     nvd # Differenz between builds (shows package changes)
     manix # Fast Nix documentation searcher
+    pamixer # CLI mixer for PulseAudio/PipeWire (volume control)
+    pavucontrol # GUI volume control for PulseAudio/PipeWire
+    pulseaudio # Provides pactl for volume control
   ];
 
   programs.bat = {

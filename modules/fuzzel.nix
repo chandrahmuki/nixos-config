@@ -36,4 +36,14 @@
       };
     };
   };
+
+  # Symlinks pour les icônes manquantes dans les thèmes standards
+  home.file.".local/share/icons/hicolor/scalable/apps/io.github.ilya_zlobintsev.LACT.svg".source =
+    "${pkgs.lact}/share/pixmaps/io.github.ilya_zlobintsev.LACT.svg";
+
+  # Pour Antigravity, on essaie de pointer vers son icône si elle est packagée
+  # Note: Si l'icône n'est pas trouvée, HM ignorera ou on ajustera.
+  home.file.".local/share/icons/hicolor/scalable/apps/antigravity.svg".source = "${
+    pkgs.antigravity-unwrapped or pkgs.antigravity
+  }/share/icons/hicolor/scalable/apps/antigravity.svg";
 }
