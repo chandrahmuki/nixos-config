@@ -21,6 +21,28 @@
         margin = 10;
         marginVertical = 10;
         marginHorizontal = 10;
+
+        # Widgets sans le Launcher
+        widgets = {
+          left = [
+            # { id = "Launcher"; }  # Retiré !
+            { id = "Clock"; }
+            { id = "SystemMonitor"; }
+            { id = "ActiveWindow"; }
+            { id = "MediaMini"; }
+          ];
+          center = [
+            { id = "Workspace"; }
+          ];
+          right = [
+            { id = "Tray"; }
+            { id = "NotificationHistory"; }
+            { id = "Battery"; }
+            { id = "Volume"; }
+            { id = "Brightness"; }
+            { id = "ControlCenter"; }
+          ];
+        };
       };
 
       general = {
