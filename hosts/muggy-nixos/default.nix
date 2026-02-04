@@ -206,7 +206,7 @@
   # 6. Kernel Scheduler (SCX - CachyOS-like)
   services.scx = {
     enable = true;
-    scheduler = "scx_rusty";
+    scheduler = "scx_lavd";
   };
 
   # 7. Advanced: CachyOS Latest Kernel via xddxdd
