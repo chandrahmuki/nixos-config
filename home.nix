@@ -24,6 +24,7 @@
     ./modules/yazi.nix
     ./modules/utils.nix
     ./modules/neovim.nix
+    ./modules/discord.nix
   ];
 
   programs.home-manager.enable = true;
