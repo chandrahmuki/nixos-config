@@ -10,7 +10,9 @@ vim.opt.rtp:prepend(lazypath)
 require("core")
 
 -- setup lazy
-require("lazy").setup("plugins")
+require("lazy").setup("plugins", {
+  lockfile = vim.fn.stdpath("data") .. "/lazy-lock.json",
+})
 
 -- load user overrides
 pcall(require, "custom")
