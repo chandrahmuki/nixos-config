@@ -24,6 +24,8 @@
       nodejs
       python3
       lua-language-server
+      nil # Nix LSP
+      nixfmt # Nix Formatter
       stylua # For stylua.toml in your config
     ];
   };
