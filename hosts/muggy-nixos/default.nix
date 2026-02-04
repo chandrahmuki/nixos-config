@@ -225,12 +225,12 @@
   boot.tmp.useTmpfs = true;
   boot.tmp.tmpfsSize = "75%"; # Use up to 75% of RAM for build
 
-  # 9. Advanced: TCP BBR (Better network speed/latency)
+  # 9. Advanced: TCP Optimizations (Standard stable)
   boot.kernel.sysctl = {
-    "net.core.default_qdisc" = "cake";
-    "net.ipv4.tcp_congestion_control" = "bbr";
+    "net.core.default_qdisc" = "fq_codel";
+    "net.ipv4.tcp_congestion_control" = "cubic";
   };
-  boot.kernelModules = [ "tcp_bbr" ];
+  # boot.kernelModules = [ "tcp_bbr" ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
