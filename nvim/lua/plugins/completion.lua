@@ -25,12 +25,26 @@ return {
             luasnip.lsp_expand(args.body)
           end,
         },
-        formatting = {
-          format = lspkind.cmp_format({
-            mode = "symbol_text", -- montre icône + texte
-            maxwidth = 50,
-            ellipsis_char = "...",
+        window = {
+          completion = cmp.config.window.bordered({
+            winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel,Search:None",
+            col_offset = -3,
+            side_padding = 0,
           }),
+          documentation = cmp.config.window.bordered({
+            winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel,Search:None",
+          }),
+        },
+        formatting = {
+          fields = { "kind", "abbr", "menu" },
+          format = function(entry, vim_item)
+            local kind = lspkind.cmp_format({ mode = "symbol_text", maxwidth = 50 })(entry, vim_item)
+            local strings = vim.split(kind.kind, "%s", { trimempty = true })
+            kind.kind = " " .. (strings[1] or "") .. " "
+            kind.menu = "    (" .. (strings[2] or "") .. ")"
+
+            return kind
+          end,
         },
         mapping = cmp.mapping.preset.insert({
           ["<C-Space>"] = cmp.mapping.complete(),
@@ -61,10 +75,6 @@ return {
           { name = "buffer", keyword_length = 3 },
           { name = "path" },
         }),
-        window = {
-          completion = cmp.config.window.bordered(),
-          documentation = cmp.config.window.bordered(),
-        },
       })
 
       -- complétion pour / ? (recherche)
@@ -82,25 +92,54 @@ return {
           { name = "cmdline" },
         }),
       })
-            -- ========================
-      -- Couleurs Nord pour nvim-cmp
+
+      -- ========================
+      -- Style "Modern" pour nvim-cmp
       -- ========================
       local set_hl = vim.api.nvim_set_hl
-      set_hl(0, "CmpItemAbbr", { fg = "#D8DEE9" })
-      set_hl(0, "CmpItemAbbrMatch", { fg = "#88C0D0", bold = true })
-      set_hl(0, "CmpItemAbbrMatchFuzzy", { fg = "#88C0D0", bold = true })
-      set_hl(0, "CmpItemMenu", { fg = "#616E88" })
+      
+      -- Fenêtre de complétion
+      set_hl(0, "PmenuSel", { bg = "#282C34", fg = "NONE" })
+      set_hl(0, "Pmenu", { fg = "#C5CDD9", bg = "#22252A" })
 
-      -- par kind
-      set_hl(0, "CmpItemKindFunction", { fg = "#88C0D0" }) -- bleu clair
-      set_hl(0, "CmpItemKindMethod",   { fg = "#88C0D0" })
-      set_hl(0, "CmpItemKindKeyword",  { fg = "#81A1C1" }) -- bleu foncé
-      set_hl(0, "CmpItemKindVariable", { fg = "#EBCB8B" }) -- jaune
-      set_hl(0, "CmpItemKindField",    { fg = "#EBCB8B" })
-      set_hl(0, "CmpItemKindProperty", { fg = "#EBCB8B" })
-      set_hl(0, "CmpItemKindSnippet",  { fg = "#A3BE8C" }) -- vert
-      set_hl(0, "CmpItemKindClass",    { fg = "#D08770" }) -- orange
-      set_hl(0, "CmpItemKindInterface",{ fg = "#B48EAD" }) -- violet
+      set_hl(0, "CmpItemAbbrDeprecated", { fg = "#7E8294", bg = "NONE", strikethrough = true })
+      set_hl(0, "CmpItemAbbrMatch", { fg = "#82AAFF", bg = "NONE", bold = true })
+      set_hl(0, "CmpItemAbbrMatchFuzzy", { fg = "#82AAFF", bg = "NONE", bold = true })
+      set_hl(0, "CmpItemMenu", { fg = "#C792EA", bg = "NONE", italic = true })
+
+      -- Couleurs par Type (Kind)
+      set_hl(0, 'CmpItemKindField', { fg = '#EED8DA', bg = '#B5585F' })
+      set_hl(0, 'CmpItemKindProperty', { fg = '#EED8DA', bg = '#B5585F' })
+      set_hl(0, 'CmpItemKindEvent', { fg = '#EED8DA', bg = '#B5585F' })
+
+      set_hl(0, 'CmpItemKindText', { fg = '#C3E88D', bg = '#9FBD73' })
+      set_hl(0, 'CmpItemKindEnum', { fg = '#C3E88D', bg = '#9FBD73' })
+      set_hl(0, 'CmpItemKindKeyword', { fg = '#C3E88D', bg = '#9FBD73' })
+
+      set_hl(0, 'CmpItemKindConstant', { fg = '#FFE082', bg = '#D4BB6C' })
+      set_hl(0, 'CmpItemKindConstructor', { fg = '#FFE082', bg = '#D4BB6C' })
+      set_hl(0, 'CmpItemKindReference', { fg = '#FFE082', bg = '#D4BB6C' })
+
+      set_hl(0, 'CmpItemKindFunction', { fg = '#EADFF0', bg = '#A377BF' })
+      set_hl(0, 'CmpItemKindStruct', { fg = '#EADFF0', bg = '#A377BF' })
+      set_hl(0, 'CmpItemKindClass', { fg = '#EADFF0', bg = '#A377BF' })
+      set_hl(0, 'CmpItemKindModule', { fg = '#EADFF0', bg = '#A377BF' })
+      set_hl(0, 'CmpItemKindOperator', { fg = '#EADFF0', bg = '#A377BF' })
+
+      set_hl(0, 'CmpItemKindVariable', { fg = '#C5CDD9', bg = '#7E8294' })
+      set_hl(0, 'CmpItemKindFile', { fg = '#C5CDD9', bg = '#7E8294' })
+
+      set_hl(0, 'CmpItemKindUnit', { fg = '#F5EBD9', bg = '#D4A959' })
+      set_hl(0, 'CmpItemKindSnippet', { fg = '#F5EBD9', bg = '#D4A959' })
+      set_hl(0, 'CmpItemKindFolder', { fg = '#F5EBD9', bg = '#D4A959' })
+
+      set_hl(0, 'CmpItemKindMethod', { fg = '#DDE5F5', bg = '#6C8ED4' })
+      set_hl(0, 'CmpItemKindValue', { fg = '#DDE5F5', bg = '#6C8ED4' })
+      set_hl(0, 'CmpItemKindEnumMember', { fg = '#DDE5F5', bg = '#6C8ED4' })
+
+      set_hl(0, 'CmpItemKindInterface', { fg = '#D8EEEB', bg = '#58B5A8' })
+      set_hl(0, 'CmpItemKindColor', { fg = '#D8EEEB', bg = '#58B5A8' })
+      set_hl(0, 'CmpItemKindTypeParameter', { fg = '#D8EEEB', bg = '#58B5A8' })
     end,
   },
 }
