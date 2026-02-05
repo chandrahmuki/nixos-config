@@ -9,6 +9,7 @@
     pamixer # CLI mixer for PulseAudio/PipeWire (volume control)
     pavucontrol # GUI volume control for PulseAudio/PipeWire
     pulseaudio # Provides pactl for volume control
+    nodejs # For MCP servers and other node-based tools
   ];
 
   programs.bat = {
