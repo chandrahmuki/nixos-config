@@ -14,7 +14,7 @@
 - **Important** : Je lance `nos` moi-même dans un terminal externe. Ne pas l'exécuter depuis l'éditeur (nécessite sudo).
 
 ## Mise à jour du flake
-- Pour tout mettre à jour SAUF le kernel CachyOS : `nix flake update --exclude nix-cachyos`
+- Pour tout mettre à jour SAUF le kernel CachyOS : `nix flake update nixpkgs home-manager niri noctalia antigravity`
 - Pour mettre à jour uniquement le kernel : `nix flake update nix-cachyos`
 
 ## Commentaires et Clarté
