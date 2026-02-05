@@ -1,5 +1,8 @@
 # Règles pour l'Assistant IA
 
+> [!NOTE]
+> Je dispose de compétences spécialisées (Skills) situées dans `.agent/skills/`. Elles complètent ces règles de base.
+
 
 ## Git / Gestion de version
 - Pour ce projet, après chaque modification fonctionnelle :
