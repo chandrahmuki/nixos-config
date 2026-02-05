@@ -13,3 +13,6 @@
 ## Mise à jour du flake
 - Pour tout mettre à jour SAUF le kernel CachyOS : `nix flake update --exclude nix-cachyos`
 - Pour mettre à jour uniquement le kernel : `nix flake update nix-cachyos`
+
+## Commentaires et Clarté
+- **Toujours commenter le code** : Chaque ajout ou modification complexe doit être accompagné de commentaires explicatifs pour faciliter la compréhension de la configuration.

@@ -206,7 +206,7 @@
   # 6. Kernel Scheduler (SCX - CachyOS-like)
   services.scx = {
     enable = true;
-    scheduler = "scx_lavd";
+    scheduler = "scx_lavd"; # LAVD est optimisé pour la latence en jeu (Gaming)
   };
 
   # 7. Advanced: CachyOS Latest Kernel via xddxdd
@@ -226,6 +226,7 @@
   boot.tmp.tmpfsSize = "75%"; # Use up to 75% of RAM for build
 
   # 9. Advanced: TCP Optimizations (Standard stable)
+  # On repasse sur fq_codel/cubic car CAKE/BBR demandent trop de CPU pendant les downloads Steam sur HDD
   boot.kernel.sysctl = {
     "net.core.default_qdisc" = "fq_codel";
     "net.ipv4.tcp_congestion_control" = "cubic";

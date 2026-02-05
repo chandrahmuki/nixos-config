@@ -1,44 +1,69 @@
 { pkgs, ... }:
 
 {
+  # Configuration du gestionnaire de fichiers Yazi
   programs.yazi = {
     enable = true;
     enableFishIntegration = true;
+
     settings = {
       manager = {
-        show_hidden = true;
-        sort_by = "modified";
-        sort_dir_first = true;
+        show_hidden = true; # Afficher les fichiers cachés par défaut
+        sort_by = "modified"; # Trier par date de modification
+        sort_dir_first = true; # Afficher les dossiers en premier
       };
+
+      # Définition des "openers" (applications pour ouvrir les fichiers)
       opener = {
-        audio = [
+        # 'listen' : lance mpv dans le terminal sans fenêtre vidéo pour l'audio
+        listen = [
           {
-            run = ''mpv --audio-display=no --no-video "$@"'';
-            block = true;
-            desc = "Play Audio";
+            run = ''${pkgs.mpv}/bin/mpv --audio-display=no --no-video "$@"'';
+            block = true; # Bloque yazi et affiche mpv dans le terminal (permet le contrôle clavier)
+            desc = "Listen";
           }
         ];
       };
+
+      # Règles d'ouverture des fichiers
       open = {
+        # prepend_rules : ces règles s'appliquent AVANT les règles par défaut de yazi
         prepend_rules = [
           {
+            mime = "audio/*";
+            use = "listen";
+          } # Tous les types audio
+          {
             name = "*.m4a";
-            use = "audio";
+            use = "listen";
           }
           {
             name = "*.mp3";
-            use = "audio";
+            use = "listen";
           }
           {
             name = "*.flac";
-            use = "audio";
+            use = "listen";
           }
           {
             name = "*.wav";
-            use = "audio";
+            use = "listen";
           }
         ];
       };
     };
+  };
+
+  # Fonction Fish 'y' : wrapper pour Yazi
+  # Permet de naviguer dans Yazi et de rester dans le dossier final en quittant
+  programs.fish.functions.y = {
+    body = ''
+      set tmp (mktemp -t "yazi-cwd.XXXXXX")
+      yazi $argv --cwd-file="$tmp"
+      if set cwd (command cat -- "$tmp"); and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
+        builtin cd -- "$cwd"
+      end
+      rm -f -- "$tmp"
+    '';
   };
 }

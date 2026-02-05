@@ -33,10 +33,11 @@
     enableRenice = true;
     settings = {
       general = {
-        renice = 10;
+        renice = 10; # Augmente la priorité CPU des processus de jeu
         softrealtime = "auto";
       };
       gpu = {
+        # Optimisations GPU AMD (bloque la fréquence à 'high')
         apply_gpu_optimisations = "accept-responsibility";
         gpu_device = 0;
         amd_performance_level = "high";
