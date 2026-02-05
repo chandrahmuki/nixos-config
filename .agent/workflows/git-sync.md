@@ -32,3 +32,6 @@ git pull --rebase
 ```bash
 git push
 ```
+
+6. Résumé de la Session
+L'assistant fournit un topo clair de la revue de code effectuée (points vérifiés, optimisations trouvées) et confirme l'état final de la synchronisation.
