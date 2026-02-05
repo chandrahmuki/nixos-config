@@ -143,6 +143,12 @@
   # Indispensable pour les binaires
   programs.nix-ld.enable = true;
 
+  # Empêche les jeux de "s'endormir" ou de tomber en FPS quand le workspace change
+  environment.sessionVariables = {
+    SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS = "0";
+    vk_xwayland_wait_ready = "false";
+  };
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.david = {
     isNormalUser = true;
@@ -197,29 +203,23 @@
   # 4. Gaming & GPU
   programs.gamemode.enable = true;
 
-  # 5. Process Priority (CachyOS-like)
-  services.ananicy = {
-    enable = true;
-    package = pkgs.ananicy-cpp;
-  };
+  # 5. Kernel Scheduler (SCX - CachyOS-like)
+  # services.scx = {
+  #   enable = true;
+  #   scheduler = "scx_lavd"; # Retour vers LAVD, plus stable pour les transitions de focus
+  # };
 
-  # 6. Kernel Scheduler (SCX - CachyOS-like)
-  services.scx = {
-    enable = true;
-    scheduler = "scx_bpfland"; # Priorise les tâches interactives (Gaming/Bureau) avec moins d'overhead
-  };
+  # 7. Advanced: Kernel
+  # nix.settings = {
+  #   substituters = [ "https://attic.xuyh0120.win/lantian" ];
+  #   trusted-public-keys = [ "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
+  #   trusted-users = [
+  #     "root"
+  #     "@wheel"
+  #   ];
+  # };
 
-  # 7. Advanced: CachyOS Latest Kernel via xddxdd
-  nix.settings = {
-    substituters = [ "https://attic.xuyh0120.win/lantian" ];
-    trusted-public-keys = [ "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
-    trusted-users = [
-      "root"
-      "@wheel"
-    ];
-  };
-
-  boot.kernelPackages = pkgs.linuxPackagesFor inputs.nix-cachyos.packages.x86_64-linux.linux-cachyos-bore;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # 8. Advanced: Build in RAM (tmpfs) - 62GB RAM required
   boot.tmp.useTmpfs = true;
