@@ -14,12 +14,13 @@
         audio = [
           {
             run = ''mpv --no-video "$@"'';
+            block = true;
             desc = "Play Audio";
           }
         ];
       };
       open = {
-        rules = [
+        prepend_rules = [
           {
             name = "*.m4a";
             use = "audio";
