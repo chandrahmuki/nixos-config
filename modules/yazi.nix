@@ -13,7 +13,7 @@
       opener = {
         audio = [
           {
-            run = ''mpv --no-video "$@"'';
+            run = ''mpv --audio-display=no --no-video "$@"'';
             block = true;
             desc = "Play Audio";
           }
