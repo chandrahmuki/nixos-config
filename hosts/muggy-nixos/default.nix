@@ -206,7 +206,7 @@
   # 6. Kernel Scheduler (SCX - CachyOS-like)
   services.scx = {
     enable = true;
-    scheduler = "scx_lavd"; # LAVD est optimisé pour la latence en jeu (Gaming)
+    scheduler = "scx_bpfland"; # Priorise les tâches interactives (Gaming/Bureau) avec moins d'overhead
   };
 
   # 7. Advanced: CachyOS Latest Kernel via xddxdd
