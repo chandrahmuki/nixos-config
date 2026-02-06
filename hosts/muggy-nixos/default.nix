@@ -204,22 +204,22 @@
   programs.gamemode.enable = true;
 
   # 5. Kernel Scheduler (SCX - CachyOS-like)
-  # services.scx = {
-  #   enable = true;
-  #   scheduler = "scx_lavd"; # Retour vers LAVD, plus stable pour les transitions de focus
-  # };
+  services.scx = {
+    enable = true;
+    scheduler = "scx_lavd"; # Retour vers LAVD, plus stable pour les transitions de focus
+  };
 
-  # 7. Advanced: Kernel
-  # nix.settings = {
-  #   substituters = [ "https://attic.xuyh0120.win/lantian" ];
-  #   trusted-public-keys = [ "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
-  #   trusted-users = [
-  #     "root"
-  #     "@wheel"
-  #   ];
-  # };
+  # 7. Advanced: CachyOS Latest Kernel via xddxdd
+  nix.settings = {
+    substituters = [ "https://attic.xuyh0120.win/lantian" ];
+    trusted-public-keys = [ "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
+    trusted-users = [
+      "root"
+      "@wheel"
+    ];
+  };
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackagesFor inputs.nix-cachyos.packages.x86_64-linux.linux-cachyos-bore;
 
   # 8. Advanced: Build in RAM (tmpfs) - 62GB RAM required
   boot.tmp.useTmpfs = true;

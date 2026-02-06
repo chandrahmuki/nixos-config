@@ -4,7 +4,6 @@
 
   # 2. Les outils qu'on veut pouvoir lancer manuellement au terminal
   environment.systemPackages = with pkgs; [
-    gamescope # Le micro-compositeur pour stabiliser les FPS
     mangohud # L'overlay pour surveiller ta RX 6800 (FPS, température)
     protonup-qt # Super utile pour installer GE-Proton (indispensable sous Linux)
   ];
@@ -19,14 +18,15 @@
 
     # Active Gamescope pour pouvoir lancer une session Steam Deck
     gamescopeSession.enable = true;
-
-    # Optimise les performances des jeux (GameMode de Feral Interactive)
-    extraPackages = with pkgs; [
-      gamemode
-    ];
   };
 
-  # 4. Amélioration des performances globales (GameMode)
+  # 4. Configuration globale de Gamescope (Setuid et permissions)
+  programs.gamescope = {
+    enable = true;
+    # On peut ajouter ici des options globales si besoin
+  };
+
+  # 5. Optimise les performances des jeux (GameMode de Feral Interactive)
   # Cela permet de booster le CPU et de prioriser le GPU quand un jeu est lancé
   programs.gamemode = {
     enable = true;
