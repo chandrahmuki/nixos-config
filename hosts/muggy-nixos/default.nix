@@ -231,7 +231,7 @@
     "net.core.default_qdisc" = "fq_codel";
     "net.ipv4.tcp_congestion_control" = "cubic";
   };
-  # boot.kernelModules = [ "tcp_bbr" ];
+  boot.kernelModules = [ "ntsync" ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
