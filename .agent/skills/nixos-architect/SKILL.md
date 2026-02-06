@@ -7,7 +7,10 @@ description: Expert en architecture NixOS, garant de la propreté et de la clart
 
 Cette compétence assure que toute modification de la configuration NixOS respecte les standards de qualité du projet.
 
-## Principes Fondamentaux
+## Système d'Expertise locale
+IMPORTANT : Toujours consulter le dossier `references/` avant toute modification majeure. Ce dossier contient notre savoir accumulé et les configurations validées pour le matériel de David.
+
+## Principes de Base
 1. **Commentaires Systématiques** : Chaque bloc de configuration complexe doit être expliqué par un commentaire en français.
 2. **Modularité** : Préférer la création de nouveaux fichiers dans `modules/` plutôt que d'alourdir le `default.nix`.
 3. **Clarté des Imports** : Les fichiers doivent être importés de manière logique dans `home.nix` ou `default.nix`.
