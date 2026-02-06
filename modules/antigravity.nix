@@ -3,6 +3,8 @@
 {
   home.packages = [
     pkgs.google-antigravity
+    pkgs.nil    # Language Server for Nix
+    pkgs.nixfmt # Formatter for Nix
   ];
 
   # Optionnel : si tu veux configurer l'outil via des variables d'environnement
