@@ -9,9 +9,10 @@ let
 
   # Helper pour créer les liens symboliques d'extensions dans le dossier Antigravity
   mkExtensionSymlink = ext: {
-    name = ".antigravity/extensions/${ext.vscodeExtName}";
+    # Format attendu par Antigravity : publisher.name-version-platform
+    name = ".antigravity/extensions/${ext.vscodeExtPublisher}.${ext.vscodeExtName}-${ext.version}-universal";
     value = {
-      source = "${ext}/share/vscode/extensions/${ext.vscodeExtName}";
+      source = "${ext}/share/vscode/extensions/${ext.vscodeExtPublisher}.${ext.vscodeExtName}";
     };
   };
 in
