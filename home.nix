@@ -25,6 +25,7 @@
     ./modules/utils.nix
     ./modules/neovim.nix
     ./modules/discord.nix
+    ./modules/xdg.nix
   ];
 
   programs.home-manager.enable = true;
