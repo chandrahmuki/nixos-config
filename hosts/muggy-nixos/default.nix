@@ -147,6 +147,7 @@
   environment.sessionVariables = {
     SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS = "0";
     vk_xwayland_wait_ready = "false";
+    MESA_SHADER_CACHE_MAX_SIZE = "16G";
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -231,6 +232,7 @@
     "net.core.default_qdisc" = "fq_codel";
     "net.ipv4.tcp_congestion_control" = "cubic";
   };
+  boot.kernelParams = [ "amdgpu.gttsize=16384" ];
   boot.kernelModules = [ "ntsync" ];
 
   # Some programs need SUID wrappers, can be configured further or are
