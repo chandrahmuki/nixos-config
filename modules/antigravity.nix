@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
   home.packages = [
@@ -10,5 +10,7 @@
     ANTIGRAVITY_EDITOR = "code"; # Ou ton éditeur favori
   };
   # Gestion persistante de la config MCP (liant le fichier ignoré par Git au Home)
-  home.file.".gemini/antigravity/mcp_config.json".source = ./mcp_config.json;
+  # On utilise mkOutOfStoreSymlink car le fichier est ignoré par Git et Nix Flake ne le voit pas sinon.
+  home.file.".gemini/antigravity/mcp_config.json".source =
+    config.lib.file.mkOutOfStoreSymlink "/home/david/nixos-config/modules/mcp_config.json";
 }
