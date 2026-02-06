@@ -5,39 +5,38 @@ description: |
   Enregistrer le processus → S'y référer pour la réponse → Archiver après usage.
 ---
 
-# Scratchpad - Mémoire de Travail Structurée
+# Scratchpad - Mémoire de Travail Avancée (Style Kira)
 
-Le scratchpad est un outil interne permettant de suivre l'avancement d'une tâche complexe sans perdre le fil technique.
+Le scratchpad est un outil interne permettant de suivre l'avancement d'une tâche complexe sans perdre le fil technique. Cette version améliorée utilise un script Python pour automatisé l'horodatage et la structuration.
 
-## Utilisation Rapide
+## Structure du Skill
 
-1. **Initialisation** : Créer un fichier `scratchpad.md` dans le répertoire des artifacts de la conversation en cours.
-2. **Journalisation** : Noter chaque étape importante, les découvertes et les impasses.
-3. **Synthèse** : Utiliser le contenu pour formuler la réponse finale à l'utilisateur.
+- `scripts/scratch_pad.py` : Moteur de journalisation (CLI).
+- `references/examples.md` : Modèles d'utilisation.
 
-## Structure Recommandée
+## Utilisation via CLI
 
-```markdown
-# 📋 Tâche : [Nom de la tâche]
+Le script Python permet de gérer le scratchpad de manière structurée :
 
-## 📝 Objectif
-[Bref résumé de ce qu'on essaie d'accomplir]
+1.  **Initialisation** : 
+    `python3 .agent/skills/scratchpad/scripts/scratch_pad.py --file [PATH] init "[Task Name]"`
+2.  **Journalisation d'outil** : 
+    `python3 .agent/skills/scratchpad/scripts/scratch_pad.py --file [PATH] log-tool "tool_name" '{"param": "val"}' --result "Output"`
+3.  **Ajout de découverte** : 
+    `python3 .agent/skills/scratchpad/scripts/scratch_pad.py --file [PATH] finding "Texte de la découverte" --category "Genre"`
+4.  **Points de passage** : 
+    `python3 .agent/skills/scratchpad/scripts/scratch_pad.py --file [PATH] checkpoint "Nom de l'étape"`
 
-## 🔍 Journal des Découvertes
-- [HEURE] : Trouvé l'option `services.niri.enable` dans `nixpkgs/wayland/niri.nix`.
-- [HEURE] : Erreur lors du build : "X11 missing". Hypothèse : besoin de xwayland-satellite.
+## Patterns Recommandés
 
-## 🔧 État des Outils
-- GitHub MCP : Utilisé pour inspecter `sodiboo/niri-flake`.
-- Nix Search : Confirme la version 0.1.0 stable.
-
-## ✅ TODO / Checkpoints
-- [x] Identifier le module
-- [/] Tester la config
-- [ ] Documenter le fix
-```
+Voir [examples.md](file:///home/david/nixos-config/.agent/skills/scratchpad/references/examples.md) pour les détails sur les patterns :
+- **Recherche** : Log des outils et findings.
+- **Multi-étapes** : Sections et checkpoints.
+- **Analyse** : TODOs et résumés.
 
 ## Règles de Conduite
-- **Référence interne uniquement** : Ne pas copier-coller le scratchpad brut dans la réponse à l'utilisateur.
+
+- **Référence interne uniquement** : Ne jamais copier-coller le scratchpad brut dans la réponse à l'utilisateur.
 - **Synthèse** : Extraire uniquement les points pertinents pour l'utilisateur.
 - **Nomenclature** : Toujours utiliser des chemins absolus pour les fichiers cités.
+- **Persistence** : Le fichier doit être créé dans le dossier des artifacts de la session (`/home/david/.gemini/antigravity/brain/[ID]/`).

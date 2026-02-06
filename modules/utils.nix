@@ -10,6 +10,7 @@
     pavucontrol # GUI volume control for PulseAudio/PipeWire
     pulseaudio # Provides pactl for volume control
     nodejs # For MCP servers and other node-based tools
+    python3 # For advanced tools like the Kira scratchpad script
   ];
 
   programs.bat = {
