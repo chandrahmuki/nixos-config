@@ -19,7 +19,7 @@
     prefer-no-csd = true;
 
     spawn-at-startup = [
-      { command = [ "sleep 15; systemctl --user restart swaybg" ]; }
+      # { command = [ "sleep 15; systemctl --user restart swaybg" ]; }
       { command = [ "xwayland-satellite" ]; }
     ];
 
