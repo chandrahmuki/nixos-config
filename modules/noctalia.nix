@@ -5,6 +5,11 @@
     inputs.noctalia.homeModules.default
   ];
 
+  # Configuration du fond d'écran pour Noctalia
+  home.file.".cache/noctalia/wallpapers.json".text = builtins.toJSON {
+    defaultWallpaper = "/home/david/Pictures/wallpaper/wallpaper.png";
+  };
+
   programs.noctalia-shell = {
     enable = true;
     systemd.enable = true; # Auto-start avec Niri/Wayland
