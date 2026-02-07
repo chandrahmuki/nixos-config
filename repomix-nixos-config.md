@@ -62,10 +62,13 @@ The content is organized as follows:
         scratch_pad.py
       SKILL.md
   workflows/
+    auto-doc.md
     git-sync.md
 .direnv/
   bin/
     nix-direnv-reload
+docs/
+  tealdeer.md
 hosts/
   muggy-nixos/
     default.nix
@@ -179,6 +182,20 @@ touch -r "/home/david/nixos-config/.envrc" "/home/david/nixos-config/.direnv"/*.
 }
 </file>
 
+<file path="modules/btop.nix">
+{ pkgs, ... }:
+
+{
+  programs.btop = {
+    enable = true;
+    settings = {
+      color_theme = "dracula";
+      vim_keys = true;
+    };
+  };
+}
+</file>
+
 <file path="modules/direnv.nix">
 { config, pkgs, ... }:
 
@@ -284,6 +301,93 @@ touch -r "/home/david/nixos-config/.envrc" "/home/david/nixos-config/.direnv"/*.
   home.packages = with pkgs; [
     parsec-bin
   ];
+}
+</file>
+
+<file path="modules/vscode.nix">
+{ pkgs, ... }:
+
+{
+  # On installe les outils nécessaires au fonctionnement de l'IDE
+  home.packages = with pkgs; [
+    nixfmt # Le formateur officiel (RFC style)
+    nil # Le "cerveau" (Language Server) pour Nix
+  ];
+
+  programs.vscode = {
+    enable = true;
+
+    profiles.default = {
+      # Extensions installées et gérées par Nix
+      extensions = with pkgs.vscode-extensions; [
+        bbenoist.nix # Coloration syntaxique
+        jnoortheen.nix-ide # Support IDE (LSP)
+        dracula-theme.theme-dracula # Thème visuel
+        christian-kohler.path-intellisense # Autocomplétion des chemins
+      ];
+
+      # Configuration de l'éditeur
+      userSettings = {
+        # Apparence et Police
+        "editor.fontFamily" = "'Hack Nerd Font', 'monospace'";
+        "editor.fontSize" = 16;
+        "workbench.colorTheme" = "Dracula";
+        "terminal.integrated.fontFamily" = "Hack Nerd Font";
+        "window.titleBarStyle" = "custom";
+
+        "path-intellisense.mappings" = {
+          "./" = "\${workspaceRoot}";
+        };
+
+        # Automatisation du formatage (nixfmt)
+        "editor.formatOnSave" = true;
+        "[nix]" = {
+          "editor.defaultFormatter" = "jnoortheen.nix-ide";
+        };
+
+        # Configuration du support Nix (LSP nil)
+        "nix.enableLanguageServer" = true;
+        "nix.serverPath" = "${pkgs.nil}/bin/nil";
+        "nix.serverSettings" = {
+          "nil" = {
+            "formatting" = {
+              "command" = [ "${pkgs.nixfmt}/bin/nixfmt" ];
+            };
+            # Ajout pour améliorer la détection des imports
+            "diagnostics" = {
+              "ignored" = [ ];
+            };
+            "nix" = {
+              "flake" = {
+                "autoArchive" = true;
+                "autoEvalInputs" = true;
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+}
+</file>
+
+<file path="modules/yt-dlp.nix">
+{ pkgs, inputs, ... }:
+
+{
+  programs.yt-dlp = {
+    enable = true;
+    package = inputs.nixpkgs-master.legacyPackages.${pkgs.stdenv.hostPlatform.system}.yt-dlp;
+    settings = {
+      embed-thumbnail = true;
+      add-metadata = true;
+      output = "%(title)s.%(ext)s";
+    };
+  };
+
+  programs.fish.functions = {
+    yt = "yt-dlp -x --audio-format m4a $argv";
+  };
 }
 </file>
 
@@ -608,58 +712,6 @@ Nous avons abandonné `ext4` au profit de `btrfs` avec une structure de sous-vol
 ## Nouvelle Configuration (Après transition)
 - UUID de boot : `83F7-5789`.
 - UUID BTRFS : `59f5b271-11c1-41f9-927d-ed3221a6b404`.
-</file>
-
-<file path=".agent/skills/nixos-research-strategy/SKILL.md">
----
-name: nixos-research-strategy
-description: |
-  Stratégies de recherche systématique pour NixOS. Fournit des arbres de décision pour naviguer dans la documentation web et le code source de Nixpkgs.
-  Utiliser pour déterminer la profondeur de lecture et choisir les bons outils (Fetch, GitHub MCP, Nix Search).
----
-
-# NixOS Research Strategy
-
-Guide stratégique pour l'exploration systématique de l'écosystème NixOS.
-
-## Niveaux de Recherche
-
-### 1. ⚡ Quick Scan (Recherche Rapide)
-- **Quand** : Questions de syntaxe simple, vérification de version.
-- **Action** : `Nix Search` pour les options, lecture du `README.md` via `Fetch`.
-- **Objectif** : Une réponse immédiate basée sur la documentation officielle.
-
-### 2. 🛡️ Standard Trace (Analyse Standard)
-- **Quand** : Configuration de nouveaux modules, erreurs de build courantes.
-- **Action** : `Quick Scan` + lecture du code du module dans Nixpkgs via `GitHub MCP`.
-- **Objectif** : Comprendre comment les options sont implémentées.
-
-### 3. 🔬 Nix-Deep-Dive (Immersion Totale)
-- **Quand** : Bugs obscurs, comportements non documentés, intégration de flakes complexes.
-- **Action** : `Standard Trace` + recherche d'issues GitHub, lecture des Pull Requests liées pour comprendre le "pourquoi" derrière une implémentation.
-- **Objectif** : Résoudre des problèmes d'architecture ou des bugs de bas niveau.
-
-## Arbre de Décision
-
-```
-Requête Utilisateur
-├── Mots-clés : "Pourquoi", "Bizarre", "Bug", "Interne"
-│   → **NIX-DEEP-DIVE**
-│   → Outils : GitHub Search (Code + Issues + PRs)
-│
-├── Mots-clés : "Comment configurer", "Options pour"
-│   → **STANDARD TRACE**
-│   → Outils : Nix Search + View Contents (module.nix)
-│
-└── Mots-clés : "Est-ce que", "Version", "Qu'est-ce que"
-    → **QUICK SCAN**
-    → Outils : Nix Search + Fetch (README)
-```
-
-## Meilleures Pratiques
-- **Toujours remonter à la source** : Le code source de Nixpkgs est la source de vérité ultime.
-- **Vérifier l'historique** : Une option qui a changé de nom est souvent documentée dans le commit qui l'a modifiée.
-- **Documenter la recherche** : Utiliser le skill `scratchpad` pour noter les fichiers parcourus.
 </file>
 
 <file path=".agent/skills/scratchpad/references/examples.md">
@@ -1087,6 +1139,47 @@ if __name__ == "__main__":
     main()
 </file>
 
+<file path=".agent/workflows/auto-doc.md">
+---
+description: Automatisation de la documentation et de la synchronisation après un changement.
+---
+
+Ce workflow permet de boucler une tâche proprement en minimisant la recherche aveugle des sous-agents.
+
+// turbo-all
+1. Exécution chirurgicale (Context + Git + Push) en une seule étape
+```bash
+repomix --output repomix-nixos-config.md && git add . && git commit -m "docs: synchronization and context update" && git push
+```
+
+2. Instructions pour l'agent suivant
+Copiez ce message pour l'agent Archiviste :
+> "Analyse le dernier commit avec `git show --stat`. Ton objectif final est de créer un **Knowledge Item** (mémoire IA) ou un fichier Markdown dans `./docs` (mémoire humaine). Ne te contente pas de remplir ton scratchpad : produit un document utile et durable."
+</file>
+
+<file path="docs/tealdeer.md">
+# 🦌 Module Tealdeer
+
+## Description
+`tealdeer` est une implémentation rapide et performante en **Rust** du projet `tldr`. Il permet d'afficher des pages d'aide simplifiées et communautaires pour les commandes Linux.
+
+## Utilité
+Contrairement aux `man pages` qui sont exhaustives mais souvent complexes, `tealdeer` fournit des exemples concrets et actionnables pour les commandes les plus courantes.
+
+## Configuration actuelle
+Le module est configuré dans `modules/tealdeer.nix` avec les options suivantes :
+- **Mode Compact** : Affichage réduit pour plus de clarté.
+- **Auto-Update** : Les pages d'aide sont mises à jour automatiquement.
+- **Pager** : Utilisation du pager système pour la lecture.
+
+## Utilisation
+Une fois le système déployé, exécutez simplement :
+```bash
+tldr <commande>
+```
+*Exemple : `tldr tar`*
+</file>
+
 <file path="hosts/muggy-nixos/hardware-configuration.nix">
 # Do not modify this file!  It was generated by ‘nixos-generate-config’
 # and may be overwritten by future invocations.  Please make changes
@@ -1137,20 +1230,6 @@ if __name__ == "__main__":
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-}
-</file>
-
-<file path="modules/btop.nix">
-{ pkgs, ... }:
-
-{
-  programs.btop = {
-    enable = true;
-    settings = {
-      color_theme = "dracula";
-      vim_keys = true;
-    };
-  };
 }
 </file>
 
@@ -1645,6 +1724,63 @@ Quand tu modifies un fichier `.nix` :
 *Note: Cette compétence est activée automatiquement dès qu'un fichier .nix est manipulé.*
 </file>
 
+<file path=".agent/skills/nixos-research-strategy/SKILL.md">
+---
+name: nixos-research-strategy
+description: |
+  Stratégies de recherche systématique pour NixOS. Fournit des arbres de décision pour naviguer dans la documentation web et le code source de Nixpkgs.
+  Utiliser pour déterminer la profondeur de lecture et choisir les bons outils (Fetch, GitHub MCP, Nix Search).
+---
+
+# NixOS Research Strategy
+
+Guide stratégique pour l'exploration systématique de l'écosystème NixOS.
+
+## Niveaux de Recherche
+
+### 1. ⚡ Quick Scan (Recherche Rapide)
+- **Quand** : Questions de syntaxe simple, vérification de version.
+- **Action** : `Nix Search` pour les options, lecture du `README.md` via `Fetch`.
+- **Objectif** : Une réponse immédiate basée sur la documentation officielle.
+
+### 2. 🛡️ Standard Trace (Analyse Standard)
+- **Quand** : Configuration de nouveaux modules, erreurs de build courantes.
+- **Action** : `Quick Scan` + lecture du code du module dans Nixpkgs via `GitHub MCP`.
+- **Objectif** : Comprendre comment les options sont implémentées.
+
+### 3. 🔬 Nix-Deep-Dive (Immersion Totale)
+- **Quand** : Bugs obscurs, comportements non documentés, intégration de flakes complexes.
+- **Action** : `Standard Trace` + recherche d'issues GitHub, lecture des Pull Requests liées pour comprendre le "pourquoi" derrière une implémentation.
+- [ ] **Objectif** : Résoudre des problèmes d'architecture ou des bugs de bas niveau.
+
+### ⚡ 4. Surgical Context (Analyse Interne)
+- **Quand** : Travailler sur des changements récents faits par un autre agent.
+- **Action** : `git show --stat` (immédiat) ou lecture de `repomix-nixos-config.md`.
+- **Objectif** : Identifier instantanément les fichiers modifiés sans scanner tout le projet.
+
+## Arbre de Décision
+
+```
+Requête Utilisateur
+├── Mots-clés : "Pourquoi", "Bizarre", "Bug", "Interne"
+│   → **NIX-DEEP-DIVE**
+│   → Outils : GitHub Search (Code + Issues + PRs)
+│
+├── Mots-clés : "Comment configurer", "Options pour"
+│   → **STANDARD TRACE**
+│   → Outils : Nix Search + View Contents (module.nix)
+│
+└── Mots-clés : "Est-ce que", "Version", "Qu'est-ce que"
+    → **QUICK SCAN**
+    → Outils : Nix Search + Fetch (README)
+```
+
+## Meilleures Pratiques
+- **Toujours remonter à la source** : Le code source de Nixpkgs est la source de vérité ultime.
+- **Vérifier l'historique** : Une option qui a changé de nom est souvent documentée dans le commit qui l'a modifiée.
+- **Documenter la recherche** : Utiliser le skill `scratchpad` pour noter les fichiers parcourus.
+</file>
+
 <file path=".agent/skills/scratchpad/SKILL.md">
 ---
 name: scratchpad
@@ -1780,93 +1916,6 @@ Voir [examples.md](file:///home/david/nixos-config/.agent/skills/scratchpad/refe
       nix-switch = "sudo nixos-rebuild switch --flake .#muggy-nixos";
     };
 
-  };
-}
-</file>
-
-<file path="modules/vscode.nix">
-{ pkgs, ... }:
-
-{
-  # On installe les outils nécessaires au fonctionnement de l'IDE
-  home.packages = with pkgs; [
-    nixfmt # Le formateur officiel (RFC style)
-    nil # Le "cerveau" (Language Server) pour Nix
-  ];
-
-  programs.vscode = {
-    enable = true;
-
-    profiles.default = {
-      # Extensions installées et gérées par Nix
-      extensions = with pkgs.vscode-extensions; [
-        bbenoist.nix # Coloration syntaxique
-        jnoortheen.nix-ide # Support IDE (LSP)
-        dracula-theme.theme-dracula # Thème visuel
-        christian-kohler.path-intellisense # Autocomplétion des chemins
-      ];
-
-      # Configuration de l'éditeur
-      userSettings = {
-        # Apparence et Police
-        "editor.fontFamily" = "'Hack Nerd Font', 'monospace'";
-        "editor.fontSize" = 16;
-        "workbench.colorTheme" = "Dracula";
-        "terminal.integrated.fontFamily" = "Hack Nerd Font";
-        "window.titleBarStyle" = "custom";
-
-        "path-intellisense.mappings" = {
-          "./" = "\${workspaceRoot}";
-        };
-
-        # Automatisation du formatage (nixfmt)
-        "editor.formatOnSave" = true;
-        "[nix]" = {
-          "editor.defaultFormatter" = "jnoortheen.nix-ide";
-        };
-
-        # Configuration du support Nix (LSP nil)
-        "nix.enableLanguageServer" = true;
-        "nix.serverPath" = "${pkgs.nil}/bin/nil";
-        "nix.serverSettings" = {
-          "nil" = {
-            "formatting" = {
-              "command" = [ "${pkgs.nixfmt}/bin/nixfmt" ];
-            };
-            # Ajout pour améliorer la détection des imports
-            "diagnostics" = {
-              "ignored" = [ ];
-            };
-            "nix" = {
-              "flake" = {
-                "autoArchive" = true;
-                "autoEvalInputs" = true;
-              };
-            };
-          };
-        };
-      };
-    };
-  };
-}
-</file>
-
-<file path="modules/yt-dlp.nix">
-{ pkgs, inputs, ... }:
-
-{
-  programs.yt-dlp = {
-    enable = true;
-    package = inputs.nixpkgs-master.legacyPackages.${pkgs.stdenv.hostPlatform.system}.yt-dlp;
-    settings = {
-      embed-thumbnail = true;
-      add-metadata = true;
-      output = "%(title)s.%(ext)s";
-    };
-  };
-
-  programs.fish.functions = {
-    yt = "yt-dlp -x --audio-format m4a $argv";
   };
 }
 </file>
@@ -2226,30 +2275,6 @@ return {
 }
 </file>
 
-<file path="GEMINI.md">
-# Règles pour l'Assistant IA
-
-> [!NOTE]
-> Je dispose de compétences spécialisées (Skills) situées dans `.agent/skills/`. Elles complètent ces règles de base.
-
-
-## Git / Gestion de version
-- Pour ce projet, après chaque modification fonctionnelle :
-  - Exécuter `git add .`
-  - Exécuter `git commit` avec un message descriptif approprié.
-
-## Compilation et déploiement
-- J'utilise `nos` pour compiler et déployer les modifications. C'est un alias pour `nh os switch` (voir `modules/nh.nix`).
-- **Important** : Je lance `nos` moi-même dans un terminal externe. Ne pas l'exécuter depuis l'éditeur (nécessite sudo).
-
-## Mise à jour du flake
-- Pour tout mettre à jour SAUF le kernel CachyOS : `nix flake update nixpkgs home-manager niri noctalia antigravity`
-- Pour mettre à jour uniquement le kernel : `nix flake update nix-cachyos`
-
-## Commentaires et Clarté
-- **Toujours commenter le code** : Chaque ajout ou modification complexe doit être accompagné de commentaires explicatifs pour faciliter la compréhension de la configuration.
-</file>
-
 <file path="modules/yazi.nix">
 { pkgs, ... }:
 
@@ -2495,74 +2520,40 @@ in
 }
 </file>
 
-<file path="modules/noctalia.nix">
-{ inputs, ... }:
+<file path="GEMINI.md">
+# Règles pour l'Assistant IA
 
-{
-  imports = [
-    inputs.noctalia.homeModules.default
-  ];
+> [!NOTE]
+> Je dispose de compétences spécialisées (Skills) situées dans `.agent/skills/`. Elles complètent ces règles de base.
 
-  # Configuration du fond d'écran pour Noctalia
-  home.file.".cache/noctalia/wallpapers.json".text = builtins.toJSON {
-    defaultWallpaper = "/home/david/Pictures/wallpaper/wallpaper.png";
-  };
 
-  programs.noctalia-shell = {
-    enable = true;
-    systemd.enable = true; # Auto-start avec Niri/Wayland
+## Git / Gestion de version
+- Pour ce projet, après chaque modification fonctionnelle :
+  - Exécuter `git add .`
+  - Exécuter `git commit` avec un message descriptif approprié.
 
-    # Configuration Noctalia (basée sur la doc)
-    settings = {
-      bar = {
-        position = "left"; # Barre sur le côté gauche
-        barType = "floating"; # Style flottant
-        floating = true;
-        backgroundOpacity = 0.5; # Transparence 50%
-        useSeparateOpacity = true;
-        monitors = [ "DP-2" ]; # Afficher uniquement sur l'écran 2K (AOC)
-        margin = 10;
-        marginVertical = 10;
-        marginHorizontal = 10;
+## Compilation et déploiement
+- J'utilise `nos` pour compiler et déployer les modifications. C'est un alias pour `nh os switch` (voir `modules/nh.nix`).
+- **Important** : Je lance `nos` moi-même dans un terminal externe. Ne pas l'exécuter depuis l'éditeur (nécessite sudo).
 
-        # Widgets sans le Launcher
-        widgets = {
-          left = [
-            # { id = "Launcher"; }  # Retiré !
-            { id = "Clock"; }
-            { id = "SystemMonitor"; }
-            { id = "ActiveWindow"; }
-            { id = "MediaMini"; }
-          ];
-          center = [
-            { id = "Workspace"; }
-          ];
-          right = [
-            { id = "Tray"; }
-            { id = "NotificationHistory"; }
-            { id = "Battery"; }
-            { id = "Volume"; }
-            { id = "Brightness"; }
-            { id = "ControlCenter"; }
-          ];
-        };
-      };
+## Mise à jour du flake
+- Pour tout mettre à jour SAUF le kernel CachyOS : `nix flake update nixpkgs home-manager niri noctalia antigravity`
+- Pour mettre à jour uniquement le kernel : `nix flake update nix-cachyos`
 
-      general = {
-        animationSpeed = 1.5; # Plus rapide (x1.5)
-        radiusRatio = 1.0;
-      };
+## Commentaires et Clarté
+- **Toujours commenter le code** : Chaque ajout ou modification complexe doit être accompagné de commentaires explicatifs pour faciliter la compréhension de la configuration.
 
-      colorSchemes = {
-        darkMode = true;
-        useWallpaperColors = true; # Support matugen/dynamic theming
-      };
-    };
+## Contexte LLM / Repomix / Diff
+- J'utilise `repomix` pour avoir une vision globale du projet.
+- Avant toute analyse globale, je devrais consulter `repomix-nixos-config.md` s'il existe.
+- **Pour une analyse rapide des changements récents**, je dois prioriser `git log --stat` et `git show --stat` au lieu de scanner tous les fichiers un par un.
+- Si des changements structurels majeurs sont faits, il est recommandé de mettre à jour le fichier repomix avec `repomix --output repomix-nixos-config.md`.
+- J'utilise le workflow `/auto-doc` pour automatiser la documentation après une tâche.
 
-    # On peut aussi définir des plugins ici si besoin
-    # plugins = { ... };
-  };
-}
+## Stabilité et Rapidité (Anti-Lag)
+- **Priorité aux outils natifs** : J'utilise `list_dir` et `view_file` au lieu de `ls` ou `cat` dans le terminal. C'est instantané et ça ne "bloque" jamais.
+- **Stratégie Async** : Pour les commandes longues, j'utilise un `WaitMsBeforeAsync` de 0 ou 500ms pour rendre la main tout de suite.
+- **Pas de boucles infinies** : Si une commande ne répond pas après 2 tentatives de `command_status`, je demande l'avis de l'utilisateur au lieu de bloquer.
 </file>
 
 <file path="flake.nix">
@@ -3072,6 +3063,77 @@ in
   },
   "root": "root",
   "version": 7
+}
+</file>
+
+<file path="modules/noctalia.nix">
+{ inputs, ... }:
+
+{
+  imports = [
+    inputs.noctalia.homeModules.default
+  ];
+
+  # Configuration du fond d'écran pour Noctalia
+  home.file.".cache/noctalia/wallpapers.json".text = builtins.toJSON {
+    defaultWallpaper = "/home/david/Pictures/wallpaper/wallpaper.png";
+  };
+
+  programs.noctalia-shell = {
+    enable = true;
+    systemd.enable = true; # Auto-start avec Niri/Wayland
+
+    # Configuration Noctalia (basée sur la doc)
+    settings = {
+      bar = {
+        position = "left"; # Barre sur le côté gauche
+        barType = "floating"; # Style flottant
+        floating = true;
+        backgroundOpacity = 0.5; # Transparence 50%
+        useSeparateOpacity = true;
+        monitors = [ "DP-2" ]; # Afficher uniquement sur l'écran 2K (AOC)
+        margin = 10;
+        marginVertical = 10;
+        marginHorizontal = 10;
+
+        # Widgets sans le Launcher
+        widgets = {
+          left = [
+            # { id = "Launcher"; }  # Retiré !
+            { id = "Clock"; }
+            { id = "SystemMonitor"; }
+            { id = "ActiveWindow"; }
+            { id = "MediaMini"; }
+          ];
+          center = [
+            { id = "Workspace"; }
+          ];
+          right = [
+            { id = "Tray"; }
+            # { id = "NotificationHistory"; } # Retiré à la demande de l'utilisateur
+            { id = "Battery"; }
+            { id = "Volume"; }
+            { id = "Brightness"; }
+            { id = "ControlCenter"; }
+          ];
+        };
+      };
+
+      general = {
+        animationSpeed = 1.5; # Plus rapide (x1.5)
+        radiusRatio = 1.0;
+      };
+
+      colorSchemes = {
+        darkMode = true;
+        schemeType = "vibrant"; # Couleurs plus éclatantes extraites du wallpaper
+        useWallpaperColors = true; # Support matugen/dynamic theming
+      };
+    };
+
+    # On peut aussi définir des plugins ici si besoin
+    # plugins = { ... };
+  };
 }
 </file>
 
