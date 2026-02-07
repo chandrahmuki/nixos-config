@@ -5,9 +5,10 @@ description: Automatisation de la documentation et de la synchronisation après 
 Ce workflow permet de boucler une tâche proprement en minimisant la recherche aveugle des sous-agents.
 
 // turbo-all
-1. Exécution chirurgicale (Context + Git + Push) en une seule étape
+// turbo-all
+1. Synchronisation Git chirurgicale (sans Repomix pour la vitesse)
 ```bash
-repomix --output repomix-nixos-config.md && git add . && git commit -m "docs: synchronization and context update" && git push
+git add . && git commit -m "docs: synchronization and context update" && git push
 ```
 
 2. Instructions pour l'agent suivant
