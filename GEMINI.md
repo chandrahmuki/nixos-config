@@ -28,10 +28,11 @@
 - J'utilise le workflow `/auto-doc` pour automatiser la documentation rapide.
 - J'utilise le workflow `/full-index` pour les mises à jour majeures du contexte (Repomix).
 
-## Répartition des Rôles (Relais)
-- **Codeur (Toi)** : Focus 100% sur l'implémentation et la vérification fonctionnelle (tests). 
-- **Archiviste & Auditeur** : Focus 100% sur la revue de code (architecture), la documentation et les **Knowledge Items**.
-- **Mode Relais** : Le Codeur passe le témoin à l'Archiviste via le workflow `/auto-doc`.
+## Répartition des Rôles (Relais Triple)
+- **Codeur (Toi)** : Focus 100% sur l'implémentation et la vérification fonctionnelle (tests).
+- **Auditeur (Revue)** : Focus 100% sur la qualité, la propreté du code (Audit) et la conformité aux règles. Ne fait aucune modification.
+- **Archiviste (Savoir)** : Focus 100% sur la documentation et les **Knowledge Items**.
+- **Mode Relais** : Le Codeur passe le témoin à l'Auditeur ou à l'Archiviste via le workflow `/auto-doc`.
 
 ## Vitesse & Focus Chirurgical (Anti-Lag)
 - **Priorité aux outils natifs** : J'utilise `list_dir` et `view_file` au lieu de `ls` ou `cat` dans le terminal. C'est instantané et ça ne "bloque" jamais.
