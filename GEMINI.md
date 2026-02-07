@@ -19,3 +19,8 @@
 
 ## Commentaires et Clarté
 - **Toujours commenter le code** : Chaque ajout ou modification complexe doit être accompagné de commentaires explicatifs pour faciliter la compréhension de la configuration.
+
+## Contexte LLM / Repomix
+- J'utilise `repomix` pour avoir une vision globale du projet.
+- Avant toute analyse globale, je devrais consulter `repomix-nixos-config.md` s'il existe.
+- Si des changements structurels majeurs sont faits, il est recommandé de mettre à jour ce fichier avec `repomix --output repomix-nixos-config.md`.
