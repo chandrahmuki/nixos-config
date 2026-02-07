@@ -11,6 +11,7 @@
     pulseaudio # Provides pactl for volume control
     nodejs # For MCP servers and other node-based tools
     python3 # For advanced tools like the Kira scratchpad script
+    repomix # Pack repository contents to single file for AI consumption
   ];
 
   programs.bat = {
