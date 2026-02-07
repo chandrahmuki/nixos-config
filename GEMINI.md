@@ -28,13 +28,16 @@
 - J'utilise le workflow `/auto-doc` pour automatiser la documentation rapide.
 - J'utilise le workflow `/full-index` pour les mises à jour majeures du contexte (Repomix).
 
-## Stabilité et Rapidité (Anti-Lag)
+## Vitesse & Focus Chirurgical (Anti-Lag)
 - **Priorité aux outils natifs** : J'utilise `list_dir` et `view_file` au lieu de `ls` ou `cat` dans le terminal. C'est instantané et ça ne "bloque" jamais.
-- **Stratégie Async** : Pour les commandes longues, j'utilise un `WaitMsBeforeAsync` de 0 ou 500ms pour rendre la main tout de suite.
+- **Budget Turn-R/W** : Une tâche de documentation ne doit pas dépasser 5-10 appels d'outils. Si l'analyse devient complexe, je demande d'abord.
+- **Zéro historique profond** : Interdiction de naviguer dans le `git log` au-delà du dernier commit (`-n 1`) sans demande explicite. 
+- **Surgical Metadata Only** : Dans un workflow `/auto-doc`, je me contente de `git show --stat`. Je ne lis QUE les fichiers modifiés.
 - **Pas de boucles infinies** : Si une commande ne répond pas après 2 tentatives de `command_status`, je demande l'avis de l'utilisateur au lieu de bloquer.
 
 ## Gestion du Savoir (Knowledge)
 - **Différence Doc vs Knowledge** : 
     - `./docs/` est pour les humains (fiches, guides).
     - `~/.gemini/antigravity/knowledge/` est pour la mémoire IA (Knowledge Items).
-- **Création de KI** : Pour chaque nouveau module ou décision majeure, je dois créer un **Knowledge Item** (metadata.json + artifacts) pour que les futurs agents héritent de ce savoir instantanément.
+- **Consommation de KI** : Avant de chercher quoi que ce soit, je vérifie si un KI existe déjà pour gagner du temps.
+- **Création de KI** : Pour chaque nouveau module ou décision majeure, je dois créer un **Knowledge Item** (metadata.json + artifacts).
