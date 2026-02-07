@@ -57,6 +57,7 @@
 
       colorSchemes = {
         darkMode = true;
+        schemeType = "vibrant"; # Couleurs plus éclatantes extraites du wallpaper
         useWallpaperColors = true; # Support matugen/dynamic theming
       };
     };
