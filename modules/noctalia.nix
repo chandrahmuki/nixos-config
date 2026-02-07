@@ -53,7 +53,10 @@
       general = {
         animationSpeed = 1.5; # Plus rapide (x1.5)
         radiusRatio = 1.0;
-        enableNotifications = false;
+      };
+
+      notifications = {
+        enabled = false;
       };
 
       colorSchemes = {
