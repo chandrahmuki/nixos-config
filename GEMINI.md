@@ -25,3 +25,9 @@
 - Avant toute analyse globale, je devrais consulter `repomix-nixos-config.md` s'il existe.
 - **Pour une analyse rapide des changements récents**, je dois prioriser `git log --stat` et `git show --stat` au lieu de scanner tous les fichiers un par un.
 - Si des changements structurels majeurs sont faits, il est recommandé de mettre à jour le fichier repomix avec `repomix --output repomix-nixos-config.md`.
+- J'utilise le workflow `/auto-doc` pour automatiser la documentation après une tâche.
+
+## Stabilité et Rapidité (Anti-Lag)
+- **Priorité aux outils natifs** : J'utilise `list_dir` et `view_file` au lieu de `ls` ou `cat` dans le terminal. C'est instantané et ça ne "bloque" jamais.
+- **Stratégie Async** : Pour les commandes longues, j'utilise un `WaitMsBeforeAsync` de 0 ou 500ms pour rendre la main tout de suite.
+- **Pas de boucles infinies** : Si une commande ne répond pas après 2 tentatives de `command_status`, je demande l'avis de l'utilisateur au lieu de bloquer.

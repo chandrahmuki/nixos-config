@@ -24,7 +24,12 @@ Guide stratégique pour l'exploration systématique de l'écosystème NixOS.
 ### 3. 🔬 Nix-Deep-Dive (Immersion Totale)
 - **Quand** : Bugs obscurs, comportements non documentés, intégration de flakes complexes.
 - **Action** : `Standard Trace` + recherche d'issues GitHub, lecture des Pull Requests liées pour comprendre le "pourquoi" derrière une implémentation.
-- **Objectif** : Résoudre des problèmes d'architecture ou des bugs de bas niveau.
+- [ ] **Objectif** : Résoudre des problèmes d'architecture ou des bugs de bas niveau.
+
+### ⚡ 4. Surgical Context (Analyse Interne)
+- **Quand** : Travailler sur des changements récents faits par un autre agent.
+- **Action** : `git show --stat` (immédiat) ou lecture de `repomix-nixos-config.md`.
+- **Objectif** : Identifier instantanément les fichiers modifiés sans scanner tout le projet.
 
 ## Arbre de Décision
 
