@@ -27,6 +27,7 @@
     ./modules/discord.nix
     ./modules/xdg.nix
     ./modules/tealdeer.nix
+    ./modules/atuin.nix
   ];
 
   programs.home-manager.enable = true;

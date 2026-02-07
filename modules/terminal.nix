@@ -56,16 +56,15 @@
     };
   };
 
+  programs.zoxide = {
+    enable = true;
+    enableFishIntegration = true;
+    options = [ "--cmd cd" ];
+  };
+
   # Configuration de FISH
   programs.fish = {
     enable = true;
-    # On installe les plugins ici
-    plugins = [
-      {
-        name = "z";
-        src = pkgs.fishPlugins.z.src;
-      }
-    ];
     # Ton shell sera tout de suite prêt à l'emploi
     interactiveShellInit = ''
       fastfetch
