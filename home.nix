@@ -26,6 +26,7 @@
     ./modules/neovim.nix
     ./modules/discord.nix
     ./modules/xdg.nix
+    ./modules/tealdeer.nix
   ];
 
   programs.home-manager.enable = true;
