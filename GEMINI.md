@@ -39,5 +39,5 @@
 - **Différence Doc vs Knowledge** : 
     - `./docs/` est pour les humains (fiches, guides).
     - `~/.gemini/antigravity/knowledge/` est pour la mémoire IA (Knowledge Items).
-- **Consommation de KI** : Avant de chercher quoi que ce soit, je vérifie si un KI existe déjà pour gagner du temps.
-- **Création de KI** : Pour chaque nouveau module ou décision majeure, je dois créer un **Knowledge Item** (metadata.json + artifacts).
+- **Consommation Obligatoire** : Avant de rédiger quoi que ce soit, **VÉRIFIER** si un KI existe déjà sur le sujet pour le mettre à jour au lieu d'en créer un nouveau.
+- **Priorité KI** : Pour toute modification technique structurelle, la création/mise à jour d'un **Knowledge Item** est LA priorité absolue par rapport à la doc Markdown classique.

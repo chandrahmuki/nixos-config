@@ -11,6 +11,10 @@ Ce workflow permet de boucler une tâche proprement en minimisant la recherche a
 git add . && git commit -m "docs: synchronization and context update" && git push
 ```
 
-2. Instructions pour l'agent suivant
-Copiez ce message pour l'agent Archiviste :
-> "Analyse le dernier commit avec `git show --stat`. Ton objectif final est de créer un **Knowledge Item** (mémoire IA) ou un fichier Markdown dans `./docs` (mémoire humaine). Ne te contente pas de remplir ton scratchpad : produit un document utile et durable."
+2. Instructions pour l'agent suivant (Archiviste)
+Copiez ce message pour l'agent suivant :
+> "1. Analyse le dernier commit avec `git show --stat`.
+> 2. **Vérifie** s'il existe déjà un **Knowledge Item** (KI) lié à ces fichiers.
+> 3. **Priorité absolue** : Complète ou crée le KI correspondant dans `~/.gemini/antigravity/knowledge/`.
+> 4. (Optionnel) Crée un guide dans `./docs` uniquement si c'est utile pour un humain. 
+> 5. Respecte le **Budget Turn (max 5-10)** : sois rapide et chirurgical."
