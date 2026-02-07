@@ -41,7 +41,7 @@
           ];
           right = [
             { id = "Tray"; }
-            { id = "NotificationHistory"; }
+            # { id = "NotificationHistory"; } # Retiré à la demande de l'utilisateur
             { id = "Battery"; }
             { id = "Volume"; }
             { id = "Brightness"; }
