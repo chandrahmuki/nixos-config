@@ -12,9 +12,13 @@ git add . && git commit -m "docs: synchronization and context update" && git pus
 ```
 
 2. Instructions pour l'agent suivant (Archiviste)
-Copiez ce message pour l'agent suivant :
-> "1. Analyse le dernier commit avec `git show --stat`.
-> 2. **Vérifie** s'il existe déjà un **Knowledge Item** (KI) lié à ces fichiers.
-> 3. **Priorité absolue** : Complète ou crée le KI correspondant dans `~/.gemini/antigravity/knowledge/`.
-> 4. (Optionnel) Crée un guide dans `./docs` uniquement si c'est utile pour un humain. 
-> 5. Respecte le **Budget Turn (max 5-10)** : sois rapide et chirurgical."
+Copiez ce message et collez-le dans une nouvelle session avec l'agent **Archiviste** :
+
+> **[MISSION ARCHIVISTE]** 
+> 1. Analyse les changements récents : `git show --stat`.
+> 2. **Vérifie** l'existence d'un **Knowledge Item (KI)** lié aux fichiers modifiés.
+> 3. **Priorité absolue** : Crée ou mets à jour le KI dans `~/.gemini/antigravity/knowledge/`.
+> 4. (Optionnel) Ajoute un guide dans `./docs` uniquement si nécessaire pour un humain.
+> 5. **Focus Chirurgical** : Ne dépasse pas **10 turns**. Sois rapide, précis et conclus dès que le KI est à jour.
+
+Le dépôt est maintenant prêt pour la capitalisation. À bientôt ! 💎🦾
