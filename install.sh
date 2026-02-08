@@ -55,13 +55,33 @@ print_info "Flake configuration: $FLAKE_NAME"
 
 # Step 0: Personalize username
 print_info "\nStep 0: Personalizing username..."
-REAL_USER=$(whoami)
-if [ "$REAL_USER" != "david" ]; then
-    print_info "Personalizing configuration for user: $REAL_USER"
-    sed -i "s/username = \"david\";/username = \"$REAL_USER\";/" "$SCRIPT_DIR/flake.nix"
-    print_success "flake.nix updated with username: $REAL_USER"
+DETECTED_USER=$(whoami)
+FINAL_USER=""
+
+if [ "$DETECTED_USER" == "nixos" ] || [ "$DETECTED_USER" == "root" ]; then
+    print_warning "Generic or root user detected ($DETECTED_USER)."
+    read -p "Enter the username you want to use for this configuration: " FINAL_USER
+    if [ -z "$FINAL_USER" ]; then
+        print_error "Username cannot be empty!"
+        exit 1
+    fi
 else
-    print_info "Default user 'david' detected, no personalization needed."
+    print_info "Detected current user: $DETECTED_USER"
+    read -p "Use '$DETECTED_USER' as your configuration username? (Y/n): " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]] && [[ ! -z $REPLY ]]; then
+        read -p "Enter your desired username: " FINAL_USER
+    else
+        FINAL_USER="$DETECTED_USER"
+    fi
+fi
+
+if [ ! -z "$FINAL_USER" ]; then
+    print_info "Setting username to: $FINAL_USER"
+    # Update flake.nix (assuming 'david' is the placeholder/current value)
+    # We use a pattern that matches the 'username = "..." ;' line
+    sed -i "s/username = \".*\";/username = \"$FINAL_USER\";/" "$SCRIPT_DIR/flake.nix"
+    print_success "flake.nix updated successfully!"
 fi
 
 # Step 1: Generate hardware configuration
