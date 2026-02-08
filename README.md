@@ -1,2 +1,79 @@
-My first NixOs config - it is pretty much WIP but it is already functionaly with niri + dms and gnome as a backup !
-<img width="2560" height="1440" alt="Screenshot from 2026-02-01 23-24-22" src="https://github.com/user-attachments/assets/0ed74bc7-cd22-45a3-86f3-e17897266439" />
+# ❄️ NixOS Configuration (Muggy-NixOS)
+
+A high-performance, modern NixOS configuration featuring **Niri** (Wayland compositor) and **GNOME** (as a robust fallback), optimized for gaming and productivity.
+
+![Desktop Screenshot](https://github.com/user-attachments/assets/0ed74bc7-cd22-45a3-86f3-e17897266439)
+
+## ✨ Key Features
+- **UI/UX**: [Niri](https://github.com/YaLTeR/niri) (unstable) with a custom [Noctalia shell](https://github.com/Noctatia/noctalia) setup.
+- **Kernel**: Optimized CachyOS Bore kernel for low-latency desktop performance.
+- **Gaming**: Pre-configured Steam, GameMode, and AMD GPU optimizations.
+- **Shell**: Fish shell equipped with Atuin (SQLite history) and Zoxide (smart navigation).
+- **Tools**: Ghostty terminal, VSCode/Antigravity, and declarative Brave/Chromium policy management.
+- **Portability**: Completely decoupled username and home paths for easy adoption.
+
+---
+
+## 🚀 Installation Guide
+
+> [!IMPORTANT]
+> This guide assumes you have a basic NixOS installation and have already enabled **Flakes**.
+
+### 1. Enable Flakes (If not already done)
+Ensure your `/etc/nixos/configuration.nix` includes:
+```nix
+nix.settings.experimental-features = [ "nix-command" "flakes" ];
+```
+Then run: `sudo nixos-rebuild switch`
+
+### 2. Prepare the Configuration
+Clone the repository and customize your username:
+```bash
+git clone https://github.com/chandrahmuki/nixos-config.git ~/nixos-config
+cd ~/nixos-config
+```
+
+**Customize your name:** Open `flake.nix` and change the `username` variable:
+```nix
+let
+  username = "your-user"; # Change this to your actual username
+in
+```
+
+### 3. Run the Installation Script
+The `install.sh` script will automate hardware configuration and the first system build:
+```bash
+chmod +x install.sh
+./install.sh
+```
+
+**What the script does:**
+1.  Generates a `hardware-configuration.nix` for your specific machine.
+2.  Verifies Flake support.
+3.  Sets the hostname to `muggy-nixos`.
+4.  Performs the initial `nixos-rebuild switch`.
+
+### 4. Final Steps
+After the script finishes, **reboot** your system:
+```bash
+sudo reboot
+```
+
+---
+
+## 🛠️ Maintenance & Common Commands
+
+This config uses [**nh**](https://github.com/viperML/nh) for a faster and cleaner NixOS experience.
+
+- **Apply changes**: `nos` (a built-in alias for `nh os switch`)
+- **Update system**: `nix flake update` (then run `nos`)
+- **Cleanup**: `nh clean all`
+
+## 📁 Project Structure
+- `hosts/`: Host-specific configurations (hostname: `muggy-nixos`).
+- `modules/`: Reusable components (Brave, Shell, Gaming, etc.).
+- `home.nix`: Main Home-Manager user configuration.
+- `docs/`: Detailed guides for specific components (Brave extensions, Triple Relay workflow).
+
+---
+*Maintained by chandrahmuki. Built with ❄️ and Antigravity AI.*
