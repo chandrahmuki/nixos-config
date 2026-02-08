@@ -53,6 +53,17 @@ print_info "Current hostname: $CURRENT_HOSTNAME"
 print_info "Target hostname: $CONFIG_HOSTNAME"
 print_info "Flake configuration: $FLAKE_NAME"
 
+# Step 0: Personalize username
+print_info "\nStep 0: Personalizing username..."
+REAL_USER=$(whoami)
+if [ "$REAL_USER" != "david" ]; then
+    print_info "Personalizing configuration for user: $REAL_USER"
+    sed -i "s/username = \"david\";/username = \"$REAL_USER\";/" "$SCRIPT_DIR/flake.nix"
+    print_success "flake.nix updated with username: $REAL_USER"
+else
+    print_info "Default user 'david' detected, no personalization needed."
+fi
+
 # Step 1: Generate hardware configuration
 print_info "\nStep 1: Generating hardware configuration..."
 HARDWARE_CONFIG="$SCRIPT_DIR/hosts/$CONFIG_HOSTNAME/hardware-configuration.nix"
