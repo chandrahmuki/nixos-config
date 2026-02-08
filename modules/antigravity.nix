@@ -25,29 +25,9 @@ in
 
   # Fichiers et configurations Antigravity
   home.file = (builtins.listToAttrs (map mkExtensionSymlink nixExtensions)) // {
-    # Configuration du LSP nil et du formateur dans l'éditeur Antigravity
-    ".config/Antigravity/User/settings.json".text = builtins.toJSON {
-      "nix.enableLanguageServer" = true;
-      "nix.serverPath" = "${pkgs.nil}/bin/nil";
-      "nix.serverSettings" = {
-        "nil" = {
-          "formatting" = {
-            "command" = [ "${pkgs.nixfmt}/bin/nixfmt" ];
-          };
-        };
-      };
-      "editor.formatOnSave" = true;
-      "[nix]" = {
-        "editor.defaultFormatter" = "jnoortheen.nix-ide";
-      };
-      "security.workspace.trust.untrustedFiles" = "open";
-      # Paramètres d'autonomie pour l'agent Antigravity
-      "antigravity.agent.terminal.autoExecutionPolicy" = "Turbo";
-      "antigravity.agent.terminal.confirmCommands" = false;
-      "antigravity.agent.workspace.gitignoreAccess" = "On";
-      "antigravity.reviewPolicy" = "Always Proceed";
-      "antigravity.confirmShellCommands" = false;
-    };
+    # Configuration mutable liée au dépôt git (pour permettre à l'agent d'écrire dedans si nécessaire)
+    ".config/Antigravity/User/settings.json".source =
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/modules/antigravity-settings.json";
 
     # Gestion persistante de la config MCP
     ".gemini/antigravity/mcp_config.json".source =

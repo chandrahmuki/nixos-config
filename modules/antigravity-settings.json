@@ -1,0 +1,21 @@
+{
+    "nix.enableLanguageServer": true,
+    "nix.serverPath": "nil",
+    "nix.serverSettings": {
+        "nil": {
+            "formatting": {
+                "command": [ "nixfmt" ]
+            }
+        }
+    },
+    "editor.formatOnSave": true,
+    "[nix]": {
+        "editor.defaultFormatter": "jnoortheen.nix-ide"
+    },
+    "security.workspace.trust.untrustedFiles": "open",
+    "antigravity.agent.terminal.autoExecutionPolicy": "Turbo",
+    "antigravity.agent.terminal.confirmCommands": false,
+    "antigravity.agent.workspace.gitignoreAccess": "On",
+    "antigravity.reviewPolicy": "Always Proceed",
+    "antigravity.confirmShellCommands": false
+}
