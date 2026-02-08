@@ -8,6 +8,9 @@
       "--enable-features=UseOzonePlatform"
       "--ozone-platform=wayland"
     ];
+    extensions = [
+      { id = "nngceckbapebfimnlniiiahkandclblb"; } # Bitwarden
+    ];
   };
 
   # Écrase complètement com.brave.Browser.desktop pour qu'il soit caché
