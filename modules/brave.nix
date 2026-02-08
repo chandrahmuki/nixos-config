@@ -1,16 +1,12 @@
 { pkgs, ... }:
 
 {
-  programs.chromium = {
+  programs.brave = {
     enable = true;
-    package = pkgs.brave;
     commandLineArgs = [
       "--unlimited-storage"
       "--enable-features=UseOzonePlatform"
       "--ozone-platform=wayland"
-    ];
-    extensions = [
-      { id = "nngceckbapebfimnlniiiahkandclblb"; } # Bitwarden
     ];
   };
 

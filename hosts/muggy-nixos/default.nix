@@ -17,6 +17,7 @@
     ../../modules/font.nix
     ../../modules/steam.nix
     ../../modules/lact.nix
+    ../../modules/brave-system.nix
   ];
 
   # Bootloader.
