@@ -19,32 +19,19 @@ A high-performance, modern NixOS configuration featuring **Niri** (Wayland compo
 > [!NOTE]
 > This guide is designed for a fresh NixOS installation. The script handles hardware configuration and enabling Flakes automatically.
 
-### 1. Prepare the Configuration
-Clone the repository and customize your username:
-```bash
-git clone https://github.com/chandrahmuki/nixos-config.git ~/nixos-config
-cd ~/nixos-config
-```
-
-**Customize your name:** Open `flake.nix` and change the `username` variable:
-```nix
-let
-  username = "your-user"; # Change this to your actual username
-in
-```
-
-### 3. Run the Installation Script
-The `install.sh` script will automate hardware configuration and the first system build:
+### 2. Run the Installation Script
+The `install.sh` script will automate everything for you (username detection, hardware configuration, and the first system build):
 ```bash
 chmod +x install.sh
 ./install.sh
 ```
 
 **What the script does:**
-1.  Generates a `hardware-configuration.nix` for your specific machine.
-2.  Verifies Flake support.
-3.  Sets the hostname to `muggy-nixos`.
-4.  Performs the initial `nixos-rebuild switch`.
+0.  **Personalization**: Automatically detects your username and updates `flake.nix`.
+1.  **Hardware**: Generates a `hardware-configuration.nix` for your specific machine.
+2.  **Flakes**: Ensures Flakes are supported for the initial build.
+3.  **Hostname**: Sets your hostname to `muggy-nixos`.
+4.  **Build**: Performs the initial `nixos-rebuild switch`.
 
 ### 4. Final Steps
 After the script finishes, **reboot** your system:
