@@ -1,8 +1,9 @@
 { pkgs, ... }:
 
 {
-  programs.brave = {
+  programs.chromium = {
     enable = true;
+    package = pkgs.brave;
     commandLineArgs = [
       "--unlimited-storage"
       "--enable-features=UseOzonePlatform"
