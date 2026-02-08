@@ -42,9 +42,9 @@ in
       };
       "security.workspace.trust.untrustedFiles" = "open";
       # Paramètres d'autonomie pour l'agent Antigravity
-      "antigravity.agent.terminal.autoExecutionPolicy" = "always";
+      "antigravity.agent.terminal.autoExecutionPolicy" = "always_proceed";
       "antigravity.agent.terminal.confirmCommands" = false;
-      "antigravity.agent.workspace.gitignoreAccess" = "on";
+      "antigravity.agent.workspace.gitignoreAccess" = "On";
     };
 
     # Gestion persistante de la config MCP
