@@ -72,26 +72,21 @@ else
     print_success "Hardware configuration generated!"
 fi
 
-# Step 2: Check if flakes are enabled
+# Step 2: Check if flakes are supported
 print_info "\nStep 2: Checking flakes configuration..."
-TEMP_CONFIG="/etc/nixos/configuration.nix"
-EXTRA_FLAGS=""
+EXTRA_FLAGS="--extra-experimental-features 'nix-command flakes'"
 
-# Try to use nix flake command - if it works, flakes are enabled
-if nix flake metadata "$SCRIPT_DIR" &>/dev/null; then
-    print_success "Flakes are enabled!"
+# Try to use nix flake command
+if nix flake metadata "$SCRIPT_DIR" $EXTRA_FLAGS &>/dev/null; then
+    print_success "Flakes are supported!"
 else
-    print_warning "Flakes not detected in system configuration!"
-    print_info "Flakes are required to build this configuration."
-    print_info "Please add to /etc/nixos/configuration.nix:"
-    echo -e "${YELLOW}  nix.settings.experimental-features = [ \"nix-command\" \"flakes\" ];${NC}"
-    print_info "Then run: ${YELLOW}sudo nixos-rebuild switch${NC}"
+    print_error "Nix command not found or not working properly!"
     exit 1
 fi
 
 # Step 3: Verify hostname
 print_info "\nStep 3: Verifying hostname..."
-if [ "$CURRENT_HOSTNAME" != "$CONFIG_HOSTNAME" ]; then
+if [ "$(hostname)" != "$CONFIG_HOSTNAME" ]; then
     print_warning "Hostname mismatch!"
     print_info "Current: $CURRENT_HOSTNAME"
     print_info "Config:  $CONFIG_HOSTNAME"
@@ -110,7 +105,7 @@ print_info "\nStep 4: Building and switching to new configuration..."
 print_warning "This may take a while on first build..."
 echo ""
 
-BUILD_CMD="sudo nixos-rebuild switch --flake $SCRIPT_DIR#$FLAKE_NAME"
+BUILD_CMD="sudo nixos-rebuild switch --flake $SCRIPT_DIR#$FLAKE_NAME $EXTRA_FLAGS"
 
 print_info "Running: $BUILD_CMD"
 echo ""

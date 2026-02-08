@@ -16,17 +16,10 @@ A high-performance, modern NixOS configuration featuring **Niri** (Wayland compo
 
 ## 🚀 Installation Guide
 
-> [!IMPORTANT]
-> This guide assumes you have a basic NixOS installation and have already enabled **Flakes**.
+> [!NOTE]
+> This guide is designed for a fresh NixOS installation. The script handles hardware configuration and enabling Flakes automatically.
 
-### 1. Enable Flakes (If not already done)
-Ensure your `/etc/nixos/configuration.nix` includes:
-```nix
-nix.settings.experimental-features = [ "nix-command" "flakes" ];
-```
-Then run: `sudo nixos-rebuild switch`
-
-### 2. Prepare the Configuration
+### 1. Prepare the Configuration
 Clone the repository and customize your username:
 ```bash
 git clone https://github.com/chandrahmuki/nixos-config.git ~/nixos-config
