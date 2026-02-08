@@ -1,4 +1,4 @@
-{ _pkgs, ... }:
+{ config, ... }:
 
 {
   programs.nh = {
