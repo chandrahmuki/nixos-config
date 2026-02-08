@@ -26,13 +26,22 @@ in
   # Fichiers et configurations Antigravity
   home.file = (builtins.listToAttrs (map mkExtensionSymlink nixExtensions)) // {
     # Configuration mutable liée au dépôt git (pour permettre à l'agent d'écrire dedans si nécessaire)
-    ".config/Antigravity/User/settings.json".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/modules/antigravity-settings.json";
+    # Géré via le script d'activation plus bas pour éviter le verrouillage en lecture seule
+    # ".config/Antigravity/User/settings.json".source = ...
 
     # Gestion persistante de la config MCP
     ".gemini/antigravity/mcp_config.json".source =
       config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/modules/mcp_config.json";
   };
+
+  # Activation Script : Force Brute pour le settings.json
+  # Home Manager a tendance à verrouiller ce fichier en lecture seule ou à casser le lien.
+  # On force ici un lien symbolique direct vers notre fichier mutable après l'activation.
+  home.activation.linkAntigravitySettings = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    run mkdir -p $HOME/.config/Antigravity/User
+    run rm -f $HOME/.config/Antigravity/User/settings.json
+    run ln -sf $HOME/nixos-config/modules/antigravity-settings.json $HOME/.config/Antigravity/User/settings.json
+  '';
 
   home.sessionVariables = {
     ANTIGRAVITY_EDITOR = "code";
