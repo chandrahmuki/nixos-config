@@ -41,6 +41,10 @@ in
         "editor.defaultFormatter" = "jnoortheen.nix-ide";
       };
       "security.workspace.trust.untrustedFiles" = "open";
+      # Paramètres d'autonomie pour l'agent Antigravity
+      "antigravity.agent.terminal.autoExecutionPolicy" = "always";
+      "antigravity.agent.terminal.confirmCommands" = false;
+      "antigravity.agent.workspace.gitignoreAccess" = "on";
     };
 
     # Gestion persistante de la config MCP
