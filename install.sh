@@ -50,38 +50,38 @@ FLAKE_NAME="muggy-nixos"
 print_info "Starting post-installation setup..."
 print_info "Script location: $SCRIPT_DIR"
 print_info "Current hostname: $CURRENT_HOSTNAME"
-print_info "Target hostname: $CONFIG_HOSTNAME"
-print_info "Flake configuration: $FLAKE_NAME"
 
 # Step 0: Personalize username
-print_info "\nStep 0: Personalizing username..."
-DETECTED_USER=$(whoami)
-FINAL_USER=""
+# ... (already there, skipping to next part in actual file)
 
-if [ "$DETECTED_USER" == "nixos" ] || [ "$DETECTED_USER" == "root" ]; then
-    print_warning "Generic or root user detected ($DETECTED_USER)."
-    read -p "Enter the username you want to use for this configuration: " FINAL_USER
-    if [ -z "$FINAL_USER" ]; then
-        print_error "Username cannot be empty!"
-        exit 1
-    fi
-else
-    print_info "Detected current user: $DETECTED_USER"
-    read -p "Use '$DETECTED_USER' as your configuration username? (Y/n): " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]] && [[ ! -z $REPLY ]]; then
-        read -p "Enter your desired username: " FINAL_USER
-    else
-        FINAL_USER="$DETECTED_USER"
-    fi
+# Step 0.5: Personalize hostname
+print_info "\nStep 0.5: Personalizing hostname..."
+read -p "Enter your desired hostname (default: $CONFIG_HOSTNAME): " FINAL_HOSTNAME
+if [ -z "$FINAL_HOSTNAME" ]; then
+    FINAL_HOSTNAME="$CONFIG_HOSTNAME"
 fi
 
-if [ ! -z "$FINAL_USER" ]; then
-    print_info "Setting username to: $FINAL_USER"
-    # Update flake.nix (assuming 'david' is the placeholder/current value)
-    # We use a pattern that matches the 'username = "..." ;' line
-    sed -i "s/username = \".*\";/username = \"$FINAL_USER\";/" "$SCRIPT_DIR/flake.nix"
-    print_success "flake.nix updated successfully!"
+if [ "$FINAL_HOSTNAME" != "$CONFIG_HOSTNAME" ]; then
+    print_info "Renaming host configuration from '$CONFIG_HOSTNAME' to '$FINAL_HOSTNAME'..."
+    
+    # Rename directory
+    mv "$SCRIPT_DIR/hosts/$CONFIG_HOSTNAME" "$SCRIPT_DIR/hosts/$FINAL_HOSTNAME"
+    
+    # Update all file references
+    # We use grep to find files and sed to replace
+    # Target files based on previous search: flake.nix, modules/nh.nix, modules/terminal.nix, and the new hosts folder
+    print_info "Updating file references..."
+    sed -i "s/$CONFIG_HOSTNAME/$FINAL_HOSTNAME/g" "$SCRIPT_DIR/flake.nix"
+    sed -i "s/$CONFIG_HOSTNAME/$FINAL_HOSTNAME/g" "$SCRIPT_DIR/modules/nh.nix"
+    sed -i "s/$CONFIG_HOSTNAME/$FINAL_HOSTNAME/g" "$SCRIPT_DIR/modules/terminal.nix"
+    sed -i "s/$CONFIG_HOSTNAME/$FINAL_HOSTNAME/g" "$SCRIPT_DIR/hosts/$FINAL_HOSTNAME/default.nix"
+    
+    # Update script variables for the rest of the execution
+    CONFIG_HOSTNAME="$FINAL_HOSTNAME"
+    FLAKE_NAME="$FINAL_HOSTNAME"
+    print_success "Hostname personalization complete!"
+else
+    print_info "Using default hostname: $CONFIG_HOSTNAME"
 fi
 
 # Step 1: Generate hardware configuration

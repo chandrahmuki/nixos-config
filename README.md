@@ -27,10 +27,10 @@ chmod +x install.sh
 ```
 
 **What the script does:**
-0.  **Personalization**: Automatically detects your username and updates `flake.nix`.
+0.  **Personalization**: Automatically detects your username and prompts for your desired hostname, updating `flake.nix` and renaming host directories accordingly.
 1.  **Hardware**: Generates a `hardware-configuration.nix` for your specific machine.
 2.  **Flakes**: Ensures Flakes are supported for the initial build.
-3.  **Hostname**: Sets your hostname to `muggy-nixos`.
+3.  **Hostname**: Sets your system hostname to your chosen value.
 4.  **Build**: Performs the initial `nixos-rebuild switch`.
 
 ### 4. Final Steps
