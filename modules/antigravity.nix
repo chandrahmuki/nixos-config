@@ -45,7 +45,7 @@ in
 
     # Gestion persistante de la config MCP
     ".gemini/antigravity/mcp_config.json".source =
-      config.lib.file.mkOutOfStoreSymlink "/home/david/nixos-config/modules/mcp_config.json";
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/modules/mcp_config.json";
   };
 
   home.sessionVariables = {

@@ -6,7 +6,7 @@
 
     # Chemin vers votre flake NixOS
     # Adaptez ce chemin selon votre configuration
-    flake = "/home/david/nixos-config";
+    flake = "${config.home.homeDirectory}/nixos-config";
 
     # Nettoyage automatique des anciennes générations
     clean = {
@@ -18,7 +18,7 @@
 
   programs.fish.functions = {
     nos = ''
-      cd /home/david/nixos-config
+      cd ${config.home.homeDirectory}/nixos-config
       nh os switch . --hostname muggy-nixos
     '';
   };

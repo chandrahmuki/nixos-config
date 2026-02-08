@@ -43,10 +43,13 @@
       nix-cachyos,
       ...
     }@inputs:
+    let
+      username = "david";
+    in
     {
       nixosConfigurations.muggy-nixos = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = { inherit inputs; };
+        specialArgs = { inherit inputs username; };
         modules = [
           ./hosts/muggy-nixos/default.nix
           ./overlays.nix
@@ -62,10 +65,10 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.david = import ./home.nix;
+            home-manager.users.${username} = import ./home.nix;
 
             # Optionnel : passe les 'inputs' du flake au fichier home.nix
-            home-manager.extraSpecialArgs = { inherit inputs; };
+            home-manager.extraSpecialArgs = { inherit inputs username; };
           }
         ];
       };

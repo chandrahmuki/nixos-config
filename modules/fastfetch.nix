@@ -6,7 +6,7 @@
     enable = true;
     settings = {
       logo = {
-        source = "/home/david/Pictures/nixos.png";
+        source = "${config.home.homeDirectory}/Pictures/nixos.png";
         type = "kitty";
         width = 24;
         height = 13;

@@ -3,10 +3,9 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 {
-  config,
-  lib,
   pkgs,
   inputs,
+  username,
   ...
 }:
 
@@ -108,7 +107,7 @@
 
   # Make GDM monitor configuration permanent
   systemd.tmpfiles.rules = [
-    "L+ /run/gdm/.config/monitors.xml - - - - /home/david/.config/monitors.xml"
+    "L+ /run/gdm/.config/monitors.xml - - - - /home/${username}/.config/monitors.xml"
   ];
 
   # Configure keymap in X11
@@ -152,9 +151,9 @@
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.david = {
+  users.users.${username} = {
     isNormalUser = true;
-    description = "David";
+    description = username;
     extraGroups = [
       "networkmanager"
       "wheel"

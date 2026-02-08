@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ username, ... }:
 
 {
   programs.git = {
@@ -7,7 +7,7 @@
 # On utilise 'settings' pour tout ce qui concerne l'identité et les alias
     settings = {
       user = {
-        name = "david";
+        name = username;
         email = "email@exemple.com";
       };
 

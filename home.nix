@@ -1,8 +1,8 @@
-{ ... }: # <-- N'oublie pas d'ajouter { config, pkgs, ... }: en haut !
+{ username, ... }: # <-- N'oublie pas d'ajouter { config, pkgs, ... }: en haut !
 
 {
-  home.username = "david";
-  home.homeDirectory = "/home/david";
+  home.username = username;
+  home.homeDirectory = "/home/${username}";
   home.stateVersion = "24.11";
 
   # On importe ici les fichiers qu'on va créer dans le dossier modules
