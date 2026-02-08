@@ -1,5 +1,5 @@
 ---
-description: [MISSION ARCHIVISTE] Capitalisation du savoir via Knowledge Items (KI).
+description: Capitalisation du savoir via Knowledge Items (Archiviste).
 ---
 
 // turbo-all

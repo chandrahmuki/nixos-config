@@ -1,5 +1,5 @@
 ---
-description: [MISSION AUDIT] Analyse du dernier commit pour revue de code et conformité.
+description: Revue de code et conformité (Auditeur).
 ---
 
 // turbo-all
