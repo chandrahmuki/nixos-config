@@ -62,19 +62,21 @@ if [ -z "$FINAL_HOSTNAME" ]; then
 fi
 
 if [ "$FINAL_HOSTNAME" != "$CONFIG_HOSTNAME" ]; then
-    print_info "Renaming host configuration from '$CONFIG_HOSTNAME' to '$FINAL_HOSTNAME'..."
-    
-    # Rename directory
-    mv "$SCRIPT_DIR/hosts/$CONFIG_HOSTNAME" "$SCRIPT_DIR/hosts/$FINAL_HOSTNAME"
-    
-    # Update all file references
-    # We use grep to find files and sed to replace
-    # Target files based on previous search: flake.nix, modules/nh.nix, modules/terminal.nix, and the new hosts folder
-    print_info "Updating file references..."
-    sed -i "s/$CONFIG_HOSTNAME/$FINAL_HOSTNAME/g" "$SCRIPT_DIR/flake.nix"
-    sed -i "s/$CONFIG_HOSTNAME/$FINAL_HOSTNAME/g" "$SCRIPT_DIR/modules/nh.nix"
-    sed -i "s/$CONFIG_HOSTNAME/$FINAL_HOSTNAME/g" "$SCRIPT_DIR/modules/terminal.nix"
-    sed -i "s/$CONFIG_HOSTNAME/$FINAL_HOSTNAME/g" "$SCRIPT_DIR/hosts/$FINAL_HOSTNAME/default.nix"
+    if [ -d "$SCRIPT_DIR/hosts/$CONFIG_HOSTNAME" ]; then
+        print_info "Renaming host configuration from '$CONFIG_HOSTNAME' to '$FINAL_HOSTNAME'..."
+        
+        # Rename directory
+        mv "$SCRIPT_DIR/hosts/$CONFIG_HOSTNAME" "$SCRIPT_DIR/hosts/$FINAL_HOSTNAME"
+        
+        # Update all file references
+        print_info "Updating file references..."
+        sed -i "s/$CONFIG_HOSTNAME/$FINAL_HOSTNAME/g" "$SCRIPT_DIR/flake.nix"
+        sed -i "s/$CONFIG_HOSTNAME/$FINAL_HOSTNAME/g" "$SCRIPT_DIR/modules/nh.nix"
+        sed -i "s/$CONFIG_HOSTNAME/$FINAL_HOSTNAME/g" "$SCRIPT_DIR/modules/terminal.nix"
+        sed -i "s/$CONFIG_HOSTNAME/$FINAL_HOSTNAME/g" "$SCRIPT_DIR/hosts/$FINAL_HOSTNAME/default.nix"
+    else
+        print_warning "Directory hosts/$CONFIG_HOSTNAME not found. Skipping rename (maybe already done?)"
+    fi
     
     # Update script variables for the rest of the execution
     CONFIG_HOSTNAME="$FINAL_HOSTNAME"
