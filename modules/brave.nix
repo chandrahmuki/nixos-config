@@ -5,8 +5,9 @@
     enable = true;
     commandLineArgs = [
       "--unlimited-storage"
-      "--enable-features=UseOzonePlatform"
+      "--enable-features=UseOzonePlatform,WebContentsForceDark"
       "--ozone-platform=wayland"
+      "--force-dark-mode"
     ];
   };
 
