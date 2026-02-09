@@ -5,8 +5,9 @@
     enable = true;
     commandLineArgs = [
       "--unlimited-storage"
+      # Force le mode sombre pour l'UI du navigateur et le contenu des pages web
       "--enable-features=UseOzonePlatform,WebContentsForceDark"
-      "--ozone-platform=wayland"
+      "--ozone-platform=wayland" # Force l'utilisation native de Wayland
       "--force-dark-mode"
     ];
   };
