@@ -9,6 +9,13 @@
         "nngceckbapebfimnlniiiahkandclblb;https://clients2.google.com/service/update2/crx" # Bitwarden
         "cjpalhdlnbpafiamejdnhcphjbkeiagm;https://clients2.google.com/service/update2/crx" # uBlock Origin
       ];
+      "WebAppInstallForceList" = [
+        {
+          url = "https://teams.microsoft.com/";
+          default_launch_container = "window";
+          create_desktop_shortcut = true;
+        }
+      ];
     };
   };
 }
