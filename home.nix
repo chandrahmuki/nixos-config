@@ -28,6 +28,7 @@
     ./modules/xdg.nix
     ./modules/tealdeer.nix
     ./modules/atuin.nix
+    ./modules/pdf.nix
   ];
 
   programs.home-manager.enable = true;
