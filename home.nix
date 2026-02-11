@@ -29,6 +29,7 @@
     ./modules/tealdeer.nix
     ./modules/atuin.nix
     ./modules/pdf.nix
+    ./modules/notifications.nix
   ];
 
   programs.home-manager.enable = true;
