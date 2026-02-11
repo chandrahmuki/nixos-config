@@ -20,6 +20,11 @@
 ## Commentaires et Clarté
 - **Toujours commenter le code** : Chaque ajout ou modification complexe doit être accompagné de commentaires explicatifs pour faciliter la compréhension de la configuration.
 
+## Recherche et Stratégie (NixOS / Nixpkgs)
+- **Priorité aux Outils MCP** : Pour toute recherche sur des options NixOS, des packages nixpkgs ou des paramètres Home Manager, utiliser **OBLIGATOIREMENT** l'outil `mcp_nix-search_nix` au lieu de recherches web génériques.
+- **Utilisation de Fetch** : Si une recherche web est nécessaire malgré tout, utiliser l'outil de fetch (ou `mcp_fetch`) pour extraire le contenu proprement.
+- **Précision** : Ne jamais deviner une option. Toujours la vérifier via le MCP pour garantir la compatibilité avec la version système.
+
 ## Contexte LLM / Repomix / Diff
 - J'utilise `repomix` pour avoir une vision globale du projet.
 - Avant toute analyse globale, je devrais consulter `repomix-nixos-config.md` s'il existe.

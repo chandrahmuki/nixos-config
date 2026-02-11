@@ -174,8 +174,11 @@
   };
 
   # XDG Desktop Portal is handled by Sodiboo's Niri module
-  # xdg.portal.enable = true;
-  # xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gnome ];
+  # We specify the default configuration to use gnome and gtk portals for Niri session
+  xdg.portal = {
+    enable = true;
+    config.niri.default = [ "gnome" "gtk" ];
+  };
 
   # Polkit for niri using the gnome one.
   security.polkit.enable = true;
