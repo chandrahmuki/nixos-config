@@ -70,6 +70,15 @@
       fastfetch
       starship init fish | source
       set -g fish_greeting ""
+
+      # Mode Vim pour Fish
+      fish_vi_key_bindings
+      
+      # Configuration du curseur pour les modes Vi (premium touch)
+      set -g fish_cursor_default block
+      set -g fish_cursor_insert line
+      set -g fish_cursor_replace_one underscore
+      set -g fish_cursor_visual block
     '';
     shellAliases = {
       nix-switch = "sudo nixos-rebuild switch --flake .#muggy-nixos";
