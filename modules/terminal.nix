@@ -79,6 +79,11 @@
       set -g fish_cursor_insert line
       set -g fish_cursor_replace_one underscore
       set -g fish_cursor_visual block
+
+      # Raccourci jk pour sortir du mode insertion (Esc)
+      function fish_user_key_bindings
+        bind -M insert -m default jk backward-char force-repaint
+      end
     '';
     shellAliases = {
       nix-switch = "sudo nixos-rebuild switch --flake .#muggy-nixos";
