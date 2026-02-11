@@ -12,6 +12,7 @@
     nodejs # For MCP servers and other node-based tools
     python3 # For advanced tools like the Kira scratchpad script
     repomix # Pack repository contents to single file for AI consumption
+    qpdf # For decrypting PDFs
   ];
 
   programs.bat = {
@@ -52,6 +53,9 @@
         --bind "change:reload:${pkgs.fd}/bin/fd {q} / 2>/dev/null" \
         --preview "${pkgs.bat}/bin/bat --color=always --style=numbers --line-range=:500 {}"
     '';
+
+    # Audio-only playback with mpv
+    mpno = "mpv --no-video $argv";
 
     # Alternative if they want to fzf the results:
     # search_interactive = "fd . / 2>/dev/null | fzf";
