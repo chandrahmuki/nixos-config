@@ -1,73 +1,12 @@
 { pkgs, ... }:
-let
-  # Wrapper générique pour xdg-open qui force le focus sur l'app cible via niri msg
-  # Appelle le VRAI xdg-open par chemin complet Nix (pas de récursion)
-  # Fonctionne avec TOUTES les apps, sur tous les moniteurs et workspaces
-  xdg-open-with-focus = pkgs.writeShellScriptBin "xdg-open" ''
-    # Déterminer le fichier .desktop cible à partir du type MIME / scheme de l'URL
-    URL="$1"
-    DESKTOP=""
-
-    if echo "$URL" | grep -qE '^https?://'; then
-      DESKTOP=$(${pkgs.xdg-utils}/bin/xdg-mime query default x-scheme-handler/https 2>/dev/null)
-    elif echo "$URL" | grep -qE '^mailto:'; then
-      DESKTOP=$(${pkgs.xdg-utils}/bin/xdg-mime query default x-scheme-handler/mailto 2>/dev/null)
-    else
-      MIME=$(${pkgs.xdg-utils}/bin/xdg-mime query filetype "$URL" 2>/dev/null)
-      if [ -n "$MIME" ]; then
-        DESKTOP=$(${pkgs.xdg-utils}/bin/xdg-mime query default "$MIME" 2>/dev/null)
-      fi
-    fi
-
-    # Trouver le fichier .desktop complet et en extraire la commande Exec
-    EXEC_CMD=""
-    if [ -n "$DESKTOP" ]; then
-      for dir in "$HOME/.local/share/applications" "/etc/profiles/per-user/$USER/share/applications" "/run/current-system/sw/share/applications"; do
-        if [ -f "$dir/$DESKTOP" ]; then
-          EXEC_CMD=$(grep -m1 "^Exec=" "$dir/$DESKTOP" | sed 's/^Exec=//' | sed 's/ %.*//' | xargs basename 2>/dev/null)
-          break
-        fi
-      done
-    fi
-
-    # Lancer le VRAI xdg-open par son chemin complet Nix (évite la récursion)
-    ${pkgs.xdg-utils}/bin/xdg-open "$@" &
-
-    # Attendre que l'app traite la requête puis forcer le focus via niri
-    sleep 0.5
-    if [ -n "$EXEC_CMD" ]; then
-      # Chercher la fenêtre Niri dont le processus correspond à la commande Exec
-      WINDOW_ID=$(niri msg --json windows 2>/dev/null \
-        | ${pkgs.jq}/bin/jq -r --arg cmd "$EXEC_CMD" \
-          '[.[] | select(.app_id | test($cmd; "i"))][0].id // empty')
-
-      # Fallback : chercher par PID du processus
-      if [ -z "$WINDOW_ID" ]; then
-        TARGET_PID=$(pgrep -x "$EXEC_CMD" 2>/dev/null | head -1)
-        if [ -n "$TARGET_PID" ]; then
-          WINDOW_ID=$(niri msg --json windows 2>/dev/null \
-            | ${pkgs.jq}/bin/jq -r --argjson pid "$TARGET_PID" \
-              '[.[] | select(.pid == $pid)][0].id // empty')
-        fi
-      fi
-
-      if [ -n "$WINDOW_ID" ]; then
-        niri msg action focus-window --id "$WINDOW_ID"
-      fi
-    fi
-  '';
-in
 {
   imports = [
     ./binds.nix
     ./style.nix
   ];
 
-  # Installer le wrapper xdg-open + jq comme dépendance
-  home.packages = [
-    xdg-open-with-focus
-    pkgs.jq
-  ];
+  # jq est nécessaire pour certains scripts niri
+  home.packages = [ pkgs.jq ];
 
   programs.niri.settings = {
 
