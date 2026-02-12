@@ -4,7 +4,7 @@ let
   # Appelle le VRAI xdg-open par chemin complet Nix (pas de récursion)
   # Fonctionne avec TOUTES les apps, sur tous les moniteurs et workspaces
   xdg-open-with-focus = pkgs.writeShellScriptBin "xdg-open" ''
-    # Déterminer l'app cible à partir du type MIME / scheme de l'URL
+    # Déterminer le fichier .desktop cible à partir du type MIME / scheme de l'URL
     URL="$1"
     DESKTOP=""
 
@@ -19,17 +19,38 @@ let
       fi
     fi
 
-    # Extraire l'app-id du nom du fichier .desktop (ex: "brave-browser.desktop" → "brave-browser")
-    APP_ID="''${DESKTOP%.desktop}"
+    # Trouver le fichier .desktop complet et en extraire la commande Exec
+    EXEC_CMD=""
+    if [ -n "$DESKTOP" ]; then
+      for dir in "$HOME/.local/share/applications" "/etc/profiles/per-user/$USER/share/applications" "/run/current-system/sw/share/applications"; do
+        if [ -f "$dir/$DESKTOP" ]; then
+          EXEC_CMD=$(grep -m1 "^Exec=" "$dir/$DESKTOP" | sed 's/^Exec=//' | sed 's/ %.*//' | xargs basename 2>/dev/null)
+          break
+        fi
+      done
+    fi
 
     # Lancer le VRAI xdg-open par son chemin complet Nix (évite la récursion)
     ${pkgs.xdg-utils}/bin/xdg-open "$@" &
 
     # Attendre que l'app traite la requête puis forcer le focus via niri
     sleep 0.5
-    if [ -n "$APP_ID" ]; then
+    if [ -n "$EXEC_CMD" ]; then
+      # Chercher la fenêtre Niri dont le processus correspond à la commande Exec
       WINDOW_ID=$(niri msg --json windows 2>/dev/null \
-        | ${pkgs.jq}/bin/jq -r "[.[] | select(.app_id == \"$APP_ID\")][0].id // empty")
+        | ${pkgs.jq}/bin/jq -r --arg cmd "$EXEC_CMD" \
+          '[.[] | select(.app_id | test($cmd; "i"))][0].id // empty')
+
+      # Fallback : chercher par PID du processus
+      if [ -z "$WINDOW_ID" ]; then
+        TARGET_PID=$(pgrep -x "$EXEC_CMD" 2>/dev/null | head -1)
+        if [ -n "$TARGET_PID" ]; then
+          WINDOW_ID=$(niri msg --json windows 2>/dev/null \
+            | ${pkgs.jq}/bin/jq -r --argjson pid "$TARGET_PID" \
+              '[.[] | select(.pid == $pid)][0].id // empty')
+        fi
+      fi
+
       if [ -n "$WINDOW_ID" ]; then
         niri msg action focus-window --id "$WINDOW_ID"
       fi
