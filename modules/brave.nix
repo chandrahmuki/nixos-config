@@ -12,12 +12,15 @@
     ];
   };
 
-  # Écrase complètement com.brave.Browser.desktop pour qu'il soit caché
+  # Écrase complètement com.brave.Browser.desktop pour qu'il soit caché mais valide pour xdg-open
   home.file.".local/share/applications/com.brave.Browser.desktop".text = ''
     [Desktop Entry]
     Type=Application
-    Name=Brave Browser (Hidden)
+    Name=Brave Browser
+    Exec=brave %U
+    Terminal=false
     NoDisplay=true
-    Hidden=true
+    Categories=Network;WebBrowser;
+    MimeType=text/html;text/xml;x-scheme-handler/http;x-scheme-handler/https;
   '';
 }
