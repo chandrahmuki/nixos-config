@@ -34,12 +34,13 @@
       on-button-left = "invoke-default-action";
       on-button-right = "dismiss";
       on-button-middle = "dismiss-all";
-
-      # Critères pour urgence critique : timeout infini + couleur rouge
-      "[urgency=critical]" = {
-        default-timeout = 0;
-        border-color = "#f38ba8"; # Red
-      };
     };
+
+    # Critères spéciaux (syntaxe sections INI, pas supportée par settings)
+    extraConfig = ''
+      [urgency=critical]
+      default-timeout=0
+      border-color=#f38ba8
+    '';
   };
 }
