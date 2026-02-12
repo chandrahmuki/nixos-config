@@ -178,6 +178,7 @@
   xdg.portal = {
     enable = true;
     config.niri.default = [ "gnome" "gtk" ];
+    extraPortals = [ pkgs.xdg-desktop-portal-gnome pkgs.xdg-desktop-portal-gtk ];
   };
 
   # Polkit for niri using the gnome one.
