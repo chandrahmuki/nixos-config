@@ -10,6 +10,10 @@
 
     window-rules = [
       {
+        matches = [ { app-id = "brave-browser"; } ];
+        open-focused = true;
+      }
+      {
         geometry-corner-radius = {
           bottom-left = 12.0;
           bottom-right = 12.0;

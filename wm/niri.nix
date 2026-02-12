@@ -23,6 +23,13 @@
       { command = [ "xwayland-satellite" ]; }
     ];
 
+    debug = {
+      # Permet le focus même si le token d'activation est "imparfait" (ex: via une notification)
+      honor-xdg-activation-with-invalid-serial = true;
+      # Corrige les soucis de focus pour les apps Chromium/Electron
+      deactivate-unfocused-windows = true;
+    };
+
     environment."DISPLAY" = ":0";
 
     layout.default-column-width = {
