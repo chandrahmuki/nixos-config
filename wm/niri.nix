@@ -1,8 +1,51 @@
 { pkgs, ... }:
+let
+  # Wrapper générique pour xdg-open qui force le focus sur l'app cible via niri msg
+  # Appelle le VRAI xdg-open par chemin complet Nix (pas de récursion)
+  # Fonctionne avec TOUTES les apps, sur tous les moniteurs et workspaces
+  xdg-open-with-focus = pkgs.writeShellScriptBin "xdg-open" ''
+    # Déterminer l'app cible à partir du type MIME / scheme de l'URL
+    URL="$1"
+    DESKTOP=""
+
+    if echo "$URL" | grep -qE '^https?://'; then
+      DESKTOP=$(${pkgs.xdg-utils}/bin/xdg-mime query default x-scheme-handler/https 2>/dev/null)
+    elif echo "$URL" | grep -qE '^mailto:'; then
+      DESKTOP=$(${pkgs.xdg-utils}/bin/xdg-mime query default x-scheme-handler/mailto 2>/dev/null)
+    else
+      MIME=$(${pkgs.xdg-utils}/bin/xdg-mime query filetype "$URL" 2>/dev/null)
+      if [ -n "$MIME" ]; then
+        DESKTOP=$(${pkgs.xdg-utils}/bin/xdg-mime query default "$MIME" 2>/dev/null)
+      fi
+    fi
+
+    # Extraire l'app-id du nom du fichier .desktop (ex: "brave-browser.desktop" → "brave-browser")
+    APP_ID="''${DESKTOP%.desktop}"
+
+    # Lancer le VRAI xdg-open par son chemin complet Nix (évite la récursion)
+    ${pkgs.xdg-utils}/bin/xdg-open "$@" &
+
+    # Attendre que l'app traite la requête puis forcer le focus via niri
+    sleep 0.5
+    if [ -n "$APP_ID" ]; then
+      WINDOW_ID=$(niri msg --json windows 2>/dev/null \
+        | ${pkgs.jq}/bin/jq -r "[.[] | select(.app_id == \"$APP_ID\")][0].id // empty")
+      if [ -n "$WINDOW_ID" ]; then
+        niri msg action focus-window --id "$WINDOW_ID"
+      fi
+    fi
+  '';
+in
 {
   imports = [
     ./binds.nix
     ./style.nix
+  ];
+
+  # Installer le wrapper xdg-open + jq comme dépendance
+  home.packages = [
+    xdg-open-with-focus
+    pkgs.jq
   ];
 
   programs.niri.settings = {
