@@ -179,6 +179,9 @@
     enable = true;
     config.niri.default = [ "gnome" "gtk" ];
     extraPortals = [ pkgs.xdg-desktop-portal-gnome pkgs.xdg-desktop-portal-gtk ];
+    # Force xdg-open à utiliser le portail pour générer un jeton d'activation
+    # Permet à Niri de changer de workspace automatiquement lors d'un clic sur un lien
+    xdgOpenUsePortal = true;
   };
 
   # Polkit for niri using the gnome one.
