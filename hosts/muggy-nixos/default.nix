@@ -84,6 +84,13 @@
     LC_TIME = "de_AT.UTF-8";
   };
 
+  # Fix persistent IBus notification on Wayland
+  i18n.inputMethod = {
+    enable = true;
+    type = "ibus";
+    ibus.waylandFrontend = true;
+  };
+
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
