@@ -67,22 +67,36 @@
     enable = true;
     # Ton shell sera tout de suite prêt à l'emploi
     interactiveShellInit = ''
-      fastfetch
-      starship init fish | source
       set -g fish_greeting ""
 
-      # Mode Vim pour Fish
-      fish_vi_key_bindings
-      
-      # Configuration du curseur pour les modes Vi (premium touch)
-      set -g fish_cursor_default block
-      set -g fish_cursor_insert line
-      set -g fish_cursor_replace_one underscore
-      set -g fish_cursor_visual block
+      if status is-interactive
+        # Fonction pour les outils visuels (Starship, Fastfetch)
+        # On les regroupe pour plus de clarté
+        function setup_visual_tools
+          fastfetch
+          starship init fish | source
+          atuin init fish | source
+        end
 
-      # Raccourci jk pour sortir du mode insertion (Esc)
-      function fish_user_key_bindings
-        bind -M insert -m default jk backward-char force-repaint
+        # On ne lance les outils visuels que si on n'est pas dans un terminal "dumb"
+        # Cela évite de bloquer l'agent AI ou les commandes distantes
+        if test "$TERM" != "dumb"
+          setup_visual_tools
+        end
+
+        # Mode Vim pour Fish
+        fish_vi_key_bindings
+        
+        # Configuration du curseur pour les modes Vi (premium touch)
+        set -g fish_cursor_default block
+        set -g fish_cursor_insert line
+        set -g fish_cursor_replace_one underscore
+        set -g fish_cursor_visual block
+
+        # Raccourci jk pour sortir du mode insertion (Esc)
+        function fish_user_key_bindings
+          bind -M insert -m default jk backward-char force-repaint
+        end
       end
     '';
     shellAliases = {

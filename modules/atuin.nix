@@ -3,7 +3,7 @@
 {
   programs.atuin = {
     enable = true;
-    enableFishIntegration = true;
+    enableFishIntegration = false; # Desactivé pour éviter les blocages de l'agent
     settings = {
       auto_sync = true;
       update_check = false;
