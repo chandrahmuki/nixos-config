@@ -155,15 +155,17 @@
       curl
       expat
       # Les nouvelles librairies X11 sans le préfixe xorg. (pour supprimer les warnings)
-      libX11
-      libXcursor
-      libXdamage
-      libXext
-      libXfixes
-      libXi
-      libXrandr
-      libXrender
-      libXtst
+      libx11
+      libxscrnsaver
+      libxcomposite
+      libxcursor
+      libxdamage
+      libxext
+      libxfixes
+      libxi
+      libxrandr
+      libxrender
+      libxtst
       libxcb
       libxshmfence
       libxkbfile
