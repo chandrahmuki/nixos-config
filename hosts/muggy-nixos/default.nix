@@ -84,12 +84,17 @@
     LC_TIME = "de_AT.UTF-8";
   };
 
-  # Fix persistent IBus notification on Wayland
-  i18n.inputMethod = {
-    enable = true;
-    type = "ibus";
-    ibus.waylandFrontend = true;
-  };
+  # Désactivation totale d'IBus pour supprimer la notification
+  i18n.inputMethod.enable = false;
+
+  # Empêcher GNOME de tirer IBus et de le lancer via autostart
+  environment.gnome.excludePackages = [ pkgs.ibus ];
+
+  # Force l'utilisation d'un module IM simple pour éviter que GNOME ne cherche IBus
+  services.desktopManager.gnome.extraGSettingsOverrides = ''
+    [org.gnome.desktop.interface]
+    gtk-im-module='gtk-im-context-simple'
+  '';
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
@@ -162,17 +167,17 @@
       curl
       expat
       # Les nouvelles librairies X11 sans le préfixe xorg. (pour supprimer les warnings)
-      libx11
-      libxscrnsaver
-      libxcomposite
-      libxcursor
-      libxdamage
-      libxext
-      libxfixes
-      libxi
-      libxrandr
-      libxrender
-      libxtst
+      libX11
+      libXScrnSaver
+      libXcomposite
+      libXcursor
+      libXdamage
+      libXext
+      libXfixes
+      libXi
+      libXrandr
+      libXrender
+      libXtst
       libxcb
       libxshmfence
       libxkbfile
