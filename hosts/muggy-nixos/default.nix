@@ -143,7 +143,32 @@
   #default to fish !
   programs.fish.enable = true;
   # Indispensable pour les binaires
-  programs.nix-ld.enable = true;
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+      stdenv.cc.cc
+      zlib
+      fuse3
+      icu
+      nss
+      openssl
+      curl
+      expat
+      # Les nouvelles librairies X11 sans le préfixe xorg. (pour supprimer les warnings)
+      libX11
+      libXcursor
+      libXdamage
+      libXext
+      libXfixes
+      libXi
+      libXrandr
+      libXrender
+      libXtst
+      libxcb
+      libxshmfence
+      libxkbfile
+    ];
+  };
 
   # Empêche les jeux de "s'endormir" ou de tomber en FPS quand le workspace change
   environment.sessionVariables = {

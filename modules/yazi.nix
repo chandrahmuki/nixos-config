@@ -5,6 +5,7 @@
   programs.yazi = {
     enable = true;
     enableFishIntegration = true;
+    shellWrapperName = "y"; # Supprime le warning de deprecation
 
     settings = {
       manager = {
