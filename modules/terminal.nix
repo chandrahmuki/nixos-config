@@ -73,7 +73,6 @@
         # Fonction pour les outils visuels (Starship, Fastfetch)
         # On les regroupe pour plus de clarté
         function setup_visual_tools
-          fastfetch
           starship init fish | source
           atuin init fish | source
         end
