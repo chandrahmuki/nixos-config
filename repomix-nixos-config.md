@@ -1,10 +1,10 @@
-This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+This file is a merged representation of a subset of the codebase, containing specifically included files and files not matching ignore patterns, combined into a single document by Repomix.
 
 <file_summary>
 This section contains a summary of this file.
 
 <purpose>
-This file contains a packed representation of the entire repository's contents.
+This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
 It is designed to be easily consumable by AI systems for analysis, code review,
 or other automated processes.
 </purpose>
@@ -32,6 +32,8 @@ The content is organized as follows:
 <notes>
 - Some files may have been excluded based on .gitignore rules and Repomix's configuration
 - Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: **/*.nix, **/*.sh, **/*.md
+- Files matching these patterns are excluded: repomix-nixos-config.md
 - Files matching patterns in .gitignore are excluded
 - Files matching default ignore patterns are excluded
 - Files are sorted by Git change count (files with more changes are at the bottom)
@@ -53,28 +55,40 @@ The content is organized as follows:
         nvme/
           nvme-transition.md
       SKILL.md
+    nixos-flakes/
+      references/
+        best-practices.md
+        dev-environments.md
+        flakes.md
+        home-manager.md
+        nix-language.md
+        nixpkgs-advanced.md
+        templates.md
+      SKILL.md
     nixos-research-strategy/
       SKILL.md
     scratchpad/
       references/
         examples.md
-      scripts/
-        scratch_pad.py
       SKILL.md
   workflows/
+    archive.md
+    audit.md
     auto-doc.md
+    full-index.md
     git-sync.md
-.direnv/
-  bin/
-    nix-direnv-reload
 docs/
+  brave.md
   tealdeer.md
+  triple-relay.md
 hosts/
   muggy-nixos/
     default.nix
     hardware-configuration.nix
 modules/
   antigravity.nix
+  atuin.nix
+  brave-system.nix
   brave.nix
   btop.nix
   direnv.nix
@@ -87,7 +101,9 @@ modules/
   neovim.nix
   nh.nix
   noctalia.nix
+  notifications.nix
   parsec.nix
+  pdf.nix
   steam.nix
   tealdeer.nix
   terminal.nix
@@ -96,35 +112,10 @@ modules/
   xdg.nix
   yazi.nix
   yt-dlp.nix
-nvim/
-  lua/
-    core/
-      init.lua
-      keymaps.lua
-      options.lua
-    plugins/
-      better-escape.lua
-      bufferline.lua
-      completion.lua
-      crates.lua
-      flash.lua
-      icons.lua
-      lsp.lua
-      mason.lua
-      move.lua
-      rustaceanvim.lua
-      snacks.lua
-      treesitter.lua
-      ui.lua
-      whichkey.lua
-  .stylua.toml
-  init.lua
 wm/
   binds.nix
   niri.nix
   style.nix
-.gitignore
-flake.lock
 flake.nix
 GEMINI.md
 home.nix
@@ -135,52 +126,6 @@ README.md
 
 <files>
 This section contains the contents of the repository's files.
-
-<file path=".direnv/bin/nix-direnv-reload">
-#!/usr/bin/env bash
-set -e
-if [[ ! -d "/home/david/nixos-config" ]]; then
-  echo "Cannot find source directory; Did you move it?"
-  echo "(Looking for "/home/david/nixos-config")"
-  echo 'Cannot force reload with this script - use "direnv reload" manually and then try again'
-  exit 1
-fi
-
-# rebuild the cache forcefully
-_nix_direnv_force_reload=1 direnv exec "/home/david/nixos-config" true
-
-# Update the mtime for .envrc.
-# This will cause direnv to reload again - but without re-building.
-touch "/home/david/nixos-config/.envrc"
-
-# Also update the timestamp of whatever profile_rc we have.
-# This makes sure that we know we are up to date.
-touch -r "/home/david/nixos-config/.envrc" "/home/david/nixos-config/.direnv"/*.rc
-</file>
-
-<file path="modules/brave.nix">
-{ pkgs, ... }:
-
-{
-  programs.brave = {
-    enable = true;
-    commandLineArgs = [
-      "--unlimited-storage"
-      "--enable-features=UseOzonePlatform"
-      "--ozone-platform=wayland"
-    ];
-  };
-
-  # Écrase complètement com.brave.Browser.desktop pour qu'il soit caché
-  home.file.".local/share/applications/com.brave.Browser.desktop".text = ''
-    [Desktop Entry]
-    Type=Application
-    Name=Brave Browser (Hidden)
-    NoDisplay=true
-    Hidden=true
-  '';
-}
-</file>
 
 <file path="modules/btop.nix">
 { pkgs, ... }:
@@ -233,63 +178,125 @@ touch -r "/home/david/nixos-config/.envrc" "/home/david/nixos-config/.direnv"/*.
 }
 </file>
 
-<file path="modules/git.nix">
+<file path="modules/fuzzel.nix">
 { pkgs, ... }:
 
 {
-  programs.git = {
+  home.packages = with pkgs; [
+    papirus-icon-theme
+    adwaita-icon-theme # Fallback for apps missing in Papirus
+    hicolor-icon-theme # Base icon theme (fallback)
+  ];
+
+  programs.fuzzel = {
     enable = true;
-    
-# On utilise 'settings' pour tout ce qui concerne l'identité et les alias
     settings = {
-      user = {
-        name = "david";
-        email = "email@exemple.com";
+      main = {
+        font = "Hack Nerd Font:size=18";
+        terminal = "${pkgs.ghostty}/bin/ghostty";
+        prompt = "'❯ '";
+        layer = "overlay";
+        icons-enabled = "yes";
+        icon-theme = "Papirus-Dark";
+        width = 40;
+        lines = 15;
       };
 
-    # Des raccourcis qui vont te faire gagner un temps fou
-    aliases = {
-      s  = "status";
-      a  = "add";
-      c  = "commit";
-      cm = "commit -m";
-      p  = "push";
-      lg = "log --graph --oneline --all"; # Une jolie vue de ton historique
-    };
+      colors = {
+        background = "282a36ff"; # Dracula Background
+        text = "f8f8f2ff"; # Dracula Foreground
+        match = "8be9fdff"; # Dracula Cyan (for matches)
+        selection = "44475aff"; # Dracula Selection
+        selection-text = "ffffffff";
+        border = "bd93f9ff"; # Dracula Purple
+      };
 
-    extraConfig = {
-      init.defaultBranch = "main";
-      pull.rebase = true; # Plus propre pour éviter les commits de "merge" inutiles
+      border = {
+        width = 2;
+        radius = 10;
+      };
     };
   };
- };
+
+  # Symlinks pour les icônes manquantes dans les thèmes standards
+  home.file.".local/share/icons/hicolor/scalable/apps/io.github.ilya_zlobintsev.LACT.svg".source =
+    "${pkgs.lact}/share/pixmaps/io.github.ilya_zlobintsev.LACT.svg";
+
+  # Pour Antigravity, on essaie de pointer vers son icône si elle est packagée
+  # Note: Si l'icône n'est pas trouvée, HM ignorera ou on ajustera.
+  home.file.".local/share/icons/hicolor/scalable/apps/antigravity.svg".source = "${
+    pkgs.antigravity-unwrapped or pkgs.antigravity
+  }/share/icons/hicolor/scalable/apps/antigravity.svg";
 }
 </file>
 
-<file path="modules/nh.nix">
-{ _pkgs, ... }:
+<file path="modules/lact.nix">
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
-  programs.nh = {
+  # Install LACT (Linux AMDGpu Control Tool)
+  environment.systemPackages = with pkgs; [
+    lact
+  ];
+
+  # Enable the lactd daemon service required for applying settings
+  systemd.services.lactd = {
+    description = "AMDGPU Control Daemon";
     enable = true;
-
-    # Chemin vers votre flake NixOS
-    # Adaptez ce chemin selon votre configuration
-    flake = "/home/david/nixos-config";
-
-    # Nettoyage automatique des anciennes générations
-    clean = {
-      enable = true;
-      # Garde les générations des 7 derniers jours
-      extraArgs = "--keep-since 7d --keep 5";
+    serviceConfig = {
+      ExecStart = "${pkgs.lact}/bin/lact daemon";
     };
+    wantedBy = [ "multi-user.target" ];
   };
 
-  programs.fish.functions = {
-    nos = ''
-      cd /home/david/nixos-config
-      nh os switch . --hostname muggy-nixos
-    '';
+  # Unlock advanced AMDGPU features (overclocking, fan control, voltage)
+  # ppfeaturemask=0xffffffff enables all features
+  boot.kernelParams = [ "amdgpu.ppfeaturemask=0xffffffff" ];
+}
+</file>
+
+<file path="modules/neovim.nix">
+{ pkgs, ... }:
+
+{
+  programs.neovim = {
+    enable = true;
+    defaultEditor = true;
+    viAlias = true;
+    vimAlias = true;
+
+    # Dependencies for lazy.nvim, mason, and common plugins
+    extraPackages = with pkgs; [
+      # Build tools
+      gcc
+      gnumake
+      unzip
+      wget
+      curl
+      # git (Managed by git.nix)
+
+      # Runtime dependencies
+      ripgrep
+      # fd (Managed by utils.nix)
+      # fzf (Managed by utils.nix)
+      nodejs
+      python3
+      lua-language-server
+      nil # Nix LSP
+      nixfmt # Nix Formatter
+      stylua # For stylua.toml in your config
+    ];
+  };
+
+  # Link the personal configuration from the internal nixos-config folder
+  home.file.".config/nvim" = {
+    source = ./../nvim;
+    recursive = true;
   };
 }
 </file>
@@ -391,167 +398,81 @@ touch -r "/home/david/nixos-config/.envrc" "/home/david/nixos-config/.direnv"/*.
 }
 </file>
 
-<file path="wm/style.nix">
-{ inputs, pkgs, ... }:
+<file path="wm/binds.nix">
+{ config, ... }:
 {
-  programs.niri.settings = {
-    layout = {
-      gaps = 32;
-      focus-ring.width = 6;
-      focus-ring.active.color = "rgba(255,255,255,0.3)";
-      focus-ring.inactive.color = "rgba(100,100,100,0.3)";
-    };
-
-    window-rules = [
-      {
-        geometry-corner-radius = {
-          bottom-left = 12.0;
-          bottom-right = 12.0;
-          top-left = 12.0;
-          top-right = 12.0;
-        };
-        clip-to-geometry = true;
-      }
+  programs.niri.settings.binds = with config.lib.niri.actions; {
+    "Mod+B".action = spawn [
+      "rofi"
+      "-show"
+      "run"
     ];
+    "Mod+D".action = spawn "fuzzel";
+    "Mod+Q".action = close-window;
+    "Mod+Shift+F".action = fullscreen-window;
+    "Mod+F".action = maximize-column;
+    "Mod+T".action = spawn "ghostty";
+    "Mod+Shift+E".action = quit { skip-confirmation = false; };
+    "Mod+Shift+Slash".action = show-hotkey-overlay;
+    "Mod+Shift+Space".action = toggle-window-floating;
+    "Mod+Space".action = switch-focus-between-floating-and-tiling;
+    "Mod+O".action.toggle-overview = [ ];
+
+    "Mod+W".action = switch-preset-column-width;
+    "Mod+H".action = switch-preset-window-height;
+    "Mod+C".action = consume-window-into-column;
+    "Mod+X".action = expel-window-from-column;
+
+    #Focus
+    "Mod+Left".action = focus-column-or-monitor-left;
+    "Mod+Right".action = focus-column-or-monitor-right;
+    "Mod+Up".action = focus-window-or-workspace-up;
+    "Mod+Down".action = focus-window-or-workspace-down;
+
+    "Mod+1".action = focus-workspace 1;
+    "Mod+2".action = focus-workspace 2;
+    "Mod+3".action = focus-workspace 3;
+    "Mod+4".action = focus-workspace 4;
+    "Mod+5".action = focus-workspace 5;
+    "Mod+6".action = focus-workspace 6;
+    "Mod+7".action = focus-workspace 7;
+    "Mod+8".action = focus-workspace 8;
+    "Mod+9".action = focus-workspace 9;
+
+    "XF86MonBrightnessUp".action = spawn "brightnessctl s +10%";
+    "XF86MonBrightnessDown".action = spawn "brightnessctl s -10%";
+    #Move
+    "Mod+Shift+Left".action = move-column-left-or-to-monitor-left;
+    "Mod+Shift+Right".action = move-column-right-or-to-monitor-right;
+    "Mod+Shift+Up".action = move-window-up-or-to-workspace-up; # ✅ CORRIGÉ
+    "Mod+Shift+Down".action = move-window-down-or-to-workspace-down; # ✅ CORRIGÉ
+
+    "Mod+Shift+1".action = move-column-to-index 1;
+    "Mod+Shift+2".action = move-column-to-index 2;
+    "Mod+Shift+3".action = move-column-to-index 3;
+    "Mod+Shift+4".action = move-column-to-index 4;
+    "Mod+Shift+5".action = move-column-to-index 5;
+    "Mod+Shift+6".action = move-column-to-index 6;
+    "Mod+Shift+7".action = move-column-to-index 7;
+    "Mod+Shift+8".action = move-column-to-index 8;
+    "Mod+Shift+9".action = move-column-to-index 9;
+
+    # Passer à la fenêtre de DROITE avec Mod + Molette vers le BAS
+    "Mod+WheelScrollDown".action = focus-column-right;
+
+    # Passer à la fenêtre de GAUCHE avec Mod + Molette vers le HAUT
+    "Mod+WheelScrollUp".action = focus-column-left;
+
+    # Si tu veux que ça déplace carrément la fenêtre (Shift en plus)
+    "Mod+Shift+WheelScrollDown".action = focus-workspace-down;
+    "Mod+Shift+WheelScrollUp".action = focus-workspace-up;
+
+    # Screenshots avec la syntaxe correcte
+    "Ctrl+Mod+S".action.screenshot = [ ]; # Fenêtre active
+    "Ctrl+Mod+Shift+S".action.screenshot-screen = [ ]; # Écran complet
 
   };
 }
-</file>
-
-<file path="install.sh">
-#!/usr/bin/env bash
-
-set -e  # Exit on error
-
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-# Print functions
-print_info() {
-    echo -e "${BLUE}[INFO]${NC} $1"
-}
-
-print_success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
-}
-
-print_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
-}
-
-print_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
-
-print_header() {
-    echo -e "\n${BLUE}╔═══════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${BLUE}║${NC}     NixOS Configuration - Post-Installation Setup           ${BLUE}║${NC}"
-    echo -e "${BLUE}╚═══════════════════════════════════════════════════════════════╝${NC}\n"
-}
-
-# Check if running as root
-if [ "$EUID" -eq 0 ]; then
-    print_error "Please do not run this script as root!"
-    print_info "Run as your regular user: ./install.sh"
-    exit 1
-fi
-
-print_header
-
-# Get the directory where this script is located
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-CURRENT_HOSTNAME=$(hostname)
-CONFIG_HOSTNAME="muggy-nixos"
-FLAKE_NAME="muggy-nixos"
-
-print_info "Starting post-installation setup..."
-print_info "Script location: $SCRIPT_DIR"
-print_info "Current hostname: $CURRENT_HOSTNAME"
-print_info "Target hostname: $CONFIG_HOSTNAME"
-print_info "Flake configuration: $FLAKE_NAME"
-
-# Step 1: Generate hardware configuration
-print_info "\nStep 1: Generating hardware configuration..."
-HARDWARE_CONFIG="$SCRIPT_DIR/hosts/$CONFIG_HOSTNAME/hardware-configuration.nix"
-
-if [ -f "$HARDWARE_CONFIG" ]; then
-    print_warning "hardware-configuration.nix already exists!"
-    read -p "Overwrite it? (y/N): " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        print_info "Keeping existing hardware configuration"
-    else
-        sudo nixos-generate-config --show-hardware-config > "$HARDWARE_CONFIG"
-        print_success "Hardware configuration regenerated!"
-    fi
-else
-    sudo nixos-generate-config --show-hardware-config > "$HARDWARE_CONFIG"
-    print_success "Hardware configuration generated!"
-fi
-
-# Step 2: Check if flakes are enabled
-print_info "\nStep 2: Checking flakes configuration..."
-TEMP_CONFIG="/etc/nixos/configuration.nix"
-EXTRA_FLAGS=""
-
-# Try to use nix flake command - if it works, flakes are enabled
-if nix flake metadata "$SCRIPT_DIR" &>/dev/null; then
-    print_success "Flakes are enabled!"
-else
-    print_warning "Flakes not detected in system configuration!"
-    print_info "Flakes are required to build this configuration."
-    print_info "Please add to /etc/nixos/configuration.nix:"
-    echo -e "${YELLOW}  nix.settings.experimental-features = [ \"nix-command\" \"flakes\" ];${NC}"
-    print_info "Then run: ${YELLOW}sudo nixos-rebuild switch${NC}"
-    exit 1
-fi
-
-# Step 3: Verify hostname
-print_info "\nStep 3: Verifying hostname..."
-if [ "$CURRENT_HOSTNAME" != "$CONFIG_HOSTNAME" ]; then
-    print_warning "Hostname mismatch!"
-    print_info "Current: $CURRENT_HOSTNAME"
-    print_info "Config:  $CONFIG_HOSTNAME"
-    print_info "The hostname will be changed to '$CONFIG_HOSTNAME' after rebuild."
-    echo ""
-    read -p "Continue? (Y/n): " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Nn]$ ]]; then
-        print_info "Aborted by user."
-        exit 0
-    fi
-fi
-
-# Step 4: Build and switch
-print_info "\nStep 4: Building and switching to new configuration..."
-print_warning "This may take a while on first build..."
-echo ""
-
-BUILD_CMD="sudo nixos-rebuild switch --flake $SCRIPT_DIR#$FLAKE_NAME"
-
-print_info "Running: $BUILD_CMD"
-echo ""
-
-if eval $BUILD_CMD; then
-    print_success "\n✨ Configuration successfully applied!"
-    echo ""
-    echo -e "${BLUE}Next steps:${NC}"
-    echo "1. Review any warnings or errors above"
-    echo "2. Reboot to ensure all changes take effect:"
-    echo -e "   ${YELLOW}sudo reboot${NC}"
-    echo ""
-    print_success "Setup completed successfully! 🎉"
-else
-    print_error "Failed to rebuild system configuration!"
-    print_info "Check the errors above and fix any issues."
-    print_info "You can manually retry with:"
-    echo -e "   ${YELLOW}$BUILD_CMD${NC}"
-    exit 1
-fi
 </file>
 
 <file path="overlays.nix">
@@ -714,6 +635,2389 @@ Nous avons abandonné `ext4` au profit de `btrfs` avec une structure de sous-vol
 - UUID BTRFS : `59f5b271-11c1-41f9-927d-ed3221a6b404`.
 </file>
 
+<file path=".agent/skills/nixos-flakes/references/best-practices.md">
+# Best Practices
+
+## Configuration Organization
+
+### Modularization
+
+Split large configurations into modules:
+
+```
+nixos-config/
+├── flake.nix
+├── flake.lock
+├── hosts/
+│   ├── desktop/
+│   │   ├── default.nix
+│   │   └── hardware-configuration.nix
+│   └── laptop/
+│       ├── default.nix
+│       └── hardware-configuration.nix
+├── modules/
+│   ├── common.nix
+│   ├── desktop.nix
+│   ├── development.nix
+│   └── services/
+│       ├── nginx.nix
+│       └── postgres.nix
+├── home/
+│   ├── default.nix
+│   ├── shell.nix
+│   └── programs/
+│       ├── git.nix
+│       ├── neovim.nix
+│       └── tmux.nix
+└── overlays/
+    └── default.nix
+```
+
+### Module Pattern
+
+```nix
+# modules/development.nix
+{ config, lib, pkgs, ... }: {
+  options.myConfig.development = {
+    enable = lib.mkEnableOption "development tools";
+  };
+
+  config = lib.mkIf config.myConfig.development.enable {
+    environment.systemPackages = with pkgs; [
+      git vim nodejs
+    ];
+  };
+}
+
+# hosts/desktop/default.nix
+{
+  imports = [ ../../modules/development.nix ];
+  myConfig.development.enable = true;
+}
+```
+
+## Git Integration
+
+### Version Control Your Config
+
+```bash
+# Initialize git in config directory
+cd ~/nixos-config
+git init
+git add .
+git commit -m "Initial config"
+```
+
+### Critical: Stage Files Before Build
+
+Nix ignores untracked files in flakes:
+
+```bash
+# This FAILS if new files aren't staged
+sudo nixos-rebuild switch --flake .
+
+# Always stage first
+git add .
+sudo nixos-rebuild switch --flake .
+```
+
+### Move Config from /etc/nixos
+
+```bash
+# Option 1: Symlink
+sudo mv /etc/nixos /etc/nixos.bak
+sudo ln -s ~/nixos-config /etc/nixos
+
+# Option 2: Specify path directly
+sudo nixos-rebuild switch --flake ~/nixos-config#hostname
+```
+
+## Debugging
+
+### Verbose Output
+
+```bash
+# Full debug output
+sudo nixos-rebuild switch --flake .#hostname --show-trace --print-build-logs --verbose
+
+# Shorthand
+sudo nixos-rebuild switch --flake .#hostname --show-trace -L -v
+```
+
+### nix repl
+
+Interactive debugging:
+
+```bash
+nix repl
+
+# Load current flake
+:lf .
+
+# Explore structure
+inputs.<TAB>
+outputs.<TAB>
+nixosConfigurations.hostname.config.services.<TAB>
+
+# Open package in editor
+:e pkgs.hello
+
+# Build derivation
+:b pkgs.hello
+
+# Show logs
+:log pkgs.hello
+
+# Get derivation path
+builtins.toString pkgs.hello
+```
+
+### Common Errors
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| "file not found" | Untracked file | `git add .` |
+| "infinite recursion" | Self-referential config | Check `final` vs `prev` in overlays |
+| "collision between" | Duplicate packages | Split into different profiles |
+| "hash mismatch" | Source changed | Update hash in fetchurl/fetchFromGitHub |
+
+## System Management
+
+### Generation Management
+
+```bash
+# List all generations
+nix profile history --profile /nix/var/nix/profiles/system
+
+# Delete old generations
+sudo nix profile wipe-history --older-than 7d --profile /nix/var/nix/profiles/system
+
+# Garbage collect
+sudo nix-collect-garbage -d
+
+# Or just GC without deleting generations
+sudo nix store gc
+```
+
+### Automatic GC
+
+```nix
+# In configuration.nix
+{
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 7d";
+  };
+
+  # Optimize store
+  nix.optimise.automatic = true;
+}
+```
+
+### Boot Entries
+
+```nix
+{
+  # Limit boot menu entries
+  boot.loader.systemd-boot.configurationLimit = 10;
+
+  # Or for GRUB
+  boot.loader.grub.configurationLimit = 10;
+}
+```
+
+## Input Management
+
+### Pin Versions
+
+```bash
+# Update all inputs
+nix flake update
+
+# Update single input
+nix flake update nixpkgs
+
+# Lock to specific commit
+nix flake lock --override-input nixpkgs github:NixOS/nixpkgs/abc123
+```
+
+### Use follows
+
+Always use `follows` to avoid multiple nixpkgs:
+
+```nix
+inputs = {
+  nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+
+  home-manager.inputs.nixpkgs.follows = "nixpkgs";
+  nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+  # Every input that uses nixpkgs should follow
+};
+```
+
+### Mixing Stable and Unstable
+
+```nix
+inputs = {
+  nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+  nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+};
+
+outputs = { nixpkgs, nixpkgs-unstable, ... }: {
+  nixosConfigurations.host = nixpkgs.lib.nixosSystem {\n    modules = [{
+      nixpkgs.overlays = [
+        (final: prev: {
+          unstable = nixpkgs-unstable.legacyPackages.${prev.system};
+        })
+      ];
+
+      # Use stable by default
+      environment.systemPackages = [ pkgs.vim ];
+
+      # Use unstable for specific packages
+      programs.firefox.package = pkgs.unstable.firefox;
+    }];
+  };
+};
+```
+
+## Remote Deployment
+
+### nixos-rebuild
+
+```bash
+# Deploy to remote host
+nixos-rebuild switch --flake .#remote-host \
+  --target-host user@remote \
+  --build-host localhost  # Build locally, deploy result
+```
+
+### Colmena
+
+```nix
+# flake.nix
+{
+  outputs = { nixpkgs, ... }: {
+    colmena = {
+      meta = {
+        nixpkgs = import nixpkgs { system = "x86_64-linux"; };
+      };
+
+      host1 = {
+        deployment = {
+          targetHost = "192.168.1.10";
+          targetUser = "root";
+        };
+        imports = [ ./hosts/host1 ];
+      };
+    };
+  };
+}
+
+# Deploy
+nix run nixpkgs#colmena -- apply
+```
+
+## Binary Cache
+
+### Using Cachix
+
+```bash
+# Install cachix
+nix-env -iA cachix -f https://cachix.org/api/v1/install
+
+# Use a cache
+cachix use nix-community
+
+# Or in configuration
+nix.settings = {
+  substituters = [
+    "https://cache.nixos.org"
+    "https://nix-community.cachix.org"
+  ];
+  trusted-public-keys = [
+    "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+    "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+  ];
+};
+```
+
+## Security
+
+### Secrets Management
+
+Never commit secrets to git. Options:
+
+1. **sops-nix** - Encrypted secrets in repo
+2. **agenix** - Age-encrypted secrets
+3. **Environment variables** - Runtime injection
+
+```nix
+# Example with sops-nix
+{
+  sops.secrets.my-secret = {
+    sopsFile = ./secrets.yaml;
+  };
+
+  services.myservice.passwordFile = config.sops.secrets.my-secret.path;
+}
+```
+
+### Principle of Least Privilege
+
+```nix
+{
+  # Run services as unprivileged users
+  systemd.services.myservice = {
+    serviceConfig = {
+      DynamicUser = true;
+      PrivateTmp = true;
+      ProtectSystem = "strict";
+      ProtectHome = true;
+    };
+  };
+}
+```
+
+## Common Patterns
+
+### Conditional Configuration
+
+```nix
+{ lib, config, ... }: {
+  config = lib.mkMerge [
+    # Always applied
+    { environment.systemPackages = [ pkgs.vim ]; }
+
+    # Conditional
+    (lib.mkIf config.services.xserver.enable {
+      environment.systemPackages = [ pkgs.firefox ];
+    })
+  ];
+}
+```
+
+### Platform-Specific
+
+```nix
+{ pkgs, lib, ... }: {
+  environment.systemPackages = with pkgs; [
+    git
+    vim
+  ] ++ lib.optionals pkgs.stdenv.isLinux [
+    # Linux only
+    inotify-tools
+  ] ++ lib.optionals pkgs.stdenv.isDarwin [
+    # macOS only
+    darwin.apple_sdk.frameworks.Security
+  ];
+}
+```
+
+### DRY with Functions
+
+```nix
+# lib/mkHost.nix
+{ inputs }: hostname: {
+  system,
+  modules ? [],
+  ...
+}:
+inputs.nixpkgs.lib.nixosSystem {
+  inherit system;
+  modules = [
+    ../hosts/${hostname}
+    ../modules/common.nix
+  ] ++ modules;
+  specialArgs = { inherit inputs; };
+}
+
+# flake.nix
+{
+  nixosConfigurations = {
+    desktop = mkHost "desktop" { system = "x86_64-linux"; };
+    laptop = mkHost "laptop" { system = "x86_64-linux"; };
+  };
+}
+```
+</file>
+
+<file path=".agent/skills/nixos-flakes/references/dev-environments.md">
+# Development Environments
+
+## Overview
+
+Three approaches for dev environments:
+1. **nix shell** - Quick, temporary access to packages
+2. **nix develop** - Full dev shell with build inputs
+3. **direnv** - Automatic environment on directory entry
+
+## nix shell
+
+Temporary shell with packages available:
+
+```bash
+# Single package
+nix shell nixpkgs#nodejs
+
+# Multiple packages
+nix shell nixpkgs#nodejs nixpkgs#yarn nixpkgs#python3
+
+# Run command directly
+nix shell nixpkgs#cowsay --command cowsay "Hello"
+
+# From specific nixpkgs version
+nix shell github:NixOS/nixpkgs/nixos-24.11#nodejs
+```
+
+## nix run
+
+Run package without installing:
+
+```bash
+# Run default program
+nix run nixpkgs#hello
+
+# Run specific program from package
+nix run nixpkgs#python3 -- script.py
+
+# Run from flake
+nix run .#myApp
+```
+
+## nix develop
+
+Enter development shell defined in flake:
+
+```bash
+# Default devShell
+nix develop
+
+# Named devShell
+nix develop .#python
+
+# From remote flake
+nix develop github:owner/repo
+
+# Run command without entering shell
+nix develop --command bash -c "npm install && npm test"
+```
+
+## pkgs.mkShell
+
+Define development environment in `flake.nix`:
+
+```nix
+{
+  outputs = { nixpkgs, ... }: let
+    pkgs = nixpkgs.legacyPackages.x86_64-linux;
+  in {
+    devShells.x86_64-linux.default = pkgs.mkShell {
+      # Packages available in shell
+      packages = with pkgs; [
+        nodejs_20
+        yarn
+        python3
+        go
+        rustc
+        cargo
+      ];
+
+      # Build inputs (for compiling native extensions)
+      buildInputs = with pkgs; [
+        openssl
+        zlib
+      ];
+
+      # Native build inputs (build tools)
+      nativeBuildInputs = with pkgs; [
+        pkg-config
+        cmake
+      ];
+
+      # Environment variables
+      MY_VAR = "value";
+      RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
+
+      # Shell hook (runs on entry)
+      shellHook = ''
+        echo "Welcome to dev environment!"
+        export PATH="$PWD/node_modules/.bin:$PATH"
+      '';
+
+      # For C library headers
+      LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
+        pkgs.openssl
+        pkgs.zlib
+      ];
+    };
+  };
+}
+```
+
+## Multi-Platform Support
+
+```nix
+{
+  outputs = { nixpkgs, flake-utils, ... }:
+    flake-utils.lib.eachDefaultSystem (system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+      devShells.default = pkgs.mkShell {
+        packages = with pkgs; [ nodejs ];
+      };
+    });
+}
+```
+
+Or manually:
+
+```nix
+{
+  outputs = { nixpkgs, ... }: let
+    systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
+    forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f {
+      pkgs = nixpkgs.legacyPackages.${system};
+    });
+  in {
+    devShells = forAllSystems ({ pkgs }: {
+      default = pkgs.mkShell { packages = [ pkgs.nodejs ]; };
+    });
+  };
+}
+```
+
+## Multiple Dev Shells
+
+```nix
+{
+  devShells.x86_64-linux = {
+    default = pkgs.mkShell {
+      packages = [ pkgs.nodejs ];
+    };
+
+    python = pkgs.mkShell {
+      packages = [ pkgs.python3 pkgs.poetry ];
+    };
+
+    rust = pkgs.mkShell {
+      packages = [ pkgs.rustc pkgs.cargo pkgs.rust-analyzer ];
+    };
+  };
+}
+
+# Usage:
+# nix develop        # default
+# nix develop .#python
+# nix develop .#rust
+```
+
+## direnv Integration
+
+Automatic environment activation:
+
+### Setup
+
+```nix
+# In home.nix or configuration.nix
+programs.direnv = {
+  enable = true;
+  nix-direnv.enable = true;  # Better caching
+};
+```
+
+### Usage
+
+```bash
+# In project root, create .envrc
+echo "use flake" > .envrc
+
+# Allow direnv
+direnv allow
+
+# Now environment activates automatically on cd
+```
+
+### Advanced .envrc
+
+```bash
+# Basic
+use flake
+
+# With impure (for unfree packages)
+use flake --impure
+
+# Specific devShell
+use flake .#python
+
+# From remote
+use flake github:owner/repo
+
+# Watch additional files (rebuild on change)
+watch_file flake.nix
+watch_file flake.lock
+
+# Additional env vars
+export MY_VAR="value"
+
+# Load .env file
+dotenv_if_exists
+```
+
+## FHS Environment (Downloaded Binaries)
+
+NixOS doesn't follow standard Linux paths. For prebuilt binaries:
+
+```nix
+{ pkgs, ... }: {
+  # Add to environment
+  environment.systemPackages = [
+    (pkgs.buildFHSEnv {
+      name = "fhs";
+      targetPkgs = pkgs: with pkgs; [
+        # Common requirements
+        zlib
+        glib
+        # Add what your binary needs
+        openssl
+        curl
+        libGL
+        xorg.libX11
+      ];
+      runScript = "bash";
+    })
+  ];
+}
+
+# Usage: enter with `fhs`, then run binaries normally
+```
+
+### For Specific Binary
+
+```nix
+{
+  myBinary = pkgs.buildFHSEnv {
+    name = "my-binary";
+    targetPkgs = pkgs: [ pkgs.zlib ];
+    runScript = "${./my-binary}";
+  };
+}
+```
+
+## nix-ld (Alternative for Binaries)
+
+System-wide dynamic linker for unpatched binaries:
+
+```nix
+# In NixOS configuration
+{
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+      stdenv.cc.cc
+      zlib
+      openssl
+      curl
+    ];
+  };
+}
+```
+
+## Python Development
+
+Python packages installed via pip fail on NixOS. Solutions:
+
+### Virtual Environment
+
+```nix
+devShells.default = pkgs.mkShell {
+  packages = [ pkgs.python3 ];
+  shellHook = ''
+    python -m venv .venv
+    source .venv/bin/activate
+    pip install -r requirements.txt
+  '';
+};
+```
+
+### poetry2nix
+
+```nix
+{
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    poetry2nix.url = "github:nix-community/poetry2nix";
+  };
+
+  outputs = { nixpkgs, poetry2nix, ... }: let
+    pkgs = nixpkgs.legacyPackages.x86_64-linux;
+    p2n = poetry2nix.lib.mkPoetry2Nix { inherit pkgs; };
+  in {
+    devShells.x86_64-linux.default = p2n.mkPoetryEnv {\n      projectDir = ./.;
+    };
+  };
+}
+```
+
+## Language-Specific Shells
+
+### Node.js
+```nix
+pkgs.mkShell {
+  packages = with pkgs; [ nodejs_20 yarn nodePackages.pnpm ];
+  shellHook = ''
+    export PATH="$PWD/node_modules/.bin:$PATH"
+  '';
+}
+```
+
+### Rust
+```nix
+pkgs.mkShell {
+  packages = with pkgs; [
+    rustc cargo rust-analyzer rustfmt clippy
+  ];
+  RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
+}
+```
+
+### Go
+```nix
+pkgs.mkShell {
+  packages = with pkgs; [ go gopls gotools go-tools ];
+  shellHook = ''
+    export GOPATH="$PWD/.go"
+    export PATH="$GOPATH/bin:$PATH"
+  '';
+}
+```
+
+### C/C++
+```nix
+pkgs.mkShell {
+  packages = with pkgs; [ gcc cmake gnumake gdb ];
+  buildInputs = with pkgs; [ openssl zlib ];
+  nativeBuildInputs = [ pkgs.pkg-config ];
+}
+```
+
+## Community Templates
+
+Use existing templates instead of writing from scratch:
+
+```bash
+# List available templates
+nix flake show templates
+
+# Initialize from template
+nix flake init -t github:the-nix-way/dev-templates#rust
+nix flake init -t github:the-nix-way/dev-templates#node
+nix flake init -t github:the-nix-way/dev-templates#python
+```
+</file>
+
+<file path=".agent/skills/nixos-flakes/references/flakes.md">
+# Flakes Reference
+
+## Overview
+
+Flakes provide:
+- **Hermetic evaluation** - No impure operations
+- **Lock file** - Reproducible dependency versions
+- **Standard structure** - Consistent `inputs`/`outputs` schema
+- **Composability** - Easy to combine multiple flakes
+
+## Enabling Flakes
+
+```nix
+# In configuration.nix or nix.conf
+nix.settings.experimental-features = [ "nix-command" "flakes" ];
+```
+
+## Input Types
+
+### GitHub
+```nix
+inputs = {
+  # Default branch
+  nixpkgs.url = "github:NixOS/nixpkgs";
+
+  # Specific branch
+  nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+
+  # Specific commit
+  nixpkgs.url = "github:NixOS/nixpkgs/abc123def456";
+
+  # Specific tag
+  nixpkgs.url = "github:NixOS/nixpkgs/24.11";
+
+  # Private repo (uses SSH)
+  private.url = "github:owner/private-repo";
+};
+```
+
+### Git
+```nix
+inputs = {
+  # HTTPS
+  repo.url = "git+https://git.example.com/repo.git";
+
+  # SSH
+  repo.url = "git+ssh://git@github.com/owner/repo.git";
+
+  # Specific branch
+  repo.url = "git+https://example.com/repo?ref=develop";
+
+  # Specific tag
+  repo.url = "git+https://example.com/repo?tag=v1.0.0";
+
+  # Specific commit
+  repo.url = "git+https://example.com/repo?rev=abc123";
+
+  # Shallow clone
+  repo.url = "git+ssh://git@github.com/owner/repo?shallow=1";
+};
+```
+
+### Path (Local)
+```nix
+inputs = {
+  # Local directory
+  local.url = "path:/home/user/projects/my-flake";
+
+  # Relative (from flake root)
+  local.url = "path:./subdir";
+};
+```
+
+### Tarball
+```nix
+inputs = {
+  archive.url = "https://example.com/archive.tar.gz";
+};
+```
+
+### Non-Flake Inputs
+```nix
+inputs = {
+  # Config files, data, etc.
+  dotfiles = {
+    url = "github:user/dotfiles";
+    flake = false;  # Don't evaluate as flake
+  };
+};
+
+# Usage in outputs:
+outputs = { dotfiles, ... }: {
+  # Reference files directly
+  home.file.".vimrc".source = "${dotfiles}/vimrc";
+};
+```
+
+## Input Follows
+
+Prevents downloading multiple versions of the same dependency:
+
+```nix
+inputs = {
+  nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+
+  home-manager = {
+    url = "github:nix-community/home-manager/release-24.11";
+    inputs.nixpkgs.follows = "nixpkgs";  # Use OUR nixpkgs
+  };
+
+  # Nested follows
+  foo = {
+    url = "github:owner/foo";
+    inputs.nixpkgs.follows = "nixpkgs";
+    inputs.bar.follows = "bar";  # If foo has bar as input
+  };
+};
+```
+
+## Flake Outputs Schema
+
+```nix
+outputs = { self, nixpkgs, ... }: {
+  # ===== Packages =====
+  packages.<system>.<name> = derivation;
+  packages.x86_64-linux.default = pkgs.hello;
+  packages.x86_64-linux.myApp = pkgs.callPackage ./app.nix {};
+
+  # ===== Applications =====
+  apps.<system>.<name> = {
+    type = "app";
+    program = "${package}/bin/executable";
+  };
+
+  # ===== Development Shells =====
+  devShells.<system>.<name> = pkgs.mkShell { ... };
+  devShells.x86_64-linux.default = pkgs.mkShell {
+    packages = [ pkgs.nodejs ];
+  };
+
+  # ===== NixOS Configurations =====
+  nixosConfigurations.<hostname> = nixpkgs.lib.nixosSystem {
+    system = "x86_64-linux";
+    modules = [ ./configuration.nix ];
+    specialArgs = { inherit inputs; };  # Pass to modules
+  };
+
+  # ===== Darwin Configurations =====
+  darwinConfigurations.<hostname> = darwin.lib.darwinSystem {\n    system = "aarch64-darwin";
+    modules = [ ./darwin.nix ];
+  };
+
+  # ===== Home Manager Configurations =====
+  homeConfigurations."user@host" = home-manager.lib.homeManagerConfiguration {
+    pkgs = nixpkgs.legacyPackages.x86_64-linux;
+    modules = [ ./home.nix ];
+  };
+
+  # ===== Overlays =====
+  overlays.<name> = final: prev: { ... };
+  overlays.default = final: prev: {
+    myPackage = prev.myPackage.override { ... };
+  };
+
+  # ===== NixOS/Darwin Modules =====
+  nixosModules.<name> = { config, ... }: { ... };
+  darwinModules.<name> = { config, ... }: { ... };
+
+  # ===== Templates =====
+  templates.<name> = {
+    path = ./template;
+    description = "A template";
+  };
+  templates.default = { ... };
+
+  # ===== Checks (CI) =====
+  checks.<system>.<name> = derivation;
+
+  # ===== Formatter =====
+  formatter.<system> = pkgs.nixpkgs-fmt;  # or alejandra, nixfmt
+
+  # ===== Library Functions =====
+  lib = { ... };
+
+  # ===== Hydra Jobs =====
+  hydraJobs.<attr>.<system> = derivation;\n};
+```
+
+## Lock File (flake.lock)
+
+Auto-generated, contains exact versions:
+
+```json
+{
+  "nodes": {
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1234567890,
+        "narHash": "sha256-...",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "abc123...",
+        "type": "github"
+      }
+    }
+  }
+}
+```
+
+## Flake Commands
+
+```bash
+# Initialize new flake
+nix flake init
+nix flake init -t templates#rust  # From template
+
+# Show flake info
+nix flake show
+nix flake show github:NixOS/nixpkgs
+
+# Show flake metadata
+nix flake metadata
+
+# Update all inputs
+nix flake update
+
+# Update specific input
+nix flake update nixpkgs
+
+# Lock to specific version
+nix flake lock --override-input nixpkgs github:NixOS/nixpkgs/abc123
+
+# Check flake
+nix flake check
+
+# Build output
+nix build .#packageName
+nix build .#packages.x86_64-linux.default
+
+# Run output
+nix run .#appName
+
+# Enter dev shell
+nix develop
+nix develop .#shellName
+
+# Archive flake
+nix flake archive
+
+# Clone flake
+nix flake clone github:owner/repo --dest ./local
+```
+
+## Self Reference
+
+The `self` input refers to the current flake:
+
+```nix
+outputs = { self, nixpkgs, ... }: {
+  packages.x86_64-linux.default = let
+    # Access other outputs
+    myLib = self.lib;
+
+    # Access flake source
+    src = self;
+    version = self.rev or self.dirtyRev or "unknown";
+  in
+    # ...
+};
+```
+
+## Flake Registry
+
+Named shortcuts for common flakes:
+
+```bash
+# List registry
+nix registry list
+
+# Add to registry
+nix registry add myflake github:owner/repo
+
+# Pin version
+nix registry pin nixpkgs
+
+# Remove
+nix registry remove myflake
+
+# Use in commands
+nix shell nixpkgs#hello  # Uses registry entry
+nix shell github:NixOS/nixpkgs#hello  # Explicit
+```
+</file>
+
+<file path=".agent/skills/nixos-flakes/references/home-manager.md">
+# Home Manager Reference
+
+## Overview
+
+Home Manager manages user-specific:
+- Packages in `~/.nix-profile`
+- Dotfiles in `~/.config`, `~/.*`
+- User services
+- Shell configuration
+
+## Installation Methods
+
+### As NixOS Module
+```nix
+# flake.nix
+{
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    home-manager = {
+      url = "github:nix-community/home-manager/release-24.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };\n  };
+
+  outputs = { nixpkgs, home-manager, ... }: {
+    nixosConfigurations.hostname = nixpkgs.lib.nixosSystem {
+      modules = [
+        ./configuration.nix
+        home-manager.nixosModules.home-manager
+        {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.users.username = import ./home.nix;
+          # Pass extra args to home.nix
+          home-manager.extraSpecialArgs = { inherit inputs; };
+        }
+      ];
+    };\n  };\n}
+```
+
+### As Darwin Module
+```nix
+# Same pattern as NixOS
+{
+  outputs = { nix-darwin, home-manager, ... }: {
+    darwinConfigurations.hostname = nix-darwin.lib.darwinSystem {
+      modules = [
+        ./darwin.nix
+        home-manager.darwinModules.home-manager
+        {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.users.username = import ./home.nix;
+        }
+      ];
+    };\n  };\n}
+```
+
+### Standalone
+```nix
+# flake.nix
+{
+  outputs = { nixpkgs, home-manager, ... }: {
+    homeConfigurations."user@hostname" = home-manager.lib.homeManagerConfiguration {
+      pkgs = nixpkgs.legacyPackages.x86_64-linux;
+      modules = [ ./home.nix ];
+      extraSpecialArgs = { inherit inputs; };
+    };
+  };\n}
+
+# Apply with:
+# home-manager switch --flake .#user@hostname
+```
+
+## Basic home.nix
+
+```nix
+{ config, pkgs, ... }: {
+  home.username = "username";
+  home.homeDirectory = "/home/username";  # /Users/username on macOS
+
+  # Packages
+  home.packages = with pkgs; [
+    ripgrep
+    fd
+    jq
+    htop
+  ];
+
+  # IMPORTANT: Match your Home Manager version
+  home.stateVersion = "24.11";
+
+  # Let Home Manager manage itself (standalone only)
+  programs.home-manager.enable = true;
+}
+```
+
+## File Management
+
+```nix
+{
+  # Copy file
+  home.file.".config/app/config.toml".source = ./config.toml;
+
+  # Create from text
+  home.file.".config/app/config.toml".text = ''
+    [section]
+    key = "value"
+  '';
+
+  # Symlink
+  home.file.".config/app".source = config.lib.file.mkOutOfStoreSymlink ./app-config;
+
+  # Executable script
+  home.file.".local/bin/myscript" = {
+    executable = true;
+    text = ''
+      #!/bin/bash
+      echo "Hello"
+    '';
+  };
+
+  # Recursive directory
+  home.file.".config/nvim" = {
+    source = ./nvim;
+    recursive = true;
+  };
+
+  # XDG config (equivalent to ~/.config)
+  xdg.configFile."app/config.toml".source = ./config.toml;
+}
+```
+
+## Program Modules
+
+Home Manager has built-in modules for many programs:
+
+### Git
+```nix
+{
+  programs.git = {
+    enable = true;
+    userName = "Your Name";
+    userEmail = "you@example.com";
+
+    extraConfig = {
+      init.defaultBranch = "main";
+      pull.rebase = true;
+      push.autoSetupRemote = true;
+    };
+
+    aliases = {
+      co = "checkout";
+      st = "status";
+    };
+
+    ignores = [ ".DS_Store" "*.swp" ];
+
+    signing = {
+      key = "KEYID";
+      signByDefault = true;
+    };
+
+    delta.enable = true;  # Better diffs
+  };\n}
+```
+
+### Shell (Zsh)
+```nix
+{
+  programs.zsh = {
+    enable = true;
+    autosuggestion.enable = true;
+    syntaxHighlighting.enable = true;
+
+    shellAliases = {
+      ll = "ls -la";
+      update = "sudo nixos-rebuild switch --flake .#hostname";
+    };
+
+    initExtra = ''
+      # Custom init
+      export PATH="$HOME/.local/bin:$PATH"
+    '';
+
+    oh-my-zsh = {
+      enable = true;
+      plugins = [ "git" "docker" ];
+      theme = "robbyrussell";
+    };\n  };\n}
+```
+
+### Shell (Fish)
+```nix
+{
+  programs.fish = {
+    enable = true;
+    shellAliases = { ll = "ls -la"; };
+    shellInit = ''
+      set -gx PATH $HOME/.local/bin $PATH
+    '';
+    plugins = [
+      { name = "z"; src = pkgs.fishPlugins.z.src; }
+    ];
+  };\n}
+```
+
+### Neovim
+```nix
+{
+  programs.neovim = {
+    enable = true;
+    defaultEditor = true;
+    viAlias = true;
+    vimAlias = true;
+
+    plugins = with pkgs.vimPlugins; [\n      nvim-treesitter.withAllGrammars
+      telescope-nvim
+      nvim-lspconfig
+    ];
+
+    extraLuaConfig = ''
+      -- Lua config here
+      vim.opt.number = true
+    '';
+
+    extraPackages = with pkgs; [
+      lua-language-server
+      nil  # Nix LSP
+    ];
+  };\n}
+```
+
+### Starship Prompt
+```nix
+{
+  programs.starship = {
+    enable = true;
+    settings = {
+      add_newline = false;
+      character.success_symbol = "[➜](bold green)";
+    };\n  };\n}
+```
+
+### Direnv
+```nix
+{
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;  # Better Nix integration
+  };\n}
+```
+
+### Tmux
+```nix
+{
+  programs.tmux = {
+    enable = true;
+    clock24 = true;
+    baseIndex = 1;
+    terminal = "screen-256color";
+    plugins = with pkgs.tmuxPlugins; [
+      sensible
+      yank
+    ];
+    extraConfig = ''
+      set -g mouse on
+    '';
+  };\n}
+```
+
+## Environment Variables
+
+```nix
+{
+  home.sessionVariables = {
+    EDITOR = "nvim";
+    BROWSER = "firefox";
+    MY_VAR = "value";
+  };
+
+  # Path additions
+  home.sessionPath = [\n    "$HOME/.local/bin"
+    "$HOME/go/bin"
+  ];
+}
+```
+
+## User Services (systemd)
+
+```nix
+{
+  # Linux only
+  systemd.user.services.myservice = {
+    Unit.Description = "My Service";
+    Install.WantedBy = [ "default.target" ];
+    Service = {
+      ExecStart = "${pkgs.myapp}/bin/myapp";
+      Restart = "always";
+    };\n  };\n}
+```
+
+## macOS (launchd)
+
+```nix
+{
+  # macOS only
+  launchd.agents.myservice = {
+    enable = true;
+    config = {
+      Program = "${pkgs.myapp}/bin/myapp";
+      RunAtLoad = true;
+      KeepAlive = true;\n    };\n  };\n}
+```
+
+## Activation Scripts
+
+```nix
+{
+  home.activation = {
+    myScript = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      # Run after home-manager writes files
+      $DRY_RUN_CMD mkdir -p $HOME/.cache/myapp
+    '';\n  };\n}
+```
+
+## NixOS vs Home Manager
+
+| Aspect | NixOS | Home Manager |
+|--------|-------|--------------|
+| Scope | System-wide | Per-user |
+| Requires | Root | No root needed |
+| Services | systemd system | systemd user |
+| Location | /etc, /run | ~/.config, ~/ |
+| Packages | Available to all | User-specific |
+
+**Use NixOS for:**
+- System services (nginx, postgres)
+- Hardware configuration
+- Boot, kernel, networking
+- System-wide packages
+
+**Use Home Manager for:**
+- User dotfiles
+- User packages
+- Shell configuration
+- Desktop apps
+- Portable configs (use across systems)
+</file>
+
+<file path=".agent/skills/nixos-flakes/references/nix-language.md">
+# Nix Language Reference
+
+## Overview
+
+Nix is a pure, lazy, functional language. Key characteristics:
+- **Pure**: Functions have no side effects
+- **Lazy**: Values computed only when needed
+- **Functional**: Functions are first-class citizens
+
+## Basic Types
+
+```nix
+# Strings
+"hello world"
+''
+  Multi-line
+  string
+''
+"interpolation: ${pkgs.hello}"
+
+# Numbers
+42\n3.14
+
+# Booleans
+true
+false
+
+# Null
+null
+
+# Paths (NOT strings)
+./relative/path
+/absolute/path
+~/home/path
+
+# Lists
+[ 1 2 3 "mixed" ./types ]
+
+# Attribute Sets
+{
+  key = "value";
+  nested.key = "works";
+  "special-key" = "quoted";
+}
+```
+
+## Attribute Sets
+
+```nix
+# Basic
+let
+  attrs = {
+    a = 1;
+    b = 2;
+  };
+in attrs.a  # => 1
+
+# Recursive (rec)
+rec {
+  x = 1;
+  y = x + 1;  # Can reference x
+}
+
+# Nested access
+attrs.nested.deeply.value
+attrs.nested.deeply.value or "default"  # with fallback
+
+# Has attribute
+attrs ? key  # => true/false
+
+# Merge
+attrs1 // attrs2  # attrs2 overrides attrs1
+```
+
+## Let Bindings
+
+```nix
+let
+  x = 1;
+  y = 2;
+  f = a: a + 1;
+in
+  f x + y  # => 4
+```
+
+## Functions
+
+```nix
+# Single argument
+x: x + 1
+
+# Multiple arguments (curried)
+x: y: x + y
+
+# Attribute set argument
+{ a, b }: a + b
+
+# With defaults
+{ a, b ? 0 }: a + b
+
+# With extra attributes (@-pattern)
+{ a, b, ... }@args: a + b + args.c
+
+# Calling
+(x: x + 1) 5  # => 6
+(add 1) 2     # curried
+func { a = 1; b = 2; }
+```
+
+## Control Flow
+
+```nix
+# If-then-else (expression, not statement!)
+if x > 0 then "positive" else "non-positive"
+
+# Assert
+assert x > 0; x + 1  # fails if x <= 0
+
+# With (brings attrs into scope)
+with pkgs; [ git vim nodejs ]
+# equivalent to: [ pkgs.git pkgs.vim pkgs.nodejs ]
+```
+
+## Inherit
+
+```nix
+# Shorthand for key = key
+let
+  x = 1;
+  y = 2;
+in {
+  inherit x y;  # same as: x = x; y = y;
+}
+
+# From attribute set\n{
+  inherit (pkgs) git vim;  # same as: git = pkgs.git; vim = pkgs.vim;
+}
+```
+
+## Import
+
+```nix
+# Import evaluates a Nix file
+import ./file.nix
+
+# Import with arguments
+import ./file.nix { inherit pkgs; }
+
+# Import directory (uses default.nix)
+import ./directory
+```
+
+## Builtins
+
+```nix
+# Common builtins
+builtins.toString 42            # "42"
+builtins.toJSON { a = 1; }      # "{\"a\":1}"
+builtins.fromJSON "{\"a\":1}"   # { a = 1; }
+builtins.readFile ./file.txt    # file contents
+builtins.pathExists ./path      # true/false
+builtins.attrNames { a=1; b=2; } # [ "a" "b" ]
+builtins.attrValues { a=1; b=2; } # [ 1 2 ]
+builtins.map (x: x+1) [1 2 3]   # [ 2 3 4 ]
+builtins.filter (x: x>1) [1 2 3] # [ 2 3 ]
+builtins.elem 2 [1 2 3]         # true
+builtins.length [1 2 3]         # 3
+builtins.head [1 2 3]           # 1
+builtins.tail [1 2 3]           # [ 2 3 ]
+builtins.concatLists [[1] [2]]  # [ 1 2 ]
+builtins.genList (i: i) 3       # [ 0 1 2 ]
+builtins.listToAttrs [{name="a"; value=1;}]  # { a = 1; }
+builtins.mapAttrs (n: v: v+1) {a=1;}  # { a = 2; }
+builtins.fetchurl { url = "..."; sha256 = "..."; }
+builtins.fetchGit { url = "..."; }
+builtins.currentSystem          # "x86_64-linux" etc.
+```
+
+## Lib Functions
+
+Common `nixpkgs.lib` functions:
+
+```nix
+{ lib, ... }: {
+  # Conditionals
+  lib.mkIf condition { /* config */ }
+  lib.mkMerge [ config1 config2 ]
+
+  # Priority
+  lib.mkDefault value      # priority 1000
+  lib.mkForce value        # priority 50
+  lib.mkOverride 100 value # custom priority
+
+  # List ordering
+  lib.mkBefore list  # prepend
+  lib.mkAfter list   # append
+
+  # Options
+  lib.mkOption { type = lib.types.str; default = ""; }
+  lib.mkEnableOption "feature"
+
+  # Strings
+  lib.concatStrings [ "a" "b" ]        # "ab"
+  lib.concatStringsSep ", " [ "a" "b" ] # "a, b"
+  lib.optionalString true "yes"        # "yes"
+  lib.strings.hasPrefix "foo" "foobar" # true
+
+  # Lists
+  lib.optional true "item"    # [ "item" ]
+  lib.optionals true [ 1 2 ]  # [ 1 2 ]
+  lib.flatten [ [1] [2 3] ]   # [ 1 2 3 ]
+  lib.unique [ 1 1 2 ]        # [ 1 2 ]
+
+  # Attrs
+  lib.filterAttrs (n: v: v != null) attrs
+  lib.mapAttrs (n: v: v + 1) attrs
+  lib.recursiveUpdate attrs1 attrs2
+  lib.attrByPath ["a" "b"] default attrs
+
+  # Paths
+  lib.makeLibraryPath [ pkgs.openssl ]
+  lib.makeBinPath [ pkgs.git ]
+
+  # System
+  lib.systems.elaborate "x86_64-linux"
+}
+```
+
+## Learning Resources
+
+- **nix.dev** - Official learning resource: https://nix.dev
+- **Tour of Nix** - Interactive tutorial: https://nixcloud.io/tour
+- **Noogle.dev** - Function search engine: https://noogle.dev
+- **Nix Pills** - Deep dive series: https://nixos.org/guides/nix-pills
+- **Nix Reference Manual** - Official docs: https://nix.dev/manual/nix
+</file>
+
+<file path=".agent/skills/nixos-flakes/references/nixpkgs-advanced.md">
+# Nixpkgs Advanced Usage
+
+## callPackage
+
+`callPackage` auto-injects dependencies from nixpkgs:
+
+```nix
+# In your package definition (mypackage.nix)
+{ lib, stdenv, fetchFromGitHub, cmake, openssl }:
+
+stdenv.mkDerivation {
+  pname = "mypackage";
+  version = "1.0.0";
+  src = fetchFromGitHub { ... };
+  nativeBuildInputs = [ cmake ];
+  buildInputs = [ openssl ];
+}
+
+# Calling it
+pkgs.callPackage ./mypackage.nix { }
+
+# With overrides
+pkgs.callPackage ./mypackage.nix {
+  openssl = pkgs.openssl_3;
+}
+```
+
+### How callPackage Works
+
+1. Detects function parameters from `{ lib, stdenv, ... }:`
+2. Matches parameters against `pkgs` attributes
+3. Injects matched dependencies automatically
+4. Second argument allows explicit overrides
+
+### Best Practice
+
+Always use `callPackage` for custom derivations:
+- Dependencies are explicit and discoverable
+- Easy to override specific inputs
+- Follows nixpkgs conventions
+
+## override
+
+Modifies function arguments (inputs to the derivation):
+
+```nix
+# Override specific arguments
+pkgs.vim.override {
+  python3 = pkgs.python311;
+}
+
+# Practical examples
+pkgs.fcitx5-rime.override {
+  rimeDataPkgs = [ ./custom-rime-data ];
+}
+
+pkgs.vscode.override {
+  commandLineArgs = "--enable-features=UseOzonePlatform";
+}
+
+pkgs.firefox.override {
+  nativeMessagingHosts = [ pkgs.tridactyl-native ];
+}
+```
+
+### Finding Override Arguments
+
+```bash
+# In nix repl
+nix repl -f '<nixpkgs>'
+:e pkgs.vim  # Opens in editor
+
+# Or check nixpkgs source on GitHub
+```
+
+## overrideAttrs
+
+Modifies derivation attributes (build settings):
+
+```nix
+# Basic syntax
+pkgs.hello.overrideAttrs (oldAttrs: {
+  patches = oldAttrs.patches or [] ++ [ ./my-patch.patch ];
+})
+
+# Access and modify multiple attributes
+pkgs.myPackage.overrideAttrs (old: rec {
+  version = "2.0.0";
+  src = pkgs.fetchFromGitHub {
+    owner = "owner";
+    repo = "repo";
+    rev = "v${version}";
+    sha256 = "sha256-...";
+  };
+})
+
+# Disable tests
+pkgs.myPackage.overrideAttrs (old: {
+  doCheck = false;
+})
+
+# Add build flags
+pkgs.myPackage.overrideAttrs (old: {
+  configureFlags = old.configureFlags or [] ++ [ "--enable-feature" ];
+})
+
+# Change phases
+pkgs.myPackage.overrideAttrs (old: {
+  postInstall = ''
+    ${old.postInstall or ""}
+    cp extra-file $out/bin/
+  '';
+})
+```
+
+### Common Attributes to Override
+
+| Attribute | Purpose |
+|-----------|---------|
+| `src` | Source code location |
+| `version` | Package version |
+| `patches` | List of patches |
+| `buildInputs` | Runtime dependencies |
+| `nativeBuildInputs` | Build-time dependencies |
+| `configureFlags` | ./configure arguments |
+| `cmakeFlags` | CMake arguments |
+| `doCheck` | Run tests |
+| `postInstall` | Post-install commands |
+
+## Overlays
+
+Overlays globally modify nixpkgs. All dependents use the modified version.
+
+### Basic Structure
+
+```nix
+# Overlay is a function: final -> prev -> { modifications }
+(final: prev: {
+  # prev = original package set
+  # final = resulting package set (with all overlays applied)
+
+  myPackage = prev.myPackage.override { ... };
+})
+```
+
+### Using final vs prev
+
+```nix
+(final: prev: {
+  # Use prev to reference original package
+  vim-modified = prev.vim.override { python = prev.python3; };
+
+  # Use final to reference other overlaid packages (avoid infinite recursion)
+  myApp = prev.callPackage ./app.nix {
+    someLib = final.myLib;  # Uses potentially-overlaid myLib
+  };
+})
+```
+
+### Applying Overlays in Flakes
+
+```nix
+# Method 1: In nixosConfiguration
+{
+  nixpkgs.overlays = [
+    (final: prev: {
+      myPackage = prev.myPackage.override { ... };
+    })
+
+    # Import from file
+    (import ./overlays/myoverlay.nix)
+  ];
+}
+
+# Method 2: When importing nixpkgs
+outputs = { nixpkgs, ... }: let
+  pkgs = import nixpkgs {
+    system = "x86_64-linux";
+    overlays = [
+      (final: prev: { ... })
+    ];
+  };
+in { ... };
+```
+
+### Practical Overlay Examples
+
+```nix
+# Chrome with custom flags
+(final: prev: {
+  google-chrome = prev.google-chrome.override {
+    commandLineArgs = [
+      "--proxy-server=127.0.0.1:1080"
+      "--enable-features=VaapiVideoDecoder"
+    ];
+  };
+})
+
+# Steam with extra packages
+(final: prev: {
+  steam = prev.steam.override {
+    extraPkgs = pkgs: with pkgs; [ keyutils libkrb5 ];
+  };
+})
+
+# Add custom package
+(final: prev: {
+  myTool = prev.callPackage ./pkgs/mytool { };
+})
+```
+
+### Exporting Overlays from Flakes
+
+```nix
+outputs = { self, nixpkgs, ... }: {
+  # Export overlay for others to use
+  overlays.default = final: prev: {
+    myPackage = prev.callPackage ./package.nix { };
+  };
+
+  # Use in your own config
+  nixosConfigurations.host = nixpkgs.lib.nixosSystem {
+    modules = [{
+      nixpkgs.overlays = [ self.overlays.default ];
+    }];
+  };
+};
+```
+
+## Multiple Nixpkgs Instances
+
+When overlays affect too many packages (cache invalidation), use separate instances:
+
+```nix
+outputs = { nixpkgs, ... }: let
+  system = "x86_64-linux";
+
+  # Main nixpkgs (clean, uses binary cache)
+  pkgs = nixpkgs.legacyPackages.${system};
+
+  # Custom nixpkgs with overlays (may build from source)
+  pkgsCustom = import nixpkgs {
+    inherit system;
+    overlays = [ myHeavyOverlay ];
+  };
+in {
+  # Use pkgs for most things
+  environment.systemPackages = [ pkgs.vim pkgs.git ];
+
+  # Use pkgsCustom only where needed
+  programs.steam.package = pkgsCustom.steam;
+};
+```
+
+## Unfree Packages
+
+### Method 1: nixpkgs-unfree (Recommended)
+
+```nix
+inputs = {
+  nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+  nixpkgs-unfree.url = "github:numtide/nixpkgs-unfree";
+  nixpkgs-unfree.inputs.nixpkgs.follows = "nixpkgs";
+};
+
+outputs = { nixpkgs-unfree, ... }: {
+  devShells.default = nixpkgs-unfree.legacyPackages.x86_64-linux.mkShell {
+    packages = [ nixpkgs-unfree.legacyPackages.x86_64-linux.vscode ];
+  };
+};
+```
+
+### Method 2: Configuration
+
+```nix
+# In NixOS/Darwin configuration
+{ nixpkgs.config.allowUnfree = true; }
+
+# Or specific packages only
+{
+  nixpkgs.config.allowUnfreePredicate = pkg:
+    builtins.elem (lib.getName pkg) [
+      "vscode"
+      "slack"
+      "discord"
+    ];
+}
+```
+
+### Method 3: User Config
+
+```nix
+# ~/.config/nixpkgs/config.nix
+{ allowUnfree = true; }
+```
+
+**Note:** `nixpkgs.config.allowUnfree` in flake.nix does NOT work with `nix develop`. Use nixpkgs-unfree or user config instead.
+
+## Fetchers
+
+```nix
+# From GitHub
+src = pkgs.fetchFromGitHub {
+  owner = "owner";
+  repo = "repo";
+  rev = "v1.0.0";  # tag, branch, or commit
+  sha256 = "";  # Leave empty first, nix will tell you
+};
+
+# From GitLab
+src = pkgs.fetchFromGitLab {
+  owner = "owner";
+  repo = "repo";
+  rev = "v1.0.0";
+  sha256 = "";
+};
+
+# From URL
+src = pkgs.fetchurl {
+  url = "https://example.com/file.tar.gz";
+  sha256 = "";
+};
+
+# From Git (with submodules)
+src = pkgs.fetchgit {
+  url = "https://github.com/owner/repo.git";
+  rev = "abc123";
+  sha256 = "";
+  fetchSubmodules = true;
+};
+
+# Get hash for fetchurl
+# nix-prefetch-url https://example.com/file.tar.gz
+
+# Get hash for fetchFromGitHub
+# nix-prefetch-url --unpack https://github.com/owner/repo/archive/v1.0.0.tar.gz
+```
+</file>
+
+<file path=".agent/skills/nixos-flakes/references/templates.md">
+# Nix Templates Reference
+
+## Overview
+
+Templates provide a quick way to bootstrap new Nix projects. Built-in and community templates cover everything from simple scripts to complex NixOS configurations.
+
+## Built-in Templates
+
+```bash
+# List available templates in nixpkgs
+nix flake show nixpkgs
+
+# Initialize from built-in template
+nix flake init -t nixpkgs#hello
+```
+
+## Community Templates (Recommended)
+
+### The Nix Way (Modern Standard)
+GitHub: `the-nix-way/dev-templates`
+
+| Language | Command |
+|----------|---------|
+| Node.js | `nix flake init -t github:the-nix-way/dev-templates#node` |
+| Python | `nix flake init -t github:the-nix-way/dev-templates#python` |
+| Rust | `nix flake init -t github:the-nix-way/dev-templates#rust` |
+| Go | `nix flake init -t github:the-nix-way/dev-templates#go` |
+| C/C++ | `nix flake init -t github:the-nix-way/dev-templates#cpp` |
+
+## Starter flake.nix Examples
+
+### 1. Minimal Dev Shell
+```nix
+{
+  description = "A simple development shell";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    flake-utils.url = "github:numtide/flake-utils";
+  };
+
+  outputs = { self, nixpkgs, flake-utils }:
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+      in
+      {
+        devShells.default = pkgs.mkShell {
+          packages = [ pkgs.git pkgs.vim ];
+        };
+      }
+    );
+}
+```
+
+### 2. Personal NixOS Configuration
+```nix
+{
+  description = "My personal NixOS configuration";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    home-manager = {
+      url = "github:nix-community/home-manager/release-24.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  outputs = { self, nixpkgs, home-manager, ... }@inputs: {
+    nixosConfigurations.myhost = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      specialArgs = { inherit inputs; };
+      modules = [
+        ./configuration.nix
+        home-manager.nixosModules.home-manager
+        {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.users.user = import ./home.nix;
+        }
+      ];
+    };
+  };
+}
+```
+
+### 3. Application Package
+```nix
+{
+  description = "A simple application package";
+
+  outputs = { self, nixpkgs }: let
+    system = "x86_64-linux";
+    pkgs = nixpkgs.legacyPackages.${system};
+  in {
+    packages.${system}.default = pkgs.stdenv.mkDerivation {
+      pname = "myapp";
+      version = "0.1.0";
+      src = ./.;
+      buildInputs = [ pkgs.hello ];
+      installPhase = ''
+        mkdir -p $out/bin
+        cp myapp $out/bin/
+      '';
+    };
+  };
+}
+```
+
+## Creating Your Own Templates
+
+In `flake.nix` of your templates repository:
+
+```nix
+{
+  description = "My custom templates";
+
+  outputs = { self }: {
+    templates = {
+      basic = {
+        path = ./basic;
+        description = "A basic template";
+      };
+      advanced = {
+        path = ./advanced;
+        description = "An advanced template";
+      };
+    };
+    defaultTemplate = self.templates.basic;
+  };
+}
+```
+
+## Using Templates
+
+| Task | Command |
+|------|---------|
+| List templates | `nix flake show github:owner/repo` |
+| Initialize (Current Dir) | `nix flake init -t .#template-name` |
+| Create New Project | `nix flake new my-project -t .#template-name` |
+| Use Registry Template | `nix flake init -t myregistry#template` |
+
+## Tips
+
+1. **Keep it minimal** - Templates should be a starting point, not a complete app.
+2. **Use flake-utils** - Simplifies multi-platform support.
+3. **Include .envrc** - Add `use flake` to help users with direnv.
+4. **README.md** - Briefly explain what's in the template and how to use it.
+</file>
+
+<file path=".agent/skills/nixos-flakes/SKILL.md">
+---
+name: nix
+description: Comprehensive NixOS, Nix Flakes, Home Manager, and nix-darwin skill. Covers declarative system configuration, reproducible environments, package management, and cross-platform Nix workflows. Activate for any Nix/NixOS/Flakes/Home-Manager/nix-darwin tasks.
+---
+
+# Nix Ecosystem Guide
+
+## Core Philosophy
+
+1. **Declarative over Imperative** - Describe desired state, not steps to reach it
+2. **Reproducibility** - Lock files (`flake.lock`) pin exact versions
+3. **Immutability** - Nix Store is read-only; same inputs = same outputs
+4. **Rollback (NixOS)** - Every generation preserved; instant recovery via boot menu
+
+## Flake Structure
+
+```nix
+{
+  description = "My Nix configuration";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    home-manager = {
+      url = "github:nix-community/home-manager/release-24.11";
+      inputs.nixpkgs.follows = "nixpkgs";  # CRITICAL: avoid duplicate nixpkgs
+    };
+    # macOS support
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin/nix-darwin-24.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  outputs = { self, nixpkgs, home-manager, nix-darwin, ... }@inputs: {
+    # NixOS configurations
+    nixosConfigurations.hostname = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [ ./configuration.nix ];
+    };
+
+    # macOS configurations
+    darwinConfigurations.hostname = nix-darwin.lib.darwinSystem {
+      system = "aarch64-darwin";  # or x86_64-darwin for Intel
+      modules = [ ./darwin.nix ];
+    };
+
+    # Development shells
+    devShells.x86_64-linux.default = nixpkgs.legacyPackages.x86_64-linux.mkShell {
+      packages = [ /* ... */ ];
+    };
+  };
+}
+```
+
+## Essential Patterns
+
+### Input Management
+```nix
+inputs = {
+  nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+  unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+  # Use parent's nixpkgs to avoid downloading multiple versions
+  home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+  # Non-flake input (config files, etc.)
+  private-config = {
+    url = "git+ssh://git@github.com/user/config.git";
+    flake = false;
+  };
+};
+```
+
+### Module System
+```nix
+# Modules have: imports, options, config
+{ config, pkgs, lib, ... }: {
+  imports = [ ./hardware.nix ./services.nix ];
+
+  options.myOption = lib.mkOption {
+    type = lib.types.bool;
+    default = false;
+  };
+
+  config = lib.mkIf config.myOption {
+    # conditional configuration
+  };
+}
+```
+
+### Priority Control
+```nix
+{
+  # lib.mkDefault (priority 1000) - base module defaults
+  services.nginx.enable = lib.mkDefault true;
+
+  # Direct assignment (priority 100) - normal config
+  services.nginx.enable = true;
+
+  # lib.mkForce (priority 50) - override everything
+  services.nginx.enable = lib.mkForce false;
+}
+```
+
+### Package Customization
+```nix
+{
+  # Override function arguments
+  pkgs.fcitx5-rime.override { rimeDataPkgs = [ ./custom-rime ]; }
+
+  # Override derivation attributes
+  pkgs.hello.overrideAttrs (old: { doCheck = false; })
+
+  # Overlays (global modification)
+  nixpkgs.overlays = [
+    (final: prev: {
+      myPackage = prev.myPackage.override { /* ... */ };
+    })
+  ];
+}
+```
+
+## Platform-Specific
+
+### NixOS
+```bash
+sudo nixos-rebuild switch --flake .#hostname
+sudo nixos-rebuild boot --flake .#hostname    # apply on next boot
+sudo nixos-rebuild test --flake .#hostname    # test without boot entry
+```
+
+### nix-darwin (macOS)
+```bash
+darwin-rebuild switch --flake .#hostname
+# TouchID for sudo:
+# security.pam.services.sudo_local.touchIdAuth = true;
+```
+
+### Home Manager
+```nix
+# As NixOS/Darwin module:
+home-manager.useGlobalPkgs = true;
+home-manager.useUserPackages = true;
+home-manager.users.username = import ./home.nix;
+
+# Standalone:
+home-manager switch --flake .#username@hostname
+```
+
+## Commands Reference
+
+| Task | Command |
+|------|---------|
+| Rebuild NixOS | `sudo nixos-rebuild switch --flake .#hostname` |
+| Rebuild Darwin | `darwin-rebuild switch --flake .#hostname` |
+| Dev shell | `nix develop` |
+| Temp package | `nix shell nixpkgs#package` |
+| Run package | `nix run nixpkgs#package` |
+| Update all | `nix flake update` |
+| Update one | `nix flake update nixpkgs` |
+| GC old gens | `sudo nix-collect-garbage -d` |
+| List gens | `nix profile history --profile /nix/var/nix/profiles/system` |
+| Debug build | `nixos-rebuild switch --show-trace -L -v` |
+| REPL | `nix repl` then `:lf .` to load flake |
+
+## Common Gotchas
+
+1. **Untracked files ignored** - `git add` before any flake command (nix build/run/shell/develop, nixos-rebuild, darwin-rebuild)
+2. **allowUnfree fails in devShells** - Use `nixpkgs-unfree` overlay or `~/.config/nixpkgs/config.nix`
+3. **Duplicate input downloads** - Use `follows` to pin dependencies (most common: `inputs.nixpkgs.follows`)
+4. **Python pip fails** - Use `venv`, `poetry2nix`, or containers
+5. **Downloaded binaries fail** - Use FHS environment or `nix-ld`
+6. **Merge conflicts in lists** - Use `lib.mkBefore`/`lib.mkAfter` for ordering
+7. **Build from source unexpectedly** - Check if overlays invalidate cache
+
+## Development Environments
+
+```nix
+# In flake.nix outputs:
+devShells.x86_64-linux.default = pkgs.mkShell {
+  packages = with pkgs; [ nodejs python3 rustc ];
+
+  shellHook = ''
+    echo "Dev environment ready"
+    export MY_VAR="value"
+  '';
+
+  # For C libraries
+  LD_LIBRARY_PATH = lib.makeLibraryPath [ pkgs.openssl ];
+};
+```
+
+### direnv Integration
+```bash
+# .envrc
+use flake
+# or for unfree: use flake --impure
+```
+
+## Debugging
+
+```bash
+# Verbose rebuild
+nixos-rebuild switch --show-trace --print-build-logs --verbose
+
+# Interactive REPL
+nix repl
+:lf .                    # load current flake
+:e pkgs.hello           # open in editor
+:b pkgs.hello           # build derivation
+inputs.<TAB>            # explore inputs
+```
+
+## References
+
+For detailed information, see:
+- `references/nix-language.md` - Nix language syntax
+- `references/flakes.md` - Flake inputs/outputs details
+- `references/home-manager.md` - User environment management
+- `references/nix-darwin.md` - macOS configuration
+- `references/nixpkgs-advanced.md` - Overlays, overrides, callPackage
+- `references/dev-environments.md` - Dev shells, direnv, FHS
+- `references/best-practices.md` - Modularization, debugging, deployment
+- `references/templates.md` - Ready-to-use flake.nix examples
+</file>
+
 <file path=".agent/skills/scratchpad/references/examples.md">
 # Scratch Pad Usage Examples
 
@@ -810,351 +3114,45 @@ python scripts/scratch_pad.py --file $SCRATCH section "Phase 3: Conclusions"
 ```
 </file>
 
-<file path=".agent/skills/scratchpad/scripts/scratch_pad.py">
-#!/usr/bin/env python3
-"""
-Scratch Pad Manager (Markdown Version) - Direct markdown file management for long-running tasks
-
-Module usage:
-    from scripts.scratch_pad_md import ScratchPadManager
-    
-    manager = ScratchPadManager('/tmp/scratch.md')
-    manager.init("My Task")
-    manager.add_section("## Research Findings")
-    manager.append("Found 3 key competitors...")
-    manager.log_tool("web_search", {"query": "AI trends"}, "Found 10 results")
-
-CLI usage:
-    python scripts/scratch_pad.py init "My Task" 
-    python scripts/scratch_pad.py append "## Section Title"
-    python scripts/scratch_pad.py append "Content to add..."
-    python scripts/scratch_pad.py log-tool "web_search" '{"query": "test"}' "Result text"
-"""
-
-import os
-import sys
-from datetime import datetime
-from pathlib import Path
-from typing import Optional, Dict, Any
-import argparse
-import json
-
-class ScratchPadManager:
-    """Markdown-based scratch pad manager"""
-    
-    def __init__(self, pad_file: str = "/tmp/scratch_pad.md"):
-        """Initialize scratch pad manager
-        
-        Args:
-            pad_file: Path to the markdown file
-        """
-        self.pad_file = Path(pad_file)
-        
-    def init(self, task_name: str = "Untitled Task") -> Dict[str, Any]:
-        """Initialize a new scratch pad with header
-        
-        Args:
-            task_name: Name of the task
-            
-        Returns:
-            Dict with status and message
-        """
-        # Ensure directory exists
-        self.pad_file.parent.mkdir(parents=True, exist_ok=True)
-        
-        # Create initial content
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        content = f"""# 📋 {task_name}
-
-**Created:** {timestamp}  
-**Status:** 🔄 In Progress
-
+<file path=".agent/workflows/full-index.md">
+---
+description: Mise à jour complète de l'index du projet (Repomix). À lancer après des changements structurels majeurs.
 ---
 
-## 📝 Task Overview
-Task: {task_name}
-Started: {timestamp}
-
----
-
-"""
-        
-        with open(self.pad_file, 'w', encoding='utf-8') as f:
-            f.write(content)
-            
-        return {
-            "status": "success",
-            "message": f"Initialized scratch pad: {task_name}",
-            "file": str(self.pad_file)
-        }
-    
-    def append(self, content: str) -> Dict[str, Any]:
-        """Append content to the scratch pad
-        
-        Args:
-            content: Content to append (can include markdown formatting)
-            
-        Returns:
-            Dict with status
-        """
-        # Add timestamp if content is not a header
-        if not content.strip().startswith('#'):
-            timestamp = datetime.now().strftime("%H:%M:%S")
-            content = f"[{timestamp}] {content}"
-        
-        # Ensure file exists
-        if not self.pad_file.exists():
-            self.init()
-        
-        with open(self.pad_file, 'a', encoding='utf-8') as f:
-            f.write(content + "\n\n")
-            
-        return {"status": "success", "message": "Content appended"}
-    
-    def add_section(self, title: str) -> Dict[str, Any]:
-        """Add a new section with timestamp
-        
-        Args:
-            title: Section title (will be formatted as ## header)
-        """
-        timestamp = datetime.now().strftime("%H:%M:%S")
-        
-        # Ensure it's a proper header
-        if not title.startswith('#'):
-            title = f"## {title}"
-            
-        content = f"{title} ({timestamp})\n"
-        return self.append(content)
-    
-    def log_tool(self, tool_name: str, parameters: Dict[str, Any], result: str = "") -> Dict[str, Any]:
-        """Log a tool call in markdown format
-        
-        Args:
-            tool_name: Name of the tool
-            parameters: Tool parameters
-            result: Tool result (as string)
-        """
-        timestamp = datetime.now().strftime("%H:%M:%S")
-        
-        # Format as collapsible detail
-        content = f"""### 🔧 [{timestamp}] Tool: {tool_name}
-
-**Parameters:**
-```json
-{json.dumps(parameters, indent=2, ensure_ascii=False)}
-```
-
-**Result:**
-```
-{result if result else "⏳ Pending..."}
-```
-
----"""
-        
-        return self.append(content)
-    
-    def add_finding(self, finding: str, category: str = "General") -> Dict[str, Any]:
-        """Add a key finding or observation
-        
-        Args:
-            finding: The finding text
-            category: Category of finding
-        """
-        timestamp = datetime.now().strftime("%H:%M:%S")
-        content = f"**[{timestamp}] {category}:** {finding}"
-        return self.append(content)
-    
-    def add_checkpoint(self, name: str, description: str = "") -> Dict[str, Any]:
-        """Add a checkpoint/milestone marker
-        
-        Args:
-            name: Checkpoint name
-            description: Optional description
-        """
-        timestamp = datetime.now().strftime("%H:%M:%S")
-        content = f"""---
-
-### ✅ Checkpoint: {name}
-**Time:** {timestamp}  
-{description}
-
----"""
-        return self.append(content)
-    
-    def add_summary(self, summary: str) -> Dict[str, Any]:
-        """Add a summary section
-        
-        Args:
-            summary: Summary text
-        """
-        content = f"""## 📊 Summary
-
-{summary}
-
----"""
-        return self.append(content)
-    
-    def add_todo(self, task: str, completed: bool = False) -> Dict[str, Any]:
-        """Add a TODO item
-        
-        Args:
-            task: Task description
-            completed: Whether task is completed
-        """
-        checkbox = "✅" if completed else "⬜"
-        content = f"- {checkbox} {task}"
-        return self.append(content)
-    
-    def read(self) -> str:
-        """Read the entire scratch pad content"""
-        if not self.pad_file.exists():
-            return ""
-        
-        with open(self.pad_file, 'r', encoding='utf-8') as f:
-            return f.read()
-    
-    def get_size(self) -> int:
-        """Get file size in bytes"""
-        if not self.pad_file.exists():
-            return 0
-        return self.pad_file.stat().st_size
-    
-    def complete(self) -> Dict[str, Any]:
-        """Mark the task as complete"""
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        content = f"""---
-
-## ✅ Task Complete
-
-**Completed:** {timestamp}  
-**Status:** ✅ Complete
-
----"""
-        return self.append(content)
-
-
-def main():
-    """CLI interface for markdown scratch pad"""
-    parser = argparse.ArgumentParser(description="Markdown Scratch Pad Manager")
-    parser.add_argument("--file", default="/tmp/scratch_pad.md", help="Path to scratch pad file")
-    
-    subparsers = parser.add_subparsers(dest="command", help="Commands")
-    
-    # Init command
-    init_parser = subparsers.add_parser("init", help="Initialize new scratch pad")
-    init_parser.add_argument("task_name", nargs="?", default="Untitled Task", help="Name of the task")
-    
-    # Append command
-    append_parser = subparsers.add_parser("append", help="Append content")
-    append_parser.add_argument("content", help="Content to append")
-    
-    # Section command
-    section_parser = subparsers.add_parser("section", help="Add a new section")
-    section_parser.add_argument("title", help="Section title")
-    
-    # Log tool command
-    log_parser = subparsers.add_parser("log-tool", help="Log a tool call")
-    log_parser.add_argument("tool_name", help="Tool name")
-    log_parser.add_argument("parameters", help="Parameters (JSON)")
-    log_parser.add_argument("--result", default="", help="Result")
-    
-    # Finding command
-    finding_parser = subparsers.add_parser("finding", help="Add a finding")
-    finding_parser.add_argument("finding", help="Finding text")
-    finding_parser.add_argument("--category", default="General", help="Category")
-    
-    # Checkpoint command
-    checkpoint_parser = subparsers.add_parser("checkpoint", help="Add checkpoint")
-    checkpoint_parser.add_argument("name", help="Checkpoint name")
-    checkpoint_parser.add_argument("--description", default="", help="Description")
-    
-    # TODO command
-    todo_parser = subparsers.add_parser("todo", help="Add TODO item")
-    todo_parser.add_argument("task", help="Task description")
-    todo_parser.add_argument("--done", action="store_true", help="Mark as done")
-    
-    # Summary command
-    summary_parser = subparsers.add_parser("summary", help="Add summary")
-    summary_parser.add_argument("text", help="Summary text")
-    
-    # Read command
-    read_parser = subparsers.add_parser("read", help="Read entire pad")
-    
-    # Complete command
-    complete_parser = subparsers.add_parser("complete", help="Mark task complete")
-    
-    args = parser.parse_args()
-    
-    manager = ScratchPadManager(args.file)
-    
-    if args.command == "init":
-        result = manager.init(args.task_name)
-        print(f"✅ {result['message']}")
-        
-    elif args.command == "append":
-        manager.append(args.content)
-        print("✅ Content appended")
-        
-    elif args.command == "section":
-        manager.add_section(args.title)
-        print(f"✅ Section added: {args.title}")
-        
-    elif args.command == "log-tool":
-        try:
-            params = json.loads(args.parameters)
-        except:
-            params = {"raw": args.parameters}
-        manager.log_tool(args.tool_name, params, args.result)
-        print(f"✅ Logged tool: {args.tool_name}")
-        
-    elif args.command == "finding":
-        manager.add_finding(args.finding, args.category)
-        print(f"✅ Finding added: {args.category}")
-        
-    elif args.command == "checkpoint":
-        manager.add_checkpoint(args.name, args.description)
-        print(f"✅ Checkpoint: {args.name}")
-        
-    elif args.command == "todo":
-        manager.add_todo(args.task, args.done)
-        print(f"✅ TODO added")
-        
-    elif args.command == "summary":
-        manager.add_summary(args.text)
-        print("✅ Summary added")
-        
-    elif args.command == "read":
-        content = manager.read()
-        print(content)
-        
-    elif args.command == "complete":
-        manager.complete()
-        print("✅ Task marked complete")
-        
-    else:
-        parser.print_help()
-
-
-if __name__ == "__main__":
-    main()
-</file>
-
-<file path=".agent/workflows/auto-doc.md">
----
-description: Automatisation de la documentation et de la synchronisation après un changement.
----
-
-Ce workflow permet de boucler une tâche proprement en minimisant la recherche aveugle des sous-agents.
+Ce workflow rafraîchit la "carte" du projet pour que tous les agents aient une vision globale parfaite.
 
 // turbo-all
-1. Exécution chirurgicale (Context + Git + Push) en une seule étape
+1. Régénération de l'index Repomix
 ```bash
-repomix --output repomix-nixos-config.md && git add . && git commit -m "docs: synchronization and context update" && git push
+repomix --output repomix-nixos-config.md
 ```
 
-2. Instructions pour l'agent suivant
-Copiez ce message pour l'agent Archiviste :
-> "Analyse le dernier commit avec `git show --stat`. Ton objectif final est de créer un **Knowledge Item** (mémoire IA) ou un fichier Markdown dans `./docs` (mémoire humaine). Ne te contente pas de remplir ton scratchpad : produit un document utile et durable."
+2. Synchronisation Git
+```bash
+git add repomix-nixos-config.md && git commit -m "chore: update project index (repomix)" && git push
+```
+</file>
+
+<file path="docs/brave.md">
+# 🌐 Configuration de Brave sur NixOS
+
+Cette fiche explique comment Brave est configuré pour concilier sécurité (extensions forcées) et confort visuel (Wayland, Dark Mode).
+
+## 🛡️ Politiques Système (Extensions & PWAs)
+Nous utilisons les politiques **Chromium** globales pour forcer des éléments essentiels.
+- **Fichier** : `modules/brave-system.nix`
+- **Extensions forcées** : Bitwarden, uBlock Origin.
+- **PWAs forcées** : Microsoft Teams.
+
+## 🎨 Interface et Performance (UI & Wayland)
+La configuration utilisateur via Home-Manager optimise le rendu graphique.
+- **Fichier** : `modules/brave.nix`
+- **Wayland Natif** : Activé via `--ozone-platform=wayland` pour une meilleure fluidité sur les tiling managers (Niri).
+- **Dark Mode** : Forcé via `--force-dark-mode` (UI) et `--enable-features=WebContentsForceDark` (contenu).
+
+## 🔧 Maintenance rapide
+- **Ajouter une extension** : Ajouter l'ID dans `modules/brave-system.nix`.
+- **Désactiver le Dark Mode** : Modifier `commandLineArgs` dans `modules/brave.nix`.
 </file>
 
 <file path="docs/tealdeer.md">
@@ -1178,6 +3176,27 @@ Une fois le système déployé, exécutez simplement :
 tldr <commande>
 ```
 *Exemple : `tldr tar`*
+</file>
+
+<file path="docs/triple-relay.md">
+# 💎 Système de Relais Triple (Triple Relay)
+
+Le projet utilise un système de collaboration agentique basé sur trois rôles distincts pour garantir la qualité et la pérennité de la configuration.
+
+## Les Trois Rôles
+
+1.  **Codeur (Toi/IA)** : Se concentre à 100% sur l'implémentation, la correction de bugs et les tests de validation.
+2.  **Auditeur (IA - `/audit`)** : Effectue une revue de code rigoureuse. Vérifie la conformité à `GEMINI.md`, la propreté du code et propose des optimisations sans modifier le code lui-même.
+3.  **Archiviste (IA - `/archive`)** : S'occupe de la capitalisation du savoir. Met à jour les **Knowledge Items (KI)** pour que l'IA garde une mémoire technique précise du projet.
+
+## Commandes Slash
+
+-   **/auto-doc** : À utiliser après un changement fonctionnel pour synchroniser la documentation et préparer le terrain pour l'IA suivante.
+-   **/audit** : Pour lancer une analyse de qualité sur les changements récents.
+-   **/archive** : Pour enregistrer les nouveaux apprentissages techniques.
+
+## Philosophie : Focus Chirurgical
+Chaque étape du relais doit être concise et efficace (**5-10 tours maximum**). On privilégie la précision et la mise à jour constante du savoir technique.
 </file>
 
 <file path="hosts/muggy-nixos/hardware-configuration.nix">
@@ -1233,33 +3252,61 @@ tldr <commande>
 }
 </file>
 
-<file path="modules/lact.nix">
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+<file path="modules/git.nix">
+{ username, ... }:
 
 {
-  # Install LACT (Linux AMDGpu Control Tool)
-  environment.systemPackages = with pkgs; [
-    lact
-  ];
-
-  # Enable the lactd daemon service required for applying settings
-  systemd.services.lactd = {
-    description = "AMDGPU Control Daemon";
+  programs.git = {
     enable = true;
-    serviceConfig = {
-      ExecStart = "${pkgs.lact}/bin/lact daemon";
-    };
-    wantedBy = [ "multi-user.target" ];
-  };
+    
+# On utilise 'settings' pour tout ce qui concerne l'identité et les alias
+    settings = {
+      user = {
+        name = username;
+        email = "email@exemple.com";
+      };
 
-  # Unlock advanced AMDGPU features (overclocking, fan control, voltage)
-  # ppfeaturemask=0xffffffff enables all features
-  boot.kernelParams = [ "amdgpu.ppfeaturemask=0xffffffff" ];
+    # Des raccourcis qui vont te faire gagner un temps fou
+    aliases = {
+      s  = "status";
+      a  = "add";
+      c  = "commit";
+      cm = "commit -m";
+      p  = "push";
+      lg = "log --graph --oneline --all"; # Une jolie vue de ton historique
+    };
+
+    extraConfig = {
+      init.defaultBranch = "main";
+      pull.rebase = true; # Plus propre pour éviter les commits de "merge" inutiles
+    };
+  };
+ };
+}
+</file>
+
+<file path="modules/pdf.nix">
+{ pkgs, ... }:
+
+{
+  programs.zathura = {
+    enable = true;
+    options = {
+      selection-clipboard = "clipboard";
+      recolor = true; # Dark mode by default
+      recolor-keephue = true;
+      
+      # Premium Dark Theme (Catppuccin-like)
+      default-bg = "#1e1e2e";
+      default-fg = "#cdd6f4";
+      statusbar-bg = "#181825";
+      statusbar-fg = "#cdd6f4";
+      inputbar-bg = "#11111b";
+      inputbar-fg = "#cdd6f4";
+      recolor-lightcolor = "#1e1e2e";
+      recolor-darkcolor = "#cdd6f4";
+    };
+  };
 }
 </file>
 
@@ -1283,445 +3330,114 @@ tldr <commande>
 }
 </file>
 
-<file path="modules/xdg.nix">
-{ config, pkgs, ... }:
-
+<file path="wm/style.nix">
+{ inputs, pkgs, ... }:
 {
-  # Gestion des répertoires utilisateurs standards (Documents, Images, etc.)
-  xdg.userDirs = {
-    enable = true;
-    createDirectories = true; # Crée les dossiers s'ils n'existent pas
-    
-    # Chemins par défaut
-    documents = "${config.home.homeDirectory}/Documents";
-    download = "${config.home.homeDirectory}/Downloads";
-    music = "${config.home.homeDirectory}/Music";
-    pictures = "${config.home.homeDirectory}/Pictures";
-    videos = "${config.home.homeDirectory}/Videos";
-    desktop = "${config.home.homeDirectory}/Desktop";
-    publicShare = "${config.home.homeDirectory}/Public";
-    templates = "${config.home.homeDirectory}/Templates";
-  };
+  programs.niri.settings = {
+    layout = {
+      gaps = 32;
+      focus-ring.width = 6;
+      focus-ring.active.color = "rgba(255,255,255,0.3)";
+      focus-ring.inactive.color = "rgba(100,100,100,0.3)";
+    };
 
-  # On peut aussi s'assurer que XDG lui-même est bien là (souvent implicite mais bon à avoir)
-  xdg.enable = true;
-}
-</file>
-
-<file path="nvim/lua/core/init.lua">
--- ~/.config/nvim/lua/core/init.lua
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
-
-require("core.options")
-require("core.keymaps")
--- plus tard : require("core.autocmds")
-</file>
-
-<file path="nvim/lua/core/keymaps.lua">
-local map = vim.keymap.set
-local opts = { noremap = true, silent = true }
-
--- Basic keymaps
-map("n", "<leader>q", ":q<CR>", { desc = "Quit" })
-map("n", "<leader>w", ":w<CR>", { desc = "Save" })
-
--- Clipboard paste
-map("i", "<C-S-v>", '<Esc>"+pa', opts)
-map("c", "<C-S-v>", '<C-R>+', opts)
-
-
--- Window navigation
-map("n", "<leader>h", "<C-w>h", { desc = "Move to left window" })
-map("n", "<leader>l", "<C-w>l", { desc = "Move to right window" })
-map("n", "<leader>j", "<C-w>j", { desc = "Move to lower window" })
-map("n", "<leader>k", "<C-w>k", { desc = "Move to upper window" })
-</file>
-
-<file path="nvim/lua/core/options.lua">
--- ~/.config/nvim/lua/core/options.lua
-vim.opt.number = true
-vim.opt.relativenumber = true
-vim.opt.termguicolors = true
-vim.opt.expandtab = true
-vim.opt.shiftwidth = 2
-vim.opt.tabstop = 2
-vim.opt.clipboard = "unnamedplus"
-</file>
-
-<file path="nvim/lua/plugins/better-escape.lua">
-return {
-  "max397574/better-escape.nvim",
-  config = function()
-    require("better_escape").setup()
-  end,
-}
-</file>
-
-<file path="nvim/lua/plugins/bufferline.lua">
--- plugins.lua (ou dans ton gestionnaire de plugins Lazy, Packer, etc.)
-return {
-  {
-    "akinsho/bufferline.nvim",
-    version = "*",
-    dependencies = "nvim-tree/nvim-web-devicons",
-    config = function()
-      require("bufferline").setup({
-        options = {
-          mode = "buffers", -- ou "tabs"
-          separator_style = "slant", -- "slant", "thick", "thin", etc.
-          diagnostics = "nvim_lsp", -- affiche les erreurs LSP
-          show_buffer_close_icons = true,
-          show_close_icon = false,
-        },
-      })
-
-  -- 🔹 Raccourcis
-      vim.keymap.set("n", "<Tab>", "<Cmd>BufferLineCycleNext<CR>", { desc = "Next buffer" })
-      vim.keymap.set("n", "<S-Tab>", "<Cmd>BufferLineCyclePrev<CR>", { desc = "Prev buffer" })
-      vim.keymap.set("n", "<leader>bc", "<Cmd>bdelete<CR>", { desc = "Close buffer" })
-      vim.keymap.set("n", "<leader>bp", "<Cmd>BufferLinePick<CR>", { desc = "Pick buffer" })
-
-    end,
-  }
-}
-</file>
-
-<file path="nvim/lua/plugins/crates.lua">
-return {
-
-  {
-    'saecki/crates.nvim',
-    event = { "BufRead Cargo.toml" },
-    config = function()
-        require('crates').setup()
-    end,
-  }
-
-}
-</file>
-
-<file path="nvim/lua/plugins/flash.lua">
-return {
-  "folke/flash.nvim",
-  event = "VeryLazy",
-  opts = {},
-  keys = {
-    { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
-    { "S", mode = { "n", "o", "x" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
-    { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
-    { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-    { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
-  },
-}
-</file>
-
-<file path="nvim/lua/plugins/icons.lua">
-return {
-  "nvim-tree/nvim-web-devicons",
-  lazy = true,
-}
-</file>
-
-<file path="nvim/lua/plugins/mason.lua">
-return {
-  "williamboman/mason.nvim",
-  build = ":MasonUpdate", -- met à jour les registres lors de l’install
-  config = function()
-    require("mason").setup()
-  end,
-}
-</file>
-
-<file path="nvim/lua/plugins/move.lua">
-return {
-  "fedepujol/move.nvim",
-  keys = {
-    -- Normal Mode
-    { "<A-j>", ":MoveLine(1)<CR>", desc = "Move Line Down" },
-    { "<A-k>", ":MoveLine(-1)<CR>", desc = "Move Line Up" },
-    { "<A-h>", ":MoveHChar(-1)<CR>", desc = "Move Character Left" },
-    { "<A-l>", ":MoveHChar(1)<CR>", desc = "Move Character Right" },
-    { "<leader>wb>", ":MoveWord(1)<CR>",  mode = { "n" }, desc = "Move Word Right" },
-    { "<leader>wf>", ":MoveWord(-1)<CR>", mode = { "n" }, desc = "Move Word Left" },
-
-    -- Visual Mode
-    { "<A-j>", ":MoveBlock(1)<CR>",  mode = { "v" }, desc = "Move Block Down" },
-    { "<A-k>", ":MoveBlock(-1)<CR>", mode = { "v" }, desc = "Move Block Up" },
-    { "<A-h>", ":MoveHBlock(-1)<CR>", mode = { "v" }, desc = "Move Block Left" },
-    { "<A-l>", ":MoveHBlock(1)<CR>",  mode = { "v" }, desc = "Move Block Right" },
-  },
-  opts = {
-    -- Config here
-  },
-}
-</file>
-
-<file path="nvim/lua/plugins/rustaceanvim.lua">
-return {
-
-{
-  'mrcjkb/rustaceanvim',
-  version = '^6', -- Recommended
-  lazy = false, -- This plugin is already lazy
-}
-
-
-}
-</file>
-
-<file path="nvim/lua/plugins/snacks.lua">
-return {
-  "folke/snacks.nvim",
-  lazy = false,
-  priority = 1000,
-  ---@type snacks.Config
-  opts = {
-    bigfile = { enabled = true },
-    dashboard = {
-      enabled = true,
-      preset = {
-        header = [[
-███╗   ███╗██╗   ██╗ ██████╗  ██████╗ ██╗   ██╗██╗   ██╗██╗███╗   ███╗
-████╗ ████║██║   ██║██╔═══██╗██╔═══██╗██║   ██║██║   ██║██║████╗ ████║
-██╔████╔██║██║   ██║██║   ██║██║   ██║██║   ██║██║   ██║██║██╔████╔██║
-██║╚██╔╝██║██║   ██║██║   ██║██║   ██║╚██╗ ██╔╝╚██╗ ██╔╝██║██║╚██╔╝██║
-██║ ╚═╝ ██║╚██████╔╝╚██████╔╝╚██████╔╝ ╚████╔╝  ╚████╔╝ ██║██║ ╚═╝ ██║
-╚═╝     ╚═╝ ╚═════╝  ╚═════╝  ╚═════╝   ╚═══╝    ╚═══╝  ╚═╝╚═╝     ╚═╝
-                        ✨ Welcome to MuggyVim ✨
-        ]],
-      },
-    },
-    explorer = { enabled = true },
-    indent = { enabled = true },
-    input = { enabled = true },
-    notifier = { enabled = true },
-    picker = { enabled = true },
-    quickfile = { enabled = true },
-    scope = { enabled = true },
-    scroll = { enabled = true },
-    statuscolumn = { enabled = true },
-    words = { enabled = true },
-  },
-  keys = {
-    -- Top Pickers & Explorer
-    { "<leader><space>", function() Snacks.picker.smart() end, desc = "Smart Find Files" },
-    { "<leader>,",       function() Snacks.picker.buffers() end, desc = "Buffers" },
-    { "<leader>/",       function() Snacks.picker.grep() end, desc = "Grep" },
-    { "<leader>:",       function() Snacks.picker.command_history() end, desc = "Command History" },
-    { "<leader>n",       function() Snacks.picker.notifications() end, desc = "Notification History" },
-    { "<leader>e",       function() Snacks.explorer() end, desc = "File Explorer" },
-
-    -- find
-    { "<leader>fb", function() Snacks.picker.buffers() end, desc = "Buffers" },
-    { "<leader>ff", function() Snacks.picker.files() end, desc = "Find Files" },
-    { "<leader>fg", function() Snacks.picker.git_files() end, desc = "Find Git Files" },
-    { "<leader>fr", function() Snacks.picker.recent() end, desc = "Recent" },
-
-    -- git
-    { "<leader>gs", function() Snacks.picker.git_status() end, desc = "Git Status" },
-    { "<leader>gl", function() Snacks.picker.git_log() end, desc = "Git Log" },
-
-    -- search
-    { "<leader>sb", function() Snacks.picker.lines() end, desc = "Buffer Lines" },
-    { "<leader>sg", function() Snacks.picker.grep() end, desc = "Grep" },
-    { "<leader>sh", function() Snacks.picker.help() end, desc = "Help Pages" },
-    { "<leader>sk", function() Snacks.picker.keymaps() end, desc = "Keymaps" },
-    { "<leader>sm", function() Snacks.picker.marks() end, desc = "Marks" },
-
-    -- Other
-    { "<leader>z", function() Snacks.zen() end, desc = "Toggle Zen Mode" },
-    { "<leader>.", function() Snacks.scratch() end, desc = "Scratch Buffer" },
-    { "<leader>S", function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
-    { "<c-/>",     function() Snacks.terminal() end, desc = "Toggle Terminal" },
-  },
-}
-</file>
-
-<file path="nvim/lua/plugins/treesitter.lua">
-return {
-  "nvim-treesitter/nvim-treesitter",
-  build = ":TSUpdate",
-
-  opts = {
-    highlight = { enable = true },
-    indent = { enable = true }, -- ✅ active indentation Treesitter
-  }
-}
-</file>
-
-<file path="nvim/lua/plugins/ui.lua">
-return {
-  {
-    "shaunsingh/nord.nvim",
-    priority = 1000,
-    config = function()
-      vim.cmd.colorscheme("nord")
-    end,
-  },
-  {
-    "nvim-lualine/lualine.nvim",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    config = function()
-      require("lualine").setup { options = { theme = "nord" } }
-    end,
-  },
-  {
-    "lewis6991/gitsigns.nvim",
-    event = "BufReadPre",
-    config = function()
-      require("gitsigns").setup()
-    end,
-  },
-}
-</file>
-
-<file path="nvim/lua/plugins/whichkey.lua">
-return {
-  "folke/which-key.nvim",
-  event = "VeryLazy",
-  opts = {
-    preset = "modern",
-  },
-  keys = {
-    {
-      "<leader>?",
-      function()
-        require("which-key").show({ global = false })
-      end,
-      desc = "Buffer Local Keymaps (which-key)",
-    },
-  },
-}
-</file>
-
-<file path="nvim/.stylua.toml">
-column_width = 120
-line_endings = "Unix"
-indent_type = "Spaces"
-indent_width = 2
-quote_style = "AutoPreferDouble"
-call_parentheses = "None"
-</file>
-
-<file path="wm/binds.nix">
-{ config, ... }:
-{
-  programs.niri.settings.binds = with config.lib.niri.actions; {
-    "Mod+B".action = spawn [
-      "rofi"
-      "-show"
-      "run"
+    window-rules = [
+      {
+        matches = [ { app-id = "brave-browser"; } ];
+        open-focused = true;
+      }
+      {
+        geometry-corner-radius = {
+          bottom-left = 12.0;
+          bottom-right = 12.0;
+          top-left = 12.0;
+          top-right = 12.0;
+        };
+        clip-to-geometry = true;
+      }
     ];
-    "Mod+D".action = spawn "fuzzel";
-    "Mod+Q".action = close-window;
-    "Mod+Shift+F".action = fullscreen-window;
-    "Mod+F".action = maximize-column;
-    "Mod+T".action = spawn "ghostty";
-    "Mod+Shift+E".action = quit { skip-confirmation = false; };
-    "Mod+Shift+Slash".action = show-hotkey-overlay;
-    "Mod+Shift+Space".action = toggle-window-floating;
-    "Mod+Space".action = switch-focus-between-floating-and-tiling;
-    "Mod+O".action.toggle-overview = [ ];
-
-    "Mod+W".action = switch-preset-column-width;
-    "Mod+H".action = switch-preset-window-height;
-    "Mod+C".action = consume-window-into-column;
-    "Mod+X".action = expel-window-from-column;
-
-    #Focus
-    "Mod+Left".action = focus-column-or-monitor-left;
-    "Mod+Right".action = focus-column-or-monitor-right;
-    "Mod+Up".action = focus-window-or-workspace-up;
-    "Mod+Down".action = focus-window-or-workspace-down;
-
-    "Mod+1".action = focus-workspace 1;
-    "Mod+2".action = focus-workspace 2;
-    "Mod+3".action = focus-workspace 3;
-    "Mod+4".action = focus-workspace 4;
-    "Mod+5".action = focus-workspace 5;
-    "Mod+6".action = focus-workspace 6;
-    "Mod+7".action = focus-workspace 7;
-    "Mod+8".action = focus-workspace 8;
-    "Mod+9".action = focus-workspace 9;
-
-    "XF86MonBrightnessUp".action = spawn "brightnessctl s +10%";
-    "XF86MonBrightnessDown".action = spawn "brightnessctl s -10%";
-    #Move
-    "Mod+Shift+Left".action = move-column-left-or-to-monitor-left;
-    "Mod+Shift+Right".action = move-column-right-or-to-monitor-right;
-    "Mod+Shift+Up".action = move-window-up-or-to-workspace-up; # ✅ CORRIGÉ
-    "Mod+Shift+Down".action = move-window-down-or-to-workspace-down; # ✅ CORRIGÉ
-
-    "Mod+Shift+1".action = move-column-to-index 1;
-    "Mod+Shift+2".action = move-column-to-index 2;
-    "Mod+Shift+3".action = move-column-to-index 3;
-    "Mod+Shift+4".action = move-column-to-index 4;
-    "Mod+Shift+5".action = move-column-to-index 5;
-    "Mod+Shift+6".action = move-column-to-index 6;
-    "Mod+Shift+7".action = move-column-to-index 7;
-    "Mod+Shift+8".action = move-column-to-index 8;
-    "Mod+Shift+9".action = move-column-to-index 9;
-
-    # Passer à la fenêtre de DROITE avec Mod + Molette vers le BAS
-    "Mod+WheelScrollDown".action = focus-column-right;
-
-    # Passer à la fenêtre de GAUCHE avec Mod + Molette vers le HAUT
-    "Mod+WheelScrollUp".action = focus-column-left;
-
-    # Si tu veux que ça déplace carrément la fenêtre (Shift en plus)
-    "Mod+Shift+WheelScrollDown".action = focus-workspace-down;
-    "Mod+Shift+WheelScrollUp".action = focus-workspace-up;
-
-    # Screenshots avec la syntaxe correcte
-    "Ctrl+Mod+S".action.screenshot = [ ]; # Fenêtre active
-    "Ctrl+Mod+Shift+S".action.screenshot-screen = [ ]; # Écran complet
 
   };
 }
 </file>
 
-<file path=".gitignore">
-# Secrets
-modules/mcp_config.json
+<file path="flake.nix">
+{
+  description = "NixOS Unstable avec Home Manager intégré";
 
-# Build results
-result
-result-*
-</file>
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-master.url = "github:nixos/nixpkgs/master";
 
-<file path="README.md">
-My first NixOs config - it is pretty much WIP but it is already functionaly with niri + dms and gnome as a backup !
-<img width="2560" height="1440" alt="Screenshot from 2026-02-01 23-24-22" src="https://github.com/user-attachments/assets/0ed74bc7-cd22-45a3-86f3-e17897266439" />
-</file>
+    # Home Manager pointant sur la branche unstable
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs"; # Force HM à utiliser votre version de nixpkgs
+    };
 
-<file path=".agent/skills/nixos-architect/SKILL.md">
----
-name: nixos-architect
-description: Expert en architecture NixOS, garant de la propreté et de la clarté de la configuration.
----
+    # Flake niri
+    niri = {
+      url = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-# NixOS Architect Skill
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    antigravity = {
+      url = "github:jacopone/antigravity-nix";
+      # C'est ici que la magie opère :
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-Cette compétence assure que toute modification de la configuration NixOS respecte les standards de qualité du projet.
+    # CachyOS Latest Kernel (xddxdd - has lantian cache)
+    nix-cachyos.url = "github:xddxdd/nix-cachyos-kernel";
+  };
 
-## Système d'Expertise locale
-IMPORTANT : Toujours consulter le dossier `references/` avant toute modification majeure. Ce dossier contient notre savoir accumulé et les configurations validées pour le matériel de David.
+  outputs =
+    {
+      self,
+      nixpkgs,
+      nixpkgs-master,
+      home-manager,
+      niri,
+      antigravity,
+      noctalia,
+      nix-cachyos,
+      ...
+    }@inputs:
+    let
+      username = "david";
+    in
+    {
+      nixosConfigurations.muggy-nixos = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs username; };
+        modules = [
+          ./hosts/muggy-nixos/default.nix
+          ./overlays.nix
 
-## Principes de Base
-1. **Commentaires Systématiques** : Chaque bloc de configuration complexe doit être expliqué par un commentaire en français.
-2. **Modularité** : Préférer la création de nouveaux fichiers dans `modules/` plutôt que d'alourdir le `default.nix`.
-3. **Clarté des Imports** : Les fichiers doivent être importés de manière logique dans `home.nix` ou `default.nix`.
+          # CachyOS kernel is set via boot.kernelPackages in default.nix
 
-## Instructions de travail
-Quand tu modifies un fichier `.nix` :
-1. Analyse la structure existante.
-2. Ajoute des commentaires expliquant le **pourquoi** de la modification, pas seulement le quoi.
-3. Vérifie que les variables utilisées (comme `pkgs`) sont bien déclarées.
-4. Si tu introduis une nouvelle fonctionnalité (ex: un nouvel outil), crée un module dédié.
+          # Le module Noctalia se charge au niveau SYSTEME (si besoin, mais on va surtout l'utiliser dans Home Manager)
+          noctalia.nixosModules.default
+          niri.nixosModules.niri # Le module Niri Système (Sodiboo)
 
----
-*Note: Cette compétence est activée automatiquement dès qu'un fichier .nix est manipulé.*
+          # Import du module Home Manager
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.${username} = import ./home.nix;
+
+            # Optionnel : passe les 'inputs' du flake au fichier home.nix
+            home-manager.extraSpecialArgs = { inherit inputs username; };
+          }
+        ];
+      };
+    };
+}
 </file>
 
 <file path=".agent/skills/nixos-research-strategy/SKILL.md">
@@ -1826,6 +3542,66 @@ Voir [examples.md](file:///home/david/nixos-config/.agent/skills/scratchpad/refe
 - **Persistence** : Le fichier doit être créé dans le dossier des artifacts de la session (`/home/david/.gemini/antigravity/brain/[ID]/`).
 </file>
 
+<file path=".agent/workflows/archive.md">
+---
+description: Capitalisation du savoir via Knowledge Items (Archiviste).
+---
+
+// turbo-all
+1. Analyse du commit final
+```bash
+git show --stat
+```
+
+2. Gestion du Savoir (Knowledge)
+- **Priorité absolue** : Crée ou mets à jour le **Knowledge Item (KI)** dans `~/.gemini/antigravity/knowledge/`.
+- Utilise les métadonnées du commit pour extraire les apprentissages clés.
+- (Optionnel) Ajoute une doc Markdown dans `./docs` uniquement si utile pour un humain.
+
+3. Clôture
+- Confirme la mise à jour du savoir.
+- **Focus Chirurgical** : Max 5-10 turns.
+</file>
+
+<file path=".agent/workflows/audit.md">
+---
+description: Revue de code et conformité (Auditeur).
+---
+
+// turbo-all
+1. Analyse des changements récents
+```bash
+git show --stat
+```
+
+2. Revue de Code
+- Compare le code avec les règles de `GEMINI.md`.
+- Vérifie la cohérence de l'architecture NixOS.
+- Liste les optimisations possibles (performance, clarté, sécurité).
+
+3. Conclusion
+- Valide la conformité ou propose des correctifs.
+- Demande à l'utilisateur de passer à la phase **ARCHIVE** via `/archive` si tout est OK.
+- **Focus Chirurgical** : Max 5-10 turns.
+</file>
+
+<file path="modules/atuin.nix">
+{ pkgs, ... }:
+
+{
+  programs.atuin = {
+    enable = true;
+    enableFishIntegration = false; # Desactivé pour éviter les blocages de l'agent
+    settings = {
+      auto_sync = true;
+      update_check = false;
+      sync_address = "https://api.atuin.sh";
+      search_mode = "fuzzy";
+    };
+  };
+}
+</file>
+
 <file path="modules/discord.nix">
 { pkgs, ... }:
 
@@ -1835,6 +3611,462 @@ Voir [examples.md](file:///home/david/nixos-config/.agent/skills/scratchpad/refe
     vesktop # Supporte le partage d'écran audio/vidéo sous Wayland et inclut Vencord
   ];
 }
+</file>
+
+<file path="modules/fastfetch.nix">
+{ config, pkgs, ... }:
+{
+  home.packages = [ pkgs.chafa ];
+
+  programs.fastfetch = {
+    enable = true;
+    settings = {
+      logo = {
+        source = "${config.home.homeDirectory}/Pictures/nixos.png";
+        type = "kitty";
+        width = 24;
+        height = 13;
+        padding = {
+          top = 1;
+          left = 2;
+          right = 4;
+        };
+      };
+      display = {
+        separator = " → ";
+        color = {
+          keys = "magenta";
+          separator = "cyan";
+        };
+      };
+      modules = [
+        "break"
+        {
+          type = "os";
+          key = "╭─ OS";
+          format = "{3}";
+        }
+        {
+          type = "kernel";
+          key = "├─ Kernel";
+        }
+        {
+          type = "shell";
+          key = "├─ Shell";
+        }
+        {
+          type = "wm";
+          key = "├─ WM";
+          format = "{1}";
+        }
+        {
+          type = "terminal";
+          key = "├─ Terminal";
+        }
+        {
+          type = "uptime";
+          key = "╰─ Uptime";
+        }
+        "break"
+        {
+          type = "colors";
+          symbol = "circle";
+          paddingLeft = 2;
+        }
+      ];
+    };
+  };
+}
+</file>
+
+<file path="modules/nh.nix">
+{ config, ... }:
+
+{
+  programs.nh = {
+    enable = true;
+
+    # Chemin vers votre flake NixOS
+    # Adaptez ce chemin selon votre configuration
+    flake = "${config.home.homeDirectory}/nixos-config";
+
+    # Nettoyage automatique des anciennes générations
+    clean = {
+      enable = true;
+      # Garde les générations des 7 derniers jours
+      extraArgs = "--keep-since 7d --keep 5";
+    };
+  };
+
+  programs.fish.functions = {
+    nos = ''
+      cd ${config.home.homeDirectory}/nixos-config
+      nh os switch . --hostname muggy-nixos
+    '';
+  };
+}
+</file>
+
+<file path=".agent/skills/nixos-architect/SKILL.md">
+---
+name: nixos-architect
+description: Expert en architecture NixOS, garant de la propreté et de la clarté de la configuration.
+---
+
+# NixOS Architect Skill
+
+Cette compétence assure que toute modification de la configuration NixOS respecte les standards de qualité du projet.
+
+## Système d'Expertise locale
+IMPORTANT : Toujours consulter le dossier `references/` avant toute modification majeure. Ce dossier contient notre savoir accumulé et les configurations validées pour le matériel de David.
+
+## Principes de Base
+0. **Expertise Avancée** : Pour tout ce qui concerne la syntaxe Nix, les Flakes, Home Manager ou les patterns avancés, se référer à la compétence [nix](../nixos-flakes/SKILL.md).
+1. **Commentaires Systématiques** : Chaque bloc de configuration complexe doit être expliqué par un commentaire en français.
+2. **Modularité** : Préférer la création de nouveaux fichiers dans `modules/` plutôt que d'alourdir le `default.nix`.
+3. **Clarté des Imports** : Les fichiers doivent être importés de manière logique dans `home.nix` ou `default.nix`.
+
+## Instructions de travail
+Quand tu modifies un fichier `.nix` :
+1. Analyse la structure existante.
+2. Ajoute des commentaires expliquant le **pourquoi** de la modification, pas seulement le quoi.
+3. Vérifie que les variables utilisées (comme `pkgs`) sont bien déclarées.
+4. Si tu introduis une nouvelle fonctionnalité (ex: un nouvel outil), crée un module dédié.
+
+---
+*Note: Cette compétence est activée automatiquement dès qu'un fichier .nix est manipulé.*
+</file>
+
+<file path=".agent/workflows/git-sync.md">
+---
+description: Synchroniser les changements avec Git (Add, Review, Commit, Pull, Push)
+---
+
+Ce workflow automatise la synchronisation complète. Il inclut désormais une phase de **Code Review** pour garantir la qualité avant le commit.
+
+// turbo-all
+1. Préparer les changements
+```bash
+git add .
+```
+
+2. Revue de Code Automatisée
+L'assistant analyse les changements indexés, vérifie la conformité avec `GEMINI.md` et propose des optimisations via le skill `architect`.
+```bash
+git diff --cached --stat
+# [INTERNAL REVIEW] : L'IA analyse maintenant le contenu détaillé de ces fichiers...
+```
+
+3. Créer un commit avec un message intelligent
+On utilise `commit-pro` pour générer un message au format Conventional Commits.
+```bash
+# L'assistant génère le message ici
+```
+
+4. Récupérer les changements distants (Pull)
+```bash
+git pull --rebase
+```
+
+5. Envoyer les changements (Push)
+```bash
+git push
+```
+
+6. Résumé de la Session
+L'assistant fournit un topo clair de la revue de code effectuée (points vérifiés, optimisations trouvées) et confirme l'état final de la synchronisation.
+</file>
+
+<file path="modules/brave-system.nix">
+{ ... }:
+
+{
+  # On utilise le module Chromium système pour forcer les politiques dans Brave
+  programs.chromium = {
+    enable = true;
+    extraOpts = {
+      "ExtensionInstallForcelist" = [
+        "nngceckbapebfimnlniiiahkandclblb;https://clients2.google.com/service/update2/crx" # Bitwarden
+        "cjpalhdlnbpafiamejdnhcphjbkeiagm;https://clients2.google.com/service/update2/crx" # uBlock Origin
+        "dcbfghmdnnkkkjjpmghnoaidojfickmj;https://clients2.google.com/service/update2/crx" # Theme: Thassos Sea View
+      ];
+      "WebAppInstallForceList" = [
+        {
+          url = "https://teams.microsoft.com/";
+          default_launch_container = "window";
+          create_desktop_shortcut = true;
+        }
+      ];
+    };
+  };
+}
+</file>
+
+<file path="modules/steam.nix">
+{ pkgs, ... }:
+
+{
+
+  # 2. Les outils qu'on veut pouvoir lancer manuellement au terminal
+  environment.systemPackages = with pkgs; [
+    mangohud # L'overlay pour surveiller ta RX 6800 (FPS, température)
+    protonup-qt # Super utile pour installer GE-Proton (indispensable sous Linux)
+  ];
+
+  # 3. La configuration du module Steam
+  programs.steam = {
+    enable = true;
+
+    # Ouvre le pare-feu pour le Remote Play et les serveurs locaux
+    remotePlay.openFirewall = true;
+    dedicatedServer.openFirewall = true;
+
+    # Active Gamescope pour pouvoir lancer une session Steam Deck
+    gamescopeSession.enable = true;
+  };
+
+  # 4. Configuration globale de Gamescope (Setuid et permissions)
+  programs.gamescope = {
+    enable = true;
+    # On peut ajouter ici des options globales si besoin
+  };
+
+  # 5. Optimise les performances des jeux (GameMode de Feral Interactive)
+  # Cela permet de booster le CPU et de prioriser le GPU quand un jeu est lancé
+  programs.gamemode = {
+    enable = true;
+    enableRenice = true;
+    settings = {
+      general = {
+        renice = 10; # Augmente la priorité CPU des processus de jeu
+        softrealtime = "auto";
+      };
+      gpu = {
+        # Optimisations GPU AMD (bloque la fréquence à 'high')
+        apply_gpu_optimisations = "accept-responsibility";
+        gpu_device = 0;
+        amd_performance_level = "high";
+      };
+      custom = {
+        start = "${pkgs.libnotify}/bin/notify-send 'GameMode started'";
+        end = "${pkgs.libnotify}/bin/notify-send 'GameMode ended'";
+      };
+    };
+  };
+}
+</file>
+
+<file path="modules/xdg.nix">
+{ config, pkgs, ... }:
+
+{
+  # Gestion des répertoires utilisateurs standards (Documents, Images, etc.)
+  xdg.userDirs = {
+    enable = true;
+    createDirectories = true; # Crée les dossiers s'ils n'existent pas
+    
+    # Chemins par défaut
+    documents = "${config.home.homeDirectory}/Documents";
+    download = "${config.home.homeDirectory}/Downloads";
+    music = "${config.home.homeDirectory}/Music";
+    pictures = "${config.home.homeDirectory}/Pictures";
+    videos = "${config.home.homeDirectory}/Videos";
+    desktop = "${config.home.homeDirectory}/Desktop";
+    publicShare = "${config.home.homeDirectory}/Public";
+    templates = "${config.home.homeDirectory}/Templates";
+  };
+
+  # On peut aussi s'assurer que XDG lui-même est bien là (souvent implicite mais bon à avoir)
+  xdg.enable = true;
+
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "text/html" = "com.brave.Browser.desktop";
+      "x-scheme-handler/http" = "com.brave.Browser.desktop";
+      "x-scheme-handler/https" = "com.brave.Browser.desktop";
+    };
+  };
+}
+</file>
+
+<file path="modules/notifications.nix">
+{ pkgs, ... }:
+
+{
+  # notify-send est fourni par libnotify
+  home.packages = [ pkgs.libnotify ];
+  # Mako : daemon de notification léger avec support natif xdg-activation
+  # Quand on clique une notification, Mako envoie un token d'activation
+  # au compositeur (Niri) qui change automatiquement de workspace et focus la fenêtre
+  services.mako = {
+    enable = true;
+    settings = {
+      # Position et apparence
+      anchor = "top-right";
+      layer = "top";
+      width = 400;
+      height = 200;
+      margin = "10";
+      padding = "12";
+      border-size = 2;
+      border-radius = 8;
+      icon-path = "";
+      max-icon-size = 64;
+
+      # Couleurs Catppuccin Mocha
+      background-color = "#1e1e2eee"; # Surface avec transparence
+      text-color = "#cdd6f4"; # Text
+      border-color = "#89b4fa"; # Blue
+      progress-color = "#313244"; # Surface1
+
+      # Comportement
+      default-timeout = 5000; # 5 secondes par défaut
+      ignore-timeout = false;
+
+      # Actions : clic gauche = action par défaut (xdg-activation focus)
+      # Clic droit = dismiss
+      on-button-left = "invoke-default-action";
+      on-button-right = "dismiss";
+      on-button-middle = "dismiss-all";
+    };
+
+    # Critères spéciaux (syntaxe sections INI, pas supportée par settings)
+    extraConfig = ''
+      [urgency=critical]
+      default-timeout=0
+      border-color=#f38ba8
+    '';
+  };
+}
+</file>
+
+<file path="modules/utils.nix">
+{ pkgs, ... }:
+
+{
+  home.packages = with pkgs; [
+    fd # Used for the search function
+    playerctl # MPRIS media player control (required for DMS media widget)
+    nvd # Differenz between builds (shows package changes)
+    manix # Fast Nix documentation searcher
+    pamixer # CLI mixer for PulseAudio/PipeWire (volume control)
+    pavucontrol # GUI volume control for PulseAudio/PipeWire
+    pulseaudio # Provides pactl for volume control
+    nodejs # For MCP servers and other node-based tools
+    python3 # For advanced tools like the Kira scratchpad script
+    repomix # Pack repository contents to single file for AI consumption
+    qpdf # For decrypting PDFs
+  ];
+
+  programs.bat = {
+    enable = true;
+    config = {
+      theme = "Dracula";
+    };
+  };
+
+  programs.mpv = {
+    enable = true;
+    scripts = with pkgs.mpvScripts; [
+      mpris # MPRIS support for media player detection (DMS, playerctl)
+    ];
+  };
+
+  programs.fzf = {
+    enable = true;
+    enableFishIntegration = true;
+  };
+
+  programs.fish.functions = {
+    # Search function that searches from root (/)
+    # Uses fd for speed, searching globally
+    search = ''
+      if test (count $argv) -eq 0
+        echo "Usage: search <query>"
+        return 1
+      end
+
+      # Launch fzf in interactive mode
+      # --disabled: Do not let fzf filter the results, let fd handle it via reload
+      # --query: Pre-fill with the user's argument
+      # --bind: Reload fd whenever the query string changes
+      # --preview: Optional but nice, shows file content with bat
+      ${pkgs.fzf}/bin/fzf --disabled --query "$argv" \
+        --bind "start:reload:${pkgs.fd}/bin/fd {q} / 2>/dev/null" \
+        --bind "change:reload:${pkgs.fd}/bin/fd {q} / 2>/dev/null" \
+        --preview "${pkgs.bat}/bin/bat --color=always --style=numbers --line-range=:500 {}"
+    '';
+
+    # Audio-only playback with mpv
+    mpno = "mpv --no-video $argv";
+
+    # Alternative if they want to fzf the results:
+    # search_interactive = "fd . / 2>/dev/null | fzf";
+  };
+}
+</file>
+
+<file path="README.md">
+# ❄️ NixOS Configuration (Muggy-NixOS)
+
+A high-performance, modern NixOS configuration featuring **Niri** (Wayland compositor) and **GNOME** (as a robust fallback), optimized for gaming and productivity.
+
+![Desktop Screenshot](https://github.com/user-attachments/assets/0ed74bc7-cd22-45a3-86f3-e17897266439)
+
+## ✨ Key Features
+- **UI/UX**: [Niri](https://github.com/YaLTeR/niri) (unstable) with a custom [Noctalia shell](https://github.com/Noctatia/noctalia) setup.
+- **Kernel**: Optimized CachyOS Bore kernel for low-latency desktop performance.
+- **Gaming**: Pre-configured Steam, GameMode, and AMD GPU optimizations.
+- **Shell**: Fish shell equipped with Atuin (SQLite history) and Zoxide (smart navigation).
+- **Tools**: Ghostty terminal, VSCode/Antigravity, and declarative Brave/Chromium policy management.
+- **Portability**: Completely decoupled username and home paths for easy adoption.
+
+---
+
+## 🚀 Installation Guide
+
+> [!NOTE]
+> This guide is designed for a fresh NixOS installation. The script handles hardware configuration and enabling Flakes automatically.
+
+### 2. Run the Installation Script
+The `install.sh` script will automate everything for you (username detection, hardware configuration, and the first system build):
+```bash
+chmod +x install.sh
+./install.sh
+```
+
+**What the script does:**
+0.  **Personalization**: Automatically detects your username and prompts for your desired hostname, updating `flake.nix` and renaming host directories accordingly.
+1.  **Hardware**: Generates a `hardware-configuration.nix` for your specific machine.
+2.  **Flakes**: Ensures Flakes are supported for the initial build.
+3.  **Hostname**: Sets your system hostname to your chosen value.
+4.  **Build**: Performs the initial `nixos-rebuild switch`.
+
+### 4. Final Steps
+After the script finishes, **reboot** your system:
+```bash
+sudo reboot
+```
+
+---
+
+## 🛠️ Maintenance & Common Commands
+
+This config uses [**nh**](https://github.com/viperML/nh) for a faster and cleaner NixOS experience.
+
+- **Apply changes**: `nos` (a built-in alias for `nh os switch`)
+- **Update system**: `nix flake update` (then run `nos`)
+- **Cleanup**: `nh clean all`
+
+## 📁 Project Structure
+- `hosts/`: Host-specific configurations (hostname: `muggy-nixos`).
+- `modules/`: Reusable components (Brave, Shell, Gaming, etc.).
+- `home.nix`: Main Home-Manager user configuration.
+- `docs/`: Detailed guides for specific components (Brave extensions, Triple Relay workflow).
+
+---
+*Maintained by chandrahmuki. Built with ❄️ and Antigravity AI.*
 </file>
 
 <file path="modules/terminal.nix">
@@ -1896,21 +4128,47 @@ Voir [examples.md](file:///home/david/nixos-config/.agent/skills/scratchpad/refe
     };
   };
 
+  programs.zoxide = {
+    enable = true;
+    enableFishIntegration = true;
+    options = [ "--cmd cd" ];
+  };
+
   # Configuration de FISH
   programs.fish = {
     enable = true;
-    # On installe les plugins ici
-    plugins = [
-      {
-        name = "z";
-        src = pkgs.fishPlugins.z.src;
-      }
-    ];
     # Ton shell sera tout de suite prêt à l'emploi
     interactiveShellInit = ''
-      fastfetch
-      starship init fish | source
       set -g fish_greeting ""
+
+      if status is-interactive
+        # Fonction pour les outils visuels (Starship, Fastfetch)
+        # On les regroupe pour plus de clarté
+        function setup_visual_tools
+          starship init fish | source
+          atuin init fish | source
+        end
+
+        # On ne lance les outils visuels que si on n'est pas dans un terminal "dumb"
+        # Cela évite de bloquer l'agent AI ou les commandes distantes
+        if test "$TERM" != "dumb"
+          setup_visual_tools
+        end
+
+        # Mode Vim pour Fish
+        fish_vi_key_bindings
+        
+        # Configuration du curseur pour les modes Vi (premium touch)
+        set -g fish_cursor_default block
+        set -g fish_cursor_insert line
+        set -g fish_cursor_replace_one underscore
+        set -g fish_cursor_visual block
+
+        # Raccourci jk pour sortir du mode insertion (Esc)
+        function fish_user_key_bindings
+          bind -M insert -m default jk backward-char force-repaint
+        end
+      end
     '';
     shellAliases = {
       nix-switch = "sudo nixos-rebuild switch --flake .#muggy-nixos";
@@ -1920,358 +4178,242 @@ Voir [examples.md](file:///home/david/nixos-config/.agent/skills/scratchpad/refe
 }
 </file>
 
-<file path="nvim/init.lua">
--- MuggyVim 🚀
--- bootstrap lazy.nvim
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", lazypath })
-end
-vim.opt.rtp:prepend(lazypath)
+<file path="install.sh">
+#!/usr/bin/env bash
 
--- core
-require("core")
+set -e  # Exit on error
 
--- setup lazy
-require("lazy").setup("plugins", {
-  lockfile = vim.fn.stdpath("data") .. "/lazy-lock.json",
-})
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
 
--- load user overrides
-pcall(require, "custom")
-
-vim.notify("Welcome to MuggyVim ✨", vim.log.levels.INFO)
-</file>
-
-<file path=".agent/workflows/git-sync.md">
----
-description: Synchroniser les changements avec Git (Add, Review, Commit, Pull, Push)
----
-
-Ce workflow automatise la synchronisation complète. Il inclut désormais une phase de **Code Review** pour garantir la qualité avant le commit.
-
-// turbo-all
-1. Préparer les changements
-```bash
-git add .
-```
-
-2. Revue de Code Automatisée
-L'assistant analyse les changements indexés, vérifie la conformité avec `GEMINI.md` et propose des optimisations via le skill `architect`.
-```bash
-git diff --cached --stat
-# [INTERNAL REVIEW] : L'IA analyse maintenant le contenu détaillé de ces fichiers...
-```
-
-3. Créer un commit avec un message intelligent
-On utilise `commit-pro` pour générer un message au format Conventional Commits.
-```bash
-# L'assistant génère le message ici
-```
-
-4. Récupérer les changements distants (Pull)
-```bash
-git pull --rebase
-```
-
-5. Envoyer les changements (Push)
-```bash
-git push
-```
-
-6. Résumé de la Session
-L'assistant fournit un topo clair de la revue de code effectuée (points vérifiés, optimisations trouvées) et confirme l'état final de la synchronisation.
-</file>
-
-<file path="modules/neovim.nix">
-{ pkgs, ... }:
-
-{
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true;
-    viAlias = true;
-    vimAlias = true;
-
-    # Dependencies for lazy.nvim, mason, and common plugins
-    extraPackages = with pkgs; [
-      # Build tools
-      gcc
-      gnumake
-      unzip
-      wget
-      curl
-      # git (Managed by git.nix)
-
-      # Runtime dependencies
-      ripgrep
-      # fd (Managed by utils.nix)
-      # fzf (Managed by utils.nix)
-      nodejs
-      python3
-      lua-language-server
-      nil # Nix LSP
-      nixfmt # Nix Formatter
-      stylua # For stylua.toml in your config
-    ];
-  };
-
-  # Link the personal configuration from the internal nixos-config folder
-  home.file.".config/nvim" = {
-    source = ./../nvim;
-    recursive = true;
-  };
+# Print functions
+print_info() {
+    echo -e "${BLUE}[INFO]${NC} $1"
 }
+
+print_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+print_header() {
+    echo -e "\n${BLUE}╔═══════════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${BLUE}║${NC}     NixOS Configuration - Post-Installation Setup           ${BLUE}║${NC}"
+    echo -e "${BLUE}╚═══════════════════════════════════════════════════════════════╝${NC}\n"
+}
+
+# Check if running as root
+if [ "$EUID" -eq 0 ]; then
+    print_error "Please do not run this script as root!"
+    print_info "Run as your regular user: ./install.sh"
+    exit 1
+fi
+
+print_header
+
+# Get the directory where this script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+CURRENT_HOSTNAME=$(hostname)
+CONFIG_HOSTNAME="muggy-nixos"
+FLAKE_NAME="muggy-nixos"
+
+print_info "Starting post-installation setup..."
+print_info "Script location: $SCRIPT_DIR"
+print_info "Current hostname: $CURRENT_HOSTNAME"
+
+# Step 0: Personalize username
+# ... (already there, skipping to next part in actual file)
+
+# Step 0.5: Personalize hostname
+print_info "\nStep 0.5: Personalizing hostname..."
+read -p "Enter your desired hostname (default: $CONFIG_HOSTNAME): " FINAL_HOSTNAME
+if [ -z "$FINAL_HOSTNAME" ]; then
+    FINAL_HOSTNAME="$CONFIG_HOSTNAME"
+fi
+
+if [ "$FINAL_HOSTNAME" != "$CONFIG_HOSTNAME" ]; then
+    if [ -d "$SCRIPT_DIR/hosts/$CONFIG_HOSTNAME" ]; then
+        print_info "Renaming host configuration from '$CONFIG_HOSTNAME' to '$FINAL_HOSTNAME'..."
+        
+        # Rename directory
+        mv "$SCRIPT_DIR/hosts/$CONFIG_HOSTNAME" "$SCRIPT_DIR/hosts/$FINAL_HOSTNAME"
+        
+        # Update all file references
+        print_info "Updating file references..."
+        sed -i "s/$CONFIG_HOSTNAME/$FINAL_HOSTNAME/g" "$SCRIPT_DIR/flake.nix"
+        sed -i "s/$CONFIG_HOSTNAME/$FINAL_HOSTNAME/g" "$SCRIPT_DIR/modules/nh.nix"
+        sed -i "s/$CONFIG_HOSTNAME/$FINAL_HOSTNAME/g" "$SCRIPT_DIR/modules/terminal.nix"
+        sed -i "s/$CONFIG_HOSTNAME/$FINAL_HOSTNAME/g" "$SCRIPT_DIR/hosts/$FINAL_HOSTNAME/default.nix"
+    else
+        print_warning "Directory hosts/$CONFIG_HOSTNAME not found. Skipping rename (maybe already done?)"
+    fi
+    
+    # Update script variables for the rest of the execution
+    CONFIG_HOSTNAME="$FINAL_HOSTNAME"
+    FLAKE_NAME="$FINAL_HOSTNAME"
+    print_success "Hostname personalization complete!"
+else
+    print_info "Using default hostname: $CONFIG_HOSTNAME"
+fi
+
+# Step 1: Generate hardware configuration
+print_info "\nStep 1: Generating hardware configuration..."
+HARDWARE_CONFIG="$SCRIPT_DIR/hosts/$CONFIG_HOSTNAME/hardware-configuration.nix"
+
+if [ -f "$HARDWARE_CONFIG" ]; then
+    print_warning "hardware-configuration.nix already exists!"
+    read -p "Overwrite it? (y/N): " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        print_info "Keeping existing hardware configuration"
+    else
+        sudo nixos-generate-config --show-hardware-config > "$HARDWARE_CONFIG"
+        print_success "Hardware configuration regenerated!"
+    fi
+else
+    sudo nixos-generate-config --show-hardware-config > "$HARDWARE_CONFIG"
+    print_success "Hardware configuration generated!"
+fi
+
+# Step 2: Check if flakes are supported
+print_info "\nStep 2: Checking flakes configuration..."
+EXTRA_FLAGS="--extra-experimental-features 'nix-command flakes'"
+
+# Try to use nix flake command
+if nix flake metadata "$SCRIPT_DIR" $EXTRA_FLAGS &>/dev/null; then
+    print_success "Flakes are supported!"
+else
+    print_error "Nix command not found or not working properly!"
+    exit 1
+fi
+
+# Step 3: Verify hostname
+print_info "\nStep 3: Verifying hostname..."
+if [ "$(hostname)" != "$CONFIG_HOSTNAME" ]; then
+    print_warning "Hostname mismatch!"
+    print_info "Current: $CURRENT_HOSTNAME"
+    print_info "Config:  $CONFIG_HOSTNAME"
+    print_info "The hostname will be changed to '$CONFIG_HOSTNAME' after rebuild."
+    echo ""
+    read -p "Continue? (Y/n): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Nn]$ ]]; then
+        print_info "Aborted by user."
+        exit 0
+    fi
+fi
+
+# Step 4: Build and switch
+print_info "\nStep 4: Building and switching to new configuration..."
+print_warning "This may take a while on first build..."
+echo ""
+
+BUILD_CMD="sudo nixos-rebuild switch --flake $SCRIPT_DIR#$FLAKE_NAME $EXTRA_FLAGS"
+
+print_info "Running: $BUILD_CMD"
+echo ""
+
+if eval $BUILD_CMD; then
+    print_success "\n✨ Configuration successfully applied!"
+    echo ""
+    echo -e "${BLUE}Next steps:${NC}"
+    echo "1. Review any warnings or errors above"
+    echo "2. Reboot to ensure all changes take effect:"
+    echo -e "   ${YELLOW}sudo reboot${NC}"
+    echo ""
+    print_success "Setup completed successfully! 🎉"
+else
+    print_error "Failed to rebuild system configuration!"
+    print_info "Check the errors above and fix any issues."
+    print_info "You can manually retry with:"
+    echo -e "   ${YELLOW}$BUILD_CMD${NC}"
+    exit 1
+fi
 </file>
 
-<file path="modules/steam.nix">
-{ pkgs, ... }:
+<file path="modules/noctalia.nix">
+{ config, inputs, ... }:
 
 {
-
-  # 2. Les outils qu'on veut pouvoir lancer manuellement au terminal
-  environment.systemPackages = with pkgs; [
-    mangohud # L'overlay pour surveiller ta RX 6800 (FPS, température)
-    protonup-qt # Super utile pour installer GE-Proton (indispensable sous Linux)
+  imports = [
+    inputs.noctalia.homeModules.default
   ];
 
-  # 3. La configuration du module Steam
-  programs.steam = {
-    enable = true;
-
-    # Ouvre le pare-feu pour le Remote Play et les serveurs locaux
-    remotePlay.openFirewall = true;
-    dedicatedServer.openFirewall = true;
-
-    # Active Gamescope pour pouvoir lancer une session Steam Deck
-    gamescopeSession.enable = true;
+  # Configuration du fond d'écran pour Noctalia
+  home.file.".cache/noctalia/wallpapers.json".text = builtins.toJSON {
+    defaultWallpaper = "${config.home.homeDirectory}/Pictures/wallpaper/wallpaper.png";
   };
 
-  # 4. Configuration globale de Gamescope (Setuid et permissions)
-  programs.gamescope = {
+  programs.noctalia-shell = {
     enable = true;
-    # On peut ajouter ici des options globales si besoin
-  };
+    systemd.enable = true; # Auto-start avec Niri/Wayland
 
-  # 5. Optimise les performances des jeux (GameMode de Feral Interactive)
-  # Cela permet de booster le CPU et de prioriser le GPU quand un jeu est lancé
-  programs.gamemode = {
-    enable = true;
-    enableRenice = true;
+    # Configuration Noctalia (basée sur la doc)
     settings = {
+      bar = {
+        position = "left"; # Barre sur le côté gauche
+        barType = "floating"; # Style flottant
+        floating = true;
+        backgroundOpacity = 0.5; # Transparence 50%
+        useSeparateOpacity = true;
+        monitors = [ "DP-2" ]; # Afficher uniquement sur l'écran 2K (AOC)
+        margin = 10;
+        marginVertical = 10;
+        marginHorizontal = 10;
+
+        # Widgets sans le Launcher
+        widgets = {
+          left = [
+            # { id = "Launcher"; }  # Retiré !
+            { id = "Clock"; }
+            { id = "SystemMonitor"; }
+            { id = "ActiveWindow"; }
+            { id = "MediaMini"; }
+          ];
+          center = [
+            { id = "Workspace"; }
+          ];
+          right = [
+            { id = "Tray"; }
+            # { id = "NotificationHistory"; } # Retiré à la demande de l'utilisateur
+            { id = "Battery"; }
+            { id = "Volume"; }
+            { id = "Brightness"; }
+            { id = "ControlCenter"; }
+          ];
+        };
+      };
+
       general = {
-        renice = 10; # Augmente la priorité CPU des processus de jeu
-        softrealtime = "auto";
-      };
-      gpu = {
-        # Optimisations GPU AMD (bloque la fréquence à 'high')
-        apply_gpu_optimisations = "accept-responsibility";
-        gpu_device = 0;
-        amd_performance_level = "high";
-      };
-      custom = {
-        start = "${pkgs.libnotify}/bin/notify-send 'GameMode started'";
-        end = "${pkgs.libnotify}/bin/notify-send 'GameMode ended'";
-      };
-    };
-  };
-}
-</file>
-
-<file path="nvim/lua/plugins/completion.lua">
-return {
-  {
-    "hrsh7th/nvim-cmp",
-    event = "InsertEnter",
-    dependencies = {
-      "hrsh7th/cmp-nvim-lsp",
-      "hrsh7th/cmp-buffer",
-      "hrsh7th/cmp-path",
-      "hrsh7th/cmp-cmdline",
-      "hrsh7th/cmp-nvim-lsp-signature-help",
-      "saadparwaiz1/cmp_luasnip",
-      "L3MON4D3/LuaSnip",
-      "rafamadriz/friendly-snippets",
-      "onsails/lspkind.nvim", -- icônes
-    },
-    config = function()
-      local cmp = require("cmp")
-      local luasnip = require("luasnip")
-      local lspkind = require("lspkind")
-      require("luasnip.loaders.from_vscode").lazy_load()
-
-      cmp.setup({
-        snippet = {
-          expand = function(args)
-            luasnip.lsp_expand(args.body)
-          end,
-        },
-        window = {
-          completion = cmp.config.window.bordered(),
-          documentation = cmp.config.window.bordered(),
-        },
-        formatting = {
-          format = lspkind.cmp_format({
-            mode = "symbol_text", -- montre icône + texte
-            maxwidth = 50,
-            ellipsis_char = "...",
-          }),
-        },
-        mapping = cmp.mapping.preset.insert({
-          ["<C-Space>"] = cmp.mapping.complete(),
-          ["<CR>"] = cmp.mapping.confirm({ select = true }),
-          ["<Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-              cmp.select_next_item()
-            elseif luasnip.expand_or_jumpable() then
-              luasnip.expand_or_jump()
-            else
-              fallback()
-            end
-          end, { "i", "s" }),
-          ["<S-Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-              cmp.select_prev_item()
-            elseif luasnip.jumpable(-1) then
-              luasnip.jump(-1)
-            else
-              fallback()
-            end
-          end, { "i", "s" }),
-        }),
-        sources = cmp.config.sources({
-          { name = "nvim_lsp", priority = 1000 },
-          { name = "nvim_lsp_signature_help" },
-          { name = "luasnip", priority = 800 },
-          { name = "buffer", keyword_length = 3 },
-          { name = "path" },
-        }),
-      })
-
-      -- complétion pour / ? (recherche)
-      cmp.setup.cmdline({ "/", "?" }, {
-        mapping = cmp.mapping.preset.cmdline(),
-        sources = { { name = "buffer" } },
-      })
-
-      -- complétion pour :
-      cmp.setup.cmdline(":", {
-        mapping = cmp.mapping.preset.cmdline(),
-        sources = cmp.config.sources({
-          { name = "path" },
-        }, {
-          { name = "cmdline" },
-        }),
-      })
-
-      -- ========================
-      -- Couleurs Nord pour nvim-cmp
-      -- ========================
-      local set_hl = vim.api.nvim_set_hl
-      set_hl(0, "CmpItemAbbr", { fg = "#D8DEE9" })
-      set_hl(0, "CmpItemAbbrMatch", { fg = "#88C0D0", bold = true })
-      set_hl(0, "CmpItemAbbrMatchFuzzy", { fg = "#88C0D0", bold = true })
-      set_hl(0, "CmpItemMenu", { fg = "#616E88" })
-
-      -- par kind
-      set_hl(0, "CmpItemKindFunction", { fg = "#88C0D0" }) -- bleu clair
-      set_hl(0, "CmpItemKindMethod",   { fg = "#88C0D0" })
-      set_hl(0, "CmpItemKindKeyword",  { fg = "#81A1C1" }) -- bleu foncé
-      set_hl(0, "CmpItemKindVariable", { fg = "#EBCB8B" }) -- jaune
-      set_hl(0, "CmpItemKindField",    { fg = "#EBCB8B" })
-      set_hl(0, "CmpItemKindProperty", { fg = "#EBCB8B" })
-      set_hl(0, "CmpItemKindSnippet",  { fg = "#A3BE8C" }) -- vert
-      set_hl(0, "CmpItemKindClass",    { fg = "#D08770" }) -- orange
-      set_hl(0, "CmpItemKindInterface",{ fg = "#B48EAD" }) -- violet
-    end,
-  },
-}
-</file>
-
-<file path="nvim/lua/plugins/lsp.lua">
-return {
-  {
-    "neovim/nvim-lspconfig",
-    config = function()
-      local capabilities = vim.lsp.protocol.make_client_capabilities()
-      if pcall(require, "cmp_nvim_lsp") then
-        capabilities = require("cmp_nvim_lsp").default_capabilities()
-      end
-
-      -- Nix
-      vim.lsp.enable("nil_ls")
-      vim.lsp.config("nil_ls", {
-        capabilities = capabilities,
-      })
-
-      -- Lua
-      vim.lsp.enable("lua_ls")
-      vim.lsp.config("lua_ls", {
-        capabilities = capabilities,
-        settings = {
-          Lua = {
-            diagnostics = {
-              globals = { "vim" },
-            },
-          },
-        },
-      })
-    end,
-  },
-  { "williamboman/mason.nvim", config = true },
-  { "williamboman/mason-lspconfig.nvim", config = true },
-}
-</file>
-
-<file path="modules/fuzzel.nix">
-{ pkgs, ... }:
-
-{
-  home.packages = with pkgs; [
-    papirus-icon-theme
-    adwaita-icon-theme # Fallback for apps missing in Papirus
-    hicolor-icon-theme # Base icon theme (fallback)
-  ];
-
-  programs.fuzzel = {
-    enable = true;
-    settings = {
-      main = {
-        font = "Hack Nerd Font:size=18";
-        terminal = "${pkgs.ghostty}/bin/ghostty";
-        prompt = "'❯ '";
-        layer = "overlay";
-        icons-enabled = "yes";
-        icon-theme = "Papirus-Dark";
-        width = 40;
-        lines = 15;
+        animationSpeed = 1.5; # Plus rapide (x1.5)
+        radiusRatio = 1.0;
       };
 
-      colors = {
-        background = "282a36ff"; # Dracula Background
-        text = "f8f8f2ff"; # Dracula Foreground
-        match = "8be9fdff"; # Dracula Cyan (for matches)
-        selection = "44475aff"; # Dracula Selection
-        selection-text = "ffffffff";
-        border = "bd93f9ff"; # Dracula Purple
+      notifications = {
+        enabled = false;
       };
 
-      border = {
-        width = 2;
-        radius = 10;
+      colorSchemes = {
+        darkMode = true;
+        schemeType = "vibrant"; # Couleurs plus éclatantes extraites du wallpaper
+        useWallpaperColors = true; # Support matugen/dynamic theming
       };
     };
+
+    # On peut aussi définir des plugins ici si besoin
+    # plugins = { ... };
   };
-
-  # Symlinks pour les icônes manquantes dans les thèmes standards
-  home.file.".local/share/icons/hicolor/scalable/apps/io.github.ilya_zlobintsev.LACT.svg".source =
-    "${pkgs.lact}/share/pixmaps/io.github.ilya_zlobintsev.LACT.svg";
-
-  # Pour Antigravity, on essaie de pointer vers son icône si elle est packagée
-  # Note: Si l'icône n'est pas trouvée, HM ignorera ou on ajustera.
-  home.file.".local/share/icons/hicolor/scalable/apps/antigravity.svg".source = "${
-    pkgs.antigravity-unwrapped or pkgs.antigravity
-  }/share/icons/hicolor/scalable/apps/antigravity.svg";
 }
 </file>
 
@@ -2283,6 +4425,7 @@ return {
   programs.yazi = {
     enable = true;
     enableFishIntegration = true;
+    shellWrapperName = "y"; # Supprime le warning de deprecation
 
     settings = {
       manager = {
@@ -2331,112 +4474,6 @@ return {
       };
     };
   };
-
-  # Fonction Fish 'y' : wrapper pour Yazi
-  # Permet de naviguer dans Yazi et de rester dans le dossier final en quittant
-  programs.fish.functions.y = {
-    body = ''
-      set tmp (mktemp -t "yazi-cwd.XXXXXX")
-      yazi $argv --cwd-file="$tmp"
-      if set cwd (command cat -- "$tmp"); and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
-        builtin cd -- "$cwd"
-      end
-      rm -f -- "$tmp"
-    '';
-  };
-}
-</file>
-
-<file path="home.nix">
-{ ... }: # <-- N'oublie pas d'ajouter { config, pkgs, ... }: en haut !
-
-{
-  home.username = "david";
-  home.homeDirectory = "/home/david";
-  home.stateVersion = "24.11";
-
-  # On importe ici les fichiers qu'on va créer dans le dossier modules
-  imports = [
-    ./modules/btop.nix
-    ./modules/terminal.nix
-    ./modules/git.nix
-    ./modules/fastfetch.nix
-    ./modules/brave.nix
-    ./modules/vscode.nix
-    ./wm/niri.nix
-    ./modules/fuzzel.nix
-    ./modules/noctalia.nix
-    ./modules/nh.nix
-    ./modules/parsec.nix
-    ./modules/antigravity.nix
-    ./modules/direnv.nix
-    ./modules/yt-dlp.nix
-    ./modules/yazi.nix
-    ./modules/utils.nix
-    ./modules/neovim.nix
-    ./modules/discord.nix
-    ./modules/xdg.nix
-    ./modules/tealdeer.nix
-  ];
-
-  programs.home-manager.enable = true;
-}
-</file>
-
-<file path="modules/antigravity.nix">
-{ config, pkgs, ... }:
-
-let
-  # Extensions VSCode pour le support Nix
-  nixExtensions = [
-    pkgs.vscode-extensions.bbenoist.nix
-    pkgs.vscode-extensions.jnoortheen.nix-ide
-  ];
-
-  # Helper pour créer les liens symboliques d'extensions dans le dossier Antigravity
-  mkExtensionSymlink = ext: {
-    # Format attendu par Antigravity : publisher.name-version-platform
-    name = ".antigravity/extensions/${ext.vscodeExtPublisher}.${ext.vscodeExtName}-${ext.version}-universal";
-    value = {
-      source = "${ext}/share/vscode/extensions/${ext.vscodeExtPublisher}.${ext.vscodeExtName}";
-    };
-  };
-in
-{
-  home.packages = [
-    pkgs.google-antigravity
-    pkgs.nil # Language Server for Nix
-    pkgs.nixfmt # Formatter for Nix
-  ];
-
-  # Fichiers et configurations Antigravity
-  home.file = (builtins.listToAttrs (map mkExtensionSymlink nixExtensions)) // {
-    # Configuration du LSP nil et du formateur dans l'éditeur Antigravity
-    ".config/Antigravity/User/settings.json".text = builtins.toJSON {
-      "nix.enableLanguageServer" = true;
-      "nix.serverPath" = "${pkgs.nil}/bin/nil";
-      "nix.serverSettings" = {
-        "nil" = {
-          "formatting" = {
-            "command" = [ "${pkgs.nixfmt}/bin/nixfmt" ];
-          };
-        };
-      };
-      "editor.formatOnSave" = true;
-      "[nix]" = {
-        "editor.defaultFormatter" = "jnoortheen.nix-ide";
-      };
-      "security.workspace.trust.untrustedFiles" = "open";
-    };
-
-    # Gestion persistante de la config MCP
-    ".gemini/antigravity/mcp_config.json".source =
-      config.lib.file.mkOutOfStoreSymlink "/home/david/nixos-config/modules/mcp_config.json";
-  };
-
-  home.sessionVariables = {
-    ANTIGRAVITY_EDITOR = "code";
-  };
 }
 </file>
 
@@ -2447,6 +4484,9 @@ in
     ./binds.nix
     ./style.nix
   ];
+
+  # jq est nécessaire pour certains scripts niri
+  home.packages = [ pkgs.jq ];
 
   programs.niri.settings = {
 
@@ -2465,6 +4505,13 @@ in
       # { command = [ "sleep 15; systemctl --user restart swaybg" ]; }
       { command = [ "xwayland-satellite" ]; }
     ];
+
+    debug = {
+      # Permet le focus même si le token d'activation est "imparfait" (ex: via une notification)
+      honor-xdg-activation-with-invalid-serial = true;
+      # Corrige les soucis de focus pour les apps Chromium/Electron
+      deactivate-unfocused-windows = true;
+    };
 
     environment."DISPLAY" = ":0";
 
@@ -2520,6 +4567,99 @@ in
 }
 </file>
 
+<file path="home.nix">
+{ username, ... }: # <-- N'oublie pas d'ajouter { config, pkgs, ... }: en haut !
+
+{
+  home.username = username;
+  home.homeDirectory = "/home/${username}";
+  home.stateVersion = "24.11";
+
+  # On importe ici les fichiers qu'on va créer dans le dossier modules
+  imports = [
+    ./modules/btop.nix
+    ./modules/terminal.nix
+    ./modules/git.nix
+    ./modules/fastfetch.nix
+    ./modules/brave.nix
+    ./modules/vscode.nix
+    ./wm/niri.nix
+    ./modules/fuzzel.nix
+    ./modules/noctalia.nix
+    ./modules/nh.nix
+    ./modules/parsec.nix
+    ./modules/antigravity.nix
+    ./modules/direnv.nix
+    ./modules/yt-dlp.nix
+    ./modules/yazi.nix
+    ./modules/utils.nix
+    ./modules/neovim.nix
+    ./modules/discord.nix
+    ./modules/xdg.nix
+    ./modules/tealdeer.nix
+    ./modules/atuin.nix
+    ./modules/pdf.nix
+    ./modules/notifications.nix
+  ];
+
+  programs.home-manager.enable = true;
+}
+</file>
+
+<file path=".agent/workflows/auto-doc.md">
+---
+description: Automatisation de la documentation et de la synchronisation après un changement.
+---
+
+Ce workflow permet de boucler une tâche proprement en minimisant la recherche aveugle des sous-agents.
+
+// turbo-all
+// turbo-all
+1. Synchronisation Git chirurgicale (sans Repomix pour la vitesse)
+```bash
+git add . && git commit -m "docs: synchronization and context update" && git push
+```
+
+2. Instructions pour l'agent suivant (Relais Triple)
+Ouvrez une nouvelle session avec un nouvel agent et tapez simplement :
+
+- **`/audit`** : Pour lancer une revue de code (Auditeur).
+- **`/archive`** : Pour capitaliser le savoir (Archiviste).
+
+Le dépôt est prêt pour le relais. À bientôt ! 💎🦾
+
+Le dépôt est maintenant prêt pour la capitalisation. À bientôt ! 💎🦾
+</file>
+
+<file path="modules/brave.nix">
+{ pkgs, ... }:
+
+{
+  programs.brave = {
+    enable = true;
+    commandLineArgs = [
+      "--unlimited-storage"
+      # Force le mode sombre pour l'UI du navigateur et le contenu des pages web
+      "--enable-features=UseOzonePlatform,WebContentsForceDark"
+      "--ozone-platform=wayland" # Force l'utilisation native de Wayland
+      "--force-dark-mode"
+    ];
+  };
+
+  # Écrase complètement com.brave.Browser.desktop pour qu'il soit caché mais valide pour xdg-open
+  home.file.".local/share/applications/com.brave.Browser.desktop".text = ''
+    [Desktop Entry]
+    Type=Application
+    Name=Brave Browser
+    Exec=brave %U
+    Terminal=false
+    NoDisplay=true
+    Categories=Network;WebBrowser;
+    MimeType=text/html;text/xml;x-scheme-handler/http;x-scheme-handler/https;
+  '';
+}
+</file>
+
 <file path="GEMINI.md">
 # Règles pour l'Assistant IA
 
@@ -2543,662 +4683,88 @@ in
 ## Commentaires et Clarté
 - **Toujours commenter le code** : Chaque ajout ou modification complexe doit être accompagné de commentaires explicatifs pour faciliter la compréhension de la configuration.
 
+## Recherche et Stratégie (NixOS / Nixpkgs)
+- **Priorité aux Outils MCP** : Pour toute recherche sur des options NixOS, des packages nixpkgs ou des paramètres Home Manager, utiliser **OBLIGATOIREMENT** l'outil `mcp_nix-search_nix` au lieu de recherches web génériques.
+- **Utilisation de Fetch** : Si une recherche web est nécessaire malgré tout, utiliser l'outil de fetch (ou `mcp_fetch`) pour extraire le contenu proprement.
+- **Précision** : Ne jamais deviner une option. Toujours la vérifier via le MCP pour garantir la compatibilité avec la version système.
+
 ## Contexte LLM / Repomix / Diff
 - J'utilise `repomix` pour avoir une vision globale du projet.
 - Avant toute analyse globale, je devrais consulter `repomix-nixos-config.md` s'il existe.
 - **Pour une analyse rapide des changements récents**, je dois prioriser `git log --stat` et `git show --stat` au lieu de scanner tous les fichiers un par un.
 - Si des changements structurels majeurs sont faits, il est recommandé de mettre à jour le fichier repomix avec `repomix --output repomix-nixos-config.md`.
-- J'utilise le workflow `/auto-doc` pour automatiser la documentation après une tâche.
+- J'utilise le workflow `/auto-doc` pour automatiser la documentation rapide.
+- J'utilise le workflow `/full-index` pour les mises à jour majeures du contexte (Repomix).
 
-## Stabilité et Rapidité (Anti-Lag)
+## Répartition des Rôles (Relais Triple)
+- **Codeur (Toi)** : Focus 100% sur l'implémentation et la vérification fonctionnelle (tests).
+- **Auditeur (Revue)** : Focus 100% sur la qualité, la propreté du code (Audit) et la conformité aux règles. Ne fait aucune modification.
+- **Archiviste (Savoir)** : Focus 100% sur la documentation et les **Knowledge Items**.
+- **Mode Relais** : Le Codeur passe le témoin à l'Auditeur ou à l'Archiviste via le workflow `/auto-doc`.
+
+## Vitesse & Focus Chirurgical (Anti-Lag)
 - **Priorité aux outils natifs** : J'utilise `list_dir` et `view_file` au lieu de `ls` ou `cat` dans le terminal. C'est instantané et ça ne "bloque" jamais.
-- **Stratégie Async** : Pour les commandes longues, j'utilise un `WaitMsBeforeAsync` de 0 ou 500ms pour rendre la main tout de suite.
+- **Budget Turn-R/W** : Une tâche de documentation ne doit pas dépasser 5-10 appels d'outils. Si l'analyse devient complexe, je demande d'abord.
+- **Zéro historique profond** : Interdiction de naviguer dans le `git log` au-delà du dernier commit (`-n 1`) sans demande explicite. 
+- **Surgical Metadata Only** : Dans un workflow `/auto-doc`, je me contente de `git show --stat`. Je ne lis QUE les fichiers modifiés.
 - **Pas de boucles infinies** : Si une commande ne répond pas après 2 tentatives de `command_status`, je demande l'avis de l'utilisateur au lieu de bloquer.
+
+## Gestion du Savoir (Knowledge)
+- **Différence Doc vs Knowledge** : 
+    - `./docs/` est pour les humains (fiches, guides).
+    - `~/.gemini/antigravity/knowledge/` est pour la mémoire IA (Knowledge Items).
+- **Consommation Obligatoire** : Avant de rédiger quoi que ce soit, **VÉRIFIER** si un KI existe déjà sur le sujet pour le mettre à jour au lieu d'en créer un nouveau.
+- **Priorité KI** : Pour toute modification technique structurelle, la création/mise à jour d'un **Knowledge Item** est LA priorité absolue par rapport à la doc Markdown classique.
 </file>
 
-<file path="flake.nix">
-{
-  description = "NixOS Unstable avec Home Manager intégré";
+<file path="modules/antigravity.nix">
+{ config, pkgs, lib, ... }:
 
-  inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs-master.url = "github:nixos/nixpkgs/master";
-
-    # Home Manager pointant sur la branche unstable
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs"; # Force HM à utiliser votre version de nixpkgs
-    };
-
-    # Flake niri
-    niri = {
-      url = "github:sodiboo/niri-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    antigravity = {
-      url = "github:jacopone/antigravity-nix";
-      # C'est ici que la magie opère :
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # CachyOS Latest Kernel (xddxdd - has lantian cache)
-    nix-cachyos.url = "github:xddxdd/nix-cachyos-kernel";
-  };
-
-  outputs =
-    {
-      self,
-      nixpkgs,
-      nixpkgs-master,
-      home-manager,
-      niri,
-      antigravity,
-      noctalia,
-      nix-cachyos,
-      ...
-    }@inputs:
-    {
-      nixosConfigurations.muggy-nixos = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = { inherit inputs; };
-        modules = [
-          ./hosts/muggy-nixos/default.nix
-          ./overlays.nix
-
-          # CachyOS kernel is set via boot.kernelPackages in default.nix
-
-          # Le module Noctalia se charge au niveau SYSTEME (si besoin, mais on va surtout l'utiliser dans Home Manager)
-          noctalia.nixosModules.default
-          niri.nixosModules.niri # Le module Niri Système (Sodiboo)
-
-          # Import du module Home Manager
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.david = import ./home.nix;
-
-            # Optionnel : passe les 'inputs' du flake au fichier home.nix
-            home-manager.extraSpecialArgs = { inherit inputs; };
-          }
-        ];
-      };
-    };
-}
-</file>
-
-<file path="modules/utils.nix">
-{ pkgs, ... }:
-
-{
-  home.packages = with pkgs; [
-    fd # Used for the search function
-    playerctl # MPRIS media player control (required for DMS media widget)
-    nvd # Differenz between builds (shows package changes)
-    manix # Fast Nix documentation searcher
-    pamixer # CLI mixer for PulseAudio/PipeWire (volume control)
-    pavucontrol # GUI volume control for PulseAudio/PipeWire
-    pulseaudio # Provides pactl for volume control
-    nodejs # For MCP servers and other node-based tools
-    python3 # For advanced tools like the Kira scratchpad script
-    repomix # Pack repository contents to single file for AI consumption
+let
+  # Extensions VSCode pour le support Nix
+  nixExtensions = [
+    pkgs.vscode-extensions.bbenoist.nix
+    pkgs.vscode-extensions.jnoortheen.nix-ide
   ];
 
-  programs.bat = {
-    enable = true;
-    config = {
-      theme = "Dracula";
+  # Helper pour créer les liens symboliques d'extensions dans le dossier Antigravity
+  mkExtensionSymlink = ext: {
+    # Format attendu par Antigravity : publisher.name-version-platform
+    name = ".antigravity/extensions/${ext.vscodeExtPublisher}.${ext.vscodeExtName}-${ext.version}-universal";
+    value = {
+      source = "${ext}/share/vscode/extensions/${ext.vscodeExtPublisher}.${ext.vscodeExtName}";
     };
   };
-
-  programs.mpv = {
-    enable = true;
-    scripts = with pkgs.mpvScripts; [
-      mpris # MPRIS support for media player detection (DMS, playerctl)
-    ];
-  };
-
-  programs.fzf = {
-    enable = true;
-    enableFishIntegration = true;
-  };
-
-  programs.fish.functions = {
-    # Search function that searches from root (/)
-    # Uses fd for speed, searching globally
-    search = ''
-      if test (count $argv) -eq 0
-        echo "Usage: search <query>"
-        return 1
-      end
-
-      # Launch fzf in interactive mode
-      # --disabled: Do not let fzf filter the results, let fd handle it via reload
-      # --query: Pre-fill with the user's argument
-      # --bind: Reload fd whenever the query string changes
-      # --preview: Optional but nice, shows file content with bat
-      ${pkgs.fzf}/bin/fzf --disabled --query "$argv" \
-        --bind "start:reload:${pkgs.fd}/bin/fd {q} / 2>/dev/null" \
-        --bind "change:reload:${pkgs.fd}/bin/fd {q} / 2>/dev/null" \
-        --preview "${pkgs.bat}/bin/bat --color=always --style=numbers --line-range=:500 {}"
-    '';
-
-    # Alternative if they want to fzf the results:
-    # search_interactive = "fd . / 2>/dev/null | fzf";
-  };
-}
-</file>
-
-<file path="flake.lock">
+in
 {
-  "nodes": {
-    "antigravity": {
-      "inputs": {
-        "flake-utils": "flake-utils",
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1770196631,
-        "narHash": "sha256-neRXwIILc8BUFHeT0UM2Mj8Wt1oo4UPpmm4NkfBwQOY=",
-        "owner": "jacopone",
-        "repo": "antigravity-nix",
-        "rev": "acc9baf089a67ef7456117ef31285e34c3294984",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jacopone",
-        "repo": "antigravity-nix",
-        "type": "github"
-      }
-    },
-    "cachyos-kernel": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1770052877,
-        "narHash": "sha256-Ejj9F2obMjVoy0Jsugw6txHFaR9ziuErYIt58cIJqzE=",
-        "owner": "CachyOS",
-        "repo": "linux-cachyos",
-        "rev": "1f8a79ffeac6f319a8c0fc3abad27a3ec7762abf",
-        "type": "github"
-      },
-      "original": {
-        "owner": "CachyOS",
-        "repo": "linux-cachyos",
-        "type": "github"
-      }
-    },
-    "cachyos-kernel-patches": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1770051966,
-        "narHash": "sha256-udCJTbUAEZm5zBrr4zVVjpBLQtCC/vQlkIOLnEGr5Ik=",
-        "owner": "CachyOS",
-        "repo": "kernel-patches",
-        "rev": "bfa4ff5231408610ffcc92898cd1e4c9bd55e452",
-        "type": "github"
-      },
-      "original": {
-        "owner": "CachyOS",
-        "repo": "kernel-patches",
-        "type": "github"
-      }
-    },
-    "flake-compat": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1767039857,
-        "narHash": "sha256-vNpUSpF5Nuw8xvDLj2KCwwksIbjua2LZCqhV1LNRDns=",
-        "owner": "NixOS",
-        "repo": "flake-compat",
-        "rev": "5edf11c44bc78a0d334f6334cdaf7d60d732daab",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "repo": "flake-compat",
-        "type": "github"
-      }
-    },
-    "flake-parts": {
-      "inputs": {
-        "nixpkgs-lib": "nixpkgs-lib"
-      },
-      "locked": {
-        "lastModified": 1769996383,
-        "narHash": "sha256-AnYjnFWgS49RlqX7LrC4uA+sCCDBj0Ry/WOJ5XWAsa0=",
-        "owner": "hercules-ci",
-        "repo": "flake-parts",
-        "rev": "57928607ea566b5db3ad13af0e57e921e6b12381",
-        "type": "github"
-      },
-      "original": {
-        "owner": "hercules-ci",
-        "repo": "flake-parts",
-        "type": "github"
-      }
-    },
-    "flake-utils": {
-      "inputs": {
-        "systems": "systems"
-      },
-      "locked": {
-        "lastModified": 1731533236,
-        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "type": "github"
-      }
-    },
-    "home-manager": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1770263241,
-        "narHash": "sha256-R1WFtIvp38hS9x63dnijdJw1KyIiy30KGea6e6N7LHs=",
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "rev": "04e5203db66417d548ae1ff188a9f591836dfaa7",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "type": "github"
-      }
-    },
-    "niri": {
-      "inputs": {
-        "niri-stable": "niri-stable",
-        "niri-unstable": "niri-unstable",
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "nixpkgs-stable": "nixpkgs-stable",
-        "xwayland-satellite-stable": "xwayland-satellite-stable",
-        "xwayland-satellite-unstable": "xwayland-satellite-unstable"
-      },
-      "locked": {
-        "lastModified": 1770271466,
-        "narHash": "sha256-Pyc3p/V7ruQplnU31r+umLSNlSGwOOoHzhWfzfLmiiw=",
-        "owner": "sodiboo",
-        "repo": "niri-flake",
-        "rev": "76e1d271485b00a5d98aeb1dd76408594741c039",
-        "type": "github"
-      },
-      "original": {
-        "owner": "sodiboo",
-        "repo": "niri-flake",
-        "type": "github"
-      }
-    },
-    "niri-stable": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1756556321,
-        "narHash": "sha256-RLD89dfjN0RVO86C/Mot0T7aduCygPGaYbog566F0Qo=",
-        "owner": "YaLTeR",
-        "repo": "niri",
-        "rev": "01be0e65f4eb91a9cd624ac0b76aaeab765c7294",
-        "type": "github"
-      },
-      "original": {
-        "owner": "YaLTeR",
-        "ref": "v25.08",
-        "repo": "niri",
-        "type": "github"
-      }
-    },
-    "niri-unstable": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1770092965,
-        "narHash": "sha256-++K1ftjwPqMJzIO8t2GsdkYQzC2LLA5A1w21Uo+SLz4=",
-        "owner": "YaLTeR",
-        "repo": "niri",
-        "rev": "189917c93329c86ac2ddd89f459c26a028d590ba",
-        "type": "github"
-      },
-      "original": {
-        "owner": "YaLTeR",
-        "repo": "niri",
-        "type": "github"
-      }
-    },
-    "nix-cachyos": {
-      "inputs": {
-        "cachyos-kernel": "cachyos-kernel",
-        "cachyos-kernel-patches": "cachyos-kernel-patches",
-        "flake-compat": "flake-compat",
-        "flake-parts": "flake-parts",
-        "nixpkgs": "nixpkgs"
-      },
-      "locked": {
-        "lastModified": 1770055712,
-        "narHash": "sha256-VpbF4JDFPSW2crh0tP5EiegnuTkj3fACs0SLWDhlfPM=",
-        "owner": "xddxdd",
-        "repo": "nix-cachyos-kernel",
-        "rev": "220dce3edcb81188ecb896382699884243d1c2e3",
-        "type": "github"
-      },
-      "original": {
-        "owner": "xddxdd",
-        "repo": "nix-cachyos-kernel",
-        "type": "github"
-      }
-    },
-    "nixpkgs": {
-      "locked": {
-        "lastModified": 1770030960,
-        "narHash": "sha256-b9kW8RiZYQjSYKcFRYwc2vPB08F8xjaTS85tv+lP0YA=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "0fe992afb42c8f9077ba77d1bb9795492cc7a4b3",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "nixos-unstable-small",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs-lib": {
-      "locked": {
-        "lastModified": 1769909678,
-        "narHash": "sha256-cBEymOf4/o3FD5AZnzC3J9hLbiZ+QDT/KDuyHXVJOpM=",
-        "owner": "nix-community",
-        "repo": "nixpkgs.lib",
-        "rev": "72716169fe93074c333e8d0173151350670b824c",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "repo": "nixpkgs.lib",
-        "type": "github"
-      }
-    },
-    "nixpkgs-master": {
-      "locked": {
-        "lastModified": 1770056648,
-        "narHash": "sha256-hsM96Z1KmiFuCe57iOIapJMPTCM2XxfvZKl8JdHGQRE=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "d844a3bc280fee349c892033977bb109dcdd543a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "master",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs-stable": {
-      "locked": {
-        "lastModified": 1770136044,
-        "narHash": "sha256-tlFqNG/uzz2++aAmn4v8J0vAkV3z7XngeIIB3rM3650=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "e576e3c9cf9bad747afcddd9e34f51d18c855b4e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "nixos-25.11",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs_2": {
-      "locked": {
-        "lastModified": 1770197578,
-        "narHash": "sha256-AYqlWrX09+HvGs8zM6ebZ1pwUqjkfpnv8mewYwAo+iM=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "00c21e4c93d963c50d4c0c89bfa84ed6e0694df2",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "nixos-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "noctalia": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1770294810,
-        "narHash": "sha256-qmODFANi4drhxDNld7NeNl0y9HQvESaby9yJeGsf0Q8=",
-        "owner": "noctalia-dev",
-        "repo": "noctalia-shell",
-        "rev": "f13bc738be5c10d29683a5041383b4739eeb97d1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "noctalia-dev",
-        "repo": "noctalia-shell",
-        "type": "github"
-      }
-    },
-    "root": {
-      "inputs": {
-        "antigravity": "antigravity",
-        "home-manager": "home-manager",
-        "niri": "niri",
-        "nix-cachyos": "nix-cachyos",
-        "nixpkgs": "nixpkgs_2",
-        "nixpkgs-master": "nixpkgs-master",
-        "noctalia": "noctalia"
-      }
-    },
-    "systems": {
-      "locked": {
-        "lastModified": 1681028828,
-        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
-        "owner": "nix-systems",
-        "repo": "default",
-        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-systems",
-        "repo": "default",
-        "type": "github"
-      }
-    },
-    "xwayland-satellite-stable": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1755491097,
-        "narHash": "sha256-m+9tUfsmBeF2Gn4HWa6vSITZ4Gz1eA1F5Kh62B0N4oE=",
-        "owner": "Supreeeme",
-        "repo": "xwayland-satellite",
-        "rev": "388d291e82ffbc73be18169d39470f340707edaa",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Supreeeme",
-        "ref": "v0.7",
-        "repo": "xwayland-satellite",
-        "type": "github"
-      }
-    },
-    "xwayland-satellite-unstable": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1770167989,
-        "narHash": "sha256-rE2WTxKHe3KMG/Zr5YUNeKHkZfWwSFl7yJXrOKnunHg=",
-        "owner": "Supreeeme",
-        "repo": "xwayland-satellite",
-        "rev": "0947c4685f6237d4f8045482ce0c62feab40b6c4",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Supreeeme",
-        "repo": "xwayland-satellite",
-        "type": "github"
-      }
-    }
-  },
-  "root": "root",
-  "version": 7
-}
-</file>
-
-<file path="modules/noctalia.nix">
-{ inputs, ... }:
-
-{
-  imports = [
-    inputs.noctalia.homeModules.default
+  home.packages = [
+    pkgs.google-antigravity
+    pkgs.nil # Language Server for Nix
+    pkgs.nixfmt # Formatter for Nix
   ];
 
-  # Configuration du fond d'écran pour Noctalia
-  home.file.".cache/noctalia/wallpapers.json".text = builtins.toJSON {
-    defaultWallpaper = "/home/david/Pictures/wallpaper/wallpaper.png";
+  # Fichiers et configurations Antigravity
+  home.file = (builtins.listToAttrs (map mkExtensionSymlink nixExtensions)) // {
+    # Configuration mutable liée au dépôt git (pour permettre à l'agent d'écrire dedans si nécessaire)
+    # Géré via le script d'activation plus bas pour éviter le verrouillage en lecture seule
+    # ".config/Antigravity/User/settings.json".source = ...
+
+    # Gestion persistante de la config MCP
+    ".gemini/antigravity/mcp_config.json".source =
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/modules/mcp_config.json";
   };
 
-  programs.noctalia-shell = {
-    enable = true;
-    systemd.enable = true; # Auto-start avec Niri/Wayland
+  # Activation Script : Force Brute pour le settings.json
+  # Home Manager a tendance à verrouiller ce fichier en lecture seule ou à casser le lien.
+  # On force ici un lien symbolique direct vers notre fichier mutable après l'activation.
+  home.activation.linkAntigravitySettings = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    run mkdir -p $HOME/.config/Antigravity/User
+    run rm -f $HOME/.config/Antigravity/User/settings.json
+    run ln -sf $HOME/nixos-config/modules/antigravity-settings.json $HOME/.config/Antigravity/User/settings.json
+  '';
 
-    # Configuration Noctalia (basée sur la doc)
-    settings = {
-      bar = {
-        position = "left"; # Barre sur le côté gauche
-        barType = "floating"; # Style flottant
-        floating = true;
-        backgroundOpacity = 0.5; # Transparence 50%
-        useSeparateOpacity = true;
-        monitors = [ "DP-2" ]; # Afficher uniquement sur l'écran 2K (AOC)
-        margin = 10;
-        marginVertical = 10;
-        marginHorizontal = 10;
-
-        # Widgets sans le Launcher
-        widgets = {
-          left = [
-            # { id = "Launcher"; }  # Retiré !
-            { id = "Clock"; }
-            { id = "SystemMonitor"; }
-            { id = "ActiveWindow"; }
-            { id = "MediaMini"; }
-          ];
-          center = [
-            { id = "Workspace"; }
-          ];
-          right = [
-            { id = "Tray"; }
-            # { id = "NotificationHistory"; } # Retiré à la demande de l'utilisateur
-            { id = "Battery"; }
-            { id = "Volume"; }
-            { id = "Brightness"; }
-            { id = "ControlCenter"; }
-          ];
-        };
-      };
-
-      general = {
-        animationSpeed = 1.5; # Plus rapide (x1.5)
-        radiusRatio = 1.0;
-      };
-
-      colorSchemes = {
-        darkMode = true;
-        schemeType = "vibrant"; # Couleurs plus éclatantes extraites du wallpaper
-        useWallpaperColors = true; # Support matugen/dynamic theming
-      };
-    };
-
-    # On peut aussi définir des plugins ici si besoin
-    # plugins = { ... };
-  };
-}
-</file>
-
-<file path="modules/fastfetch.nix">
-{ pkgs, ... }:
-{
-  home.packages = [ pkgs.chafa ];
-
-  programs.fastfetch = {
-    enable = true;
-    settings = {
-      logo = {
-        source = "/home/david/Pictures/nixos.png";
-        type = "kitty";
-        width = 24;
-        height = 13;
-        padding = {
-          top = 1;
-          left = 2;
-          right = 4;
-        };
-      };
-      display = {
-        separator = " → ";
-        color = {
-          keys = "magenta";
-          separator = "cyan";
-        };
-      };
-      modules = [
-        "break"
-        {
-          type = "os";
-          key = "╭─ OS";
-          format = "{3}";
-        }
-        {
-          type = "kernel";
-          key = "├─ Kernel";
-        }
-        {
-          type = "shell";
-          key = "├─ Shell";
-        }
-        {
-          type = "wm";
-          key = "├─ WM";
-          format = "{1}";
-        }
-        {
-          type = "terminal";
-          key = "├─ Terminal";
-        }
-        {
-          type = "uptime";
-          key = "╰─ Uptime";
-        }
-        "break"
-        {
-          type = "colors";
-          symbol = "circle";
-          paddingLeft = 2;
-        }
-      ];
-    };
+  home.sessionVariables = {
+    ANTIGRAVITY_EDITOR = "code";
   };
 }
 </file>
@@ -3213,6 +4779,7 @@ in
   lib,
   pkgs,
   inputs,
+  username,
   ...
 }:
 
@@ -3223,6 +4790,7 @@ in
     ../../modules/font.nix
     ../../modules/steam.nix
     ../../modules/lact.nix
+    ../../modules/brave-system.nix
   ];
 
   # Bootloader.
@@ -3313,7 +4881,7 @@ in
 
   # Make GDM monitor configuration permanent
   systemd.tmpfiles.rules = [
-    "L+ /run/gdm/.config/monitors.xml - - - - /home/david/.config/monitors.xml"
+    "L+ /run/gdm/.config/monitors.xml - - - - /home/${username}/.config/monitors.xml"
   ];
 
   # Configure keymap in X11
@@ -3347,7 +4915,34 @@ in
   #default to fish !
   programs.fish.enable = true;
   # Indispensable pour les binaires
-  programs.nix-ld.enable = true;
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+      stdenv.cc.cc
+      zlib
+      fuse3
+      icu
+      nss
+      openssl
+      curl
+      expat
+      # Les nouvelles librairies X11 sans le préfixe xorg. (pour supprimer les warnings)
+      libx11
+      libxscrnsaver
+      libxcomposite
+      libxcursor
+      libxdamage
+      libxext
+      libxfixes
+      libxi
+      libxrandr
+      libxrender
+      libxtst
+      libxcb
+      libxshmfence
+      libxkbfile
+    ];
+  };
 
   # Empêche les jeux de "s'endormir" ou de tomber en FPS quand le workspace change
   environment.sessionVariables = {
@@ -3357,9 +4952,9 @@ in
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.david = {
+  users.users.${username} = {
     isNormalUser = true;
-    description = "David";
+    description = username;
     extraGroups = [
       "networkmanager"
       "wheel"
@@ -3378,8 +4973,12 @@ in
   };
 
   # XDG Desktop Portal is handled by Sodiboo's Niri module
-  # xdg.portal.enable = true;
-  # xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gnome ];
+  # We specify the default configuration to use gnome and gtk portals for Niri session
+  xdg.portal = {
+    enable = true;
+    config.niri.default = [ "gnome" "gtk" ];
+    extraPortals = [ pkgs.xdg-desktop-portal-gnome pkgs.xdg-desktop-portal-gtk ];
+  };
 
   # Polkit for niri using the gnome one.
   security.polkit.enable = true;
