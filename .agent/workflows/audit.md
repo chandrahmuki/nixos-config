@@ -8,10 +8,10 @@ description: Revue de code et conformité (Auditeur).
 git show --stat
 ```
 
-2. Revue de Code
-- Compare le code avec les règles de `GEMINI.md`.
-- Vérifie la cohérence de l'architecture NixOS.
-- Liste les optimisations possibles (performance, clarté, sécurité).
+2. Revue de Code (Skill: `nixos-auditor`)
+- Appliquer les contrôles du skill `nixos-auditor`.
+- Vérifier les duplications, le style `nix-ld` et les commentaires.
+- Lister les optimisations possibles (performance, clarté, sécurité).
 
 3. Conclusion
 - Valide la conformité ou propose des correctifs.
