@@ -8,42 +8,7 @@
   # au compositeur (Niri) qui change automatiquement de workspace et focus la fenêtre
   services.mako = {
     enable = true;
-    settings = {
-      # Position et apparence
-      anchor = "top-right";
-      layer = "top";
-      width = 400;
-      height = 200;
-      margin = "10";
-      padding = "12";
-      border-size = 2;
-      border-radius = 8;
-      icon-path = "";
-      max-icon-size = 64;
-
-      # Couleurs dynamiques gérées par sync-colors.py
-      # background-color = "#1e1e2eee";
-      # text-color = "#cdd6f4";
-      # border-color = "#89b4fa";
-      # progress-color = "#313244";
-
-      # Comportement
-      default-timeout = 5000; # 5 secondes par défaut
-      ignore-timeout = false;
-
-      # Actions : clic gauche = action par défaut (xdg-activation focus)
-      # Clic droit = dismiss
-      on-button-left = "invoke-default-action";
-      on-button-right = "dismiss";
-      on-button-middle = "dismiss-all";
-    };
-
-    # Critères spéciaux (syntaxe sections INI, pas supportée par settings)
-    extraConfig = ''
-      [urgency=critical]
-      default-timeout=0
-      # border-color=#f38ba8
-    '';
+    # La configuration est gérée dynamiquement par sync-colors.py via un lien symbolique
   };
 
   home.file.".config/mako/config".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/mako/config";

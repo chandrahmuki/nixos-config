@@ -9,33 +9,7 @@
 
   programs.fuzzel = {
     enable = true;
-    settings = {
-      main = {
-        font = "Hack Nerd Font:size=18";
-        terminal = "${pkgs.ghostty}/bin/ghostty";
-        prompt = "'❯ '";
-        layer = "overlay";
-        icons-enabled = "yes";
-        icon-theme = "Papirus-Dark";
-        width = 40;
-        lines = 15;
-      };
-
-      # Couleurs dynamiques gérées par sync-colors.py
-      # colors = {
-      #   background = "282a36ff";
-      #   text = "f8f8f2ff";
-      #   match = "8be9fdff";
-      #   selection = "44475aff";
-      #   selection-text = "ffffffff";
-      #   border = "bd93f9ff";
-      # };
-
-      border = {
-        width = 2;
-        radius = 10;
-      };
-    };
+    # La configuration est gérée dynamiquement par sync-colors.py via un lien symbolique
   };
 
   # Symlinks pour les icônes manquantes dans les thèmes standards
