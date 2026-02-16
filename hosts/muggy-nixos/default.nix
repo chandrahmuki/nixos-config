@@ -156,30 +156,30 @@
   # Indispensable pour les binaires
   programs.nix-ld = {
     enable = true;
-    libraries = with pkgs; [
-      stdenv.cc.cc
-      zlib
-      fuse3
-      icu
-      nss
-      openssl
-      curl
-      expat
-      # Les nouvelles librairies X11 sans le préfixe xorg. (pour supprimer les warnings)
-      libX11
-      libXScrnSaver
-      libXcomposite
-      libXcursor
-      libXdamage
-      libXext
-      libXfixes
-      libXi
-      libXrandr
-      libXrender
-      libXtst
-      libxcb
-      libxshmfence
-      libxkbfile
+    libraries = [
+      pkgs.stdenv.cc.cc
+      pkgs.zlib
+      pkgs.fuse3
+      pkgs.icu
+      pkgs.nss
+      pkgs.openssl
+      pkgs.curl
+      pkgs.expat
+      # Bibliothèques X11 explicites (xorg.*) pour éviter les warnings de dépréciation
+      pkgs.xorg.libX11
+      pkgs.xorg.libXScrnSaver
+      pkgs.xorg.libXcomposite
+      pkgs.xorg.libXcursor
+      pkgs.xorg.libXdamage
+      pkgs.xorg.libXext
+      pkgs.xorg.libXfixes
+      pkgs.xorg.libXi
+      pkgs.xorg.libXrandr
+      pkgs.xorg.libXrender
+      pkgs.xorg.libXtst
+      pkgs.xorg.libxcb
+      pkgs.xorg.libxshmfence
+      pkgs.xorg.libxkbfile
     ];
   };
 

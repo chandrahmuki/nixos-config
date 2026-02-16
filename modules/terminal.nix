@@ -103,9 +103,9 @@
           if test -f flake.lock
             set -l inputs (cat flake.lock | jq -r '.nodes.root.inputs | keys[]' 2>/dev/null)
             set -l current_args (commandline -opc)
-            for i in $inputs
-              if not contains $i $current_args
-                echo $i
+            for i in \$inputs
+              if not contains \$i \$current_args
+                echo \$i
               end
             end
           end
