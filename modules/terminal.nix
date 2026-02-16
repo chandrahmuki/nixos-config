@@ -98,8 +98,18 @@
         end
 
         # Complétion pour nfu (nix flake update)
-        # On extrait les inputs du flake.lock s'il existe
-        complete -c nfu -f -a "(test -f flake.lock; and cat flake.lock | jq -r '.nodes.root.inputs | keys[]' 2>/dev/null)"
+        # On extrait les inputs du flake.lock et on exclut ceux déjà présents sur la ligne de commande
+        complete -c nfu -f -a "(
+          if test -f flake.lock
+            set -l inputs (cat flake.lock | jq -r '.nodes.root.inputs | keys[]' 2>/dev/null)
+            set -l current_args (commandline -opc)
+            for i in $inputs
+              if not contains $i $current_args
+                echo $i
+              end
+            end
+          end
+        )"
       end
     '';
     shellAliases = {
