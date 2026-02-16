@@ -11,5 +11,5 @@
     # La configuration est gérée dynamiquement par sync-colors.py via un lien symbolique
   };
 
-  home.file.".config/mako/config".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/mako/config";
+  home.file.".config/mako/config".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/generated/mako";
 }

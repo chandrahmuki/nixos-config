@@ -5,9 +5,10 @@ import sys
 
 # Chemins
 COLOR_FILE = os.path.expanduser("~/.config/noctalia/colors.json")
-MAKO_CONFIG = os.path.expanduser("~/.config/mako/config")
-FUZZEL_CONFIG = os.path.expanduser("~/.config/fuzzel/fuzzel.ini")
-YAZI_CONFIG = os.path.expanduser("~/.config/yazi/theme.toml")
+BASE_GEN = os.path.expanduser("~/nixos-config/generated")
+MAKO_CONFIG = os.path.join(BASE_GEN, "mako")
+FUZZEL_CONFIG = os.path.join(BASE_GEN, "fuzzel")
+YAZI_CONFIG = os.path.join(BASE_GEN, "yazi")
 
 def load_colors():
     if not os.path.exists(COLOR_FILE):
