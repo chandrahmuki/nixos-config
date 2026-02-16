@@ -32,9 +32,10 @@ return {
   },
   keys = {
     -- Top Level (Essential)
-    { "<leader><space>", function() Snacks.picker.smart() end, desc = "Smart Find Files" },
-    { "<leader>,",       function() Snacks.picker.buffers() end, desc = "Buffers" },
-    { "<leader>/",       function() Snacks.picker.grep() end, desc = "Grep" },
+    { "<leader><space>", function() Snacks.picker.smart() end, desc = "Find File" },
+    { "<leader>,",       function() Snacks.picker.buffers() end, desc = "Switch Buffer" },
+    { "<leader>.",       function() Snacks.explorer() end, desc = "Browse Files" },
+    { "<leader>/",       function() Snacks.picker.grep() end, desc = "Search" },
     { "<leader>:",       function() Snacks.picker.command_history() end, desc = "Command History" },
     { "<leader>e",       function() Snacks.explorer() end, desc = "File Explorer" },
 
