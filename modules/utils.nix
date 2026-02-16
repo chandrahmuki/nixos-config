@@ -61,7 +61,7 @@
     # Quick flake update with input name
     nfu = "nix flake update $argv";
 
-    # Alternative if they want to fzf the results:
-    # search_interactive = "fd . / 2>/dev/null | fzf";
+    # Sync dynamic colors from Noctalia/Wallpaper
+    upc = "python3 ~/nixos-config/scripts/sync-colors.py";
   };
 }

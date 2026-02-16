@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   # Configuration du gestionnaire de fichiers Yazi
@@ -54,4 +54,6 @@
       };
     };
   };
+
+  home.file.".config/yazi/theme.toml".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/yazi/theme.toml";
 }

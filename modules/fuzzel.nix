@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   home.packages = with pkgs; [
@@ -21,14 +21,15 @@
         lines = 15;
       };
 
-      colors = {
-        background = "282a36ff"; # Dracula Background
-        text = "f8f8f2ff"; # Dracula Foreground
-        match = "8be9fdff"; # Dracula Cyan (for matches)
-        selection = "44475aff"; # Dracula Selection
-        selection-text = "ffffffff";
-        border = "bd93f9ff"; # Dracula Purple
-      };
+      # Couleurs dynamiques gérées par sync-colors.py
+      # colors = {
+      #   background = "282a36ff";
+      #   text = "f8f8f2ff";
+      #   match = "8be9fdff";
+      #   selection = "44475aff";
+      #   selection-text = "ffffffff";
+      #   border = "bd93f9ff";
+      # };
 
       border = {
         width = 2;
@@ -46,4 +47,6 @@
   home.file.".local/share/icons/hicolor/scalable/apps/antigravity.svg".source = "${
     pkgs.antigravity-unwrapped or pkgs.antigravity
   }/share/icons/hicolor/scalable/apps/antigravity.svg";
+  # Lien vers la config générée dynamiquement
+  home.file.".config/fuzzel/fuzzel.ini".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/fuzzel/fuzzel.ini";
 }

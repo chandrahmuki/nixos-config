@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   # notify-send est fourni par libnotify
@@ -21,11 +21,11 @@
       icon-path = "";
       max-icon-size = 64;
 
-      # Couleurs Catppuccin Mocha
-      background-color = "#1e1e2eee"; # Surface avec transparence
-      text-color = "#cdd6f4"; # Text
-      border-color = "#89b4fa"; # Blue
-      progress-color = "#313244"; # Surface1
+      # Couleurs dynamiques gérées par sync-colors.py
+      # background-color = "#1e1e2eee";
+      # text-color = "#cdd6f4";
+      # border-color = "#89b4fa";
+      # progress-color = "#313244";
 
       # Comportement
       default-timeout = 5000; # 5 secondes par défaut
@@ -42,7 +42,9 @@
     extraConfig = ''
       [urgency=critical]
       default-timeout=0
-      border-color=#f38ba8
+      # border-color=#f38ba8
     '';
   };
+
+  home.file.".config/mako/config".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/mako/config";
 }
