@@ -49,7 +49,6 @@
   #Activate KornFlakes
   nix.settings.experimental-features = [
     "nix-command"
-    "nix-command"
     "flakes"
   ];
 
