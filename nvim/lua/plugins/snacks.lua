@@ -32,12 +32,13 @@ return {
   },
   keys = {
     -- Top Pickers & Explorer
+    -- Top Pickers & Explorer
     { "<leader><space>", function() Snacks.picker.smart() end, desc = "Smart Find Files" },
-    { "<leader>,",       function() Snacks.picker.buffers() end, desc = "Buffers" },
+    { "<leader>bb",       function() Snacks.picker.buffers() end, desc = "Buffers" },
     { "<leader>/",       function() Snacks.picker.grep() end, desc = "Grep" },
     { "<leader>:",       function() Snacks.picker.command_history() end, desc = "Command History" },
-    { "<leader>n",       function() Snacks.picker.notifications() end, desc = "Notification History" },
-    { "<leader>e",       function() Snacks.explorer() end, desc = "File Explorer" },
+    { "<leader>sn",       function() Snacks.picker.notifications() end, desc = "Notification History" },
+    { "<leader>fe",       function() Snacks.explorer() end, desc = "File Explorer" },
 
     -- find
     { "<leader>fb", function() Snacks.picker.buffers() end, desc = "Buffers" },
@@ -57,7 +58,7 @@ return {
     { "<leader>sm", function() Snacks.picker.marks() end, desc = "Marks" },
 
     -- Other
-    { "<leader>z", function() Snacks.zen() end, desc = "Toggle Zen Mode" },
+    { "<leader>uz", function() Snacks.zen() end, desc = "Toggle Zen Mode" },
     { "<leader>.", function() Snacks.scratch() end, desc = "Scratch Buffer" },
     { "<leader>S", function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
     { "<c-/>",     function() Snacks.terminal() end, desc = "Toggle Terminal" },
