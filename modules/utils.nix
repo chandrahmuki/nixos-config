@@ -13,6 +13,7 @@
     python3 # For advanced tools like the Kira scratchpad script
     repomix # Pack repository contents to single file for AI consumption
     qpdf # For decrypting PDFs
+    jq # For parsing JSON (useful for flake.lock)
   ];
 
   programs.bat = {
@@ -56,6 +57,9 @@
 
     # Audio-only playback with mpv
     mpno = "mpv --no-video $argv";
+
+    # Quick flake update with input name
+    nfu = "nix flake update $argv";
 
     # Alternative if they want to fzf the results:
     # search_interactive = "fd . / 2>/dev/null | fzf";

@@ -96,6 +96,10 @@
         function fish_user_key_bindings
           bind -M insert -m default jk backward-char force-repaint
         end
+
+        # Complétion pour nfu (nix flake update)
+        # On extrait les inputs du flake.lock s'il existe
+        complete -c nfu -f -a "(test -f flake.lock; and cat flake.lock | jq -r '.nodes.root.inputs | keys[]' 2>/dev/null)"
       end
     '';
     shellAliases = {
