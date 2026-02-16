@@ -4,12 +4,13 @@ return {
   opts = {
     preset = "modern",
     spec = {
-      { "<leader>f", group = "file", icon = "󰈔" },
+      { "<leader>f", group = "file / find", icon = "󰈔" },
       { "<leader>g", group = "git", icon = "󰊢" },
       { "<leader>s", group = "search", icon = "" },
       { "<leader>b", group = "buffer", icon = "󰓩" },
+      { "<leader>u", group = "ui / util", icon = "󰙵" },
       { "<leader>w", group = "window", icon = "󰖲" },
-      { "<leader>q", group = "quit", icon = "󰗼" },
+      { "<leader>q", group = "quit / session", icon = "󰗼" },
     },
   },
   keys = {

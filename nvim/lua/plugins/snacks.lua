@@ -31,36 +31,36 @@ return {
     words = { enabled = true },
   },
   keys = {
-    -- Top Pickers & Explorer
-    -- Top Pickers & Explorer
+    -- Top Level (Essential)
     { "<leader><space>", function() Snacks.picker.smart() end, desc = "Smart Find Files" },
-    { "<leader>bb",       function() Snacks.picker.buffers() end, desc = "Buffers" },
+    { "<leader>,",       function() Snacks.picker.buffers() end, desc = "Buffers" },
     { "<leader>/",       function() Snacks.picker.grep() end, desc = "Grep" },
     { "<leader>:",       function() Snacks.picker.command_history() end, desc = "Command History" },
-    { "<leader>sn",       function() Snacks.picker.notifications() end, desc = "Notification History" },
-    { "<leader>fe",       function() Snacks.explorer() end, desc = "File Explorer" },
+    { "<leader>e",       function() Snacks.explorer() end, desc = "File Explorer" },
 
-    -- find
-    { "<leader>fb", function() Snacks.picker.buffers() end, desc = "Buffers" },
+    -- [f]ile / find
     { "<leader>ff", function() Snacks.picker.files() end, desc = "Find Files" },
-    { "<leader>fg", function() Snacks.picker.git_files() end, desc = "Find Git Files" },
     { "<leader>fr", function() Snacks.picker.recent() end, desc = "Recent" },
+    { "<leader>fg", function() Snacks.picker.git_files() end, desc = "Find Git Files" },
+    { "<leader>fb", function() Snacks.picker.buffers() end, desc = "Buffers (Alternative)" },
+    { "<leader>fe", function() Snacks.explorer() end, desc = "Explorer" },
 
-    -- git
+    -- [g]it
     { "<leader>gs", function() Snacks.picker.git_status() end, desc = "Git Status" },
     { "<leader>gl", function() Snacks.picker.git_log() end, desc = "Git Log" },
 
-    -- search
+    -- [s]earch
+    { "<leader>sn", function() Snacks.picker.notifications() end, desc = "Notification History" },
     { "<leader>sb", function() Snacks.picker.lines() end, desc = "Buffer Lines" },
     { "<leader>sg", function() Snacks.picker.grep() end, desc = "Grep" },
     { "<leader>sh", function() Snacks.picker.help() end, desc = "Help Pages" },
     { "<leader>sk", function() Snacks.picker.keymaps() end, desc = "Keymaps" },
     { "<leader>sm", function() Snacks.picker.marks() end, desc = "Marks" },
 
-    -- Other
+    -- [u]i / util
     { "<leader>uz", function() Snacks.zen() end, desc = "Toggle Zen Mode" },
-    { "<leader>.", function() Snacks.scratch() end, desc = "Scratch Buffer" },
-    { "<leader>S", function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
+    { "<leader>u.", function() Snacks.scratch() end, desc = "Scratch Buffer" },
+    { "<leader>uS", function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
     { "<c-/>",     function() Snacks.terminal() end, desc = "Toggle Terminal" },
   },
 }
