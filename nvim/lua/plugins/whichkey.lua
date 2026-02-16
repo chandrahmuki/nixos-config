@@ -25,6 +25,11 @@ return {
       { "<leader>w", group = "window", icon = "󰖲" },
     },
   },
+  config = function(_, opts)
+    require("which-key").setup(opts)
+    -- Harmoniser la couleur des groupes (+) avec les descriptions (pas de blanc)
+    vim.api.nvim_set_hl(0, "WhichKeyGroup", { link = "WhichKeyDesc" })
+  end,
   keys = {
     {
       "<leader>?",
