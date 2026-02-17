@@ -14,6 +14,7 @@
     repomix # Pack repository contents to single file for AI consumption
     qpdf # For decrypting PDFs
     jq # For parsing JSON (useful for flake.lock)
+    matugen # Material You color generation tool
   ];
 
   programs.bat = {
@@ -61,7 +62,7 @@
     # Quick flake update with input name
     nfu = "nix flake update $argv";
 
-    # Sync dynamic colors from Noctalia/Wallpaper
-    upc = "python3 ~/nixos-config/scripts/sync-colors.py";
+    # Sync dynamic colors using Matugen
+    upc = "matugen -c ~/nixos-config/templates/matugen.toml image \$(cat ~/.cache/noctalia/wallpapers.json | jq -r .defaultWallpaper) && makoctl reload";
   };
 }

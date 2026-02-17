@@ -1,0 +1,16 @@
+[config]
+# Matugen global configuration
+# Templates are used to generate files in ~/nixos-config/generated/
+# Nix symlinks point to these generated files.
+
+[templates.mako]
+input_path = "/home/david/nixos-config/templates/mako.conf"
+output_path = "/home/david/nixos-config/generated/mako"
+
+[templates.fuzzel]
+input_path = "/home/david/nixos-config/templates/fuzzel.conf"
+output_path = "/home/david/nixos-config/generated/fuzzel.ini"
+
+[templates.yazi]
+input_path = "/home/david/nixos-config/templates/yazi.conf"
+output_path = "/home/david/nixos-config/generated/yazi.toml"

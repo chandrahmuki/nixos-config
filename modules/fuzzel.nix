@@ -22,5 +22,5 @@
     pkgs.antigravity-unwrapped or pkgs.antigravity
   }/share/icons/hicolor/scalable/apps/antigravity.svg";
   # Lien vers la config générée dynamiquement
-  home.file.".config/fuzzel/fuzzel.ini".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/generated/fuzzel";
+  home.file.".config/fuzzel/fuzzel.ini".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/generated/fuzzel.ini";
 }

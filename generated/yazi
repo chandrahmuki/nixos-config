@@ -1,0 +1,30 @@
+[manager]
+cwd = { fg = "#53d7f1" }
+hovered = { fg = "#111415", bg = "#53d7f1", bold = true }
+preview_hovered = { underline = true }
+find_keyword = { fg = "#53d7f1", italic = true }
+find_position = { fg = "#b2cbd2", bg = "#111415" }
+
+[status]
+separator_open  = ""
+separator_close = ""
+separator_style = { fg = "#111415", bg = "#111415" }
+
+[select]
+border   = { fg = "#53d7f1" }
+active   = { fg = "#53d7f1", bold = true }
+inactive = { fg = "#e1e3e4" }
+
+[input]
+border   = { fg = "#53d7f1" }
+title    = { fg = "#53d7f1" }
+value    = { fg = "#e1e3e4" }
+
+[completion]
+border   = { fg = "#53d7f1" }
+active   = { fg = "#111415", bg = "#53d7f1" }
+inactive = { fg = "#e1e3e4" }
+
+# Style anti-violet
+[file]
+selection = { fg = "#111415", bg = "#53d7f1" }

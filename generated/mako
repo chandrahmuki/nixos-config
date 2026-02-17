@@ -1,0 +1,17 @@
+anchor=top-right
+layer=top
+width=400
+height=200
+margin=10
+padding=12
+border-size=2
+border-radius=8
+background-color=#53d7f1dd
+text-color=#00363f
+border-color=#53d7f1
+progress-color=#00363f
+default-timeout=5000
+
+[urgency=critical]
+default-timeout=0
+border-color=#ffb4ab

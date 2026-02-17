@@ -1,0 +1,21 @@
+[main]
+font=Hack Nerd Font:size=18
+terminal=ghostty
+prompt='❯ '
+layer=overlay
+icons-enabled=yes
+icon-theme=Papirus-Dark
+width=40
+lines=15
+
+[colors]
+background=53d7f1ee
+text=00363f
+match=ffffff
+selection=53d7f1ff
+selection-text=ffffff
+border=53d7f1ff
+
+[border]
+width=2
+radius=10
