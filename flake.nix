@@ -28,7 +28,7 @@
     };
 
     # CachyOS Latest Kernel (xddxdd - has lantian cache)
-    nix-cachyos.url = "github:xddxdd/nix-cachyos-kernel";
+    nix-cachyos.url = "github:xddxdd/nix-cachyos-kernel/release";
   };
 
   outputs =
