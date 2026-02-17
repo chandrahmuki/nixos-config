@@ -6,10 +6,10 @@ margin=10
 padding=12
 border-size=2
 border-radius=8
-background-color=#53d7f1dd
-text-color=#00363f
-border-color=#53d7f1
-progress-color=#00363f
+background-color=#0e1415ee
+text-color=#dee3e5
+border-color=#82d3e1
+progress-color=#82d3e1
 default-timeout=5000
 
 [urgency=critical]
