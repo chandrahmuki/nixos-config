@@ -7,6 +7,8 @@
     settings = {
       embed-thumbnail = true;
       add-metadata = true;
+      restrict-filenames = true;
+      windows-filenames = true;
       output = "%(title)s.%(ext)s";
     };
   };
