@@ -22,7 +22,8 @@
       # Exit if nothing selected or if a separator/header is picked (check if it's a valid file)
       [ -z "$CHOICE" ] || [ ! -f "$CHOICE" ] && exit
       
-      # Play with mpv
+      # Play with mpv (kill previous instance first to avoid parallel playback)
+      ${pkgs.procps}/bin/pkill mpv || true
       ${pkgs.mpv}/bin/mpv --no-video "$CHOICE"
     '')
   ];
