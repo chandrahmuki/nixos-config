@@ -39,12 +39,12 @@
 
     # Audio & Media Control
     # Audio & Media Control (Ctrl + Mod)
-    "Ctrl+Mod+equal".action = spawn "pamixer -i 5";
-    "Ctrl+Mod+minus".action = spawn "pamixer -d 5";
-    "Ctrl+Mod+0".action = spawn "pamixer -t";
-    "Ctrl+Mod+p".action = spawn "playerctl play-pause";
-    "Ctrl+Mod+bracketright".action = spawn "playerctl next";
-    "Ctrl+Mod+bracketleft".action = spawn "playerctl previous";
+    "Ctrl+Mod+Equal".action = spawn "${pkgs.pamixer}/bin/pamixer -i 5";
+    "Ctrl+Mod+Minus".action = spawn "${pkgs.pamixer}/bin/pamixer -d 5";
+    "Ctrl+Mod+0".action = spawn "${pkgs.pamixer}/bin/pamixer -t";
+    "Ctrl+Mod+P".action = spawn "${pkgs.playerctl}/bin/playerctl play-pause";
+    "Ctrl+Mod+BracketRight".action = spawn "${pkgs.playerctl}/bin/playerctl next";
+    "Ctrl+Mod+BracketLeft".action = spawn "${pkgs.playerctl}/bin/playerctl previous";
     #Move
     "Mod+Shift+Left".action = move-column-left-or-to-monitor-left;
     "Mod+Shift+Right".action = move-column-right-or-to-monitor-right;
