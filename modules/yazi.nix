@@ -31,6 +31,10 @@
         # prepend_rules : ces règles s'appliquent AVANT les règles par défaut de yazi
         prepend_rules = [
           {
+            name = "*.m3u";
+            use = "listen";
+          }
+          {
             mime = "audio/*";
             use = "listen";
           } # Tous les types audio
@@ -51,11 +55,7 @@
             use = "listen";
           }
           {
-            name = "*.m3u";
-            use = "listen";
-          }
-          {
-            mime = "*mpegurl*";
+            name = "*.wav";
             use = "listen";
           }
         ];
