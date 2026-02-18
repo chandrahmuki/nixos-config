@@ -54,6 +54,10 @@
             name = "*.m3u";
             use = "listen";
           }
+          {
+            mime = "*mpegurl*";
+            use = "listen";
+          }
         ];
       };
     };
