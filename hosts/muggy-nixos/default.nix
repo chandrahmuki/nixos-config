@@ -185,7 +185,6 @@
 
   # Empêche les jeux de "s'endormir" ou de tomber en FPS quand le workspace change
   environment.sessionVariables = {
-    SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS = "0";
     vk_xwayland_wait_ready = "false";
     MESA_SHADER_CACHE_MAX_SIZE = "16G";
   };

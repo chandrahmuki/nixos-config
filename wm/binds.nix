@@ -1,11 +1,6 @@
 { config, ... }:
 {
   programs.niri.settings.binds = with config.lib.niri.actions; {
-    "Mod+B".action = spawn [
-      "rofi"
-      "-show"
-      "run"
-    ];
     "Mod+D".action = spawn "fuzzel";
     "Mod+M".action = spawn "music-menu";
     "Mod+Q".action = close-window;
