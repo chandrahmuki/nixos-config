@@ -7,6 +7,7 @@
       "run"
     ];
     "Mod+D".action = spawn "fuzzel";
+    "Mod+M".action = spawn "music-menu";
     "Mod+Q".action = close-window;
     "Mod+Shift+F".action = fullscreen-window;
     "Mod+F".action = maximize-column;

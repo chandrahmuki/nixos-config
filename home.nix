@@ -15,6 +15,7 @@
     ./modules/vscode.nix
     ./wm/niri.nix
     ./modules/fuzzel.nix
+    ./modules/music-menu.nix
     ./modules/noctalia.nix
     ./modules/nh.nix
     ./modules/parsec.nix
