@@ -55,7 +55,19 @@
             use = "listen";
           }
           {
-            name = "*.wav";
+            # Catch m3u specifically by extension, even if mime is text
+            name = "*.m3u"; 
+            mime = "text/*";
+            use = "listen";
+          }
+          {
+            # Catch m3u by extension generally
+            name = "*.m3u";
+            use = "listen";
+          }
+          {
+            # Catch by specific mime type
+            mime = "audio/x-mpegurl";
             use = "listen";
           }
         ];
