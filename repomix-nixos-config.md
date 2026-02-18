@@ -1,10 +1,10 @@
-This file is a merged representation of a subset of the codebase, containing specifically included files and files not matching ignore patterns, combined into a single document by Repomix.
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
 
 <file_summary>
 This section contains a summary of this file.
 
 <purpose>
-This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+This file contains a packed representation of the entire repository's contents.
 It is designed to be easily consumable by AI systems for analysis, code review,
 or other automated processes.
 </purpose>
@@ -32,8 +32,6 @@ The content is organized as follows:
 <notes>
 - Some files may have been excluded based on .gitignore rules and Repomix's configuration
 - Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
-- Only files matching these patterns are included: **/*.nix, **/*.sh, **/*.md
-- Files matching these patterns are excluded: repomix-nixos-config.md
 - Files matching patterns in .gitignore are excluded
 - Files matching default ignore patterns are excluded
 - Files are sorted by Git change count (files with more changes are at the bottom)
@@ -46,6 +44,8 @@ The content is organized as follows:
   skills/
     commit-pro/
       SKILL.md
+    knowledge-archivist/
+      SKILL.md
     nix-flake-maintainer/
       SKILL.md
     nixos-architect/
@@ -54,6 +54,8 @@ The content is organized as follows:
           gaming-expertise.md
         nvme/
           nvme-transition.md
+      SKILL.md
+    nixos-auditor/
       SKILL.md
     nixos-flakes/
       references/
@@ -65,11 +67,15 @@ The content is organized as follows:
         nixpkgs-advanced.md
         templates.md
       SKILL.md
+    nixos-project-manager/
+      SKILL.md
     nixos-research-strategy/
       SKILL.md
     scratchpad/
       references/
         examples.md
+      scripts/
+        scratch_pad.py
       SKILL.md
   workflows/
     archive.md
@@ -77,15 +83,23 @@ The content is organized as follows:
     auto-doc.md
     full-index.md
     git-sync.md
+.direnv/
+  bin/
+    nix-direnv-reload
 docs/
   brave.md
   tealdeer.md
   triple-relay.md
+generated/
+  fuzzel.ini
+  mako
+  yazi.toml
 hosts/
   muggy-nixos/
     default.nix
     hardware-configuration.nix
 modules/
+  antigravity-settings.json
   antigravity.nix
   atuin.nix
   brave-system.nix
@@ -98,6 +112,7 @@ modules/
   fuzzel.nix
   git.nix
   lact.nix
+  music-menu.nix
   neovim.nix
   nh.nix
   noctalia.nix
@@ -112,10 +127,40 @@ modules/
   xdg.nix
   yazi.nix
   yt-dlp.nix
+nvim/
+  lua/
+    core/
+      init.lua
+      keymaps.lua
+      options.lua
+    plugins/
+      better-escape.lua
+      bufferline.lua
+      completion.lua
+      crates.lua
+      flash.lua
+      icons.lua
+      lsp.lua
+      mason.lua
+      move.lua
+      rustaceanvim.lua
+      snacks.lua
+      treesitter.lua
+      ui.lua
+      whichkey.lua
+  .stylua.toml
+  init.lua
+templates/
+  fuzzel.conf
+  mako.conf
+  matugen.toml
+  yazi.conf
 wm/
   binds.nix
   niri.nix
   style.nix
+.gitignore
+flake.lock
 flake.nix
 GEMINI.md
 home.nix
@@ -126,370 +171,6 @@ README.md
 
 <files>
 This section contains the contents of the repository's files.
-
-<file path="modules/btop.nix">
-{ pkgs, ... }:
-
-{
-  programs.btop = {
-    enable = true;
-    settings = {
-      color_theme = "dracula";
-      vim_keys = true;
-    };
-  };
-}
-</file>
-
-<file path="modules/direnv.nix">
-{ config, pkgs, ... }:
-
-{
-  programs.direnv = {
-    enable = true;
-    nix-direnv.enable = true;
-    enableFishIntegration = true;
-  };
-}
-</file>
-
-<file path="modules/font.nix">
-{ pkgs, ... }:
-
-{
-  fonts.packages = with pkgs; [
-    # La version "Nerd Font" de Hack (indispensable pour les icônes)
-    nerd-fonts.hack
-    
-    # Optionnel : Emojis et polices de base si tu ne les as pas
-    noto-fonts-color-emoji
-    font-awesome
-  ];
-
-  # Optimisation pour le rendu des polices (plus net)
-  fonts.fontconfig = {
-    enable = true;
-    defaultFonts = {
-      monospace = [ "Hack Nerd Font" ];
-      sansSerif = [ "DejaVu Sans" ];
-      serif = [ "DejaVu Serif" ];
-    };
-  };
-}
-</file>
-
-<file path="modules/fuzzel.nix">
-{ pkgs, ... }:
-
-{
-  home.packages = with pkgs; [
-    papirus-icon-theme
-    adwaita-icon-theme # Fallback for apps missing in Papirus
-    hicolor-icon-theme # Base icon theme (fallback)
-  ];
-
-  programs.fuzzel = {
-    enable = true;
-    settings = {
-      main = {
-        font = "Hack Nerd Font:size=18";
-        terminal = "${pkgs.ghostty}/bin/ghostty";
-        prompt = "'❯ '";
-        layer = "overlay";
-        icons-enabled = "yes";
-        icon-theme = "Papirus-Dark";
-        width = 40;
-        lines = 15;
-      };
-
-      colors = {
-        background = "282a36ff"; # Dracula Background
-        text = "f8f8f2ff"; # Dracula Foreground
-        match = "8be9fdff"; # Dracula Cyan (for matches)
-        selection = "44475aff"; # Dracula Selection
-        selection-text = "ffffffff";
-        border = "bd93f9ff"; # Dracula Purple
-      };
-
-      border = {
-        width = 2;
-        radius = 10;
-      };
-    };
-  };
-
-  # Symlinks pour les icônes manquantes dans les thèmes standards
-  home.file.".local/share/icons/hicolor/scalable/apps/io.github.ilya_zlobintsev.LACT.svg".source =
-    "${pkgs.lact}/share/pixmaps/io.github.ilya_zlobintsev.LACT.svg";
-
-  # Pour Antigravity, on essaie de pointer vers son icône si elle est packagée
-  # Note: Si l'icône n'est pas trouvée, HM ignorera ou on ajustera.
-  home.file.".local/share/icons/hicolor/scalable/apps/antigravity.svg".source = "${
-    pkgs.antigravity-unwrapped or pkgs.antigravity
-  }/share/icons/hicolor/scalable/apps/antigravity.svg";
-}
-</file>
-
-<file path="modules/lact.nix">
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
-
-{
-  # Install LACT (Linux AMDGpu Control Tool)
-  environment.systemPackages = with pkgs; [
-    lact
-  ];
-
-  # Enable the lactd daemon service required for applying settings
-  systemd.services.lactd = {
-    description = "AMDGPU Control Daemon";
-    enable = true;
-    serviceConfig = {
-      ExecStart = "${pkgs.lact}/bin/lact daemon";
-    };
-    wantedBy = [ "multi-user.target" ];
-  };
-
-  # Unlock advanced AMDGPU features (overclocking, fan control, voltage)
-  # ppfeaturemask=0xffffffff enables all features
-  boot.kernelParams = [ "amdgpu.ppfeaturemask=0xffffffff" ];
-}
-</file>
-
-<file path="modules/neovim.nix">
-{ pkgs, ... }:
-
-{
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true;
-    viAlias = true;
-    vimAlias = true;
-
-    # Dependencies for lazy.nvim, mason, and common plugins
-    extraPackages = with pkgs; [
-      # Build tools
-      gcc
-      gnumake
-      unzip
-      wget
-      curl
-      # git (Managed by git.nix)
-
-      # Runtime dependencies
-      ripgrep
-      # fd (Managed by utils.nix)
-      # fzf (Managed by utils.nix)
-      nodejs
-      python3
-      lua-language-server
-      nil # Nix LSP
-      nixfmt # Nix Formatter
-      stylua # For stylua.toml in your config
-    ];
-  };
-
-  # Link the personal configuration from the internal nixos-config folder
-  home.file.".config/nvim" = {
-    source = ./../nvim;
-    recursive = true;
-  };
-}
-</file>
-
-<file path="modules/parsec.nix">
-{ pkgs, ... }:
-
-{
-  home.packages = with pkgs; [
-    parsec-bin
-  ];
-}
-</file>
-
-<file path="modules/vscode.nix">
-{ pkgs, ... }:
-
-{
-  # On installe les outils nécessaires au fonctionnement de l'IDE
-  home.packages = with pkgs; [
-    nixfmt # Le formateur officiel (RFC style)
-    nil # Le "cerveau" (Language Server) pour Nix
-  ];
-
-  programs.vscode = {
-    enable = true;
-
-    profiles.default = {
-      # Extensions installées et gérées par Nix
-      extensions = with pkgs.vscode-extensions; [
-        bbenoist.nix # Coloration syntaxique
-        jnoortheen.nix-ide # Support IDE (LSP)
-        dracula-theme.theme-dracula # Thème visuel
-        christian-kohler.path-intellisense # Autocomplétion des chemins
-      ];
-
-      # Configuration de l'éditeur
-      userSettings = {
-        # Apparence et Police
-        "editor.fontFamily" = "'Hack Nerd Font', 'monospace'";
-        "editor.fontSize" = 16;
-        "workbench.colorTheme" = "Dracula";
-        "terminal.integrated.fontFamily" = "Hack Nerd Font";
-        "window.titleBarStyle" = "custom";
-
-        "path-intellisense.mappings" = {
-          "./" = "\${workspaceRoot}";
-        };
-
-        # Automatisation du formatage (nixfmt)
-        "editor.formatOnSave" = true;
-        "[nix]" = {
-          "editor.defaultFormatter" = "jnoortheen.nix-ide";
-        };
-
-        # Configuration du support Nix (LSP nil)
-        "nix.enableLanguageServer" = true;
-        "nix.serverPath" = "${pkgs.nil}/bin/nil";
-        "nix.serverSettings" = {
-          "nil" = {
-            "formatting" = {
-              "command" = [ "${pkgs.nixfmt}/bin/nixfmt" ];
-            };
-            # Ajout pour améliorer la détection des imports
-            "diagnostics" = {
-              "ignored" = [ ];
-            };
-            "nix" = {
-              "flake" = {
-                "autoArchive" = true;
-                "autoEvalInputs" = true;
-              };
-            };
-          };
-        };
-      };
-    };
-  };
-}
-</file>
-
-<file path="modules/yt-dlp.nix">
-{ pkgs, inputs, ... }:
-
-{
-  programs.yt-dlp = {
-    enable = true;
-    package = inputs.nixpkgs-master.legacyPackages.${pkgs.stdenv.hostPlatform.system}.yt-dlp;
-    settings = {
-      embed-thumbnail = true;
-      add-metadata = true;
-      output = "%(title)s.%(ext)s";
-    };
-  };
-
-  programs.fish.functions = {
-    yt = "yt-dlp -x --audio-format m4a $argv";
-  };
-}
-</file>
-
-<file path="wm/binds.nix">
-{ config, ... }:
-{
-  programs.niri.settings.binds = with config.lib.niri.actions; {
-    "Mod+B".action = spawn [
-      "rofi"
-      "-show"
-      "run"
-    ];
-    "Mod+D".action = spawn "fuzzel";
-    "Mod+Q".action = close-window;
-    "Mod+Shift+F".action = fullscreen-window;
-    "Mod+F".action = maximize-column;
-    "Mod+T".action = spawn "ghostty";
-    "Mod+Shift+E".action = quit { skip-confirmation = false; };
-    "Mod+Shift+Slash".action = show-hotkey-overlay;
-    "Mod+Shift+Space".action = toggle-window-floating;
-    "Mod+Space".action = switch-focus-between-floating-and-tiling;
-    "Mod+O".action.toggle-overview = [ ];
-
-    "Mod+W".action = switch-preset-column-width;
-    "Mod+H".action = switch-preset-window-height;
-    "Mod+C".action = consume-window-into-column;
-    "Mod+X".action = expel-window-from-column;
-
-    #Focus
-    "Mod+Left".action = focus-column-or-monitor-left;
-    "Mod+Right".action = focus-column-or-monitor-right;
-    "Mod+Up".action = focus-window-or-workspace-up;
-    "Mod+Down".action = focus-window-or-workspace-down;
-
-    "Mod+1".action = focus-workspace 1;
-    "Mod+2".action = focus-workspace 2;
-    "Mod+3".action = focus-workspace 3;
-    "Mod+4".action = focus-workspace 4;
-    "Mod+5".action = focus-workspace 5;
-    "Mod+6".action = focus-workspace 6;
-    "Mod+7".action = focus-workspace 7;
-    "Mod+8".action = focus-workspace 8;
-    "Mod+9".action = focus-workspace 9;
-
-    "XF86MonBrightnessUp".action = spawn "brightnessctl s +10%";
-    "XF86MonBrightnessDown".action = spawn "brightnessctl s -10%";
-    #Move
-    "Mod+Shift+Left".action = move-column-left-or-to-monitor-left;
-    "Mod+Shift+Right".action = move-column-right-or-to-monitor-right;
-    "Mod+Shift+Up".action = move-window-up-or-to-workspace-up; # ✅ CORRIGÉ
-    "Mod+Shift+Down".action = move-window-down-or-to-workspace-down; # ✅ CORRIGÉ
-
-    "Mod+Shift+1".action = move-column-to-index 1;
-    "Mod+Shift+2".action = move-column-to-index 2;
-    "Mod+Shift+3".action = move-column-to-index 3;
-    "Mod+Shift+4".action = move-column-to-index 4;
-    "Mod+Shift+5".action = move-column-to-index 5;
-    "Mod+Shift+6".action = move-column-to-index 6;
-    "Mod+Shift+7".action = move-column-to-index 7;
-    "Mod+Shift+8".action = move-column-to-index 8;
-    "Mod+Shift+9".action = move-column-to-index 9;
-
-    # Passer à la fenêtre de DROITE avec Mod + Molette vers le BAS
-    "Mod+WheelScrollDown".action = focus-column-right;
-
-    # Passer à la fenêtre de GAUCHE avec Mod + Molette vers le HAUT
-    "Mod+WheelScrollUp".action = focus-column-left;
-
-    # Si tu veux que ça déplace carrément la fenêtre (Shift en plus)
-    "Mod+Shift+WheelScrollDown".action = focus-workspace-down;
-    "Mod+Shift+WheelScrollUp".action = focus-workspace-up;
-
-    # Screenshots avec la syntaxe correcte
-    "Ctrl+Mod+S".action.screenshot = [ ]; # Fenêtre active
-    "Ctrl+Mod+Shift+S".action.screenshot-screen = [ ]; # Écran complet
-
-  };
-}
-</file>
-
-<file path="overlays.nix">
-{
-  config,
-  pkgs,
-  lib,
-  inputs,
-  ...
-}:
-{
-  nixpkgs.overlays = [
-    inputs.niri.overlays.niri
-    inputs.antigravity.overlays.default
-  ];
-}
-</file>
 
 <file path=".agent/skills/commit-pro/SKILL.md">
 ---
@@ -602,6 +283,1280 @@ You are an expert at maintaining NixOS systems. Your primary goal is to keep the
 - [NixOS Wiki - NVIDIA/AMD](https://nixos.wiki/wiki/AMD_GPU)
 </file>
 
+<file path=".agent/skills/scratchpad/references/examples.md">
+# Scratch Pad Usage Examples
+
+## Basic Research Task
+
+```bash
+# Initialize
+SCRATCH="/tmp/scratch_research.md"
+python scripts/scratch_pad.py --file $SCRATCH init "Competitor Analysis"
+
+# Log searches
+python scripts/scratch_pad.py --file $SCRATCH log-tool "web_search" '{"query": "competitor A"}' "Found 10 results"
+python scripts/scratch_pad.py --file $SCRATCH finding "Competitor A has 30% market share" --category "Market"
+
+python scripts/scratch_pad.py --file $SCRATCH log-tool "web_search" '{"query": "competitor B"}' "Found 8 results"  
+python scripts/scratch_pad.py --file $SCRATCH finding "Competitor B focuses on enterprise" --category "Market"
+
+# Add summary
+python scripts/scratch_pad.py --file $SCRATCH summary "Three main competitors identified with different market strategies"
+
+# Read for response
+python scripts/scratch_pad.py --file $SCRATCH read
+```
+
+## Multi-Step Processing
+
+```bash
+# Initialize
+SCRATCH="/tmp/scratch_process.md"
+python scripts/scratch_pad.py --file $SCRATCH init "Data Processing Pipeline"
+
+# Step 1: Load
+python scripts/scratch_pad.py --file $SCRATCH section "Step 1: Load Data"
+python scripts/scratch_pad.py --file $SCRATCH log-tool "file_read" '{"path": "data.csv"}' "Loaded 1000 rows"
+python scripts/scratch_pad.py --file $SCRATCH checkpoint "Data loaded"
+
+# Step 2: Process  
+python scripts/scratch_pad.py --file $SCRATCH section "Step 2: Process Data"
+python scripts/scratch_pad.py --file $SCRATCH append "Removed 50 duplicate rows"
+python scripts/scratch_pad.py --file $SCRATCH append "Applied normalization"
+python scripts/scratch_pad.py --file $SCRATCH checkpoint "Processing complete"
+
+# Step 3: Save
+python scripts/scratch_pad.py --file $SCRATCH section "Step 3: Save Results"
+python scripts/scratch_pad.py --file $SCRATCH log-tool "file_write" '{"path": "output.csv"}' "Saved 950 rows"
+
+# Mark complete
+python scripts/scratch_pad.py --file $SCRATCH complete
+```
+
+## Document Analysis
+
+```bash
+# Initialize
+SCRATCH="/tmp/scratch_docs.md"
+python scripts/scratch_pad.py --file $SCRATCH init "Confluence Documentation Review"
+
+# Process each page
+python scripts/scratch_pad.py --file $SCRATCH section "Main Page Analysis"
+python scripts/scratch_pad.py --file $SCRATCH log-tool "confluence_read" '{"page_id": "123"}' "Read main page"
+python scripts/scratch_pad.py --file $SCRATCH finding "Main page covers project overview"
+
+python scripts/scratch_pad.py --file $SCRATCH section "Child Pages"
+python scripts/scratch_pad.py --file $SCRATCH todo "Review technical specs page"
+python scripts/scratch_pad.py --file $SCRATCH todo "Check API documentation" 
+python scripts/scratch_pad.py --file $SCRATCH todo "Update outdated examples" --done
+
+# Summary
+python scripts/scratch_pad.py --file $SCRATCH summary "Documentation is mostly complete but needs updates in 3 areas"
+```
+
+## Quick Patterns
+
+### Finding Pattern
+```bash
+python scripts/scratch_pad.py --file $SCRATCH finding "Discovery text" --category "Category"
+```
+
+### Tool Logging Pattern
+```bash
+# Before execution
+python scripts/scratch_pad.py --file $SCRATCH log-tool "tool_name" '{"params": "value"}' ""
+# After execution  
+python scripts/scratch_pad.py --file $SCRATCH append "Result: Success with X items"
+```
+
+### Section Organization
+```bash
+python scripts/scratch_pad.py --file $SCRATCH section "Phase 1: Research"
+# ... add content ...
+python scripts/scratch_pad.py --file $SCRATCH section "Phase 2: Analysis"  
+# ... add content ...
+python scripts/scratch_pad.py --file $SCRATCH section "Phase 3: Conclusions"
+```
+</file>
+
+<file path=".agent/skills/scratchpad/scripts/scratch_pad.py">
+#!/usr/bin/env python3
+"""
+Scratch Pad Manager (Markdown Version) - Direct markdown file management for long-running tasks
+
+Module usage:
+    from scripts.scratch_pad_md import ScratchPadManager
+    
+    manager = ScratchPadManager('/tmp/scratch.md')
+    manager.init("My Task")
+    manager.add_section("## Research Findings")
+    manager.append("Found 3 key competitors...")
+    manager.log_tool("web_search", {"query": "AI trends"}, "Found 10 results")
+
+CLI usage:
+    python scripts/scratch_pad.py init "My Task" 
+    python scripts/scratch_pad.py append "## Section Title"
+    python scripts/scratch_pad.py append "Content to add..."
+    python scripts/scratch_pad.py log-tool "web_search" '{"query": "test"}' "Result text"
+"""
+
+import os
+import sys
+from datetime import datetime
+from pathlib import Path
+from typing import Optional, Dict, Any
+import argparse
+import json
+
+class ScratchPadManager:
+    """Markdown-based scratch pad manager"""
+    
+    def __init__(self, pad_file: str = "/tmp/scratch_pad.md"):
+        """Initialize scratch pad manager
+        
+        Args:
+            pad_file: Path to the markdown file
+        """
+        self.pad_file = Path(pad_file)
+        
+    def init(self, task_name: str = "Untitled Task") -> Dict[str, Any]:
+        """Initialize a new scratch pad with header
+        
+        Args:
+            task_name: Name of the task
+            
+        Returns:
+            Dict with status and message
+        """
+        # Ensure directory exists
+        self.pad_file.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Create initial content
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        content = f"""# 📋 {task_name}
+
+**Created:** {timestamp}  
+**Status:** 🔄 In Progress
+
+---
+
+## 📝 Task Overview
+Task: {task_name}
+Started: {timestamp}
+
+---
+
+"""
+        
+        with open(self.pad_file, 'w', encoding='utf-8') as f:
+            f.write(content)
+            
+        return {
+            "status": "success",
+            "message": f"Initialized scratch pad: {task_name}",
+            "file": str(self.pad_file)
+        }
+    
+    def append(self, content: str) -> Dict[str, Any]:
+        """Append content to the scratch pad
+        
+        Args:
+            content: Content to append (can include markdown formatting)
+            
+        Returns:
+            Dict with status
+        """
+        # Add timestamp if content is not a header
+        if not content.strip().startswith('#'):
+            timestamp = datetime.now().strftime("%H:%M:%S")
+            content = f"[{timestamp}] {content}"
+        
+        # Ensure file exists
+        if not self.pad_file.exists():
+            self.init()
+        
+        with open(self.pad_file, 'a', encoding='utf-8') as f:
+            f.write(content + "\n\n")
+            
+        return {"status": "success", "message": "Content appended"}
+    
+    def add_section(self, title: str) -> Dict[str, Any]:
+        """Add a new section with timestamp
+        
+        Args:
+            title: Section title (will be formatted as ## header)
+        """
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        
+        # Ensure it's a proper header
+        if not title.startswith('#'):
+            title = f"## {title}"
+            
+        content = f"{title} ({timestamp})\n"
+        return self.append(content)
+    
+    def log_tool(self, tool_name: str, parameters: Dict[str, Any], result: str = "") -> Dict[str, Any]:
+        """Log a tool call in markdown format
+        
+        Args:
+            tool_name: Name of the tool
+            parameters: Tool parameters
+            result: Tool result (as string)
+        """
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        
+        # Format as collapsible detail
+        content = f"""### 🔧 [{timestamp}] Tool: {tool_name}
+
+**Parameters:**
+```json
+{json.dumps(parameters, indent=2, ensure_ascii=False)}
+```
+
+**Result:**
+```
+{result if result else "⏳ Pending..."}
+```
+
+---"""
+        
+        return self.append(content)
+    
+    def add_finding(self, finding: str, category: str = "General") -> Dict[str, Any]:
+        """Add a key finding or observation
+        
+        Args:
+            finding: The finding text
+            category: Category of finding
+        """
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        content = f"**[{timestamp}] {category}:** {finding}"
+        return self.append(content)
+    
+    def add_checkpoint(self, name: str, description: str = "") -> Dict[str, Any]:
+        """Add a checkpoint/milestone marker
+        
+        Args:
+            name: Checkpoint name
+            description: Optional description
+        """
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        content = f"""---
+
+### ✅ Checkpoint: {name}
+**Time:** {timestamp}  
+{description}
+
+---"""
+        return self.append(content)
+    
+    def add_summary(self, summary: str) -> Dict[str, Any]:
+        """Add a summary section
+        
+        Args:
+            summary: Summary text
+        """
+        content = f"""## 📊 Summary
+
+{summary}
+
+---"""
+        return self.append(content)
+    
+    def add_todo(self, task: str, completed: bool = False) -> Dict[str, Any]:
+        """Add a TODO item
+        
+        Args:
+            task: Task description
+            completed: Whether task is completed
+        """
+        checkbox = "✅" if completed else "⬜"
+        content = f"- {checkbox} {task}"
+        return self.append(content)
+    
+    def read(self) -> str:
+        """Read the entire scratch pad content"""
+        if not self.pad_file.exists():
+            return ""
+        
+        with open(self.pad_file, 'r', encoding='utf-8') as f:
+            return f.read()
+    
+    def get_size(self) -> int:
+        """Get file size in bytes"""
+        if not self.pad_file.exists():
+            return 0
+        return self.pad_file.stat().st_size
+    
+    def complete(self) -> Dict[str, Any]:
+        """Mark the task as complete"""
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        content = f"""---
+
+## ✅ Task Complete
+
+**Completed:** {timestamp}  
+**Status:** ✅ Complete
+
+---"""
+        return self.append(content)
+
+
+def main():
+    """CLI interface for markdown scratch pad"""
+    parser = argparse.ArgumentParser(description="Markdown Scratch Pad Manager")
+    parser.add_argument("--file", default="/tmp/scratch_pad.md", help="Path to scratch pad file")
+    
+    subparsers = parser.add_subparsers(dest="command", help="Commands")
+    
+    # Init command
+    init_parser = subparsers.add_parser("init", help="Initialize new scratch pad")
+    init_parser.add_argument("task_name", nargs="?", default="Untitled Task", help="Name of the task")
+    
+    # Append command
+    append_parser = subparsers.add_parser("append", help="Append content")
+    append_parser.add_argument("content", help="Content to append")
+    
+    # Section command
+    section_parser = subparsers.add_parser("section", help="Add a new section")
+    section_parser.add_argument("title", help="Section title")
+    
+    # Log tool command
+    log_parser = subparsers.add_parser("log-tool", help="Log a tool call")
+    log_parser.add_argument("tool_name", help="Tool name")
+    log_parser.add_argument("parameters", help="Parameters (JSON)")
+    log_parser.add_argument("--result", default="", help="Result")
+    
+    # Finding command
+    finding_parser = subparsers.add_parser("finding", help="Add a finding")
+    finding_parser.add_argument("finding", help="Finding text")
+    finding_parser.add_argument("--category", default="General", help="Category")
+    
+    # Checkpoint command
+    checkpoint_parser = subparsers.add_parser("checkpoint", help="Add checkpoint")
+    checkpoint_parser.add_argument("name", help="Checkpoint name")
+    checkpoint_parser.add_argument("--description", default="", help="Description")
+    
+    # TODO command
+    todo_parser = subparsers.add_parser("todo", help="Add TODO item")
+    todo_parser.add_argument("task", help="Task description")
+    todo_parser.add_argument("--done", action="store_true", help="Mark as done")
+    
+    # Summary command
+    summary_parser = subparsers.add_parser("summary", help="Add summary")
+    summary_parser.add_argument("text", help="Summary text")
+    
+    # Read command
+    read_parser = subparsers.add_parser("read", help="Read entire pad")
+    
+    # Complete command
+    complete_parser = subparsers.add_parser("complete", help="Mark task complete")
+    
+    args = parser.parse_args()
+    
+    manager = ScratchPadManager(args.file)
+    
+    if args.command == "init":
+        result = manager.init(args.task_name)
+        print(f"✅ {result['message']}")
+        
+    elif args.command == "append":
+        manager.append(args.content)
+        print("✅ Content appended")
+        
+    elif args.command == "section":
+        manager.add_section(args.title)
+        print(f"✅ Section added: {args.title}")
+        
+    elif args.command == "log-tool":
+        try:
+            params = json.loads(args.parameters)
+        except:
+            params = {"raw": args.parameters}
+        manager.log_tool(args.tool_name, params, args.result)
+        print(f"✅ Logged tool: {args.tool_name}")
+        
+    elif args.command == "finding":
+        manager.add_finding(args.finding, args.category)
+        print(f"✅ Finding added: {args.category}")
+        
+    elif args.command == "checkpoint":
+        manager.add_checkpoint(args.name, args.description)
+        print(f"✅ Checkpoint: {args.name}")
+        
+    elif args.command == "todo":
+        manager.add_todo(args.task, args.done)
+        print(f"✅ TODO added")
+        
+    elif args.command == "summary":
+        manager.add_summary(args.text)
+        print("✅ Summary added")
+        
+    elif args.command == "read":
+        content = manager.read()
+        print(content)
+        
+    elif args.command == "complete":
+        manager.complete()
+        print("✅ Task marked complete")
+        
+    else:
+        parser.print_help()
+
+
+if __name__ == "__main__":
+    main()
+</file>
+
+<file path=".agent/skills/scratchpad/SKILL.md">
+---
+name: scratchpad
+description: |
+  Mémoire vive au format Markdown pour les tâches complexes. À utiliser quand : plus de 5 appels d'outils sont nécessaires, en cas de recherche multi-sources, ou pour des analyses comparatives. 
+  Enregistrer le processus → S'y référer pour la réponse → Archiver après usage.
+---
+
+# Scratchpad - Mémoire de Travail Avancée (Style Kira)
+
+Le scratchpad est un outil interne permettant de suivre l'avancement d'une tâche complexe sans perdre le fil technique. Cette version améliorée utilise un script Python pour automatisé l'horodatage et la structuration.
+
+## Structure du Skill
+
+- `scripts/scratch_pad.py` : Moteur de journalisation (CLI).
+- `references/examples.md` : Modèles d'utilisation.
+
+## Utilisation via CLI
+
+Le script Python permet de gérer le scratchpad de manière structurée :
+
+1.  **Initialisation** : 
+    `python3 .agent/skills/scratchpad/scripts/scratch_pad.py --file [PATH] init "[Task Name]"`
+2.  **Journalisation d'outil** : 
+    `python3 .agent/skills/scratchpad/scripts/scratch_pad.py --file [PATH] log-tool "tool_name" '{"param": "val"}' --result "Output"`
+3.  **Ajout de découverte** : 
+    `python3 .agent/skills/scratchpad/scripts/scratch_pad.py --file [PATH] finding "Texte de la découverte" --category "Genre"`
+4.  **Points de passage** : 
+    `python3 .agent/skills/scratchpad/scripts/scratch_pad.py --file [PATH] checkpoint "Nom de l'étape"`
+
+## Patterns Recommandés
+
+Voir [examples.md](file:///home/david/nixos-config/.agent/skills/scratchpad/references/examples.md) pour les détails sur les patterns :
+- **Recherche** : Log des outils et findings.
+- **Multi-étapes** : Sections et checkpoints.
+- **Analyse** : TODOs et résumés.
+
+## Règles de Conduite
+
+- **Référence interne uniquement** : Ne jamais copier-coller le scratchpad brut dans la réponse à l'utilisateur.
+- **Synthèse** : Extraire uniquement les points pertinents pour l'utilisateur.
+- **Nomenclature** : Toujours utiliser des chemins absolus pour les fichiers cités.
+- **Persistence** : Le fichier doit être créé dans le dossier des artifacts de la session (`/home/david/.gemini/antigravity/brain/[ID]/`).
+</file>
+
+<file path=".agent/workflows/git-sync.md">
+---
+description: Synchroniser les changements avec Git (Add, Review, Commit, Pull, Push)
+---
+
+Ce workflow automatise la synchronisation complète. Il inclut désormais une phase de **Code Review** pour garantir la qualité avant le commit.
+
+// turbo-all
+1. Préparer les changements
+```bash
+git add .
+```
+
+2. Revue de Code Automatisée
+L'assistant analyse les changements indexés, vérifie la conformité avec `GEMINI.md` et propose des optimisations via le skill `architect`.
+```bash
+git diff --cached --stat
+# [INTERNAL REVIEW] : L'IA analyse maintenant le contenu détaillé de ces fichiers...
+```
+
+3. Créer un commit avec un message intelligent
+On utilise `commit-pro` pour générer un message au format Conventional Commits.
+```bash
+# L'assistant génère le message ici
+```
+
+4. Récupérer les changements distants (Pull)
+```bash
+git pull --rebase
+```
+
+5. Envoyer les changements (Push)
+```bash
+git push
+```
+
+6. Résumé de la Session
+L'assistant fournit un topo clair de la revue de code effectuée (points vérifiés, optimisations trouvées) et confirme l'état final de la synchronisation.
+</file>
+
+<file path=".direnv/bin/nix-direnv-reload">
+#!/usr/bin/env bash
+set -e
+if [[ ! -d "/home/david/nixos-config" ]]; then
+  echo "Cannot find source directory; Did you move it?"
+  echo "(Looking for "/home/david/nixos-config")"
+  echo 'Cannot force reload with this script - use "direnv reload" manually and then try again'
+  exit 1
+fi
+
+# rebuild the cache forcefully
+_nix_direnv_force_reload=1 direnv exec "/home/david/nixos-config" true
+
+# Update the mtime for .envrc.
+# This will cause direnv to reload again - but without re-building.
+touch "/home/david/nixos-config/.envrc"
+
+# Also update the timestamp of whatever profile_rc we have.
+# This makes sure that we know we are up to date.
+touch -r "/home/david/nixos-config/.envrc" "/home/david/nixos-config/.direnv"/*.rc
+</file>
+
+<file path="hosts/muggy-nixos/hardware-configuration.nix">
+# Do not modify this file!  It was generated by ‘nixos-generate-config’
+# and may be overwritten by future invocations.  Please make changes
+# to /etc/nixos/configuration.nix instead.
+{ config, lib, pkgs, modulesPath, ... }:
+
+{
+  imports =
+    [ (modulesPath + "/installer/scan/not-detected.nix")
+    ];
+
+  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usbhid" "sd_mod" ];
+  boot.initrd.kernelModules = [ ];
+  boot.kernelModules = [ "kvm-amd" ];
+  boot.extraModulePackages = [ ];
+
+  fileSystems."/" =
+    { device = "/dev/disk/by-uuid/59f5b271-11c1-41f9-927d-ed3221a6b404";
+      fsType = "btrfs";
+      options = [ "subvol=@" ];
+    };
+
+  fileSystems."/nix" =
+    { device = "/dev/disk/by-uuid/59f5b271-11c1-41f9-927d-ed3221a6b404";
+      fsType = "btrfs";
+      options = [ "subvol=@nix" ];
+    };
+
+  fileSystems."/var/log" =
+    { device = "/dev/disk/by-uuid/59f5b271-11c1-41f9-927d-ed3221a6b404";
+      fsType = "btrfs";
+      options = [ "subvol=@log" ];
+    };
+
+  fileSystems."/home" =
+    { device = "/dev/disk/by-uuid/59f5b271-11c1-41f9-927d-ed3221a6b404";
+      fsType = "btrfs";
+      options = [ "subvol=@home" ];
+    };
+
+  fileSystems."/boot" =
+    { device = "/dev/disk/by-uuid/83F7-5789";
+      fsType = "vfat";
+      options = [ "fmask=0077" "dmask=0077" ];
+    };
+
+  swapDevices = [ ];
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+}
+</file>
+
+<file path="modules/btop.nix">
+{ pkgs, ... }:
+
+{
+  programs.btop = {
+    enable = true;
+    settings = {
+      color_theme = "dracula";
+      vim_keys = true;
+    };
+  };
+}
+</file>
+
+<file path="modules/direnv.nix">
+{ config, pkgs, ... }:
+
+{
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+    enableFishIntegration = true;
+  };
+}
+</file>
+
+<file path="modules/discord.nix">
+{ pkgs, ... }:
+
+{
+  # Installation de Vesktop (client Discord alternatif optimisé pour Wayland)
+  home.packages = with pkgs; [
+    vesktop # Supporte le partage d'écran audio/vidéo sous Wayland et inclut Vencord
+  ];
+}
+</file>
+
+<file path="modules/font.nix">
+{ pkgs, ... }:
+
+{
+  fonts.packages = with pkgs; [
+    # La version "Nerd Font" de Hack (indispensable pour les icônes)
+    nerd-fonts.hack
+    
+    # Optionnel : Emojis et polices de base si tu ne les as pas
+    noto-fonts-color-emoji
+    font-awesome
+  ];
+
+  # Optimisation pour le rendu des polices (plus net)
+  fonts.fontconfig = {
+    enable = true;
+    defaultFonts = {
+      monospace = [ "Hack Nerd Font" ];
+      sansSerif = [ "DejaVu Sans" ];
+      serif = [ "DejaVu Serif" ];
+    };
+  };
+}
+</file>
+
+<file path="modules/lact.nix">
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+
+{
+  # Install LACT (Linux AMDGpu Control Tool)
+  environment.systemPackages = with pkgs; [
+    lact
+  ];
+
+  # Enable the lactd daemon service required for applying settings
+  systemd.services.lactd = {
+    description = "AMDGPU Control Daemon";
+    enable = true;
+    serviceConfig = {
+      ExecStart = "${pkgs.lact}/bin/lact daemon";
+    };
+    wantedBy = [ "multi-user.target" ];
+  };
+
+  # Unlock advanced AMDGPU features (overclocking, fan control, voltage)
+  # ppfeaturemask=0xffffffff enables all features
+  boot.kernelParams = [ "amdgpu.ppfeaturemask=0xffffffff" ];
+}
+</file>
+
+<file path="modules/neovim.nix">
+{ pkgs, ... }:
+
+{
+  programs.neovim = {
+    enable = true;
+    defaultEditor = true;
+    viAlias = true;
+    vimAlias = true;
+
+    # Dependencies for lazy.nvim, mason, and common plugins
+    extraPackages = with pkgs; [
+      # Build tools
+      gcc
+      gnumake
+      unzip
+      wget
+      curl
+      # git (Managed by git.nix)
+
+      # Runtime dependencies
+      ripgrep
+      # fd (Managed by utils.nix)
+      # fzf (Managed by utils.nix)
+      nodejs
+      python3
+      lua-language-server
+      nil # Nix LSP
+      nixfmt # Nix Formatter
+      stylua # For stylua.toml in your config
+    ];
+  };
+
+  # Link the personal configuration from the internal nixos-config folder
+  home.file.".config/nvim" = {
+    source = ./../nvim;
+    recursive = true;
+  };
+}
+</file>
+
+<file path="modules/parsec.nix">
+{ pkgs, ... }:
+
+{
+  home.packages = with pkgs; [
+    parsec-bin
+  ];
+}
+</file>
+
+<file path="modules/steam.nix">
+{ pkgs, ... }:
+
+{
+
+  # 2. Les outils qu'on veut pouvoir lancer manuellement au terminal
+  environment.systemPackages = with pkgs; [
+    mangohud # L'overlay pour surveiller ta RX 6800 (FPS, température)
+    protonup-qt # Super utile pour installer GE-Proton (indispensable sous Linux)
+  ];
+
+  # 3. La configuration du module Steam
+  programs.steam = {
+    enable = true;
+
+    # Ouvre le pare-feu pour le Remote Play et les serveurs locaux
+    remotePlay.openFirewall = true;
+    dedicatedServer.openFirewall = true;
+
+    # Active Gamescope pour pouvoir lancer une session Steam Deck
+    gamescopeSession.enable = true;
+  };
+
+  # 4. Configuration globale de Gamescope (Setuid et permissions)
+  programs.gamescope = {
+    enable = true;
+    # On peut ajouter ici des options globales si besoin
+  };
+
+  # 5. Optimise les performances des jeux (GameMode de Feral Interactive)
+  # Cela permet de booster le CPU et de prioriser le GPU quand un jeu est lancé
+  programs.gamemode = {
+    enable = true;
+    enableRenice = true;
+    settings = {
+      general = {
+        renice = 10; # Augmente la priorité CPU des processus de jeu
+        softrealtime = "auto";
+      };
+      gpu = {
+        # Optimisations GPU AMD (bloque la fréquence à 'high')
+        apply_gpu_optimisations = "accept-responsibility";
+        gpu_device = 0;
+        amd_performance_level = "high";
+      };
+      custom = {
+        start = "${pkgs.libnotify}/bin/notify-send 'GameMode started'";
+        end = "${pkgs.libnotify}/bin/notify-send 'GameMode ended'";
+      };
+    };
+  };
+}
+</file>
+
+<file path="modules/vscode.nix">
+{ pkgs, ... }:
+
+{
+  # On installe les outils nécessaires au fonctionnement de l'IDE
+  home.packages = with pkgs; [
+    nixfmt # Le formateur officiel (RFC style)
+    nil # Le "cerveau" (Language Server) pour Nix
+  ];
+
+  programs.vscode = {
+    enable = true;
+
+    profiles.default = {
+      # Extensions installées et gérées par Nix
+      extensions = with pkgs.vscode-extensions; [
+        bbenoist.nix # Coloration syntaxique
+        jnoortheen.nix-ide # Support IDE (LSP)
+        dracula-theme.theme-dracula # Thème visuel
+        christian-kohler.path-intellisense # Autocomplétion des chemins
+      ];
+
+      # Configuration de l'éditeur
+      userSettings = {
+        # Apparence et Police
+        "editor.fontFamily" = "'Hack Nerd Font', 'monospace'";
+        "editor.fontSize" = 16;
+        "workbench.colorTheme" = "Dracula";
+        "terminal.integrated.fontFamily" = "Hack Nerd Font";
+        "window.titleBarStyle" = "custom";
+
+        "path-intellisense.mappings" = {
+          "./" = "\${workspaceRoot}";
+        };
+
+        # Automatisation du formatage (nixfmt)
+        "editor.formatOnSave" = true;
+        "[nix]" = {
+          "editor.defaultFormatter" = "jnoortheen.nix-ide";
+        };
+
+        # Configuration du support Nix (LSP nil)
+        "nix.enableLanguageServer" = true;
+        "nix.serverPath" = "${pkgs.nil}/bin/nil";
+        "nix.serverSettings" = {
+          "nil" = {
+            "formatting" = {
+              "command" = [ "${pkgs.nixfmt}/bin/nixfmt" ];
+            };
+            # Ajout pour améliorer la détection des imports
+            "diagnostics" = {
+              "ignored" = [ ];
+            };
+            "nix" = {
+              "flake" = {
+                "autoArchive" = true;
+                "autoEvalInputs" = true;
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+}
+</file>
+
+<file path="nvim/lua/core/init.lua">
+-- ~/.config/nvim/lua/core/init.lua
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
+require("core.options")
+require("core.keymaps")
+-- plus tard : require("core.autocmds")
+</file>
+
+<file path="nvim/lua/core/options.lua">
+-- ~/.config/nvim/lua/core/options.lua
+vim.opt.number = true
+vim.opt.relativenumber = true
+vim.opt.termguicolors = true
+vim.opt.expandtab = true
+vim.opt.shiftwidth = 2
+vim.opt.tabstop = 2
+vim.opt.clipboard = "unnamedplus"
+</file>
+
+<file path="nvim/lua/plugins/better-escape.lua">
+return {
+  "max397574/better-escape.nvim",
+  config = function()
+    require("better_escape").setup()
+  end,
+}
+</file>
+
+<file path="nvim/lua/plugins/bufferline.lua">
+-- plugins.lua (ou dans ton gestionnaire de plugins Lazy, Packer, etc.)
+return {
+  {
+    "akinsho/bufferline.nvim",
+    version = "*",
+    dependencies = "nvim-tree/nvim-web-devicons",
+    config = function()
+      require("bufferline").setup({
+        options = {
+          mode = "buffers", -- ou "tabs"
+          separator_style = "slant", -- "slant", "thick", "thin", etc.
+          diagnostics = "nvim_lsp", -- affiche les erreurs LSP
+          show_buffer_close_icons = true,
+          show_close_icon = false,
+        },
+      })
+
+  -- 🔹 Raccourcis
+      vim.keymap.set("n", "<Tab>", "<Cmd>BufferLineCycleNext<CR>", { desc = "Next buffer" })
+      vim.keymap.set("n", "<S-Tab>", "<Cmd>BufferLineCyclePrev<CR>", { desc = "Prev buffer" })
+      vim.keymap.set("n", "<leader>bc", "<Cmd>bdelete<CR>", { desc = "Close buffer" })
+      vim.keymap.set("n", "<leader>bp", "<Cmd>BufferLinePick<CR>", { desc = "Pick buffer" })
+
+    end,
+  }
+}
+</file>
+
+<file path="nvim/lua/plugins/completion.lua">
+return {
+  {
+    "hrsh7th/nvim-cmp",
+    event = "InsertEnter",
+    dependencies = {
+      "hrsh7th/cmp-nvim-lsp",
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-path",
+      "hrsh7th/cmp-cmdline",
+      "hrsh7th/cmp-nvim-lsp-signature-help",
+      "saadparwaiz1/cmp_luasnip",
+      "L3MON4D3/LuaSnip",
+      "rafamadriz/friendly-snippets",
+      "onsails/lspkind.nvim", -- icônes
+    },
+    config = function()
+      local cmp = require("cmp")
+      local luasnip = require("luasnip")
+      local lspkind = require("lspkind")
+      require("luasnip.loaders.from_vscode").lazy_load()
+
+      cmp.setup({
+        snippet = {
+          expand = function(args)
+            luasnip.lsp_expand(args.body)
+          end,
+        },
+        window = {
+          completion = cmp.config.window.bordered(),
+          documentation = cmp.config.window.bordered(),
+        },
+        formatting = {
+          format = lspkind.cmp_format({
+            mode = "symbol_text", -- montre icône + texte
+            maxwidth = 50,
+            ellipsis_char = "...",
+          }),
+        },
+        mapping = cmp.mapping.preset.insert({
+          ["<C-Space>"] = cmp.mapping.complete(),
+          ["<CR>"] = cmp.mapping.confirm({ select = true }),
+          ["<Tab>"] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_next_item()
+            elseif luasnip.expand_or_jumpable() then
+              luasnip.expand_or_jump()
+            else
+              fallback()
+            end
+          end, { "i", "s" }),
+          ["<S-Tab>"] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_prev_item()
+            elseif luasnip.jumpable(-1) then
+              luasnip.jump(-1)
+            else
+              fallback()
+            end
+          end, { "i", "s" }),
+        }),
+        sources = cmp.config.sources({
+          { name = "nvim_lsp", priority = 1000 },
+          { name = "nvim_lsp_signature_help" },
+          { name = "luasnip", priority = 800 },
+          { name = "buffer", keyword_length = 3 },
+          { name = "path" },
+        }),
+      })
+
+      -- complétion pour / ? (recherche)
+      cmp.setup.cmdline({ "/", "?" }, {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = { { name = "buffer" } },
+      })
+
+      -- complétion pour :
+      cmp.setup.cmdline(":", {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = cmp.config.sources({
+          { name = "path" },
+        }, {
+          { name = "cmdline" },
+        }),
+      })
+
+      -- ========================
+      -- Couleurs Nord pour nvim-cmp
+      -- ========================
+      local set_hl = vim.api.nvim_set_hl
+      set_hl(0, "CmpItemAbbr", { fg = "#D8DEE9" })
+      set_hl(0, "CmpItemAbbrMatch", { fg = "#88C0D0", bold = true })
+      set_hl(0, "CmpItemAbbrMatchFuzzy", { fg = "#88C0D0", bold = true })
+      set_hl(0, "CmpItemMenu", { fg = "#616E88" })
+
+      -- par kind
+      set_hl(0, "CmpItemKindFunction", { fg = "#88C0D0" }) -- bleu clair
+      set_hl(0, "CmpItemKindMethod",   { fg = "#88C0D0" })
+      set_hl(0, "CmpItemKindKeyword",  { fg = "#81A1C1" }) -- bleu foncé
+      set_hl(0, "CmpItemKindVariable", { fg = "#EBCB8B" }) -- jaune
+      set_hl(0, "CmpItemKindField",    { fg = "#EBCB8B" })
+      set_hl(0, "CmpItemKindProperty", { fg = "#EBCB8B" })
+      set_hl(0, "CmpItemKindSnippet",  { fg = "#A3BE8C" }) -- vert
+      set_hl(0, "CmpItemKindClass",    { fg = "#D08770" }) -- orange
+      set_hl(0, "CmpItemKindInterface",{ fg = "#B48EAD" }) -- violet
+    end,
+  },
+}
+</file>
+
+<file path="nvim/lua/plugins/crates.lua">
+return {
+
+  {
+    'saecki/crates.nvim',
+    event = { "BufRead Cargo.toml" },
+    config = function()
+        require('crates').setup()
+    end,
+  }
+
+}
+</file>
+
+<file path="nvim/lua/plugins/flash.lua">
+return {
+  "folke/flash.nvim",
+  event = "VeryLazy",
+  opts = {},
+  keys = {
+    { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+    { "S", mode = { "n", "o", "x" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+    { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
+    { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+    { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+  },
+}
+</file>
+
+<file path="nvim/lua/plugins/icons.lua">
+return {
+  "nvim-tree/nvim-web-devicons",
+  lazy = true,
+}
+</file>
+
+<file path="nvim/lua/plugins/lsp.lua">
+return {
+  {
+    "neovim/nvim-lspconfig",
+    config = function()
+      local capabilities = vim.lsp.protocol.make_client_capabilities()
+      if pcall(require, "cmp_nvim_lsp") then
+        capabilities = require("cmp_nvim_lsp").default_capabilities()
+      end
+
+      -- Nix
+      vim.lsp.enable("nil_ls")
+      vim.lsp.config("nil_ls", {
+        capabilities = capabilities,
+      })
+
+      -- Lua
+      vim.lsp.enable("lua_ls")
+      vim.lsp.config("lua_ls", {
+        capabilities = capabilities,
+        settings = {
+          Lua = {
+            diagnostics = {
+              globals = { "vim" },
+            },
+          },
+        },
+      })
+    end,
+  },
+  { "williamboman/mason.nvim", config = true },
+  { "williamboman/mason-lspconfig.nvim", config = true },
+}
+</file>
+
+<file path="nvim/lua/plugins/mason.lua">
+return {
+  "williamboman/mason.nvim",
+  build = ":MasonUpdate", -- met à jour les registres lors de l’install
+  config = function()
+    require("mason").setup()
+  end,
+}
+</file>
+
+<file path="nvim/lua/plugins/move.lua">
+return {
+  "fedepujol/move.nvim",
+  keys = {
+    -- Normal Mode
+    { "<A-j>", ":MoveLine(1)<CR>", desc = "Move Line Down" },
+    { "<A-k>", ":MoveLine(-1)<CR>", desc = "Move Line Up" },
+    { "<A-h>", ":MoveHChar(-1)<CR>", desc = "Move Character Left" },
+    { "<A-l>", ":MoveHChar(1)<CR>", desc = "Move Character Right" },
+    { "<leader>wb>", ":MoveWord(1)<CR>",  mode = { "n" }, desc = "Move Word Right" },
+    { "<leader>wf>", ":MoveWord(-1)<CR>", mode = { "n" }, desc = "Move Word Left" },
+
+    -- Visual Mode
+    { "<A-j>", ":MoveBlock(1)<CR>",  mode = { "v" }, desc = "Move Block Down" },
+    { "<A-k>", ":MoveBlock(-1)<CR>", mode = { "v" }, desc = "Move Block Up" },
+    { "<A-h>", ":MoveHBlock(-1)<CR>", mode = { "v" }, desc = "Move Block Left" },
+    { "<A-l>", ":MoveHBlock(1)<CR>",  mode = { "v" }, desc = "Move Block Right" },
+  },
+  opts = {
+    -- Config here
+  },
+}
+</file>
+
+<file path="nvim/lua/plugins/rustaceanvim.lua">
+return {
+
+{
+  'mrcjkb/rustaceanvim',
+  version = '^6', -- Recommended
+  lazy = false, -- This plugin is already lazy
+}
+
+
+}
+</file>
+
+<file path="nvim/lua/plugins/treesitter.lua">
+return {
+  "nvim-treesitter/nvim-treesitter",
+  build = ":TSUpdate",
+
+  opts = {
+    highlight = { enable = true },
+    indent = { enable = true }, -- ✅ active indentation Treesitter
+  }
+}
+</file>
+
+<file path="nvim/lua/plugins/ui.lua">
+return {
+  {
+    "shaunsingh/nord.nvim",
+    priority = 1000,
+    config = function()
+      vim.cmd.colorscheme("nord")
+    end,
+  },
+  {
+    "nvim-lualine/lualine.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    config = function()
+      require("lualine").setup { options = { theme = "nord" } }
+    end,
+  },
+  {
+    "lewis6991/gitsigns.nvim",
+    event = "BufReadPre",
+    config = function()
+      require("gitsigns").setup()
+    end,
+  },
+}
+</file>
+
+<file path="nvim/.stylua.toml">
+column_width = 120
+line_endings = "Unix"
+indent_type = "Spaces"
+indent_width = 2
+quote_style = "AutoPreferDouble"
+call_parentheses = "None"
+</file>
+
+<file path="nvim/init.lua">
+-- MuggyVim 🚀
+-- bootstrap lazy.nvim
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", lazypath })
+end
+vim.opt.rtp:prepend(lazypath)
+
+-- core
+require("core")
+
+-- setup lazy
+require("lazy").setup("plugins", {
+  lockfile = vim.fn.stdpath("data") .. "/lazy-lock.json",
+})
+
+-- load user overrides
+pcall(require, "custom")
+
+vim.notify("Welcome to MuggyVim ✨", vim.log.levels.INFO)
+</file>
+
+<file path=".gitignore">
+# Secrets
+modules/mcp_config.json
+
+# Build results
+result
+result-*
+</file>
+
+<file path="overlays.nix">
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
+{
+  nixpkgs.overlays = [
+    inputs.niri.overlays.niri
+    inputs.antigravity.overlays.default
+  ];
+}
+</file>
+
+<file path=".agent/skills/knowledge-archivist/SKILL.md">
+---
+name: knowledge-archivist
+description: Focus 100% sur la documentation et les Knowledge Items (KIs). Garant de la validité et de la structure de la mémoire IA.
+---
+
+# Skill: Knowledge Archivist
+
+Ce skill définit les standards de capitalisation du savoir pour le rôle d'Archiviste dans le workflow Relais Triple.
+
+## Objectifs
+- Transformer les commits techniques en apprentissages structurés (Knowledge Items).
+- Garantir un format JSON strict pour les fichiers `metadata.json`.
+- Maintenir la cohérence du graphe de connaissances via des liens inter-KIs.
+- Assurer que les solutions techniques (spécifications) sont reproductibles.
+
+## Structure d'un Knowledge Item (KI)
+
+Chaque KI doit être situé dans `~/.gemini/antigravity/knowledge/[nom_du_ki]/` et contenir :
+
+### 1. `metadata.json`
+- **Champs obligatoires** : `title`, `summary`, `created_at`, `updated_at`, `categories`, `references`.
+- **Validation** : Le JSON doit être valide (pas de virgules traînantes).
+- **Format Date** : ISO 8601 UTC (ex: `2026-02-16T08:32:00Z`).
+
+### 2. `artifacts/` (Dossier)
+Contient les spécifications techniques (généralement `[nom]_specs.md`).
+- Utiliser des titres H1/H2 clairs.
+- Inclure des blocs de code NixOS testés.
+- Ajouter des tables comparatives si nécessaire.
+
+## Procédure d'Archivage
+
+1. **Vérification de l'existence** : Avant de créer, vérifier si un KI similaire existe déjà. Si oui, le mettre à jour.
+2. **Extraction du commit** : Analyser `git show --stat` pour identifier les fichiers clés et la logique métier.
+3. **Rédaction des Specs** : Concentrer le savoir sur le "POURQUOI" et le "COMMENT" (valeur ajoutée par rapport au code brut).
+4. **Mise à jour du lock** : S'assurer que le nouveau KI est mentionné dans la mémoire globale (via notification ou update du lock si géré).
+
+## Qualité
+- Langue : Français (pour les descriptions) et Anglais (pour les termes techniques/metadata).
+- Style : Concis, chirurgical, sans placeholders.
+</file>
+
 <file path=".agent/skills/nixos-architect/references/nvme/nvme-transition.md">
 # Transition vers le nouveau disque NVMe (Février 2026)
 
@@ -633,6 +1588,77 @@ Nous avons abandonné `ext4` au profit de `btrfs` avec une structure de sous-vol
 ## Nouvelle Configuration (Après transition)
 - UUID de boot : `83F7-5789`.
 - UUID BTRFS : `59f5b271-11c1-41f9-927d-ed3221a6b404`.
+</file>
+
+<file path=".agent/skills/nixos-architect/SKILL.md">
+---
+name: nixos-architect
+description: Expert en architecture NixOS, garant de la propreté et de la clarté de la configuration.
+---
+
+# NixOS Architect Skill
+
+Cette compétence assure que toute modification de la configuration NixOS respecte les standards de qualité du projet.
+
+## Système d'Expertise locale
+IMPORTANT : Toujours consulter le dossier `references/` avant toute modification majeure. Ce dossier contient notre savoir accumulé et les configurations validées pour le matériel de David.
+
+## Principes de Base
+0. **Expertise Avancée** : Pour tout ce qui concerne la syntaxe Nix, les Flakes, Home Manager ou les patterns avancés, se référer à la compétence [nix](../nixos-flakes/SKILL.md).
+1. **Commentaires Systématiques** : Chaque bloc de configuration complexe doit être expliqué par un commentaire en français.
+2. **Modularité** : Préférer la création de nouveaux fichiers dans `modules/` plutôt que d'alourdir le `default.nix`.
+3. **Clarté des Imports** : Les fichiers doivent être importés de manière logique dans `home.nix` ou `default.nix`.
+
+## Instructions de travail
+Quand tu modifies un fichier `.nix` :
+1. Analyse la structure existante.
+2. Ajoute des commentaires expliquant le **pourquoi** de la modification, pas seulement le quoi.
+3. Vérifie que les variables utilisées (comme `pkgs`) sont bien déclarées.
+4. Si tu introduis une nouvelle fonctionnalité (ex: un nouvel outil), crée un module dédié.
+
+---
+*Note: Cette compétence est activée automatiquement dès qu'un fichier .nix est manipulé.*
+</file>
+
+<file path=".agent/skills/nixos-auditor/SKILL.md">
+---
+name: nixos-auditor
+description: Expert en audit de configuration NixOS pour garantir la propreté, la performance et la conformité aux standards du projet.
+---
+
+# Skill: NixOS Auditor
+
+Ce skill définit les responsabilités et les procédures d'audit pour le rôle d'Auditeur dans le workflow Relais Triple.
+
+## Objectifs
+- Garantir que chaque changement est documenté par des commentaires en français.
+- Détecter les duplications d'options Nix (ex: `experimental-features` en double).
+- Vérifier la conformité des noms de bibliothèques dans `nix-ld` (PascalCase requis).
+- Assurer la propreté architecturale (séparation des modules, absence de hardcoding).
+
+## Procédures d'Audit
+
+### 1. Recherche de Doublons
+L'Auditeur doit systématiquement vérifier si une option ajoutée n'existe pas déjà dans le fichier ou le module.
+- **Action** : Utiliser `grep_search` ou `grep` sur le fichier cible avant validation.
+
+### 2. Validation `nix-ld`
+Les bibliothèques dans `programs.nix-ld.libraries` DOIVENT utiliser le format PascalCase et ne pas avoir de préfixe `xorg.`.
+- **Correct** : `libX11`, `libXext`.
+- **Incorrect** : `libx11`, `xorg.libX11`.
+
+### 3. Exigence de Commentaires
+Chaque bloc de configuration complexe ou spécifique à un bug DOIT être précédé d'un commentaire explicatif.
+- **Action** : Si un bloc manque de contexte, demander au Codeur de l'ajouter.
+
+### 4. Vérification Déclarative
+Vérifier que les changements n'introduisent pas d'états impurs ou de chemins hardcodés vers `/home/david` (utiliser `${username}` ou `${config.home.homeDirectory}`).
+
+## Feedback
+L'auditeur doit fournir un rapport concis incluant :
+- ✅ Points validés.
+- 🛠️ Optimisations suggérées.
+- 🚨 Bloquants (fautes de syntaxe, duplications critiques).
 </file>
 
 <file path=".agent/skills/nixos-flakes/references/best-practices.md">
@@ -3018,100 +4044,87 @@ For detailed information, see:
 - `references/templates.md` - Ready-to-use flake.nix examples
 </file>
 
-<file path=".agent/skills/scratchpad/references/examples.md">
-# Scratch Pad Usage Examples
+<file path=".agent/skills/nixos-project-manager/SKILL.md">
+---
+name: nixos-project-manager
+description: Expert en gestion de projet et planification pour les configurations NixOS complexes.
+---
 
-## Basic Research Task
+# Skill: NixOS Project Manager
 
-```bash
-# Initialize
-SCRATCH="/tmp/scratch_research.md"
-python scripts/scratch_pad.py --file $SCRATCH init "Competitor Analysis"
+Ce skill définit le rôle de planification (PM) pour décomposer les demandes et anticiper les conflits.
 
-# Log searches
-python scripts/scratch_pad.py --file $SCRATCH log-tool "web_search" '{"query": "competitor A"}' "Found 10 results"
-python scripts/scratch_pad.py --file $SCRATCH finding "Competitor A has 30% market share" --category "Market"
+## Missions
+- **Analyse de Faisabilité** : Vérifier si une demande respecte l'architecture déclarative du projet.
+- **Décomposition (WBS)** : Transformer une demande floue en une liste de tâches atomiques (`task.md`).
+- **Anticipation des Conflits** : Identifier les modules Nix incompatibles avant l'implémentation (ex: deux bootloaders, deux gestionnaires de réseau).
 
-python scripts/scratch_pad.py --file $SCRATCH log-tool "web_search" '{"query": "competitor B"}' "Found 8 results"  
-python scripts/scratch_pad.py --file $SCRATCH finding "Competitor B focuses on enterprise" --category "Market"
+## Livrables
+Un `task.md` initialisé avec :
+- Phases de Planning, Exécution et Vérification claires.
+- Mention des modules Nix impactés.
+- Critères d'acceptation précis.
 
-# Add summary
-python scripts/scratch_pad.py --file $SCRATCH summary "Three main competitors identified with different market strategies"
+## Stratégie
+- Toujours privilégier `nh` (nixos helper) pour les tests si possible.
+- Recommander des changements progressifs (un commit par fonctionnalité).
+</file>
 
-# Read for response
-python scripts/scratch_pad.py --file $SCRATCH read
+<file path=".agent/skills/nixos-research-strategy/SKILL.md">
+---
+name: nixos-research-strategy
+description: |
+  Stratégies de recherche systématique pour NixOS. Fournit des arbres de décision pour naviguer dans la documentation web et le code source de Nixpkgs.
+  Utiliser pour déterminer la profondeur de lecture et choisir les bons outils (Fetch, GitHub MCP, Nix Search).
+---
+
+# NixOS Research Strategy
+
+Guide stratégique pour l'exploration systématique de l'écosystème NixOS.
+
+## Niveaux de Recherche
+
+### 1. ⚡ Quick Scan (Recherche Rapide)
+- **Quand** : Questions de syntaxe simple, vérification de version.
+- **Action** : `Nix Search` pour les options, lecture du `README.md` via `Fetch`.
+- **Objectif** : Une réponse immédiate basée sur la documentation officielle.
+
+### 2. 🛡️ Standard Trace (Analyse Standard)
+- **Quand** : Configuration de nouveaux modules, erreurs de build courantes.
+- **Action** : `Quick Scan` + lecture du code du module dans Nixpkgs via `GitHub MCP`.
+- **Objectif** : Comprendre comment les options sont implémentées.
+
+### 3. 🔬 Nix-Deep-Dive (Immersion Totale)
+- **Quand** : Bugs obscurs, comportements non documentés, intégration de flakes complexes.
+- **Action** : `Standard Trace` + recherche d'issues GitHub, lecture des Pull Requests liées pour comprendre le "pourquoi" derrière une implémentation.
+- [ ] **Objectif** : Résoudre des problèmes d'architecture ou des bugs de bas niveau.
+
+### ⚡ 4. Surgical Context (Analyse Interne)
+- **Quand** : Travailler sur des changements récents faits par un autre agent.
+- **Action** : `git show --stat` (immédiat) ou lecture de `repomix-nixos-config.md`.
+- **Objectif** : Identifier instantanément les fichiers modifiés sans scanner tout le projet.
+
+## Arbre de Décision
+
+```
+Requête Utilisateur
+├── Mots-clés : "Pourquoi", "Bizarre", "Bug", "Interne"
+│   → **NIX-DEEP-DIVE**
+│   → Outils : GitHub Search (Code + Issues + PRs)
+│
+├── Mots-clés : "Comment configurer", "Options pour"
+│   → **STANDARD TRACE**
+│   → Outils : Nix Search + View Contents (module.nix)
+│
+└── Mots-clés : "Est-ce que", "Version", "Qu'est-ce que"
+    → **QUICK SCAN**
+    → Outils : Nix Search + Fetch (README)
 ```
 
-## Multi-Step Processing
-
-```bash
-# Initialize
-SCRATCH="/tmp/scratch_process.md"
-python scripts/scratch_pad.py --file $SCRATCH init "Data Processing Pipeline"
-
-# Step 1: Load
-python scripts/scratch_pad.py --file $SCRATCH section "Step 1: Load Data"
-python scripts/scratch_pad.py --file $SCRATCH log-tool "file_read" '{"path": "data.csv"}' "Loaded 1000 rows"
-python scripts/scratch_pad.py --file $SCRATCH checkpoint "Data loaded"
-
-# Step 2: Process  
-python scripts/scratch_pad.py --file $SCRATCH section "Step 2: Process Data"
-python scripts/scratch_pad.py --file $SCRATCH append "Removed 50 duplicate rows"
-python scripts/scratch_pad.py --file $SCRATCH append "Applied normalization"
-python scripts/scratch_pad.py --file $SCRATCH checkpoint "Processing complete"
-
-# Step 3: Save
-python scripts/scratch_pad.py --file $SCRATCH section "Step 3: Save Results"
-python scripts/scratch_pad.py --file $SCRATCH log-tool "file_write" '{"path": "output.csv"}' "Saved 950 rows"
-
-# Mark complete
-python scripts/scratch_pad.py --file $SCRATCH complete
-```
-
-## Document Analysis
-
-```bash
-# Initialize
-SCRATCH="/tmp/scratch_docs.md"
-python scripts/scratch_pad.py --file $SCRATCH init "Confluence Documentation Review"
-
-# Process each page
-python scripts/scratch_pad.py --file $SCRATCH section "Main Page Analysis"
-python scripts/scratch_pad.py --file $SCRATCH log-tool "confluence_read" '{"page_id": "123"}' "Read main page"
-python scripts/scratch_pad.py --file $SCRATCH finding "Main page covers project overview"
-
-python scripts/scratch_pad.py --file $SCRATCH section "Child Pages"
-python scripts/scratch_pad.py --file $SCRATCH todo "Review technical specs page"
-python scripts/scratch_pad.py --file $SCRATCH todo "Check API documentation" 
-python scripts/scratch_pad.py --file $SCRATCH todo "Update outdated examples" --done
-
-# Summary
-python scripts/scratch_pad.py --file $SCRATCH summary "Documentation is mostly complete but needs updates in 3 areas"
-```
-
-## Quick Patterns
-
-### Finding Pattern
-```bash
-python scripts/scratch_pad.py --file $SCRATCH finding "Discovery text" --category "Category"
-```
-
-### Tool Logging Pattern
-```bash
-# Before execution
-python scripts/scratch_pad.py --file $SCRATCH log-tool "tool_name" '{"params": "value"}' ""
-# After execution  
-python scripts/scratch_pad.py --file $SCRATCH append "Result: Success with X items"
-```
-
-### Section Organization
-```bash
-python scripts/scratch_pad.py --file $SCRATCH section "Phase 1: Research"
-# ... add content ...
-python scripts/scratch_pad.py --file $SCRATCH section "Phase 2: Analysis"  
-# ... add content ...
-python scripts/scratch_pad.py --file $SCRATCH section "Phase 3: Conclusions"
-```
+## Meilleures Pratiques
+- **Toujours remonter à la source** : Le code source de Nixpkgs est la source de vérité ultime.
+- **Vérifier l'historique** : Une option qui a changé de nom est souvent documentée dans le commit qui l'a modifiée.
+- **Documenter la recherche** : Utiliser le skill `scratchpad` pour noter les fichiers parcourus.
 </file>
 
 <file path=".agent/workflows/full-index.md">
@@ -3199,57 +4212,60 @@ Le projet utilise un système de collaboration agentique basé sur trois rôles 
 Chaque étape du relais doit être concise et efficace (**5-10 tours maximum**). On privilégie la précision et la mise à jour constante du savoir technique.
 </file>
 
-<file path="hosts/muggy-nixos/hardware-configuration.nix">
-# Do not modify this file!  It was generated by ‘nixos-generate-config’
-# and may be overwritten by future invocations.  Please make changes
-# to /etc/nixos/configuration.nix instead.
-{ config, lib, pkgs, modulesPath, ... }:
+<file path="generated/fuzzel.ini">
+[main]
+font=Hack Nerd Font:size=18
+terminal=ghostty
+prompt='❯ '
+layer=overlay
+icons-enabled=yes
+icon-theme=Papirus-Dark
+width=40
+lines=15
 
-{
-  imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
-    ];
+[colors]
+background=#0e1415ff
+text=#dee3e5ff
+match=#82d3e1ff
+selection=#3f484aff
+selection-text=#bfc8caff
+border=#82d3e1ff
 
-  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usbhid" "sd_mod" ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-amd" ];
-  boot.extraModulePackages = [ ];
+[border]
+width=2
+radius=10
+</file>
 
-  fileSystems."/" =
-    { device = "/dev/disk/by-uuid/59f5b271-11c1-41f9-927d-ed3221a6b404";
-      fsType = "btrfs";
-      options = [ "subvol=@" ];
-    };
+<file path="generated/yazi.toml">
+[manager]
+cwd = { fg = "#82d3e1" }
+hovered = { fg = "#0e1415", bg = "#82d3e1", bold = true }
+preview_hovered = { underline = true }
+find_keyword = { fg = "#82d3e1", italic = true }
+find_position = { fg = "#b1cbd0", bg = "#0e1415" }
 
-  fileSystems."/nix" =
-    { device = "/dev/disk/by-uuid/59f5b271-11c1-41f9-927d-ed3221a6b404";
-      fsType = "btrfs";
-      options = [ "subvol=@nix" ];
-    };
+[status]
+separator_open  = ""
+separator_close = ""
+separator_style = { fg = "#0e1415", bg = "#0e1415" }
 
-  fileSystems."/var/log" =
-    { device = "/dev/disk/by-uuid/59f5b271-11c1-41f9-927d-ed3221a6b404";
-      fsType = "btrfs";
-      options = [ "subvol=@log" ];
-    };
+[select]
+border   = { fg = "#82d3e1" }
+active   = { fg = "#82d3e1", bold = true }
+inactive = { fg = "#dee3e5" }
 
-  fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/59f5b271-11c1-41f9-927d-ed3221a6b404";
-      fsType = "btrfs";
-      options = [ "subvol=@home" ];
-    };
+[input]
+border   = { fg = "#82d3e1" }
+title    = { fg = "#82d3e1" }
+value    = { fg = "#dee3e5" }
 
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/83F7-5789";
-      fsType = "vfat";
-      options = [ "fmask=0077" "dmask=0077" ];
-    };
+[completion]
+border   = { fg = "#82d3e1" }
+active   = { fg = "#0e1415", bg = "#82d3e1" }
+inactive = { fg = "#dee3e5" }
 
-  swapDevices = [ ];
-
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-}
+[file]
+selection = { fg = "#0e1415", bg = "#82d3e1" }
 </file>
 
 <file path="modules/git.nix">
@@ -3330,6 +4346,123 @@ Chaque étape du relais doit être concise et efficace (**5-10 tours maximum**).
 }
 </file>
 
+<file path="modules/yt-dlp.nix">
+{ pkgs, inputs, ... }:
+
+{
+  programs.yt-dlp = {
+    enable = true;
+    package = inputs.nixpkgs-master.legacyPackages.${pkgs.stdenv.hostPlatform.system}.yt-dlp;
+    settings = {
+      embed-thumbnail = true;
+      add-metadata = true;
+      restrict-filenames = true;
+      windows-filenames = true;
+      output = "%(title)s.%(ext)s";
+    };
+  };
+
+  programs.fish.functions = {
+    yt = "yt-dlp -x --audio-format m4a $argv";
+  };
+}
+</file>
+
+<file path="templates/fuzzel.conf">
+[main]
+font=Hack Nerd Font:size=18
+terminal=ghostty
+prompt='❯ '
+layer=overlay
+icons-enabled=yes
+icon-theme=Papirus-Dark
+width=40
+lines=15
+
+[colors]
+background={{colors.surface.default.hex}}ff
+text={{colors.on_surface.default.hex}}ff
+match={{colors.primary.default.hex}}ff
+selection={{colors.surface_variant.default.hex}}ff
+selection-text={{colors.on_surface_variant.default.hex}}ff
+border={{colors.primary.default.hex}}ff
+
+[border]
+width=2
+radius=10
+</file>
+
+<file path="templates/mako.conf">
+anchor=top-right
+layer=top
+width=400
+height=200
+margin=10
+padding=12
+border-size=2
+border-radius=8
+background-color={{colors.surface.default.hex}}ee
+text-color={{colors.on_surface.default.hex}}
+border-color={{colors.primary.default.hex}}
+progress-color={{colors.primary.default.hex}}
+default-timeout=5000
+
+[urgency=critical]
+default-timeout=0
+border-color={{colors.error.default.hex}}
+</file>
+
+<file path="templates/matugen.toml">
+[config]
+# Matugen global configuration
+# Templates are used to generate files in ~/nixos-config/generated/
+# Nix symlinks point to these generated files.
+
+[templates.mako]
+input_path = "/home/david/nixos-config/templates/mako.conf"
+output_path = "/home/david/nixos-config/generated/mako"
+
+[templates.fuzzel]
+input_path = "/home/david/nixos-config/templates/fuzzel.conf"
+output_path = "/home/david/nixos-config/generated/fuzzel.ini"
+
+[templates.yazi]
+input_path = "/home/david/nixos-config/templates/yazi.conf"
+output_path = "/home/david/nixos-config/generated/yazi.toml"
+</file>
+
+<file path="templates/yazi.conf">
+[manager]
+cwd = { fg = "{{colors.primary.default.hex}}" }
+hovered = { fg = "{{colors.surface.default.hex}}", bg = "{{colors.primary.default.hex}}", bold = true }
+preview_hovered = { underline = true }
+find_keyword = { fg = "{{colors.primary.default.hex}}", italic = true }
+find_position = { fg = "{{colors.secondary.default.hex}}", bg = "{{colors.surface.default.hex}}" }
+
+[status]
+separator_open  = ""
+separator_close = ""
+separator_style = { fg = "{{colors.surface.default.hex}}", bg = "{{colors.surface.default.hex}}" }
+
+[select]
+border   = { fg = "{{colors.primary.default.hex}}" }
+active   = { fg = "{{colors.primary.default.hex}}", bold = true }
+inactive = { fg = "{{colors.on_surface.default.hex}}" }
+
+[input]
+border   = { fg = "{{colors.primary.default.hex}}" }
+title    = { fg = "{{colors.primary.default.hex}}" }
+value    = { fg = "{{colors.on_surface.default.hex}}" }
+
+[completion]
+border   = { fg = "{{colors.primary.default.hex}}" }
+active   = { fg = "{{colors.surface.default.hex}}", bg = "{{colors.primary.default.hex}}" }
+inactive = { fg = "{{colors.on_surface.default.hex}}" }
+
+[file]
+selection = { fg = "{{colors.surface.default.hex}}", bg = "{{colors.primary.default.hex}}" }
+</file>
+
 <file path="wm/style.nix">
 { inputs, pkgs, ... }:
 {
@@ -3361,228 +4494,52 @@ Chaque étape du relais doit être concise et efficace (**5-10 tours maximum**).
 }
 </file>
 
-<file path="flake.nix">
+<file path="generated/mako">
+anchor=top-right
+layer=top
+width=400
+height=200
+margin=10
+padding=12
+border-size=2
+border-radius=8
+background-color=#0e1415ee
+text-color=#dee3e5
+border-color=#82d3e1
+progress-color=#82d3e1
+default-timeout=5000
+
+[urgency=critical]
+default-timeout=0
+border-color=#ffb4ab
+</file>
+
+<file path="modules/antigravity-settings.json">
 {
-  description = "NixOS Unstable avec Home Manager intégré";
-
-  inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs-master.url = "github:nixos/nixpkgs/master";
-
-    # Home Manager pointant sur la branche unstable
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs"; # Force HM à utiliser votre version de nixpkgs
-    };
-
-    # Flake niri
-    niri = {
-      url = "github:sodiboo/niri-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    antigravity = {
-      url = "github:jacopone/antigravity-nix";
-      # C'est ici que la magie opère :
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # CachyOS Latest Kernel (xddxdd - has lantian cache)
-    nix-cachyos.url = "github:xddxdd/nix-cachyos-kernel";
-  };
-
-  outputs =
-    {
-      self,
-      nixpkgs,
-      nixpkgs-master,
-      home-manager,
-      niri,
-      antigravity,
-      noctalia,
-      nix-cachyos,
-      ...
-    }@inputs:
-    let
-      username = "david";
-    in
-    {
-      nixosConfigurations.muggy-nixos = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = { inherit inputs username; };
-        modules = [
-          ./hosts/muggy-nixos/default.nix
-          ./overlays.nix
-
-          # CachyOS kernel is set via boot.kernelPackages in default.nix
-
-          # Le module Noctalia se charge au niveau SYSTEME (si besoin, mais on va surtout l'utiliser dans Home Manager)
-          noctalia.nixosModules.default
-          niri.nixosModules.niri # Le module Niri Système (Sodiboo)
-
-          # Import du module Home Manager
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.${username} = import ./home.nix;
-
-            # Optionnel : passe les 'inputs' du flake au fichier home.nix
-            home-manager.extraSpecialArgs = { inherit inputs username; };
-          }
-        ];
-      };
-    };
+    "nix.enableLanguageServer": true,
+    "nix.serverPath": "nil",
+    "nix.serverSettings": {
+        "nil": {
+            "formatting": {
+                "command": [ "nixfmt" ]
+            }
+        }
+    },
+    "editor.formatOnSave": true,
+    "[nix]": {
+        "editor.defaultFormatter": "jnoortheen.nix-ide"
+    },
+    "security.workspace.trust.untrustedFiles": "open",
+    "antigravity.agent.terminal.autoExecutionPolicy": "Turbo",
+    "antigravity.agent.terminal.confirmCommands": false,
+    "antigravity.agent.workspace.gitignoreAccess": "On",
+    "antigravity.reviewPolicy": "Always Proceed",
+    "antigravity.confirmShellCommands": false,
+    "terminal.integrated.env.linux": {
+        "ELECTRON_OZONE_PLATFORM_HINT": "auto",
+        "WAYLAND_DISPLAY": "wayland-1"
+    }
 }
-</file>
-
-<file path=".agent/skills/nixos-research-strategy/SKILL.md">
----
-name: nixos-research-strategy
-description: |
-  Stratégies de recherche systématique pour NixOS. Fournit des arbres de décision pour naviguer dans la documentation web et le code source de Nixpkgs.
-  Utiliser pour déterminer la profondeur de lecture et choisir les bons outils (Fetch, GitHub MCP, Nix Search).
----
-
-# NixOS Research Strategy
-
-Guide stratégique pour l'exploration systématique de l'écosystème NixOS.
-
-## Niveaux de Recherche
-
-### 1. ⚡ Quick Scan (Recherche Rapide)
-- **Quand** : Questions de syntaxe simple, vérification de version.
-- **Action** : `Nix Search` pour les options, lecture du `README.md` via `Fetch`.
-- **Objectif** : Une réponse immédiate basée sur la documentation officielle.
-
-### 2. 🛡️ Standard Trace (Analyse Standard)
-- **Quand** : Configuration de nouveaux modules, erreurs de build courantes.
-- **Action** : `Quick Scan` + lecture du code du module dans Nixpkgs via `GitHub MCP`.
-- **Objectif** : Comprendre comment les options sont implémentées.
-
-### 3. 🔬 Nix-Deep-Dive (Immersion Totale)
-- **Quand** : Bugs obscurs, comportements non documentés, intégration de flakes complexes.
-- **Action** : `Standard Trace` + recherche d'issues GitHub, lecture des Pull Requests liées pour comprendre le "pourquoi" derrière une implémentation.
-- [ ] **Objectif** : Résoudre des problèmes d'architecture ou des bugs de bas niveau.
-
-### ⚡ 4. Surgical Context (Analyse Interne)
-- **Quand** : Travailler sur des changements récents faits par un autre agent.
-- **Action** : `git show --stat` (immédiat) ou lecture de `repomix-nixos-config.md`.
-- **Objectif** : Identifier instantanément les fichiers modifiés sans scanner tout le projet.
-
-## Arbre de Décision
-
-```
-Requête Utilisateur
-├── Mots-clés : "Pourquoi", "Bizarre", "Bug", "Interne"
-│   → **NIX-DEEP-DIVE**
-│   → Outils : GitHub Search (Code + Issues + PRs)
-│
-├── Mots-clés : "Comment configurer", "Options pour"
-│   → **STANDARD TRACE**
-│   → Outils : Nix Search + View Contents (module.nix)
-│
-└── Mots-clés : "Est-ce que", "Version", "Qu'est-ce que"
-    → **QUICK SCAN**
-    → Outils : Nix Search + Fetch (README)
-```
-
-## Meilleures Pratiques
-- **Toujours remonter à la source** : Le code source de Nixpkgs est la source de vérité ultime.
-- **Vérifier l'historique** : Une option qui a changé de nom est souvent documentée dans le commit qui l'a modifiée.
-- **Documenter la recherche** : Utiliser le skill `scratchpad` pour noter les fichiers parcourus.
-</file>
-
-<file path=".agent/skills/scratchpad/SKILL.md">
----
-name: scratchpad
-description: |
-  Mémoire vive au format Markdown pour les tâches complexes. À utiliser quand : plus de 5 appels d'outils sont nécessaires, en cas de recherche multi-sources, ou pour des analyses comparatives. 
-  Enregistrer le processus → S'y référer pour la réponse → Archiver après usage.
----
-
-# Scratchpad - Mémoire de Travail Avancée (Style Kira)
-
-Le scratchpad est un outil interne permettant de suivre l'avancement d'une tâche complexe sans perdre le fil technique. Cette version améliorée utilise un script Python pour automatisé l'horodatage et la structuration.
-
-## Structure du Skill
-
-- `scripts/scratch_pad.py` : Moteur de journalisation (CLI).
-- `references/examples.md` : Modèles d'utilisation.
-
-## Utilisation via CLI
-
-Le script Python permet de gérer le scratchpad de manière structurée :
-
-1.  **Initialisation** : 
-    `python3 .agent/skills/scratchpad/scripts/scratch_pad.py --file [PATH] init "[Task Name]"`
-2.  **Journalisation d'outil** : 
-    `python3 .agent/skills/scratchpad/scripts/scratch_pad.py --file [PATH] log-tool "tool_name" '{"param": "val"}' --result "Output"`
-3.  **Ajout de découverte** : 
-    `python3 .agent/skills/scratchpad/scripts/scratch_pad.py --file [PATH] finding "Texte de la découverte" --category "Genre"`
-4.  **Points de passage** : 
-    `python3 .agent/skills/scratchpad/scripts/scratch_pad.py --file [PATH] checkpoint "Nom de l'étape"`
-
-## Patterns Recommandés
-
-Voir [examples.md](file:///home/david/nixos-config/.agent/skills/scratchpad/references/examples.md) pour les détails sur les patterns :
-- **Recherche** : Log des outils et findings.
-- **Multi-étapes** : Sections et checkpoints.
-- **Analyse** : TODOs et résumés.
-
-## Règles de Conduite
-
-- **Référence interne uniquement** : Ne jamais copier-coller le scratchpad brut dans la réponse à l'utilisateur.
-- **Synthèse** : Extraire uniquement les points pertinents pour l'utilisateur.
-- **Nomenclature** : Toujours utiliser des chemins absolus pour les fichiers cités.
-- **Persistence** : Le fichier doit être créé dans le dossier des artifacts de la session (`/home/david/.gemini/antigravity/brain/[ID]/`).
-</file>
-
-<file path=".agent/workflows/archive.md">
----
-description: Capitalisation du savoir via Knowledge Items (Archiviste).
----
-
-// turbo-all
-1. Analyse du commit final
-```bash
-git show --stat
-```
-
-2. Gestion du Savoir (Knowledge)
-- **Priorité absolue** : Crée ou mets à jour le **Knowledge Item (KI)** dans `~/.gemini/antigravity/knowledge/`.
-- Utilise les métadonnées du commit pour extraire les apprentissages clés.
-- (Optionnel) Ajoute une doc Markdown dans `./docs` uniquement si utile pour un humain.
-
-3. Clôture
-- Confirme la mise à jour du savoir.
-- **Focus Chirurgical** : Max 5-10 turns.
-</file>
-
-<file path=".agent/workflows/audit.md">
----
-description: Revue de code et conformité (Auditeur).
----
-
-// turbo-all
-1. Analyse des changements récents
-```bash
-git show --stat
-```
-
-2. Revue de Code
-- Compare le code avec les règles de `GEMINI.md`.
-- Vérifie la cohérence de l'architecture NixOS.
-- Liste les optimisations possibles (performance, clarté, sécurité).
-
-3. Conclusion
-- Valide la conformité ou propose des correctifs.
-- Demande à l'utilisateur de passer à la phase **ARCHIVE** via `/archive` si tout est OK.
-- **Focus Chirurgical** : Max 5-10 turns.
 </file>
 
 <file path="modules/atuin.nix">
@@ -3599,17 +4556,6 @@ git show --stat
       search_mode = "fuzzy";
     };
   };
-}
-</file>
-
-<file path="modules/discord.nix">
-{ pkgs, ... }:
-
-{
-  # Installation de Vesktop (client Discord alternatif optimisé pour Wayland)
-  home.packages = with pkgs; [
-    vesktop # Supporte le partage d'écran audio/vidéo sous Wayland et inclut Vencord
-  ];
 }
 </file>
 
@@ -3707,155 +4653,6 @@ git show --stat
 }
 </file>
 
-<file path=".agent/skills/nixos-architect/SKILL.md">
----
-name: nixos-architect
-description: Expert en architecture NixOS, garant de la propreté et de la clarté de la configuration.
----
-
-# NixOS Architect Skill
-
-Cette compétence assure que toute modification de la configuration NixOS respecte les standards de qualité du projet.
-
-## Système d'Expertise locale
-IMPORTANT : Toujours consulter le dossier `references/` avant toute modification majeure. Ce dossier contient notre savoir accumulé et les configurations validées pour le matériel de David.
-
-## Principes de Base
-0. **Expertise Avancée** : Pour tout ce qui concerne la syntaxe Nix, les Flakes, Home Manager ou les patterns avancés, se référer à la compétence [nix](../nixos-flakes/SKILL.md).
-1. **Commentaires Systématiques** : Chaque bloc de configuration complexe doit être expliqué par un commentaire en français.
-2. **Modularité** : Préférer la création de nouveaux fichiers dans `modules/` plutôt que d'alourdir le `default.nix`.
-3. **Clarté des Imports** : Les fichiers doivent être importés de manière logique dans `home.nix` ou `default.nix`.
-
-## Instructions de travail
-Quand tu modifies un fichier `.nix` :
-1. Analyse la structure existante.
-2. Ajoute des commentaires expliquant le **pourquoi** de la modification, pas seulement le quoi.
-3. Vérifie que les variables utilisées (comme `pkgs`) sont bien déclarées.
-4. Si tu introduis une nouvelle fonctionnalité (ex: un nouvel outil), crée un module dédié.
-
----
-*Note: Cette compétence est activée automatiquement dès qu'un fichier .nix est manipulé.*
-</file>
-
-<file path=".agent/workflows/git-sync.md">
----
-description: Synchroniser les changements avec Git (Add, Review, Commit, Pull, Push)
----
-
-Ce workflow automatise la synchronisation complète. Il inclut désormais une phase de **Code Review** pour garantir la qualité avant le commit.
-
-// turbo-all
-1. Préparer les changements
-```bash
-git add .
-```
-
-2. Revue de Code Automatisée
-L'assistant analyse les changements indexés, vérifie la conformité avec `GEMINI.md` et propose des optimisations via le skill `architect`.
-```bash
-git diff --cached --stat
-# [INTERNAL REVIEW] : L'IA analyse maintenant le contenu détaillé de ces fichiers...
-```
-
-3. Créer un commit avec un message intelligent
-On utilise `commit-pro` pour générer un message au format Conventional Commits.
-```bash
-# L'assistant génère le message ici
-```
-
-4. Récupérer les changements distants (Pull)
-```bash
-git pull --rebase
-```
-
-5. Envoyer les changements (Push)
-```bash
-git push
-```
-
-6. Résumé de la Session
-L'assistant fournit un topo clair de la revue de code effectuée (points vérifiés, optimisations trouvées) et confirme l'état final de la synchronisation.
-</file>
-
-<file path="modules/brave-system.nix">
-{ ... }:
-
-{
-  # On utilise le module Chromium système pour forcer les politiques dans Brave
-  programs.chromium = {
-    enable = true;
-    extraOpts = {
-      "ExtensionInstallForcelist" = [
-        "nngceckbapebfimnlniiiahkandclblb;https://clients2.google.com/service/update2/crx" # Bitwarden
-        "cjpalhdlnbpafiamejdnhcphjbkeiagm;https://clients2.google.com/service/update2/crx" # uBlock Origin
-        "dcbfghmdnnkkkjjpmghnoaidojfickmj;https://clients2.google.com/service/update2/crx" # Theme: Thassos Sea View
-      ];
-      "WebAppInstallForceList" = [
-        {
-          url = "https://teams.microsoft.com/";
-          default_launch_container = "window";
-          create_desktop_shortcut = true;
-        }
-      ];
-    };
-  };
-}
-</file>
-
-<file path="modules/steam.nix">
-{ pkgs, ... }:
-
-{
-
-  # 2. Les outils qu'on veut pouvoir lancer manuellement au terminal
-  environment.systemPackages = with pkgs; [
-    mangohud # L'overlay pour surveiller ta RX 6800 (FPS, température)
-    protonup-qt # Super utile pour installer GE-Proton (indispensable sous Linux)
-  ];
-
-  # 3. La configuration du module Steam
-  programs.steam = {
-    enable = true;
-
-    # Ouvre le pare-feu pour le Remote Play et les serveurs locaux
-    remotePlay.openFirewall = true;
-    dedicatedServer.openFirewall = true;
-
-    # Active Gamescope pour pouvoir lancer une session Steam Deck
-    gamescopeSession.enable = true;
-  };
-
-  # 4. Configuration globale de Gamescope (Setuid et permissions)
-  programs.gamescope = {
-    enable = true;
-    # On peut ajouter ici des options globales si besoin
-  };
-
-  # 5. Optimise les performances des jeux (GameMode de Feral Interactive)
-  # Cela permet de booster le CPU et de prioriser le GPU quand un jeu est lancé
-  programs.gamemode = {
-    enable = true;
-    enableRenice = true;
-    settings = {
-      general = {
-        renice = 10; # Augmente la priorité CPU des processus de jeu
-        softrealtime = "auto";
-      };
-      gpu = {
-        # Optimisations GPU AMD (bloque la fréquence à 'high')
-        apply_gpu_optimisations = "accept-responsibility";
-        gpu_device = 0;
-        amd_performance_level = "high";
-      };
-      custom = {
-        start = "${pkgs.libnotify}/bin/notify-send 'GameMode started'";
-        end = "${pkgs.libnotify}/bin/notify-send 'GameMode ended'";
-      };
-    };
-  };
-}
-</file>
-
 <file path="modules/xdg.nix">
 { config, pkgs, ... }:
 
@@ -3890,120 +4687,304 @@ L'assistant fournit un topo clair de la revue de code effectuée (points vérifi
 }
 </file>
 
-<file path="modules/notifications.nix">
-{ pkgs, ... }:
+<file path="nvim/lua/core/keymaps.lua">
+local map = vim.keymap.set
+local opts = { noremap = true, silent = true }
 
+-- Basic keymaps
+map("n", "<leader>qq", ":q<CR>", { desc = "Quit" })
+map("n", "<leader>fs", ":w<CR>", { desc = "Save File" })
+
+-- Clipboard paste
+map("i", "<C-S-v>", '<Esc>"+pa', opts)
+map("c", "<C-S-v>", '<C-R>+', opts)
+
+
+-- Window navigation
+map("n", "<leader>wh", "<C-w>h", { desc = "Move to left window" })
+map("n", "<leader>wl", "<C-w>l", { desc = "Move to right window" })
+map("n", "<leader>wj", "<C-w>j", { desc = "Move to lower window" })
+map("n", "<leader>wk", "<C-w>k", { desc = "Move to upper window" })
+</file>
+
+<file path="wm/binds.nix">
+{ config, ... }:
 {
-  # notify-send est fourni par libnotify
-  home.packages = [ pkgs.libnotify ];
-  # Mako : daemon de notification léger avec support natif xdg-activation
-  # Quand on clique une notification, Mako envoie un token d'activation
-  # au compositeur (Niri) qui change automatiquement de workspace et focus la fenêtre
-  services.mako = {
-    enable = true;
-    settings = {
-      # Position et apparence
-      anchor = "top-right";
-      layer = "top";
-      width = 400;
-      height = 200;
-      margin = "10";
-      padding = "12";
-      border-size = 2;
-      border-radius = 8;
-      icon-path = "";
-      max-icon-size = 64;
+  programs.niri.settings.binds = with config.lib.niri.actions; {
+    "Mod+D".action = spawn "fuzzel";
+    "Mod+M".action = spawn "music-menu";
+    "Mod+Q".action = close-window;
+    "Mod+Shift+F".action = fullscreen-window;
+    "Mod+F".action = maximize-column;
+    "Mod+T".action = spawn "ghostty";
+    "Mod+Shift+E".action = quit { skip-confirmation = false; };
+    "Mod+Shift+Slash".action = show-hotkey-overlay;
+    "Mod+Shift+Space".action = toggle-window-floating;
+    "Mod+Space".action = switch-focus-between-floating-and-tiling;
+    "Mod+O".action.toggle-overview = [ ];
 
-      # Couleurs Catppuccin Mocha
-      background-color = "#1e1e2eee"; # Surface avec transparence
-      text-color = "#cdd6f4"; # Text
-      border-color = "#89b4fa"; # Blue
-      progress-color = "#313244"; # Surface1
+    "Mod+W".action = switch-preset-column-width;
+    "Mod+H".action = switch-preset-window-height;
+    "Mod+C".action = consume-window-into-column;
+    "Mod+X".action = expel-window-from-column;
 
-      # Comportement
-      default-timeout = 5000; # 5 secondes par défaut
-      ignore-timeout = false;
+    #Focus
+    "Mod+Left".action = focus-column-or-monitor-left;
+    "Mod+Right".action = focus-column-or-monitor-right;
+    "Mod+Up".action = focus-window-or-workspace-up;
+    "Mod+Down".action = focus-window-or-workspace-down;
 
-      # Actions : clic gauche = action par défaut (xdg-activation focus)
-      # Clic droit = dismiss
-      on-button-left = "invoke-default-action";
-      on-button-right = "dismiss";
-      on-button-middle = "dismiss-all";
-    };
+    "Mod+1".action = focus-workspace 1;
+    "Mod+2".action = focus-workspace 2;
+    "Mod+3".action = focus-workspace 3;
+    "Mod+4".action = focus-workspace 4;
+    "Mod+5".action = focus-workspace 5;
+    "Mod+6".action = focus-workspace 6;
+    "Mod+7".action = focus-workspace 7;
+    "Mod+8".action = focus-workspace 8;
+    "Mod+9".action = focus-workspace 9;
 
-    # Critères spéciaux (syntaxe sections INI, pas supportée par settings)
-    extraConfig = ''
-      [urgency=critical]
-      default-timeout=0
-      border-color=#f38ba8
-    '';
+    "XF86MonBrightnessUp".action = spawn "brightnessctl s +10%";
+    "XF86MonBrightnessDown".action = spawn "brightnessctl s -10%";
+    #Move
+    "Mod+Shift+Left".action = move-column-left-or-to-monitor-left;
+    "Mod+Shift+Right".action = move-column-right-or-to-monitor-right;
+    "Mod+Shift+Up".action = move-window-up-or-to-workspace-up; # ✅ CORRIGÉ
+    "Mod+Shift+Down".action = move-window-down-or-to-workspace-down; # ✅ CORRIGÉ
+
+    "Mod+Shift+1".action = move-column-to-index 1;
+    "Mod+Shift+2".action = move-column-to-index 2;
+    "Mod+Shift+3".action = move-column-to-index 3;
+    "Mod+Shift+4".action = move-column-to-index 4;
+    "Mod+Shift+5".action = move-column-to-index 5;
+    "Mod+Shift+6".action = move-column-to-index 6;
+    "Mod+Shift+7".action = move-column-to-index 7;
+    "Mod+Shift+8".action = move-column-to-index 8;
+    "Mod+Shift+9".action = move-column-to-index 9;
+
+    # Passer à la fenêtre de DROITE avec Mod + Molette vers le BAS
+    "Mod+WheelScrollDown".action = focus-column-right;
+
+    # Passer à la fenêtre de GAUCHE avec Mod + Molette vers le HAUT
+    "Mod+WheelScrollUp".action = focus-column-left;
+
+    # Si tu veux que ça déplace carrément la fenêtre (Shift en plus)
+    "Mod+Shift+WheelScrollDown".action = focus-workspace-down;
+    "Mod+Shift+WheelScrollUp".action = focus-workspace-up;
+
+    # Screenshots avec la syntaxe correcte
+    "Ctrl+Mod+S".action.screenshot = [ ]; # Fenêtre active
+    "Ctrl+Mod+Shift+S".action.screenshot-screen = [ ]; # Écran complet
+
   };
 }
 </file>
 
-<file path="modules/utils.nix">
-{ pkgs, ... }:
+<file path="flake.nix">
+{
+  description = "NixOS Unstable avec Home Manager intégré";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-master.url = "github:nixos/nixpkgs/master";
+
+    # Home Manager pointant sur la branche unstable
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs"; # Force HM à utiliser votre version de nixpkgs
+    };
+
+    # Flake niri
+    niri = {
+      url = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    antigravity = {
+      url = "github:jacopone/antigravity-nix";
+      # C'est ici que la magie opère :
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # CachyOS Latest Kernel (xddxdd - has lantian cache)
+    nix-cachyos.url = "github:xddxdd/nix-cachyos-kernel/release";
+  };
+
+  outputs =
+    {
+      self,
+      nixpkgs,
+      nixpkgs-master,
+      home-manager,
+      niri,
+      antigravity,
+      noctalia,
+      nix-cachyos,
+      ...
+    }@inputs:
+    let
+      username = "david";
+    in
+    {
+      nixosConfigurations.muggy-nixos = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs username; };
+        modules = [
+          ./hosts/muggy-nixos/default.nix
+          ./overlays.nix
+
+          # CachyOS kernel is set via boot.kernelPackages in default.nix
+
+          # Le module Noctalia se charge au niveau SYSTEME (si besoin, mais on va surtout l'utiliser dans Home Manager)
+          noctalia.nixosModules.default
+          niri.nixosModules.niri # Le module Niri Système (Sodiboo)
+
+          # Import du module Home Manager
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.${username} = import ./home.nix;
+
+            # Optionnel : passe les 'inputs' du flake au fichier home.nix
+            home-manager.extraSpecialArgs = { inherit inputs username; };
+          }
+        ];
+      };
+    };
+}
+</file>
+
+<file path=".agent/workflows/archive.md">
+---
+description: Capitalisation du savoir via Knowledge Items (Archiviste).
+---
+
+// turbo-all
+1. Analyse du commit final
+```bash
+git show --stat
+```
+
+2. Gestion du Savoir (Skill: `knowledge-archivist`)
+- Appliquer les standards du skill `knowledge-archivist`.
+- Créer ou mettre à jour le **Knowledge Item (KI)** dans `~/.gemini/antigravity/knowledge/`.
+- Valider le `metadata.json` et la structure des artifacts.
+
+3. Clôture
+- Confirme la mise à jour du savoir.
+- **Focus Chirurgical** : Max 5-10 turns.
+</file>
+
+<file path=".agent/workflows/audit.md">
+---
+description: Revue de code et conformité (Auditeur).
+---
+
+// turbo-all
+1. Analyse des changements récents
+```bash
+git show --stat
+```
+
+2. Revue de Code (Skill: `nixos-auditor`)
+- Appliquer les contrôles du skill `nixos-auditor`.
+- Vérifier les duplications, le style `nix-ld` et les commentaires.
+- Lister les optimisations possibles (performance, clarté, sécurité).
+
+3. Conclusion
+- Valide la conformité ou propose des correctifs.
+- Demande à l'utilisateur de passer à la phase **ARCHIVE** via `/archive` si tout est OK.
+- **Focus Chirurgical** : Max 5-10 turns.
+</file>
+
+<file path="modules/brave-system.nix">
+{ ... }:
+
+{
+  # On utilise le module Chromium système pour forcer les politiques dans Brave
+  programs.chromium = {
+    enable = true;
+    extraOpts = {
+      "ExtensionInstallForcelist" = [
+        "nngceckbapebfimnlniiiahkandclblb;https://clients2.google.com/service/update2/crx" # Bitwarden
+        "cjpalhdlnbpafiamejdnhcphjbkeiagm;https://clients2.google.com/service/update2/crx" # uBlock Origin
+        "dcbfghmdnnkkkjjpmghnoaidojfickmj;https://clients2.google.com/service/update2/crx" # Theme: Thassos Sea View
+      ];
+      "WebAppInstallForceList" = [
+        {
+          url = "https://teams.microsoft.com/";
+          default_launch_container = "window";
+          create_desktop_shortcut = true;
+        }
+      ];
+    };
+  };
+}
+</file>
+
+<file path="modules/music-menu.nix">
+{ pkgs, ... }: {
+  home.packages = [
+    (pkgs.writeShellScriptBin "music-menu" ''
+      MUSIC_DIR="$HOME/Music"
+      TAB=$'\t'
+      
+      # Find playlists (Display name \t Full path)
+      LISTS=$(find "$MUSIC_DIR" -type f -name "*.m3u" -printf "󰲸  %f$TAB%p\n" | sort)
+      
+      # Find songs (Display name \t Full path)
+      SONGS=$(find "$MUSIC_DIR" -type f \( -name "*.m4a" -o -name "*.mp3" -o -name "*.flac" \) -printf "  %f$TAB%p\n" | sort)
+      
+      # Construct the menu content
+      SEP="────────────────────────────────────────────────"
+      MENU_CONTENT="󰲸  --- PLAYLISTS ---$TAB\n$LISTS\n$SEP$TAB\n  --- SONGS ---$TAB\n$SONGS"
+      
+      # Select via Fuzzel
+      # --with-nth=1: Only show titles
+      # --accept-nth=2: Only return full path
+      CHOICE=$(echo -e "$MENU_CONTENT" | ${pkgs.fuzzel}/bin/fuzzel --dmenu --prompt="Music ❯ " --width=80 --lines=25 --with-nth=1 --accept-nth=2 --nth-delimiter="$TAB")
+      
+      # Exit if nothing selected or if a separator/header is picked (check if it's a valid file)
+      [ -z "$CHOICE" ] || [ ! -f "$CHOICE" ] && exit
+      
+      # Play with mpv
+      ${pkgs.mpv}/bin/mpv --no-video "$CHOICE"
+    '')
+  ];
+}
+</file>
+
+<file path="modules/fuzzel.nix">
+{ config, pkgs, lib, ... }:
 
 {
   home.packages = with pkgs; [
-    fd # Used for the search function
-    playerctl # MPRIS media player control (required for DMS media widget)
-    nvd # Differenz between builds (shows package changes)
-    manix # Fast Nix documentation searcher
-    pamixer # CLI mixer for PulseAudio/PipeWire (volume control)
-    pavucontrol # GUI volume control for PulseAudio/PipeWire
-    pulseaudio # Provides pactl for volume control
-    nodejs # For MCP servers and other node-based tools
-    python3 # For advanced tools like the Kira scratchpad script
-    repomix # Pack repository contents to single file for AI consumption
-    qpdf # For decrypting PDFs
+    papirus-icon-theme
+    adwaita-icon-theme # Fallback for apps missing in Papirus
+    hicolor-icon-theme # Base icon theme (fallback)
   ];
 
-  programs.bat = {
+  programs.fuzzel = {
     enable = true;
-    config = {
-      theme = "Dracula";
-    };
+    # La configuration est gérée dynamiquement par sync-colors.py via un lien symbolique
   };
 
-  programs.mpv = {
-    enable = true;
-    scripts = with pkgs.mpvScripts; [
-      mpris # MPRIS support for media player detection (DMS, playerctl)
-    ];
-  };
+  # Symlinks pour les icônes manquantes dans les thèmes standards
+  home.file.".local/share/icons/hicolor/scalable/apps/io.github.ilya_zlobintsev.LACT.svg".source =
+    "${pkgs.lact}/share/pixmaps/io.github.ilya_zlobintsev.LACT.svg";
 
-  programs.fzf = {
-    enable = true;
-    enableFishIntegration = true;
-  };
-
-  programs.fish.functions = {
-    # Search function that searches from root (/)
-    # Uses fd for speed, searching globally
-    search = ''
-      if test (count $argv) -eq 0
-        echo "Usage: search <query>"
-        return 1
-      end
-
-      # Launch fzf in interactive mode
-      # --disabled: Do not let fzf filter the results, let fd handle it via reload
-      # --query: Pre-fill with the user's argument
-      # --bind: Reload fd whenever the query string changes
-      # --preview: Optional but nice, shows file content with bat
-      ${pkgs.fzf}/bin/fzf --disabled --query "$argv" \
-        --bind "start:reload:${pkgs.fd}/bin/fd {q} / 2>/dev/null" \
-        --bind "change:reload:${pkgs.fd}/bin/fd {q} / 2>/dev/null" \
-        --preview "${pkgs.bat}/bin/bat --color=always --style=numbers --line-range=:500 {}"
-    '';
-
-    # Audio-only playback with mpv
-    mpno = "mpv --no-video $argv";
-
-    # Alternative if they want to fzf the results:
-    # search_interactive = "fd . / 2>/dev/null | fzf";
-  };
+  # Pour Antigravity, on essaie de pointer vers son icône si elle est packagée
+  # Note: Si l'icône n'est pas trouvée, HM ignorera ou on ajustera.
+  home.file.".local/share/icons/hicolor/scalable/apps/antigravity.svg".source = "${
+    pkgs.antigravity-unwrapped or pkgs.antigravity
+  }/share/icons/hicolor/scalable/apps/antigravity.svg";
+  # Lien vers la config générée dynamiquement
+  home.file.".config/fuzzel/fuzzel.ini".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/generated/fuzzel.ini";
 }
 </file>
 
@@ -4069,112 +5050,592 @@ This config uses [**nh**](https://github.com/viperML/nh) for a faster and cleane
 *Maintained by chandrahmuki. Built with ❄️ and Antigravity AI.*
 </file>
 
-<file path="modules/terminal.nix">
+<file path="modules/utils.nix">
 { pkgs, ... }:
 
 {
-  programs.ghostty = {
+  home.packages = with pkgs; [
+    fd # Used for the search function
+    playerctl # MPRIS media player control (required for DMS media widget)
+    nvd # Differenz between builds (shows package changes)
+    manix # Fast Nix documentation searcher
+    pamixer # CLI mixer for PulseAudio/PipeWire (volume control)
+    pavucontrol # GUI volume control for PulseAudio/PipeWire
+    pulseaudio # Provides pactl for volume control
+    nodejs # For MCP servers and other node-based tools
+    python3 # For advanced tools like the Kira scratchpad script
+    repomix # Pack repository contents to single file for AI consumption
+    qpdf # For decrypting PDFs
+    jq # For parsing JSON (useful for flake.lock)
+    matugen # Material You color generation tool
+  ];
+
+  programs.bat = {
     enable = true;
-    enableFishIntegration = true;
-    settings = {
+    config = {
       theme = "Dracula";
-      font-family = "Hack Nerd Font";
-      font-size = 18;
-      background-opacity = 0.9;
-      window-padding-x = 15;
-      window-padding-y = 15;
-      window-decoration = false;
-
-      # Raccourcis Zoom
-      keybind = [
-        "ctrl+plus=increase_font_size:1"
-        "ctrl+equal=increase_font_size:1"
-        "ctrl+minus=decrease_font_size:1"
-        "ctrl+0=reset_font_size"
-
-        # User request: Shift+Alt+Wheel
-        # Note: Mouse binding support in Ghostty is experimental/limited.
-        # If wheel doesn't work, use the Shift+Alt+Plus/Minus shortcuts below.
-        "shift+alt+plus=increase_font_size:1"
-        "shift+alt+minus=decrease_font_size:1"
-      ];
     };
   };
 
-  programs.eza = {
+  programs.mpv = {
     enable = true;
-    enableFishIntegration = true; # Crée automatiquement les alias ls, ll, etc.
-    icons = "auto";
-    git = true;
-    extraOptions = [
-      "--group-directories-first"
-      "--header"
+    scripts = with pkgs.mpvScripts; [
+      mpris # MPRIS support for media player detection (DMS, playerctl)
     ];
   };
-  # On active Starship
-  programs.starship = {
-    enable = true;
-    # On peut le configurer ici, mais les réglages par défaut sont déjà top
-    settings = {
-      add_newline = false;
-      character = {
-        success_symbol = "[➜](bold green)";
-        error_symbol = "[➜](bold red)";
-      };
-      # Affiche une icône NixOS quand tu es dans un shell Nix
-      nix_shell = {
-        symbol = "❄️ ";
-      };
-    };
-  };
 
-  programs.zoxide = {
+  programs.fzf = {
     enable = true;
     enableFishIntegration = true;
-    options = [ "--cmd cd" ];
   };
 
-  # Configuration de FISH
-  programs.fish = {
-    enable = true;
-    # Ton shell sera tout de suite prêt à l'emploi
-    interactiveShellInit = ''
-      set -g fish_greeting ""
-
-      if status is-interactive
-        # Fonction pour les outils visuels (Starship, Fastfetch)
-        # On les regroupe pour plus de clarté
-        function setup_visual_tools
-          starship init fish | source
-          atuin init fish | source
-        end
-
-        # On ne lance les outils visuels que si on n'est pas dans un terminal "dumb"
-        # Cela évite de bloquer l'agent AI ou les commandes distantes
-        if test "$TERM" != "dumb"
-          setup_visual_tools
-        end
-
-        # Mode Vim pour Fish
-        fish_vi_key_bindings
-        
-        # Configuration du curseur pour les modes Vi (premium touch)
-        set -g fish_cursor_default block
-        set -g fish_cursor_insert line
-        set -g fish_cursor_replace_one underscore
-        set -g fish_cursor_visual block
-
-        # Raccourci jk pour sortir du mode insertion (Esc)
-        function fish_user_key_bindings
-          bind -M insert -m default jk backward-char force-repaint
-        end
+  programs.fish.functions = {
+    # Search function that searches from root (/)
+    # Uses fd for speed, searching globally
+    search = ''
+      if test (count $argv) -eq 0
+        echo "Usage: search <query>"
+        return 1
       end
-    '';
-    shellAliases = {
-      nix-switch = "sudo nixos-rebuild switch --flake .#muggy-nixos";
-    };
 
+      # Launch fzf in interactive mode
+      # --disabled: Do not let fzf filter the results, let fd handle it via reload
+      # --query: Pre-fill with the user's argument
+      # --bind: Reload fd whenever the query string changes
+      # --preview: Optional but nice, shows file content with bat
+      ${pkgs.fzf}/bin/fzf --disabled --query "$argv" \
+        --bind "start:reload:${pkgs.fd}/bin/fd {q} / 2>/dev/null" \
+        --bind "change:reload:${pkgs.fd}/bin/fd {q} / 2>/dev/null" \
+        --preview "${pkgs.bat}/bin/bat --color=always --style=numbers --line-range=:500 {}"
+    '';
+
+    # Audio-only playback with mpv
+    mpno = "mpv --no-video $argv";
+
+    # Quick flake update with input name
+    nfu = "nix flake update $argv";
+
+    # Sync dynamic colors using Matugen
+    upc = "matugen -c ~/nixos-config/templates/matugen.toml image \$(cat ~/.cache/noctalia/wallpapers.json | jq -r .defaultWallpaper) && makoctl reload";
   };
+}
+</file>
+
+<file path="nvim/lua/plugins/snacks.lua">
+return {
+  "folke/snacks.nvim",
+  lazy = false,
+  priority = 1000,
+  ---@type snacks.Config
+  opts = {
+    bigfile = { enabled = true },
+    dashboard = {
+      enabled = true,
+      preset = {
+        header = [[
+███╗   ███╗██╗   ██╗ ██████╗  ██████╗ ██╗   ██╗██╗   ██╗██╗███╗   ███╗
+████╗ ████║██║   ██║██╔═══██╗██╔═══██╗██║   ██║██║   ██║██║████╗ ████║
+██╔████╔██║██║   ██║██║   ██║██║   ██║██║   ██║██║   ██║██║██╔████╔██║
+██║╚██╔╝██║██║   ██║██║   ██║██║   ██║╚██╗ ██╔╝╚██╗ ██╔╝██║██║╚██╔╝██║
+██║ ╚═╝ ██║╚██████╔╝╚██████╔╝╚██████╔╝ ╚████╔╝  ╚████╔╝ ██║██║ ╚═╝ ██║
+╚═╝     ╚═╝ ╚═════╝  ╚═════╝  ╚═════╝   ╚═══╝    ╚═══╝  ╚═╝╚═╝     ╚═╝
+                        ✨ Welcome to MuggyVim ✨
+        ]],
+      },
+    },
+    explorer = { enabled = true },
+    indent = { enabled = true },
+    input = { enabled = true },
+    notifier = { enabled = true },
+    picker = { enabled = true },
+    quickfile = { enabled = true },
+    scope = { enabled = true },
+    scroll = { enabled = true },
+    statuscolumn = { enabled = true },
+    words = { enabled = true },
+  },
+  keys = {
+    -- Top Level (Essential)
+    { "<leader><space>", function() Snacks.picker.smart() end, desc = "Find File" },
+    { "<leader>,",       function() Snacks.picker.buffers() end, desc = "Switch Buffer" },
+    { "<leader>.",       function() Snacks.explorer() end, desc = "Browse Files" },
+    { "<leader>/",       function() Snacks.picker.grep() end, desc = "Search" },
+    { "<leader>:",       function() Snacks.picker.command_history() end, desc = "Command History" },
+    { "<leader>e",       function() Snacks.explorer() end, desc = "File Explorer" },
+
+    -- [f]ile / find
+    { "<leader>ff", function() Snacks.picker.files() end, desc = "Find Files" },
+    { "<leader>fr", function() Snacks.picker.recent() end, desc = "Recent" },
+    { "<leader>fg", function() Snacks.picker.git_files() end, desc = "Find Git Files" },
+    { "<leader>fb", function() Snacks.picker.buffers() end, desc = "Buffers (Alternative)" },
+    { "<leader>fe", function() Snacks.explorer() end, desc = "Explorer" },
+
+    -- [g]it
+    { "<leader>gs", function() Snacks.picker.git_status() end, desc = "Git Status" },
+    { "<leader>gl", function() Snacks.picker.git_log() end, desc = "Git Log" },
+
+    -- [s]earch
+    { "<leader>sn", function() Snacks.picker.notifications() end, desc = "Notification History" },
+    { "<leader>sb", function() Snacks.picker.lines() end, desc = "Buffer Lines" },
+    { "<leader>sg", function() Snacks.picker.grep() end, desc = "Grep" },
+    { "<leader>sh", function() Snacks.picker.help() end, desc = "Help Pages" },
+    { "<leader>sk", function() Snacks.picker.keymaps() end, desc = "Keymaps" },
+    { "<leader>sm", function() Snacks.picker.marks() end, desc = "Marks" },
+
+    -- [u]i / util
+    { "<leader>uz", function() Snacks.zen() end, desc = "Toggle Zen Mode" },
+    { "<leader>u.", function() Snacks.scratch() end, desc = "Scratch Buffer" },
+    { "<leader>uS", function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
+    { "<c-/>",     function() Snacks.terminal() end, desc = "Toggle Terminal" },
+  },
+}
+</file>
+
+<file path="nvim/lua/plugins/whichkey.lua">
+return {
+  "folke/which-key.nvim",
+  event = "VeryLazy",
+  opts = {
+    preset = "classic",
+    win = {
+      border = "none",
+      padding = { 1, 2 },
+    },
+    layout = {
+      spacing = 3,
+      align = "center",
+    },
+    icons = {
+      separator = "➜",
+      group = "+",
+      mappings = true, -- Réactiver pour autoriser mes icônes manuelles
+      rules = false,   -- Désactiver les règles auto qui mettent des "bonbons" (emojis)
+    },
+    spec = {
+      { "<leader>b", group = "buffer", icon = "󰓩 " },
+      { "<leader>f", group = "file", icon = "󰈔 " },
+      { "<leader>g", group = "git", icon = "󰊢 " },
+      { "<leader>q", group = "quit/session", icon = "󰗼 " },
+      { "<leader>s", group = "search", icon = " " },
+      { "<leader>u", group = "ui", icon = "󰙵 " },
+      { "<leader>w", group = "window", icon = "󰖲 " },
+      -- Top-level
+      { "<leader><space>", icon = " " },
+      { "<leader>,",       icon = "󰓩 " },
+      { "<leader>.",       icon = "󰉋 " },
+      { "<leader>/",       icon = "󰍉 " },
+      { "<leader>:",       icon = " " },
+      { "<leader>e",       icon = "󰙅 " },
+      -- Sous-menus [f]ile
+      { "<leader>ff", icon = " " },
+      { "<leader>fr", icon = " " },
+      { "<leader>fg", icon = "󰊢 " },
+      { "<leader>fb", icon = "󰓩 " },
+      { "<leader>fe", icon = "󰉋 " },
+      { "<leader>fs", icon = "󰆓 " },
+      -- Sous-menus [g]it
+      { "<leader>gs", icon = "󰊢 " },
+      { "<leader>gl", icon = "󰗀 " },
+      -- Sous-menus [s]earch
+      { "<leader>sn", icon = "󰵙 " },
+      { "<leader>sb", icon = "󰈙 " },
+      { "<leader>sg", icon = "󰍉 " },
+      { "<leader>sh", icon = "󰞋 " },
+      { "<leader>sk", icon = "󰌌 " },
+      { "<leader>sm", icon = "󰈚 " },
+      -- Sous-menus [u]i
+      { "<leader>uz", icon = "󰙵 " },
+      { "<leader>u.", icon = "󰈚 " },
+      { "<leader>uS", icon = "󰒙 " },
+    },
+  },
+  config = function(_, opts)
+    require("which-key").setup(opts)
+    -- Harmoniser la couleur des groupes (+) avec les descriptions (pas de blanc)
+    vim.api.nvim_set_hl(0, "WhichKeyGroup", { link = "WhichKeyDesc" })
+  end,
+  keys = {
+    {
+      "<leader>?",
+      function()
+        require("which-key").show({ global = false })
+      end,
+      desc = "Buffer Local Keymaps (which-key)",
+    },
+  },
+}
+</file>
+
+<file path="flake.lock">
+{
+  "nodes": {
+    "antigravity": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1771198383,
+        "narHash": "sha256-mOq7ks7gdWyVStIUAp7U8wztanYKt0GgCnIZtPUJ6n8=",
+        "owner": "jacopone",
+        "repo": "antigravity-nix",
+        "rev": "703d29149cc127d1ec7c1885ff14f85d4e6a01ce",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jacopone",
+        "repo": "antigravity-nix",
+        "type": "github"
+      }
+    },
+    "cachyos-kernel": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1771263855,
+        "narHash": "sha256-akyds1g8cb742d2OrnQ4YciscpynsQ0+0YD2a8aZdvo=",
+        "owner": "CachyOS",
+        "repo": "linux-cachyos",
+        "rev": "5ece16c7b4a7d1261da68153cafc318a60b78ce8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "CachyOS",
+        "repo": "linux-cachyos",
+        "type": "github"
+      }
+    },
+    "cachyos-kernel-patches": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1771246613,
+        "narHash": "sha256-GftqKiyIgMcSgVkbNqXQq7oNnoL1+EB9V71XG4lPBRs=",
+        "owner": "CachyOS",
+        "repo": "kernel-patches",
+        "rev": "cb320a13e3c92f32ada27acb1fba8a828a22ae60",
+        "type": "github"
+      },
+      "original": {
+        "owner": "CachyOS",
+        "repo": "kernel-patches",
+        "type": "github"
+      }
+    },
+    "flake-compat": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1767039857,
+        "narHash": "sha256-vNpUSpF5Nuw8xvDLj2KCwwksIbjua2LZCqhV1LNRDns=",
+        "owner": "NixOS",
+        "repo": "flake-compat",
+        "rev": "5edf11c44bc78a0d334f6334cdaf7d60d732daab",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "flake-compat",
+        "type": "github"
+      }
+    },
+    "flake-parts": {
+      "inputs": {
+        "nixpkgs-lib": "nixpkgs-lib"
+      },
+      "locked": {
+        "lastModified": 1769996383,
+        "narHash": "sha256-AnYjnFWgS49RlqX7LrC4uA+sCCDBj0Ry/WOJ5XWAsa0=",
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "rev": "57928607ea566b5db3ad13af0e57e921e6b12381",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "type": "github"
+      }
+    },
+    "flake-utils": {
+      "inputs": {
+        "systems": "systems"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "home-manager": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1771269455,
+        "narHash": "sha256-BZ31eN5F99YH6vkc4AhzKGE+tJgJ52kl8f01K7wCs8w=",
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "rev": "5f1d42a97b19803041434f66681d5c44c9ae62e3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "niri": {
+      "inputs": {
+        "niri-stable": "niri-stable",
+        "niri-unstable": "niri-unstable",
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "nixpkgs-stable": "nixpkgs-stable",
+        "xwayland-satellite-stable": "xwayland-satellite-stable",
+        "xwayland-satellite-unstable": "xwayland-satellite-unstable"
+      },
+      "locked": {
+        "lastModified": 1771308899,
+        "narHash": "sha256-kb/4oSHB261GOLhVGgrzTOqo/ImeCi/WS25q2ujtHGc=",
+        "owner": "sodiboo",
+        "repo": "niri-flake",
+        "rev": "f3e98ba073bd7e2717a07d622f9b737c461a97b9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "sodiboo",
+        "repo": "niri-flake",
+        "type": "github"
+      }
+    },
+    "niri-stable": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1756556321,
+        "narHash": "sha256-RLD89dfjN0RVO86C/Mot0T7aduCygPGaYbog566F0Qo=",
+        "owner": "YaLTeR",
+        "repo": "niri",
+        "rev": "01be0e65f4eb91a9cd624ac0b76aaeab765c7294",
+        "type": "github"
+      },
+      "original": {
+        "owner": "YaLTeR",
+        "ref": "v25.08",
+        "repo": "niri",
+        "type": "github"
+      }
+    },
+    "niri-unstable": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1771305475,
+        "narHash": "sha256-lqweVTwHhYc+9T33cysp38gVwxaibGJHriOPZXWyhCY=",
+        "owner": "YaLTeR",
+        "repo": "niri",
+        "rev": "a2a52911757cb3b497db9407592f9b4c439571ea",
+        "type": "github"
+      },
+      "original": {
+        "owner": "YaLTeR",
+        "repo": "niri",
+        "type": "github"
+      }
+    },
+    "nix-cachyos": {
+      "inputs": {
+        "cachyos-kernel": "cachyos-kernel",
+        "cachyos-kernel-patches": "cachyos-kernel-patches",
+        "flake-compat": "flake-compat",
+        "flake-parts": "flake-parts",
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "lastModified": 1771265142,
+        "narHash": "sha256-5N57t2nBVIsXRWelOQvYLuT9Of4SlEqeCFfSGXaIiBY=",
+        "owner": "xddxdd",
+        "repo": "nix-cachyos-kernel",
+        "rev": "cba6866d1709590134120eefdc0a1a9854e7447e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "xddxdd",
+        "ref": "release",
+        "repo": "nix-cachyos-kernel",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1771218441,
+        "narHash": "sha256-BZ2vjG1LMwWoLTRb+OJksrTyLo5xbo3Vs9TiB+ozarY=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "007d7747527cde542ffec2a4011d17658d2c6ab2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable-small",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-lib": {
+      "locked": {
+        "lastModified": 1769909678,
+        "narHash": "sha256-cBEymOf4/o3FD5AZnzC3J9hLbiZ+QDT/KDuyHXVJOpM=",
+        "owner": "nix-community",
+        "repo": "nixpkgs.lib",
+        "rev": "72716169fe93074c333e8d0173151350670b824c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "nixpkgs.lib",
+        "type": "github"
+      }
+    },
+    "nixpkgs-master": {
+      "locked": {
+        "lastModified": 1771351578,
+        "narHash": "sha256-0G0QhkIpi0h/V+Ha83rlg7oHTohqGwnnTLFTdb0uDdM=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "1fa09357b2947765f3031109d95d5e641f1bb1cc",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "master",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-stable": {
+      "locked": {
+        "lastModified": 1771208521,
+        "narHash": "sha256-X01Q3DgSpjeBpapoGA4rzKOn25qdKxbPnxHeMLNoHTU=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "fa56d7d6de78f5a7f997b0ea2bc6efd5868ad9e8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-25.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1771008912,
+        "narHash": "sha256-gf2AmWVTs8lEq7z/3ZAsgnZDhWIckkb+ZnAo5RzSxJg=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "a82ccc39b39b621151d6732718e3e250109076fa",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "noctalia": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1771340206,
+        "narHash": "sha256-IanPDIuEft3uxOorgp5Sk1e5Vil2DYWL5FwN4zh4LF0=",
+        "owner": "noctalia-dev",
+        "repo": "noctalia-shell",
+        "rev": "c2629c3c2fadb47695e8e3deb37d7a416644bf3e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "noctalia-dev",
+        "repo": "noctalia-shell",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "antigravity": "antigravity",
+        "home-manager": "home-manager",
+        "niri": "niri",
+        "nix-cachyos": "nix-cachyos",
+        "nixpkgs": "nixpkgs_2",
+        "nixpkgs-master": "nixpkgs-master",
+        "noctalia": "noctalia"
+      }
+    },
+    "systems": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "xwayland-satellite-stable": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1755491097,
+        "narHash": "sha256-m+9tUfsmBeF2Gn4HWa6vSITZ4Gz1eA1F5Kh62B0N4oE=",
+        "owner": "Supreeeme",
+        "repo": "xwayland-satellite",
+        "rev": "388d291e82ffbc73be18169d39470f340707edaa",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Supreeeme",
+        "ref": "v0.7",
+        "repo": "xwayland-satellite",
+        "type": "github"
+      }
+    },
+    "xwayland-satellite-unstable": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1771195969,
+        "narHash": "sha256-BUE41HjLIGPjq3U8VXPjf8asH8GaMI7FYdgrIHKFMXA=",
+        "owner": "Supreeeme",
+        "repo": "xwayland-satellite",
+        "rev": "536bd32efc935bf876d6de385ec18a1b715c9358",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Supreeeme",
+        "repo": "xwayland-satellite",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
 }
 </file>
 
@@ -4417,66 +5878,6 @@ fi
 }
 </file>
 
-<file path="modules/yazi.nix">
-{ pkgs, ... }:
-
-{
-  # Configuration du gestionnaire de fichiers Yazi
-  programs.yazi = {
-    enable = true;
-    enableFishIntegration = true;
-    shellWrapperName = "y"; # Supprime le warning de deprecation
-
-    settings = {
-      manager = {
-        show_hidden = true; # Afficher les fichiers cachés par défaut
-        sort_by = "modified"; # Trier par date de modification
-        sort_dir_first = true; # Afficher les dossiers en premier
-      };
-
-      # Définition des "openers" (applications pour ouvrir les fichiers)
-      opener = {
-        # 'listen' : lance mpv dans le terminal sans fenêtre vidéo pour l'audio
-        listen = [
-          {
-            run = ''${pkgs.mpv}/bin/mpv --audio-display=no --no-video "$@"'';
-            block = true; # Bloque yazi et affiche mpv dans le terminal (permet le contrôle clavier)
-            desc = "Listen";
-          }
-        ];
-      };
-
-      # Règles d'ouverture des fichiers
-      open = {
-        # prepend_rules : ces règles s'appliquent AVANT les règles par défaut de yazi
-        prepend_rules = [
-          {
-            mime = "audio/*";
-            use = "listen";
-          } # Tous les types audio
-          {
-            name = "*.m4a";
-            use = "listen";
-          }
-          {
-            name = "*.mp3";
-            use = "listen";
-          }
-          {
-            name = "*.flac";
-            use = "listen";
-          }
-          {
-            name = "*.wav";
-            use = "listen";
-          }
-        ];
-      };
-    };
-  };
-}
-</file>
-
 <file path="wm/niri.nix">
 { pkgs, ... }:
 {
@@ -4585,6 +5986,7 @@ fi
     ./modules/vscode.nix
     ./wm/niri.nix
     ./modules/fuzzel.nix
+    ./modules/music-menu.nix
     ./modules/noctalia.nix
     ./modules/nh.nix
     ./modules/parsec.nix
@@ -4603,6 +6005,24 @@ fi
   ];
 
   programs.home-manager.enable = true;
+}
+</file>
+
+<file path="modules/notifications.nix">
+{ config, pkgs, lib, ... }:
+
+{
+  # notify-send est fourni par libnotify
+  home.packages = [ pkgs.libnotify ];
+  # Mako : daemon de notification léger avec support natif xdg-activation
+  # Quand on clique une notification, Mako envoie un token d'activation
+  # au compositeur (Niri) qui change automatiquement de workspace et focus la fenêtre
+  services.mako = {
+    enable = true;
+    # La configuration est gérée dynamiquement par sync-colors.py via un lien symbolique
+  };
+
+  home.file.".config/mako/config".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/generated/mako";
 }
 </file>
 
@@ -4631,6 +6051,58 @@ Le dépôt est prêt pour le relais. À bientôt ! 💎🦾
 Le dépôt est maintenant prêt pour la capitalisation. À bientôt ! 💎🦾
 </file>
 
+<file path="modules/antigravity.nix">
+{ config, pkgs, lib, ... }:
+
+let
+  # Extensions VSCode pour le support Nix
+  nixExtensions = [
+    pkgs.vscode-extensions.bbenoist.nix
+    pkgs.vscode-extensions.jnoortheen.nix-ide
+  ];
+
+  # Helper pour créer les liens symboliques d'extensions dans le dossier Antigravity
+  mkExtensionSymlink = ext: {
+    # Format attendu par Antigravity : publisher.name-version-platform
+    name = ".antigravity/extensions/${ext.vscodeExtPublisher}.${ext.vscodeExtName}-${ext.version}-universal";
+    value = {
+      source = "${ext}/share/vscode/extensions/${ext.vscodeExtPublisher}.${ext.vscodeExtName}";
+    };
+  };
+in
+{
+  home.packages = [
+    pkgs.google-antigravity
+    pkgs.nil # Language Server for Nix
+    pkgs.nixfmt # Formatter for Nix
+  ];
+
+  # Fichiers et configurations Antigravity
+  home.file = (builtins.listToAttrs (map mkExtensionSymlink nixExtensions)) // {
+    # Configuration mutable liée au dépôt git (pour permettre à l'agent d'écrire dedans si nécessaire)
+    # Géré via le script d'activation plus bas pour éviter le verrouillage en lecture seule
+    # ".config/Antigravity/User/settings.json".source = ...
+
+    # Gestion persistante de la config MCP
+    ".gemini/antigravity/mcp_config.json".source =
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/modules/mcp_config.json";
+  };
+
+  # Activation Script : Force Brute pour le settings.json
+  # Home Manager a tendance à verrouiller ce fichier en lecture seule ou à casser le lien.
+  # On force ici un lien symbolique direct vers notre fichier mutable après l'activation.
+  home.activation.linkAntigravitySettings = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    run mkdir -p $HOME/.config/Antigravity/User
+    run rm -f $HOME/.config/Antigravity/User/settings.json
+    run ln -sf $HOME/nixos-config/modules/antigravity-settings.json $HOME/.config/Antigravity/User/settings.json
+  '';
+
+  home.sessionVariables = {
+    ANTIGRAVITY_EDITOR = "code";
+  };
+}
+</file>
+
 <file path="modules/brave.nix">
 { pkgs, ... }:
 
@@ -4657,6 +6129,129 @@ Le dépôt est maintenant prêt pour la capitalisation. À bientôt ! 💎🦾
     Categories=Network;WebBrowser;
     MimeType=text/html;text/xml;x-scheme-handler/http;x-scheme-handler/https;
   '';
+}
+</file>
+
+<file path="modules/terminal.nix">
+{ pkgs, ... }:
+
+{
+  programs.ghostty = {
+    enable = true;
+    enableFishIntegration = true;
+    settings = {
+      theme = "Dracula";
+      font-family = "Hack Nerd Font";
+      font-size = 18;
+      background-opacity = 0.9;
+      window-padding-x = 15;
+      window-padding-y = 15;
+      window-decoration = false;
+
+      # Raccourcis Zoom
+      keybind = [
+        "ctrl+plus=increase_font_size:1"
+        "ctrl+equal=increase_font_size:1"
+        "ctrl+minus=decrease_font_size:1"
+        "ctrl+0=reset_font_size"
+
+        # User request: Shift+Alt+Wheel
+        # Note: Mouse binding support in Ghostty is experimental/limited.
+        # If wheel doesn't work, use the Shift+Alt+Plus/Minus shortcuts below.
+        "shift+alt+plus=increase_font_size:1"
+        "shift+alt+minus=decrease_font_size:1"
+      ];
+    };
+  };
+
+  programs.eza = {
+    enable = true;
+    enableFishIntegration = true; # Crée automatiquement les alias ls, ll, etc.
+    icons = "auto";
+    git = true;
+    extraOptions = [
+      "--group-directories-first"
+      "--header"
+    ];
+  };
+  # On active Starship
+  programs.starship = {
+    enable = true;
+    # On peut le configurer ici, mais les réglages par défaut sont déjà top
+    settings = {
+      add_newline = false;
+      character = {
+        success_symbol = "[➜](bold green)";
+        error_symbol = "[➜](bold red)";
+      };
+      # Affiche une icône NixOS quand tu es dans un shell Nix
+      nix_shell = {
+        symbol = "❄️ ";
+      };
+    };
+  };
+
+  programs.zoxide = {
+    enable = true;
+    enableFishIntegration = true;
+    options = [ "--cmd cd" ];
+  };
+
+  # Configuration de FISH
+  programs.fish = {
+    enable = true;
+    # Ton shell sera tout de suite prêt à l'emploi
+    interactiveShellInit = ''
+      set -g fish_greeting ""
+
+      if status is-interactive
+        # Fonction pour les outils visuels (Starship, Fastfetch)
+        # On les regroupe pour plus de clarté
+        function setup_visual_tools
+          starship init fish | source
+          atuin init fish | source
+        end
+
+        # On ne lance les outils visuels que si on n'est pas dans un terminal "dumb"
+        # Cela évite de bloquer l'agent AI ou les commandes distantes
+        if test "$TERM" != "dumb"
+          setup_visual_tools
+        end
+
+        # Mode Vim pour Fish
+        fish_vi_key_bindings
+        
+        # Configuration du curseur pour les modes Vi (premium touch)
+        set -g fish_cursor_default block
+        set -g fish_cursor_insert line
+        set -g fish_cursor_replace_one underscore
+        set -g fish_cursor_visual block
+
+        # Raccourci jk pour sortir du mode insertion (Esc)
+        function fish_user_key_bindings
+          bind -M insert -m default jk backward-char force-repaint
+        end
+
+        # Complétion pour nfu (nix flake update)
+        # On extrait les inputs du flake.lock et on exclut ceux déjà présents sur la ligne de commande
+        complete -c nfu -f -a "(
+          if test -f flake.lock
+            set -l inputs (cat flake.lock | jq -r '.nodes.root.inputs | keys[]' 2>/dev/null)
+            set -l current_args (commandline -opc)
+            for i in \$inputs
+              if not contains \$i \$current_args
+                echo \$i
+              end
+            end
+          end
+        )"
+      end
+    '';
+    shellAliases = {
+      nix-switch = "sudo nixos-rebuild switch --flake .#muggy-nixos";
+    };
+
+  };
 }
 </file>
 
@@ -4717,55 +6312,85 @@ Le dépôt est maintenant prêt pour la capitalisation. À bientôt ! 💎🦾
 - **Priorité KI** : Pour toute modification technique structurelle, la création/mise à jour d'un **Knowledge Item** est LA priorité absolue par rapport à la doc Markdown classique.
 </file>
 
-<file path="modules/antigravity.nix">
+<file path="modules/yazi.nix">
 { config, pkgs, lib, ... }:
 
-let
-  # Extensions VSCode pour le support Nix
-  nixExtensions = [
-    pkgs.vscode-extensions.bbenoist.nix
-    pkgs.vscode-extensions.jnoortheen.nix-ide
-  ];
+{
+  # Configuration du gestionnaire de fichiers Yazi
+  programs.yazi = {
+    enable = true;
+    enableFishIntegration = true;
+    shellWrapperName = "y"; # Supprime le warning de deprecation
 
-  # Helper pour créer les liens symboliques d'extensions dans le dossier Antigravity
-  mkExtensionSymlink = ext: {
-    # Format attendu par Antigravity : publisher.name-version-platform
-    name = ".antigravity/extensions/${ext.vscodeExtPublisher}.${ext.vscodeExtName}-${ext.version}-universal";
-    value = {
-      source = "${ext}/share/vscode/extensions/${ext.vscodeExtPublisher}.${ext.vscodeExtName}";
+    settings = {
+      manager = {
+        show_hidden = true; # Afficher les fichiers cachés par défaut
+        sort_by = "modified"; # Trier par date de modification
+        sort_dir_first = true; # Afficher les dossiers en premier
+      };
+
+      # Définition des "openers" (applications pour ouvrir les fichiers)
+      opener = {
+        # 'listen' : lance mpv dans le terminal sans fenêtre vidéo pour l'audio
+        listen = [
+          {
+            run = ''${pkgs.mpv}/bin/mpv --audio-display=no --no-video "$@"'';
+            block = true; # Bloque yazi et affiche mpv dans le terminal (permet le contrôle clavier)
+            desc = "Listen";
+          }
+        ];
+      };
+
+      # Règles d'ouverture des fichiers
+      open = {
+        # prepend_rules : ces règles s'appliquent AVANT les règles par défaut de yazi
+        prepend_rules = [
+          {
+            name = "*.m3u";
+            use = "listen";
+          }
+          {
+            mime = "audio/*";
+            use = "listen";
+          } # Tous les types audio
+          {
+            name = "*.m4a";
+            use = "listen";
+          }
+          {
+            name = "*.mp3";
+            use = "listen";
+          }
+          {
+            name = "*.flac";
+            use = "listen";
+          }
+          {
+            name = "*.wav";
+            use = "listen";
+          }
+          {
+            # Catch m3u specifically by extension, even if mime is text
+            name = "*.m3u"; 
+            mime = "text/*";
+            use = "listen";
+          }
+          {
+            # Catch m3u by extension generally
+            name = "*.m3u";
+            use = "listen";
+          }
+          {
+            # Catch by specific mime type
+            mime = "audio/x-mpegurl";
+            use = "listen";
+          }
+        ];
+      };
     };
   };
-in
-{
-  home.packages = [
-    pkgs.google-antigravity
-    pkgs.nil # Language Server for Nix
-    pkgs.nixfmt # Formatter for Nix
-  ];
 
-  # Fichiers et configurations Antigravity
-  home.file = (builtins.listToAttrs (map mkExtensionSymlink nixExtensions)) // {
-    # Configuration mutable liée au dépôt git (pour permettre à l'agent d'écrire dedans si nécessaire)
-    # Géré via le script d'activation plus bas pour éviter le verrouillage en lecture seule
-    # ".config/Antigravity/User/settings.json".source = ...
-
-    # Gestion persistante de la config MCP
-    ".gemini/antigravity/mcp_config.json".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/modules/mcp_config.json";
-  };
-
-  # Activation Script : Force Brute pour le settings.json
-  # Home Manager a tendance à verrouiller ce fichier en lecture seule ou à casser le lien.
-  # On force ici un lien symbolique direct vers notre fichier mutable après l'activation.
-  home.activation.linkAntigravitySettings = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    run mkdir -p $HOME/.config/Antigravity/User
-    run rm -f $HOME/.config/Antigravity/User/settings.json
-    run ln -sf $HOME/nixos-config/modules/antigravity-settings.json $HOME/.config/Antigravity/User/settings.json
-  '';
-
-  home.sessionVariables = {
-    ANTIGRAVITY_EDITOR = "code";
-  };
+  home.file.".config/yazi/theme.toml".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/generated/yazi.toml";
 }
 </file>
 
@@ -4821,7 +6446,6 @@ in
   #Activate KornFlakes
   nix.settings.experimental-features = [
     "nix-command"
-    "nix-command"
     "flakes"
   ];
 
@@ -4855,6 +6479,18 @@ in
     LC_TELEPHONE = "de_AT.UTF-8";
     LC_TIME = "de_AT.UTF-8";
   };
+
+  # Désactivation totale d'IBus pour supprimer la notification
+  i18n.inputMethod.enable = false;
+
+  # Empêcher GNOME de tirer IBus et de le lancer via autostart
+  environment.gnome.excludePackages = [ pkgs.ibus ];
+
+  # Force l'utilisation d'un module IM simple pour éviter que GNOME ne cherche IBus
+  services.desktopManager.gnome.extraGSettingsOverrides = ''
+    [org.gnome.desktop.interface]
+    gtk-im-module='gtk-im-context-simple'
+  '';
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
@@ -4917,36 +6553,35 @@ in
   # Indispensable pour les binaires
   programs.nix-ld = {
     enable = true;
-    libraries = with pkgs; [
-      stdenv.cc.cc
-      zlib
-      fuse3
-      icu
-      nss
-      openssl
-      curl
-      expat
-      # Les nouvelles librairies X11 sans le préfixe xorg. (pour supprimer les warnings)
-      libx11
-      libxscrnsaver
-      libxcomposite
-      libxcursor
-      libxdamage
-      libxext
-      libxfixes
-      libxi
-      libxrandr
-      libxrender
-      libxtst
-      libxcb
-      libxshmfence
-      libxkbfile
+    libraries = [
+      pkgs.stdenv.cc.cc
+      pkgs.zlib
+      pkgs.fuse3
+      pkgs.icu
+      pkgs.nss
+      pkgs.openssl
+      pkgs.curl
+      pkgs.expat
+      # Bibliothèques X11 explicites (xorg.*) pour éviter les warnings de dépréciation
+      pkgs.xorg.libX11
+      pkgs.xorg.libXScrnSaver
+      pkgs.xorg.libXcomposite
+      pkgs.xorg.libXcursor
+      pkgs.xorg.libXdamage
+      pkgs.xorg.libXext
+      pkgs.xorg.libXfixes
+      pkgs.xorg.libXi
+      pkgs.xorg.libXrandr
+      pkgs.xorg.libXrender
+      pkgs.xorg.libXtst
+      pkgs.xorg.libxcb
+      pkgs.xorg.libxshmfence
+      pkgs.xorg.libxkbfile
     ];
   };
 
   # Empêche les jeux de "s'endormir" ou de tomber en FPS quand le workspace change
   environment.sessionVariables = {
-    SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS = "0";
     vk_xwayland_wait_ready = "false";
     MESA_SHADER_CACHE_MAX_SIZE = "16G";
   };
