@@ -83,6 +83,8 @@ The content is organized as follows:
     auto-doc.md
     full-index.md
     git-sync.md
+  antigravity-settings.json
+  mcp_config.json
 .direnv/
   bin/
     nix-direnv-reload
@@ -99,7 +101,6 @@ hosts/
     default.nix
     hardware-configuration.nix
 modules/
-  antigravity-settings.json
   antigravity.nix
   atuin.nix
   brave-system.nix
@@ -281,6 +282,39 @@ You are an expert at maintaining NixOS systems. Your primary goal is to keep the
 ## Sources de Référence
 - [CachyOS Wiki - Gaming](https://wiki.cachyos.org/configuration/gaming/)
 - [NixOS Wiki - NVIDIA/AMD](https://nixos.wiki/wiki/AMD_GPU)
+</file>
+
+<file path=".agent/skills/nixos-architect/references/nvme/nvme-transition.md">
+# Transition vers le nouveau disque NVMe (Février 2026)
+
+Cette note documente le passage d'une installation standard `ext4` vers une configuration optimisée `btrfs` sur le nouveau disque NVMe.
+
+## Détails Techniques
+
+### Système de Fichiers (BTRFS)
+Nous avons abandonné `ext4` au profit de `btrfs` avec une structure de sous-volumes pour améliorer les performances et la maintenance :
+- `@` : Racine du système.
+- `@nix` : Stockage du store Nix (isolé pour les perfs).
+- `@log` : Journaux système dans `/var/log`.
+- `@home` : Données utilisateur.
+
+### Optimisations SSD/NVMe
+- **TRIM** : Activé via `services.fstrim.enable = true;` pour maintenir les performances du SSD sur le long terme.
+- **ZRAM** : Utilisation de `zramSwap.enable = true;` pour le swap en RAM, évitant ainsi l'usure inutile du NVMe et améliorant la réactivité.
+- **Kernel** : Utilisation du kernel `CachyOS` (bore) via `nix-cachyos` pour de meilleures performances globales et une meilleure gestion des entrées/sorties.
+
+### Paramètres Kernel
+- `amdgpu.gttsize=16384` : Augmentation de la taille GTT pour les performances graphiques (utile sur NVMe rapide).
+
+## Ancienne Configuration (Avant transition)
+- Racine sur `ext4`.
+- Partition swap physique.
+- UUID de boot : `95CA-4D08`.
+- UUID racine : `fa83065a-443f-4836-9246-45983d2ebf49`.
+
+## Nouvelle Configuration (Après transition)
+- UUID de boot : `83F7-5789`.
+- UUID BTRFS : `59f5b271-11c1-41f9-927d-ed3221a6b404`.
 </file>
 
 <file path=".agent/skills/scratchpad/references/examples.md">
@@ -791,6 +825,34 @@ git push
 
 6. Résumé de la Session
 L'assistant fournit un topo clair de la revue de code effectuée (points vérifiés, optimisations trouvées) et confirme l'état final de la synchronisation.
+</file>
+
+<file path=".agent/antigravity-settings.json">
+{
+    "nix.enableLanguageServer": true,
+    "nix.serverPath": "nil",
+    "nix.serverSettings": {
+        "nil": {
+            "formatting": {
+                "command": [ "nixfmt" ]
+            }
+        }
+    },
+    "editor.formatOnSave": true,
+    "[nix]": {
+        "editor.defaultFormatter": "jnoortheen.nix-ide"
+    },
+    "security.workspace.trust.untrustedFiles": "open",
+    "antigravity.agent.terminal.autoExecutionPolicy": "Turbo",
+    "antigravity.agent.terminal.confirmCommands": false,
+    "antigravity.agent.workspace.gitignoreAccess": "On",
+    "antigravity.reviewPolicy": "Always Proceed",
+    "antigravity.confirmShellCommands": false,
+    "terminal.integrated.env.linux": {
+        "ELECTRON_OZONE_PLATFORM_HINT": "auto",
+        "WAYLAND_DISPLAY": "wayland-1"
+    }
+}
 </file>
 
 <file path=".direnv/bin/nix-direnv-reload">
@@ -1555,39 +1617,6 @@ Contient les spécifications techniques (généralement `[nom]_specs.md`).
 ## Qualité
 - Langue : Français (pour les descriptions) et Anglais (pour les termes techniques/metadata).
 - Style : Concis, chirurgical, sans placeholders.
-</file>
-
-<file path=".agent/skills/nixos-architect/references/nvme/nvme-transition.md">
-# Transition vers le nouveau disque NVMe (Février 2026)
-
-Cette note documente le passage d'une installation standard `ext4` vers une configuration optimisée `btrfs` sur le nouveau disque NVMe.
-
-## Détails Techniques
-
-### Système de Fichiers (BTRFS)
-Nous avons abandonné `ext4` au profit de `btrfs` avec une structure de sous-volumes pour améliorer les performances et la maintenance :
-- `@` : Racine du système.
-- `@nix` : Stockage du store Nix (isolé pour les perfs).
-- `@log` : Journaux système dans `/var/log`.
-- `@home` : Données utilisateur.
-
-### Optimisations SSD/NVMe
-- **TRIM** : Activé via `services.fstrim.enable = true;` pour maintenir les performances du SSD sur le long terme.
-- **ZRAM** : Utilisation de `zramSwap.enable = true;` pour le swap en RAM, évitant ainsi l'usure inutile du NVMe et améliorant la réactivité.
-- **Kernel** : Utilisation du kernel `CachyOS` (bore) via `nix-cachyos` pour de meilleures performances globales et une meilleure gestion des entrées/sorties.
-
-### Paramètres Kernel
-- `amdgpu.gttsize=16384` : Augmentation de la taille GTT pour les performances graphiques (utile sur NVMe rapide).
-
-## Ancienne Configuration (Avant transition)
-- Racine sur `ext4`.
-- Partition swap physique.
-- UUID de boot : `95CA-4D08`.
-- UUID racine : `fa83065a-443f-4836-9246-45983d2ebf49`.
-
-## Nouvelle Configuration (Après transition)
-- UUID de boot : `83F7-5789`.
-- UUID BTRFS : `59f5b271-11c1-41f9-927d-ed3221a6b404`.
 </file>
 
 <file path=".agent/skills/nixos-architect/SKILL.md">
@@ -4514,34 +4543,6 @@ default-timeout=0
 border-color=#ffb4ab
 </file>
 
-<file path="modules/antigravity-settings.json">
-{
-    "nix.enableLanguageServer": true,
-    "nix.serverPath": "nil",
-    "nix.serverSettings": {
-        "nil": {
-            "formatting": {
-                "command": [ "nixfmt" ]
-            }
-        }
-    },
-    "editor.formatOnSave": true,
-    "[nix]": {
-        "editor.defaultFormatter": "jnoortheen.nix-ide"
-    },
-    "security.workspace.trust.untrustedFiles": "open",
-    "antigravity.agent.terminal.autoExecutionPolicy": "Turbo",
-    "antigravity.agent.terminal.confirmCommands": false,
-    "antigravity.agent.workspace.gitignoreAccess": "On",
-    "antigravity.reviewPolicy": "Always Proceed",
-    "antigravity.confirmShellCommands": false,
-    "terminal.integrated.env.linux": {
-        "ELECTRON_OZONE_PLATFORM_HINT": "auto",
-        "WAYLAND_DISPLAY": "wayland-1"
-    }
-}
-</file>
-
 <file path="modules/atuin.nix">
 { pkgs, ... }:
 
@@ -6085,7 +6086,7 @@ in
 
     # Gestion persistante de la config MCP
     ".gemini/antigravity/mcp_config.json".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/modules/mcp_config.json";
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/.agent/mcp_config.json";
   };
 
   # Activation Script : Force Brute pour le settings.json
@@ -6094,7 +6095,7 @@ in
   home.activation.linkAntigravitySettings = lib.hm.dag.entryAfter ["writeBoundary"] ''
     run mkdir -p $HOME/.config/Antigravity/User
     run rm -f $HOME/.config/Antigravity/User/settings.json
-    run ln -sf $HOME/nixos-config/modules/antigravity-settings.json $HOME/.config/Antigravity/User/settings.json
+    run ln -sf $HOME/nixos-config/.agent/antigravity-settings.json $HOME/.config/Antigravity/User/settings.json
   '';
 
   home.sessionVariables = {

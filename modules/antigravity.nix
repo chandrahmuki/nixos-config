@@ -31,7 +31,7 @@ in
 
     # Gestion persistante de la config MCP
     ".gemini/antigravity/mcp_config.json".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/modules/mcp_config.json";
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/.agent/mcp_config.json";
   };
 
   # Activation Script : Force Brute pour le settings.json
@@ -40,7 +40,7 @@ in
   home.activation.linkAntigravitySettings = lib.hm.dag.entryAfter ["writeBoundary"] ''
     run mkdir -p $HOME/.config/Antigravity/User
     run rm -f $HOME/.config/Antigravity/User/settings.json
-    run ln -sf $HOME/nixos-config/modules/antigravity-settings.json $HOME/.config/Antigravity/User/settings.json
+    run ln -sf $HOME/nixos-config/.agent/antigravity-settings.json $HOME/.config/Antigravity/User/settings.json
   '';
 
   home.sessionVariables = {
