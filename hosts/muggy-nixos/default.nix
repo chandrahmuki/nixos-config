@@ -231,7 +231,11 @@
     #  wget
     xwayland-satellite
     nvtopPackages.amd
+    via
   ];
+
+  # VIA / QMK Udev rules
+  services.udev.packages = [ pkgs.via ];
 
   # --- OPTIMIZATIONS ---
 
