@@ -50,6 +50,10 @@
             name = "*.wav";
             use = "listen";
           }
+          {
+            name = "*.m3u";
+            use = "listen";
+          }
         ];
       };
     };
