@@ -2,30 +2,28 @@
   home.packages = [
     (pkgs.writeShellScriptBin "music-menu" ''
       MUSIC_DIR="$HOME/Music"
+      TAB=$'\t'
       
-      # Headers (for visual organization)
-      SEP="────────────────────────────────────────────────"
+      # Find playlists (Display name \t Full path)
+      LISTS=$(find "$MUSIC_DIR" -type f -name "*.m3u" -printf "󰲸  %f$TAB%p\n" | sort)
       
-      # Find playlists (Display name | Full path)
-      LISTS=$(find "$MUSIC_DIR" -type f \( -name "*.m3u" \) -printf "󰲸  %f|%p\n" | sort)
-      
-      # Find songs (Display name | Full path)
-      SONGS=$(find "$MUSIC_DIR" -type f \( -name "*.m4a" -o -name "*.mp3" -o -name "*.flac" \) -printf "  %f|%p\n" | sort)
+      # Find songs (Display name \t Full path)
+      SONGS=$(find "$MUSIC_DIR" -type f \( -name "*.m4a" -o -name "*.mp3" -o -name "*.flac" \) -printf "  %f$TAB%p\n" | sort)
       
       # Construct the menu content
-      MENU_CONTENT="󰲸  --- PLAYLISTS ---|IGNORE\n$LISTS\n$SEP|IGNORE\n  --- SONGS ---|IGNORE\n$SONGS"
+      SEP="────────────────────────────────────────────────"
+      MENU_CONTENT="󰲸  --- PLAYLISTS ---$TAB\n$LISTS\n$SEP$TAB\n  --- SONGS ---$TAB\n$SONGS"
       
       # Select via Fuzzel
-      CHOICE=$(echo -e "$MENU_CONTENT" | ${pkgs.fuzzel}/bin/fuzzel --dmenu --prompt="Music ❯ " --width=100 --lines=25)
+      # --with-nth=1: Only show titles
+      # --accept-nth=2: Only return full path
+      CHOICE=$(echo -e "$MENU_CONTENT" | ${pkgs.fuzzel}/bin/fuzzel --dmenu --prompt="Music ❯ " --width=80 --lines=25 --with-nth=1 --accept-nth=2 --nth-delimiter="$TAB")
       
-      # Exit if nothing selected or if a separator/header is picked
-      [ -z "$CHOICE" ] || [[ "$CHOICE" == *"---"* ]] || [[ "$CHOICE" == *"────"* ]] && exit
-      
-      # Extract actual full path (everything after |)
-      FILE_PATH=$(echo "$CHOICE" | cut -d'|' -f2)
+      # Exit if nothing selected or if a separator/header is picked (check if it's a valid file)
+      [ -z "$CHOICE" ] || [ ! -f "$CHOICE" ] && exit
       
       # Play with mpv
-      ${pkgs.mpv}/bin/mpv --no-video "$FILE_PATH"
+      ${pkgs.mpv}/bin/mpv --no-video "$CHOICE"
     '')
   ];
 }
