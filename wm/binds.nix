@@ -38,12 +38,13 @@
     "XF86MonBrightnessDown".action = spawn "brightnessctl s -10%";
 
     # Audio & Media Control
-    "XF86AudioRaiseVolume".action = spawn "pamixer -i 5";
-    "XF86AudioLowerVolume".action = spawn "pamixer -d 5";
-    "XF86AudioMute".action = spawn "pamixer -t";
-    "XF86AudioPlay".action = spawn "playerctl play-pause";
-    "XF86AudioNext".action = spawn "playerctl next";
-    "XF86AudioPrev".action = spawn "playerctl previous";
+    # Audio & Media Control (Ctrl + Mod)
+    "Ctrl+Mod+equal".action = spawn "pamixer -i 5";
+    "Ctrl+Mod+minus".action = spawn "pamixer -d 5";
+    "Ctrl+Mod+0".action = spawn "pamixer -t";
+    "Ctrl+Mod+p".action = spawn "playerctl play-pause";
+    "Ctrl+Mod+bracketright".action = spawn "playerctl next";
+    "Ctrl+Mod+bracketleft".action = spawn "playerctl previous";
     #Move
     "Mod+Shift+Left".action = move-column-left-or-to-monitor-left;
     "Mod+Shift+Right".action = move-column-right-or-to-monitor-right;
