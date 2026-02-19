@@ -8,7 +8,7 @@
   # au compositeur (Niri) qui change automatiquement de workspace et focus la fenêtre
   services.mako = {
     enable = true;
-    # La configuration est gérée dynamiquement par sync-colors.py via un lien symbolique
+    # La configuration est gérée dynamiquement par Matugen via un lien symbolique
   };
 
   home.file.".config/mako/config".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/generated/mako";

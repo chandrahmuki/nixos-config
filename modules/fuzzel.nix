@@ -9,7 +9,7 @@
 
   programs.fuzzel = {
     enable = true;
-    # La configuration est gérée dynamiquement par sync-colors.py via un lien symbolique
+    # La configuration est gérée dynamiquement par Matugen via un lien symbolique
   };
 
   # Symlinks pour les icônes manquantes dans les thèmes standards
