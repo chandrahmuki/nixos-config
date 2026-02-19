@@ -1,4 +1,5 @@
 ---
+name: archive
 description: Capitalisation du savoir via Knowledge Items (Archiviste).
 ---
 

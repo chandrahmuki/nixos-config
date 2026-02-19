@@ -1,4 +1,5 @@
 ---
+name: git-sync
 description: Synchroniser les changements avec Git (Add, Review, Commit, Pull, Push)
 ---
 

@@ -1,4 +1,5 @@
 ---
+name: full-index
 description: Mise à jour complète de l'index du projet (Repomix). À lancer après des changements structurels majeurs.
 ---
 

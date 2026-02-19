@@ -1,4 +1,5 @@
 ---
+name: auto-doc
 description: Automatisation de la documentation et de la synchronisation après un changement.
 ---
 
