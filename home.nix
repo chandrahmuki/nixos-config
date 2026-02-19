@@ -31,6 +31,7 @@
     ./modules/atuin.nix
     ./modules/pdf.nix
     ./modules/notifications.nix
+    ./modules/gemini.nix
   ];
 
   programs.home-manager.enable = true;
