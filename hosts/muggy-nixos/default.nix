@@ -19,6 +19,7 @@
     ../../modules/steam.nix
     ../../modules/lact.nix
     ../../modules/brave-system.nix
+    ../../modules/performance-tuning.nix
   ];
 
   # Bootloader.
@@ -273,14 +274,8 @@
   boot.tmp.useTmpfs = true;
   boot.tmp.tmpfsSize = "75%"; # Use up to 75% of RAM for build
 
-  # 9. Advanced: TCP Optimizations (Standard stable)
-  # On repasse sur fq_codel/cubic car CAKE/BBR demandent trop de CPU pendant les downloads Steam sur HDD
-  boot.kernel.sysctl = {
-    "net.core.default_qdisc" = "fq_codel";
-    "net.ipv4.tcp_congestion_control" = "cubic";
-  };
-  boot.kernelParams = [ "amdgpu.gttsize=16384" ];
-  boot.kernelModules = [ "ntsync" ];
+
+  # (Settings for Cubic, amgdpu gttsize, and ntsync moved to modules/performance-tuning.nix)
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
