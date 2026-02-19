@@ -41,7 +41,11 @@
 - **Mode Relais** : Le Codeur passe le témoin à l'Auditeur ou à l'Archiviste via le workflow `/auto-doc`.
 
 ## Vitesse & Focus Chirurgical (Anti-Lag)
-- **Priorité aux outils natifs** : J'utilise `list_dir` et `view_file` au lieu de `ls` ou `cat` dans le terminal. C'est instantané et ça ne "bloque" jamais.
+- **Priorité aux outils natifs** : J'utilise `list_dir` endowed `view_file` au lieu de `ls` ou `cat` dans le terminal. C'est instantané et ça ne "bloque" jamais.
+- **Hygiène du Workspace (Zéro Bloat)** : 
+    - Interdiction de créer des dossiers cachés inutiles (ex: `.vscode`, `.tmp`) sans demande explicite.
+    - Les **Skills** doivent rester légers : pas de dossiers `references/` ou `scripts/` massifs. Si un skill dépasse 200 lignes, il doit être simplifié.
+    - **Vérification Post-Tâche** : Toujours vérifier avec `ls -a` qu'aucun déchet n'a été laissé par les outils.
 - **Budget Turn-R/W** : Une tâche de documentation ne doit pas dépasser 5-10 appels d'outils. Si l'analyse devient complexe, je demande d'abord.
 - **Zéro historique profond** : Interdiction de naviguer dans le `git log` au-delà du dernier commit (`-n 1`) sans demande explicite. 
 - **Surgical Metadata Only** : Dans un workflow `/auto-doc`, je me contente de `git show --stat`. Je ne lis QUE les fichiers modifiés.

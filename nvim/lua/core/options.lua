@@ -7,5 +7,9 @@ vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
 vim.opt.clipboard = "unnamedplus"
 
+-- Autoreload settings (for external changes)
+vim.opt.autoread = true
+vim.opt.updatetime = 300
+
 
 
