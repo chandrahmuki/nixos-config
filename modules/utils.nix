@@ -10,6 +10,7 @@
     pavucontrol # GUI volume control for PulseAudio/PipeWire
     pulseaudio # Provides pactl for volume control
     nodejs # For MCP servers and other node-based tools
+    rich-cli # Beautiful terminal renderer for Markdown (hides # markers)
     python3 # For advanced tools like the Kira scratchpad script
     repomix # Pack repository contents to single file for AI consumption
     qpdf # For decrypting PDFs
@@ -37,6 +38,9 @@
   };
 
   programs.fish.functions = {
+    # Quick markdown preview with rich-cli
+    md = "rich --markdown $argv";
+
     # Search function that searches from root (/)
     # Uses fd for speed, searching globally
     search = ''
