@@ -29,6 +29,12 @@
 
     # CachyOS Latest Kernel (xddxdd - has lantian cache)
     nix-cachyos.url = "github:xddxdd/nix-cachyos-kernel/release";
+
+    # Secrets management
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -41,6 +47,7 @@
       antigravity,
       noctalia,
       nix-cachyos,
+      sops-nix,
       ...
     }@inputs:
     let
@@ -59,6 +66,7 @@
           # Le module Noctalia se charge au niveau SYSTEME (si besoin, mais on va surtout l'utiliser dans Home Manager)
           noctalia.nixosModules.default
           niri.nixosModules.niri # Le module Niri Système (Sodiboo)
+          sops-nix.nixosModules.sops
 
           # Import du module Home Manager
           home-manager.nixosModules.home-manager

@@ -1,6 +1,10 @@
 # Secrets
 modules/mcp_config.json
-.agent/
+.agent/mcp_config.json
+.agent/antigravity-settings.json
+# On garde les dossiers de travail visibles pour l'IDE
+!.agent/workflows/
+!.agent/skills/
 
 # Build results
 result

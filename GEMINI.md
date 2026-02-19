@@ -6,6 +6,7 @@
 
 ## Git / Gestion de version
 - Pour ce projet, après chaque modification fonctionnelle :
+  - **Important (Nix Flakes)** : Toujours exécuter `git add` pour les nouveaux fichiers, sinon Nix ne les verra pas dans le sandbox (erreur "path does not exist").
   - Exécuter `git add .`
   - Exécuter `git commit` avec un message descriptif approprié.
 

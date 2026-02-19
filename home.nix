@@ -32,6 +32,7 @@
     ./modules/pdf.nix
     ./modules/notifications.nix
     ./modules/gemini.nix
+    ./modules/secrets.nix
   ];
 
   programs.home-manager.enable = true;
