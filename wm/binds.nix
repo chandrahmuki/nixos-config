@@ -2,7 +2,9 @@
 {
   programs.niri.settings.binds = with config.lib.niri.actions; {
     "Mod+D".action = spawn "fuzzel";
-    "Mod+M".action = spawn "music-menu";
+    "Mod+M".action = spawn [ "music-menu" ];
+    "Mod+Y".action = spawn [ "yt-search" ];
+    "Mod+Shift+Y".action = spawn [ "yt-search" "--audio" ];
     "Mod+Q".action = close-window;
     "Mod+Shift+F".action = fullscreen-window;
     "Mod+F".action = maximize-column;
