@@ -50,7 +50,9 @@
       };
 
       desktop = {
+        monitors = [ "DP-2" ];
         widgets = [
+          { id = "Clock"; }
           { id = "MediaMini"; }
         ];
       };
