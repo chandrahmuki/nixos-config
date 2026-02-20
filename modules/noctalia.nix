@@ -34,7 +34,6 @@
             { id = "Clock"; }
             { id = "SystemMonitor"; }
             { id = "ActiveWindow"; }
-            { id = "MediaMini"; }
           ];
           center = [
             { id = "Workspace"; }
@@ -48,6 +47,12 @@
             { id = "ControlCenter"; }
           ];
         };
+      };
+
+      desktop = {
+        widgets = [
+          { id = "MediaMini"; }
+        ];
       };
 
       general = {
