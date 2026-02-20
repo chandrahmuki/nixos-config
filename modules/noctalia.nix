@@ -56,6 +56,15 @@
             monitor = "DP-2";
             widgets = [
               { id = "Clock"; }
+              { id = "SystemMonitor"; }
+              { id = "MediaMini"; }
+            ];
+          }
+          {
+            monitor = "HDMI-A-1";
+            widgets = [
+              { id = "Clock"; }
+              { id = "SystemMonitor"; }
               { id = "MediaMini"; }
             ];
           }
