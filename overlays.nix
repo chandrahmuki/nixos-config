@@ -8,6 +8,8 @@
 {
   nixpkgs.overlays = [
     inputs.niri.overlays.niri
-    inputs.antigravity.overlays.default
+    (final: prev: {
+      google-antigravity = final.callPackage ./pkgs/google-antigravity { };
+    })
   ];
 }

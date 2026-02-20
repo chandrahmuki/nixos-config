@@ -5,13 +5,11 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-master.url = "github:nixos/nixpkgs/master";
 
-    # Home Manager pointant sur la branche unstable
     home-manager = {
       url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs"; # Force HM à utiliser votre version de nixpkgs
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Flake niri
     niri = {
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -21,16 +19,9 @@
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    antigravity = {
-      url = "github:jacopone/antigravity-nix";
-      # C'est ici que la magie opère :
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
-    # CachyOS Latest Kernel (xddxdd - has lantian cache)
     nix-cachyos.url = "github:xddxdd/nix-cachyos-kernel/release";
 
-    # Secrets management
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -44,7 +35,6 @@
       nixpkgs-master,
       home-manager,
       niri,
-      antigravity,
       noctalia,
       nix-cachyos,
       sops-nix,
@@ -61,21 +51,15 @@
           ./hosts/muggy-nixos/default.nix
           ./overlays.nix
 
-          # CachyOS kernel is set via boot.kernelPackages in default.nix
-
-          # Le module Noctalia se charge au niveau SYSTEME (si besoin, mais on va surtout l'utiliser dans Home Manager)
           noctalia.nixosModules.default
-          niri.nixosModules.niri # Le module Niri Système (Sodiboo)
+          niri.nixosModules.niri
           sops-nix.nixosModules.sops
 
-          # Import du module Home Manager
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.users.${username} = import ./home.nix;
-
-            # Optionnel : passe les 'inputs' du flake au fichier home.nix
             home-manager.extraSpecialArgs = { inherit inputs username; };
           }
         ];
