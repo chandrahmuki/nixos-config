@@ -49,11 +49,16 @@
         };
       };
 
-      desktop = {
-        monitors = [ "DP-2" ];
-        widgets = [
-          { id = "Clock"; }
-          { id = "MediaMini"; }
+      desktopWidgets = {
+        enabled = true;
+        monitorWidgets = [
+          {
+            monitor = "DP-2";
+            widgets = [
+              { id = "Clock"; }
+              { id = "MediaMini"; }
+            ];
+          }
         ];
       };
 
