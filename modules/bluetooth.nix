@@ -7,7 +7,10 @@
     powerOnBoot = true;
     settings = {
       General = {
-        Experimental = true; # Enbles Battery status for some devices
+        Experimental = true;
+        Enable = "Source,Sink,Media,Socket"; # Better audio support
+        AutoConnect = true;
+        ControllerMode = "dual"; # Supports both BR/EDR and LE
       };
     };
   };
