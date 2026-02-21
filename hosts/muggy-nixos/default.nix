@@ -84,45 +84,19 @@
     LC_TIME = "de_AT.UTF-8";
   };
 
-  # Désactivation totale d'IBus pour supprimer la notification
-  i18n.inputMethod.enable = false;
-
-  # Empêcher GNOME de tirer IBus et de le lancer via autostart
-  environment.gnome.excludePackages = [ pkgs.ibus ];
-
-  # Force l'utilisation d'un module IM simple pour éviter que GNOME ne cherche IBus
-  services.desktopManager.gnome.extraGSettingsOverrides = ''
-    [org.gnome.desktop.interface]
-    gtk-im-module='gtk-im-context-simple'
-  '';
-
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
-  # Enable the GNOME Desktop Environment.
-  services.displayManager.gdm.enable = true;
-  services.desktopManager.gnome.enable = true;
-
-  # GDM Customization (HiDPI scaling)
-  programs.dconf.profiles.gdm.databases = [
-    {
-      settings = {
-        "org/gnome/desktop/interface" = {
-          scaling-factor = lib.gvariant.mkUint32 2; # 2x scale for HiDPI
-          text-scaling-factor = 1.25; # Slightly larger text
-        };
-        "org/gnome/login-screen" = {
-          banner-message-enable = false;
-          disable-user-list = false; # Show user list
-        };
+  # Enable greetd for a minimal login experience
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --remember-user-session --cmd niri";
+        user = "greeter";
       };
-    }
-  ];
-
-  # Make GDM monitor configuration permanent
-  systemd.tmpfiles.rules = [
-    "L+ /run/gdm/.config/monitors.xml - - - - /home/${username}/.config/monitors.xml"
-  ];
+    };
+  };
 
   # Configure keymap in X11
   services.xserver.xkb = {
