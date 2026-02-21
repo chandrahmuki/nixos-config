@@ -92,7 +92,9 @@
     enable = true;
     settings = {
       default_session = {
-        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --remember-user-session --cmd niri-session";
+        # --remember-user-session was removed to prevent tuigreet from caching the wrong command
+        # Absolute path is used to ensure the niri-session wrapper is explicitly found
+        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd ${pkgs.niri-unstable}/bin/niri-session";
         user = "greeter";
       };
     };
