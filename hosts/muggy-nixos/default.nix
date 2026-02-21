@@ -94,7 +94,7 @@
       default_session = {
         # --remember-user-session was removed to prevent tuigreet from caching the wrong command
         # Use simple command name so tuigreet doesn't display the ugly nix-store path
-        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd niri-session";
+        command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd niri-session";
         user = "greeter";
       };
     };
