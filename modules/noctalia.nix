@@ -55,13 +55,25 @@
           {
             monitor = "DP-2";
             widgets = [
-              { id = "Clock"; }
+              {
+                id = "Clock";
+                x = 50;
+                y = 50;
+                format = "HH:mm\nd MMMM yyyy";
+                showBackground = true;
+              }
             ];
           }
           {
             monitor = "HDMI-A-1";
             widgets = [
-              { id = "Clock"; }
+              {
+                id = "Clock";
+                x = 50;
+                y = 50;
+                format = "HH:mm\nd MMMM yyyy";
+                showBackground = true;
+              }
             ];
           }
         ];
