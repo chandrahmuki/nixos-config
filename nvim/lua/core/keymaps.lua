@@ -4,6 +4,8 @@ local opts = { noremap = true, silent = true }
 -- Basic keymaps
 map("n", "<leader>qq", ":q<CR>", { desc = "Quit" })
 map("n", "<leader>fs", ":w<CR>", { desc = "Save File" })
+map({ "n", "i", "v" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save File" })
+map("n", "<leader>s", "<cmd>w<cr>", { desc = "Save File" })
 
 -- Clipboard paste
 map("i", "<C-S-v>", '<Esc>"+pa', opts)
