@@ -17,6 +17,7 @@
     jq # For parsing JSON (useful for flake.lock)
     matugen # Material You color generation tool
     uv # Extremely fast Python package manager (provides uvx)
+    cava # Console-based Audio Visualizer for Alsa/PulseAudio/PipeWire
   ];
 
   programs.bat = {

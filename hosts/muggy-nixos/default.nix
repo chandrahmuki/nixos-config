@@ -21,6 +21,7 @@
     ../../modules/brave-system.nix
     ../../modules/performance-tuning.nix
     ../../modules/bluetooth.nix
+    ../../modules/nautilus.nix
   ];
 
   # Bootloader.
