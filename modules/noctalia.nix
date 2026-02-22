@@ -57,15 +57,16 @@
             widgets = [
               {
                 id = "Clock";
-                x = 50;
-                y = 50;
+                x = 33;
+                y = 45;
+                scale = 0.5279141523625126;
                 format = "HH:mm\nd MMMM yyyy";
                 showBackground = true;
               }
               {
                 id = "plugin:media-mixer";
-                x = 46;
-                y = 180;
+                x = 134;
+                y = 52;
                 scale = 1;
               }
             ];
