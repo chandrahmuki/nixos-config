@@ -56,11 +56,9 @@
             name = "DP-2";
             widgets = [
               {
-                id = "Clock";
+                id = "plugin:media-mixer";
                 x = 50;
                 y = 50;
-                format = "HH:mm\nd MMMM yyyy";
-                showBackground = true;
               }
             ];
           }
