@@ -13,17 +13,7 @@
   # Enable Sushi for quick file previews (spacebar)
   services.gnome.sushi.enable = true;
 
-  # Enable portals integration for Niri
-  programs.niri.useNautilus = true;
-
-  # Optional: terminal integration for Nautilus
-  programs.nautilus-open-any-terminal = {
-    enable = true;
-    terminal = "ghostty"; # David uses ghostty (seen in terminal.nix)
-  };
-
   environment.systemPackages = with pkgs; [
     nautilus # File manager
-    nautilus-python # Extensions
   ];
 }
