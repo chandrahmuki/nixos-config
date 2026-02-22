@@ -16,6 +16,7 @@
     qpdf # For decrypting PDFs
     jq # For parsing JSON (useful for flake.lock)
     matugen # Material You color generation tool
+    uv # Extremely fast Python package manager (provides uvx)
   ];
 
   programs.bat = {
