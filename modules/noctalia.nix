@@ -53,16 +53,6 @@
         enabled = true;
         monitorWidgets = [
           {
-            name = "DP-2";
-            widgets = [
-              {
-                id = "plugin:media-mixer";
-                x = 50;
-                y = 50;
-              }
-            ];
-          }
-          {
             name = "HDMI-A-1";
             widgets = [
               {
@@ -71,6 +61,11 @@
                 y = 50;
                 format = "HH:mm\nd MMMM yyyy";
                 showBackground = true;
+              }
+              {
+                id = "plugin:media-mixer";
+                x = 70;
+                y = 50;
               }
             ];
           }
