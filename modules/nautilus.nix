@@ -4,9 +4,6 @@
 }:
 
 {
-  # Enable Nautilus file manager
-  programs.nautilus.enable = true;
-
   # Enable GVfs for mounting drives (required for Nautilus sidebar)
   services.gvfs.enable = true;
 
@@ -26,7 +23,7 @@
   };
 
   environment.systemPackages = with pkgs; [
-    # Nautilus extensions
-    nautilus-python
+    nautilus # File manager
+    nautilus-python # Extensions
   ];
 }
