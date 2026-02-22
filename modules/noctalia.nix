@@ -64,8 +64,9 @@
               }
               {
                 id = "plugin:media-mixer";
-                x = 44;
-                y = 224;
+                x = 46;
+                y = 180;
+                scale = 1;
               }
             ];
           }
