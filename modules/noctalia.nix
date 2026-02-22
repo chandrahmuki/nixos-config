@@ -53,7 +53,7 @@
         enabled = true;
         monitorWidgets = [
           {
-            monitor = "DP-2";
+            name = "DP-2";
             widgets = [
               {
                 id = "Clock";
@@ -63,7 +63,7 @@
             ];
           }
           {
-            monitor = "HDMI-A-1";
+            name = "HDMI-A-1";
             widgets = [
               {
                 id = "Clock";
