@@ -57,10 +57,8 @@
             widgets = [
               {
                 id = "Clock";
-                x = 50;
-                y = 50;
-                format = "HH:mm\nd MMMM yyyy";
-                showBackground = true;
+                x = 100;
+                y = 100;
               }
             ];
           }
@@ -69,10 +67,8 @@
             widgets = [
               {
                 id = "Clock";
-                x = 50;
-                y = 50;
-                format = "HH:mm\nd MMMM yyyy";
-                showBackground = true;
+                x = 100;
+                y = 100;
               }
             ];
           }
