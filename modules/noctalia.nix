@@ -64,7 +64,7 @@
               }
               {
                 id = "plugin:media-mixer";
-                x = 70;
+                x = 1220;
                 y = 50;
               }
             ];
