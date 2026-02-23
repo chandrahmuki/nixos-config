@@ -1,16 +1,20 @@
 return {
   {
-    "shaunsingh/nord.nvim",
+    "folke/tokyonight.nvim",
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme("nord")
+      require("tokyonight").setup({
+        style = "moon", -- Vibrant moon style
+        transparent = false, -- Opaque as per last test preference
+      })
+      vim.cmd.colorscheme("tokyonight")
     end,
   },
   {
     "nvim-lualine/lualine.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
-      require("lualine").setup { options = { theme = "nord" } }
+      require("lualine").setup { options = { theme = "tokyonight" } }
     end,
   },
   {
