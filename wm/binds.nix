@@ -8,7 +8,7 @@
     "Mod+Q".action = close-window;
     "Mod+Shift+F".action = fullscreen-window;
     "Mod+F".action = maximize-column;
-    "Mod+T".action = spawn "ghostty";
+    "Mod+T".action = spawn "foot";
     "Mod+Shift+E".action = quit { skip-confirmation = false; };
     "Mod+Shift+Slash".action = show-hotkey-overlay;
     "Mod+Shift+Space".action = toggle-window-floating;
