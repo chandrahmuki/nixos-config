@@ -34,8 +34,10 @@ return {
     zen = {
       enabled = true,
       toggles = {
-        dim = true, -- Omerxx focus effect
-        line_number = false, -- Truly hide numbers
+        dim = true, -- Omerxx focus effect (Twilight equivalent)
+        number = false, -- Hide numbers
+        relativenumber = false, -- Hide relative numbers
+        line_number = false, -- Alternative toggle name
         relative_number = false,
         signcolumn = false,
         statuscolumn = false,
@@ -45,7 +47,7 @@ return {
         width = 0.85, -- Writing width like in the video
         backdrop = {
           transparent = true, -- Avoid "grey bars" by using terminal background
-          opacity = 0.6, -- Subtle dimming of the background
+          opacity = 0.5, -- Subtle dimming of the background
         },
         wo = {
           number = false,
