@@ -8,14 +8,13 @@ return {
         transparent = false, -- Opaque as per last test preference
       })
       vim.cmd.colorscheme("tokyonight")
+      -- Force Neovim to never show its own default statusline
+      vim.opt.laststatus = 0
     end,
   },
   {
     "nvim-lualine/lualine.nvim",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    config = function()
-      require("lualine").setup { options = { theme = "tokyonight" } }
-    end,
+    enabled = false, -- User requested to completely remove the bottom status bar
   },
   {
     "lewis6991/gitsigns.nvim",
