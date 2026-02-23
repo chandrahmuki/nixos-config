@@ -34,21 +34,19 @@ return {
     zen = {
       enabled = true,
       toggles = {
-        dim = true, -- Omerxx focus effect (Twilight equivalent)
-        number = false, -- Hide numbers
-        relativenumber = false, -- Hide relative numbers
-        line_number = false, -- Alternative toggle name
+        dim = true, -- Focus effect (Twilight)
+        number = false,
+        relativenumber = false,
+        line_number = false,
         relative_number = false,
         signcolumn = false,
         statuscolumn = false,
       },
       win = {
-        style = "zen", -- Restore the centered style
-        width = 0.85, -- Writing width like in the video
-        backdrop = {
-          transparent = true, -- Avoid "grey bars" by using terminal background
-          opacity = 0.5, -- Subtle dimming of the background
-        },
+        style = "none", -- Disable floating centered style
+        width = 0, -- Fullscreen to cover underlying gutter
+        height = 0,
+        backdrop = { enabled = false }, -- No backdrop needed for fullscreen
         wo = {
           number = false,
           relativenumber = false,
