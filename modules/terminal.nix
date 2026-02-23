@@ -1,31 +1,33 @@
 { pkgs, ... }:
 
 {
-  programs.ghostty = {
+  programs.foot = {
     enable = true;
-    enableFishIntegration = true;
     settings = {
-      theme = "Dracula";
-      font-family = "Hack Nerd Font";
-      font-size = 18;
-      background-opacity = 1.0;
-      window-padding-x = 15;
-      window-padding-y = 15;
-      window-decoration = false;
-
-      # Raccourcis Zoom
-      keybind = [
-        "ctrl+plus=increase_font_size:1"
-        "ctrl+equal=increase_font_size:1"
-        "ctrl+minus=decrease_font_size:1"
-        "ctrl+0=reset_font_size"
-
-        # User request: Shift+Alt+Wheel
-        # Note: Mouse binding support in Ghostty is experimental/limited.
-        # If wheel doesn't work, use the Shift+Alt+Plus/Minus shortcuts below.
-        "shift+alt+plus=increase_font_size:1"
-        "shift+alt+minus=decrease_font_size:1"
-      ];
+      main = {
+        font = "Hack Nerd Font:size=18";
+        pad = "15x15";
+      };
+      colors = {
+        background = "282a36";
+        foreground = "f8f8f2";
+        regular0 = "21222c"; # black
+        regular1 = "ff5555"; # red
+        regular2 = "50fa7b"; # green
+        regular3 = "f1fa8c"; # yellow
+        regular4 = "bd93f9"; # blue
+        regular5 = "ff79c6"; # magenta
+        regular6 = "8be9fd"; # cyan
+        regular7 = "f8f8f2"; # white
+        bright0 = "6272a4"; # bright black
+        bright1 = "ff6e6e"; # bright red
+        bright2 = "69ff94"; # bright green
+        bright3 = "ffffa5"; # bright yellow
+        bright4 = "d6acff"; # bright blue
+        bright5 = "ff92df"; # bright magenta
+        bright6 = "a4ffff"; # bright cyan
+        bright7 = "ffffff"; # bright white
+      };
     };
   };
 
