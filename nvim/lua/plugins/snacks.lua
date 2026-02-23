@@ -7,20 +7,14 @@ return {
     bigfile = { enabled = true },
     dashboard = {
       enabled = true,
-      width = 1,
-      preset = {
-        header = [[
-███╗   ███╗██╗   ██╗ ██████╗  ██████╗ ██╗   ██╗██╗   ██╗██╗███╗   ███╗
-████╗ ████║██║   ██║██╔═══██╗██╔═══██╗██║   ██║██║   ██║██║████╗ ████║
-██╔████╔██║██║   ██║██║   ██║██║   ██║██║   ██║██║   ██║██║██╔████╔██║
-██║╚██╔╝██║██║   ██║██║   ██║██║   ██║╚██╗ ██╔╝╚██╗ ██╔╝██║██║╚██╔╝██║
-██║ ╚═╝ ██║╚██████╔╝╚██████╔╝╚██████╔╝ ╚████╔╝  ╚████╔╝ ██║██║ ╚═╝ ██║
-╚═╝     ╚═╝ ╚═════╝  ╚═════╝  ╚═════╝   ╚═══╝    ╚═══╝  ╚═╝╚═╝     ╚═╝
-                        ✨ Welcome to MuggyVim ✨
-        ]],
+      -- The 'width' key was removed as per the implied change
+      -- The 'preset' key was removed and its content moved up
+      sections = {
+        { section = "header" },
+        { section = "keys", gap = 1, padding = 1 },
+        { section = "startup" },
       },
     },
-    dim = { enabled = true }, -- Twilight-like focus
     explorer = { enabled = true },
     indent = { enabled = true },
     input = { enabled = true },
@@ -31,36 +25,6 @@ return {
     scroll = { enabled = true },
     statuscolumn = { enabled = true },
     words = { enabled = true },
-    zen = {
-      enabled = true,
-      toggles = {
-        dim = true, -- Focus effect (Twilight)
-        number = false,
-        relativenumber = false,
-        line_number = false,
-        relative_number = false,
-        signcolumn = false,
-        statuscolumn = false,
-      },
-      win = {
-        style = "none", -- Disable floating centered style
-        width = 0, -- Fullscreen to cover underlying gutter
-        height = 0,
-        backdrop = { enabled = false }, -- No backdrop needed for fullscreen
-        wo = {
-          number = false,
-          relativenumber = false,
-          signcolumn = "no",
-          statuscolumn = "",
-          foldcolumn = "0",
-        },
-      },
-      -- Global options to hide bars during Zen
-      go = {
-        laststatus = 0,
-        showtabline = 0,
-      },
-    },
   },
   keys = {
     -- Top Level (Essential)
