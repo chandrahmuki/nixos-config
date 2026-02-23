@@ -6,7 +6,7 @@
     settings = {
       main = {
         font = "Hack Nerd Font:size=18";
-        pad = "0x0";
+        pad = "15x15";
       };
       colors = {
         background = "282a36";
