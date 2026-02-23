@@ -13,3 +13,5 @@ vim.opt.updatetime = 300
 
 
 
+vim.opt.scrolloff = 7
+vim.opt.mouse = ""
