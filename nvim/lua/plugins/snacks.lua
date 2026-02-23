@@ -33,19 +33,22 @@ return {
     zen = {
       enabled = true,
       toggles = {
-        dim = false, -- Disable dimming of non-active lines
+        dim = false, -- Force disable line dimming
+        line_number = false, -- Force disable line numbers
+        relative_number = false, -- Force disable relative numbers
         git_signs = false,
         mini_diff = false,
         diagnostics = false,
         inlay_hints = false,
       },
       win = {
-        width = 1, -- Force 100% width
-        height = 1, -- Force 100% height
+        style = "none", -- Disable default centered style
+        width = 0, -- Full width
+        height = 0, -- Full height
         row = 0,
         col = 0,
-        padding = { 0, 0 }, -- Explicitly no padding
-        border = "none", -- No border
+        padding = { 0, 0 },
+        border = "none",
         backdrop = {
           enabled = false, -- No dimming backdrop
           transparent = true,
@@ -60,14 +63,6 @@ return {
           foldcolumn = "0",
           list = false,
         },
-      },
-      -- Customizing the minimalist appearance
-      styles = {
-        zen = {
-          width = 1,
-          height = 1,
-          backdrop = false,
-        }
       },
       -- Global options to hide bars during Zen
       go = {
