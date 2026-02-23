@@ -15,6 +15,10 @@ return {
           cursorcolumn = false, -- disable cursor column
           foldcolumn = "0", -- disable fold column
           list = false, -- disable whitespace characters
+          showcmd = false, -- hide command line (bottom right)
+          ruler = false, -- hide ruler (43,1 35%)
+          laststatus = 0, -- hide status line
+          showmode = false, -- hide -- INSERT -- etc
         },
       },
       plugins = {
@@ -22,7 +26,6 @@ return {
           enabled = true,
           runtimepath = true, -- for local plugins
           filetype = true, -- for filetype options
-          laststatus = 0, -- hide statusline
         },
         twilight = { enabled = true }, -- enable twilight when zen mode is active
         gitsigns = { enabled = false },
