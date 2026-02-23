@@ -8,7 +8,7 @@
       theme = "Dracula";
       font-family = "Hack Nerd Font";
       font-size = 18;
-      background-opacity = 0.9;
+      background-opacity = 1.0;
       window-padding-x = 15;
       window-padding-y = 15;
       window-decoration = false;

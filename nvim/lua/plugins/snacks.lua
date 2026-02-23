@@ -7,6 +7,7 @@ return {
     bigfile = { enabled = true },
     dashboard = {
       enabled = true,
+      width = 1,
       preset = {
         header = [[
 ███╗   ███╗██╗   ██╗ ██████╗  ██████╗ ██╗   ██╗██╗   ██╗██╗███╗   ███╗
@@ -29,6 +30,51 @@ return {
     scroll = { enabled = true },
     statuscolumn = { enabled = true },
     words = { enabled = true },
+    zen = {
+      enabled = true,
+      toggles = {
+        dim = true,
+        git_signs = false,
+        mini_diff = false,
+        diagnostics = false,
+        inlay_hints = false,
+      },
+      win = {
+        width = 1, -- Force 100% width
+        height = 1, -- Force 100% height
+        row = 0,
+        col = 0,
+        padding = { 0, 0 }, -- Explicitly no padding
+        border = "none", -- No border
+        backdrop = {
+          enabled = false, -- No dimming backdrop
+          transparent = true,
+        },
+        wo = {
+          number = false,
+          relativenumber = false,
+          signcolumn = "no",
+          statuscolumn = "",
+          cursorline = false,
+          cursorcolumn = false,
+          foldcolumn = "0",
+          list = false,
+        },
+      },
+      -- Customizing the minimalist appearance
+      styles = {
+        zen = {
+          width = 1,
+          height = 1,
+          backdrop = false,
+        }
+      },
+      -- Global options to hide bars during Zen
+      go = {
+        laststatus = 0,
+        showtabline = 0,
+      },
+    },
   },
   keys = {
     -- Top Level (Essential)
