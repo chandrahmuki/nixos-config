@@ -33,7 +33,7 @@ return {
     zen = {
       enabled = true,
       toggles = {
-        dim = true,
+        dim = false, -- Disable dimming of non-active lines
         git_signs = false,
         mini_diff = false,
         diagnostics = false,
