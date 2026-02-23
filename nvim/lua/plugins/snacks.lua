@@ -20,6 +20,7 @@ return {
         ]],
       },
     },
+    dim = { enabled = true }, -- Twilight-like focus
     explorer = { enabled = true },
     indent = { enabled = true },
     input = { enabled = true },
@@ -33,35 +34,25 @@ return {
     zen = {
       enabled = true,
       toggles = {
-        dim = false, -- Force disable line dimming
-        line_number = false, -- Force disable line numbers
-        relative_number = false, -- Force disable relative numbers
-        git_signs = false,
-        mini_diff = false,
-        diagnostics = false,
-        inlay_hints = false,
+        dim = true, -- Omerxx focus effect
+        line_number = false, -- Truly hide numbers
+        relative_number = false,
+        signcolumn = false,
+        statuscolumn = false,
       },
       win = {
-        style = "none", -- Disable default centered style
-        width = 0, -- Full width
-        height = 0, -- Full height
-        row = 0,
-        col = 0,
-        padding = { 0, 0 },
-        border = "none",
+        style = "zen", -- Restore the centered style
+        width = 0.85, -- Writing width like in the video
         backdrop = {
-          enabled = false, -- No dimming backdrop
-          transparent = true,
+          transparent = true, -- Avoid "grey bars" by using terminal background
+          opacity = 0.6, -- Subtle dimming of the background
         },
         wo = {
           number = false,
           relativenumber = false,
           signcolumn = "no",
           statuscolumn = "",
-          cursorline = false,
-          cursorcolumn = false,
           foldcolumn = "0",
-          list = false,
         },
       },
       -- Global options to hide bars during Zen
