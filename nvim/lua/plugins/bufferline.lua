@@ -7,11 +7,16 @@ return {
     config = function()
       require("bufferline").setup({
         options = {
-          mode = "tabs", -- Only show actual tabs (super compact)
-          separator_style = "slant", -- Modern slanted separators
-          show_buffer_close_icons = false, -- Hide close icons on each buffer
-          show_close_icon = false, -- Hide the global close icon
-          always_show_bufferline = true, -- Keep it visible
+          mode = "buffers", -- Back to buffers so you can see all your files!
+          separator_style = "slant",
+          show_buffer_close_icons = false,
+          show_close_icon = false,
+          always_show_bufferline = true,
+          -- Ultra-compact settings --
+          max_name_length = 15,
+          tab_size = 15,
+          diagnostics = false, -- Remove diagnostics to save space
+          show_tab_indicators = false,
         },
       })
 
