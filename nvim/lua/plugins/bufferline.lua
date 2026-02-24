@@ -7,11 +7,11 @@ return {
     config = function()
       require("bufferline").setup({
         options = {
-          mode = "buffers", -- ou "tabs"
-          separator_style = "slant", -- "slant", "thick", "thin", etc.
-          diagnostics = "nvim_lsp", -- affiche les erreurs LSP
-          show_buffer_close_icons = true,
-          show_close_icon = false,
+          mode = "tabs", -- Only show actual tabs (super compact)
+          separator_style = "slant", -- Modern slanted separators
+          show_buffer_close_icons = false, -- Hide close icons on each buffer
+          show_close_icon = false, -- Hide the global close icon
+          always_show_bufferline = true, -- Keep it visible
         },
       })
 
