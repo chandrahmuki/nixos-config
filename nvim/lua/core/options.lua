@@ -15,3 +15,4 @@ vim.opt.updatetime = 300
 
 vim.opt.scrolloff = 7
 vim.opt.mouse = ""
+vim.opt.cmdheight = 0 -- Hide command line when not used (MuggyVim Premium Style)
