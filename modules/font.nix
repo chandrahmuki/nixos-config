@@ -2,8 +2,7 @@
 
 {
   fonts.packages = with pkgs; [
-    # La version "Nerd Font" de Hack (indispensable pour les icônes)
-    nerd-fonts.hack
+    nerd-fonts.jetbrains-mono
     
     # Optionnel : Emojis et polices de base si tu ne les as pas
     noto-fonts-color-emoji
@@ -14,7 +13,7 @@
   fonts.fontconfig = {
     enable = true;
     defaultFonts = {
-      monospace = [ "Hack Nerd Font" ];
+      monospace = [ "JetBrainsMono Nerd Font" ];
       sansSerif = [ "DejaVu Sans" ];
       serif = [ "DejaVu Serif" ];
     };

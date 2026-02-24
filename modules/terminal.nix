@@ -5,7 +5,7 @@
     enable = true;
     settings = {
       main = {
-        font = "Hack Nerd Font:size=18";
+        font = "JetBrainsMono Nerd Font:size=18";
         pad = "15x15";
       };
       colors = {
