@@ -7,10 +7,8 @@ return {
     bigfile = { enabled = true },
     dashboard = {
       enabled = true,
-      -- The 'width' key was removed as per the implied change
-      -- The 'preset' key was removed and its content moved up
       sections = {
-        { section = "header" },
+        { section = "text", text = "✨ Welcome to MuggyVim ✨", hl = "header", padding = 1 },
         { section = "keys", gap = 1, padding = 1 },
         { section = "startup" },
       },
@@ -33,6 +31,7 @@ return {
     { "<leader>.",       function() Snacks.explorer() end, desc = "Browse Files" },
     { "<leader>/",       function() Snacks.picker.grep() end, desc = "Search" },
     { "<leader>:",       function() Snacks.picker.command_history() end, desc = "Command History" },
+    { "<leader>P",       function() Snacks.picker.commands() end, desc = "Command Palette" },
     { "<leader>e",       function() Snacks.explorer() end, desc = "File Explorer" },
 
     -- [f]ile / find
