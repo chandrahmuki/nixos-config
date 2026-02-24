@@ -55,7 +55,6 @@ return {
     { "<leader>sm", function() Snacks.picker.marks() end, desc = "Marks" },
 
     -- [u]i / util
-    { "<leader>uz", function() Snacks.zen() end, desc = "Toggle Zen Mode" },
     { "<leader>u.", function() Snacks.scratch() end, desc = "Scratch Buffer" },
     { "<leader>uS", function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
     { "<c-/>",     function() Snacks.terminal() end, desc = "Toggle Terminal" },
