@@ -7,10 +7,3 @@ vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI", "FocusGained", "BufEn
     end
   end,
 })
-
--- Notification quand un fichier est rechargé
-vim.api.nvim_create_autocmd("FileChangedShellPost", {
-  callback = function()
-    vim.notify("Fichier rechargé (modifié sur le disque) 📂🔄", vim.log.levels.INFO)
-  end,
-})
