@@ -85,8 +85,25 @@
 
       colorSchemes = {
         darkMode = true;
-        schemeType = "vibrant"; # Couleurs plus éclatantes extraites du wallpaper
-        useWallpaperColors = true; # Support matugen/dynamic theming
+        schemeType = "vibrant";
+        useWallpaperColors = false; # Desactive l'extraction auto pour forcer TokyoNight
+        
+        # Palette TokyoNight Moon (Material 3 Aliases)
+        customPalette = {
+          mPrimary = "#7aa2f7";       # Blue
+          mOnPrimary = "#1a1b26";     # Background
+          mSecondary = "#bb9af7";     # Magenta
+          mOnSecondary = "#1a1b26";
+          mTertiary = "#7dcfff";      # Cyan
+          mOnTertiary = "#1a1b26";
+          mSurface = "#1a1b26";       # Background
+          mOnSurface = "#c0caf5";     # Foreground
+          mSurfaceVariant = "#24283b";# Darker Background
+          mOnSurfaceVariant = "#a9b1d6";
+          mOutline = "#414868";       # Selection/Border
+          mError = "#f7768e";         # Red
+          mOnError = "#1a1b26";
+        };
       };
     };
 
