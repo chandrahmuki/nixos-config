@@ -8,7 +8,7 @@
   home.packages = [
     pkgs.gemini-cli
     pkgs.nodejs
-    pkgs.playwright-driver.browsers
+    pkgs.chromium
   ];
 
   # Gestion déclarative des paramètres de Gemini CLI
@@ -39,8 +39,9 @@
           "mcp-mermaid"
         ];
         env = {
-          PLAYWRIGHT_BROWSERS_PATH = "${pkgs.playwright-driver.browsers}";
+          PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH = "${pkgs.chromium}/bin/chromium";
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1";
+          CHROME_BIN = "${pkgs.chromium}/bin/chromium";
         };
       };
     };
