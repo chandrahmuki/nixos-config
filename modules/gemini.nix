@@ -33,16 +33,12 @@
         env = { };
       };
       mcp-mermaid = {
-        command = "npx";
+        command = "bash";
         args = [
-          "-y"
-          "mcp-mermaid"
+          "-c"
+          "PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=${pkgs.chromium}/bin/chromium PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npx -y mcp-mermaid"
         ];
-        env = {
-          PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH = "${pkgs.chromium}/bin/chromium";
-          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1";
-          CHROME_BIN = "${pkgs.chromium}/bin/chromium";
-        };
+        env = { };
       };
     };
   };
