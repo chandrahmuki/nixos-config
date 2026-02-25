@@ -11,5 +11,5 @@
     # La configuration est gérée dynamiquement par Matugen via un lien symbolique
   };
 
-  home.file.".config/mako/config".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/generated/mako";
+  home.file.".config/mako/config".source = config.lib.file.mkOutOfStoreSymlink "/home/david/nixos-config/generated/mako";
 }

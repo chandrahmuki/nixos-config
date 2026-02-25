@@ -75,5 +75,5 @@
     };
   };
 
-  home.file.".config/yazi/theme.toml".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/generated/yazi.toml";
+  home.file.".config/yazi/theme.toml".source = config.lib.file.mkOutOfStoreSymlink "/home/david/nixos-config/generated/yazi.toml";
 }
