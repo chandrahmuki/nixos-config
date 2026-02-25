@@ -8,11 +8,9 @@
   home.packages = [
     pkgs.gemini-cli
     pkgs.nodejs
-    pkgs.chromium
   ];
 
   # Gestion déclarative des paramètres de Gemini CLI
-  # On inclut les serveurs MCP existants et on fixe mcp-mermaid pour NixOS
   home.file."Documents/P-Project/.gemini/settings.json".text = builtins.toJSON {
     mcpServers = {
       atlassian-mcp-server = {
@@ -29,14 +27,6 @@
         args = [
           "-c"
           "GITHUB_PERSONAL_ACCESS_TOKEN=$(cat ${config.home.homeDirectory}/.config/antigravity/github_token) npx -y @modelcontextprotocol/server-github"
-        ];
-        env = { };
-      };
-      mcp-mermaid = {
-        command = "bash";
-        args = [
-          "-c"
-          "PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=${pkgs.chromium}/bin/chromium PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npx -y mcp-mermaid"
         ];
         env = { };
       };
