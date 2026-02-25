@@ -34,6 +34,7 @@
     ./modules/notifications.nix
     ./modules/gemini.nix
     ./modules/secrets.nix
+    ./modules/theme.nix
   ];
 
   programs.home-manager.enable = true;
