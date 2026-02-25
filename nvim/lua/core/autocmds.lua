@@ -7,3 +7,10 @@ vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "CursorHoldI", "FocusGai
     end
   end,
 })
+
+-- Notification passive quand un fichier est rechargé (sans prompt bloquant)
+vim.api.nvim_create_autocmd("FileChangedShellPost", {
+  callback = function()
+    vim.notify("Fichier synchronisé 📂🔄", vim.log.levels.INFO, { title = "MuggyVim", timeout = 2000 })
+  end,
+})
