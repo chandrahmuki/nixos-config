@@ -1,29 +1,29 @@
 [manager]
-cwd = { fg = "#82d3e1" }
-hovered = { fg = "#0e1415", bg = "#82d3e1", bold = true }
+cwd = { fg = "#7aa2f7" }
+hovered = { fg = "#1a1b26", bg = "#7aa2f7", bold = true }
 preview_hovered = { underline = true }
-find_keyword = { fg = "#82d3e1", italic = true }
-find_position = { fg = "#b1cbd0", bg = "#0e1415" }
+find_keyword = { fg = "#7aa2f7", italic = true }
+find_position = { fg = "#bb9af7", bg = "#1a1b26" }
 
 [status]
 separator_open  = ""
 separator_close = ""
-separator_style = { fg = "#0e1415", bg = "#0e1415" }
+separator_style = { fg = "#1a1b26", bg = "#2d3f76" }
 
 [select]
-border   = { fg = "#82d3e1" }
-active   = { fg = "#82d3e1", bold = true }
-inactive = { fg = "#dee3e5" }
+border   = { fg = "#7aa2f7" }
+active   = { fg = "#7aa2f7", bold = true }
+inactive = { fg = "#c0caf5" }
 
 [input]
-border   = { fg = "#82d3e1" }
-title    = { fg = "#82d3e1" }
-value    = { fg = "#dee3e5" }
+border   = { fg = "#7aa2f7" }
+title    = { fg = "#7aa2f7" }
+value    = { fg = "#c0caf5" }
 
 [completion]
-border   = { fg = "#82d3e1" }
-active   = { fg = "#0e1415", bg = "#82d3e1" }
-inactive = { fg = "#dee3e5" }
+border   = { fg = "#7aa2f7" }
+active   = { fg = "#1a1b26", bg = "#7aa2f7" }
+inactive = { fg = "#c0caf5" }
 
 [file]
-selection = { fg = "#0e1415", bg = "#82d3e1" }
+selection = { fg = "#1a1b26", bg = "#7aa2f7" }

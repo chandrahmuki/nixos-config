@@ -21,7 +21,7 @@
       ripgrep
       # fd (Managed by utils.nix)
       # fzf (Managed by utils.nix)
-      nodejs
+      # nodejs (Managed by utils.nix)
       python3
       lua-language-server
       nil # Nix LSP

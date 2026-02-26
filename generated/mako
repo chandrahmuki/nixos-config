@@ -6,12 +6,12 @@ margin=10
 padding=12
 border-size=2
 border-radius=8
-background-color=#0e1415ee
-text-color=#dee3e5
-border-color=#82d3e1
-progress-color=#82d3e1
+background-color=#1a1b26ee
+text-color=#c0caf5
+border-color=#7aa2f7
+progress-color=#7aa2f7
 default-timeout=5000
 
 [urgency=critical]
 default-timeout=0
-border-color=#ffb4ab
+border-color=#f7768e

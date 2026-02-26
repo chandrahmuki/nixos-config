@@ -4,7 +4,9 @@
     "nix.serverSettings": {
         "nil": {
             "formatting": {
-                "command": [ "nixfmt" ]
+                "command": [
+                    "nixfmt"
+                ]
             }
         }
     },
@@ -21,5 +23,6 @@
     "terminal.integrated.env.linux": {
         "ELECTRON_OZONE_PLATFORM_HINT": "auto",
         "WAYLAND_DISPLAY": "wayland-1"
-    }
+    },
+    "explorer.confirmDelete": false
 }

@@ -3,7 +3,7 @@
 {
   home.username = username;
   home.homeDirectory = "/home/${username}";
-  home.stateVersion = "24.11";
+  home.stateVersion = "25.11";
 
   # On importe ici les fichiers qu'on va créer dans le dossier modules
   imports = [

@@ -7,7 +7,6 @@
 
   home.packages = [
     pkgs.gemini-cli
-    pkgs.nodejs
   ];
 
   # Gestion déclarative des paramètres de Gemini CLI
