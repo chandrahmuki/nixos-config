@@ -13,7 +13,7 @@ in
 {
   programs.zellij = {
     enable = true;
-    enableFishIntegration = true;
+    enableFishIntegration = false;
 
     extraConfig = ''
       keybinds {
@@ -29,7 +29,6 @@ in
     settings = {
       pane_frames = false;
       theme = "tokyonight-moon";
-      default_layout = "dev";
       mouse_mode = true;
       copy_on_select = true;
 
@@ -81,7 +80,7 @@ in
                 pane split_direction="vertical" {
                     pane edit="." focus=true
                     pane size="25%" {
-                        pane name="Gemini CLI" command="antigravity"
+                        pane name="Gemini CLI" command="gemini"
                         pane name="Terminal"
                     }
                 }
