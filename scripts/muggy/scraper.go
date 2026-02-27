@@ -19,13 +19,29 @@ func SearchSkillfish(query string) ([]MCPResult, error) {
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Muggy/1.0)")
+	
+	// Mimic a real browser to avoid 429 Too Many Requests
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8")
+	req.Header.Set("Accept-Language", "en-US,en;q=0.9")
 
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode == 429 {
+		// Fallback to a mock for now, later we'll add MCP Market scraper
+		return []MCPResult{
+			{
+				Name:   "rate-limited",
+				Desc:   "Skill.fish is rate-limiting us (Error 429). Please try again later or use 'muggy install <url>'.",
+				Source: "System",
+				URL:    "",
+			},
+		}, nil
+	}
 
 	if resp.StatusCode != 200 {
 		return nil, fmt.Errorf("skill.fish search failed with status %d", resp.StatusCode)
@@ -38,22 +54,17 @@ func SearchSkillfish(query string) ([]MCPResult, error) {
 
 	var results []MCPResult
 
-	// Try to parse the skill.fish search page. The structure might change, 
-	// but generally lists of skills are in specific elements.
-	// We are looking for links that contain "/skill/"
 	doc.Find("a[href^='/skill/']").Each(func(i int, s *goquery.Selection) {
 		link, _ := s.Attr("href")
 		// Extract name from URL
 		parts := strings.Split(link, "/")
 		if len(parts) > 0 {
 			name := parts[len(parts)-1]
-			// The description might be inside the a tag or adjacent
 			desc := strings.TrimSpace(s.Text())
 			if desc == "" {
 				desc = "Skill.fish package: " + name
 			}
 			
-			// Avoid duplicates
 			isDuplicate := false
 			for _, r := range results {
 				if r.Name == name {
@@ -64,10 +75,10 @@ func SearchSkillfish(query string) ([]MCPResult, error) {
 			
 			if !isDuplicate && name != "" {
 				results = append(results, MCPResult{
-					Name:        name,
-					Desc:        desc,
-					Source:      "Skill.fish",
-					URL:         "https://www.skill.fish" + link,
+					Name:   name,
+					Desc:   desc,
+					Source: "Skill.fish",
+					URL:    "https://www.skill.fish" + link,
 				})
 			}
 		}
