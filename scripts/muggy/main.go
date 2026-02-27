@@ -131,7 +131,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		if msg.Type == tea.KeyCtrlC || msg.Type == tea.KeyEsc {
+		// Only Ctrl+C exits globally. Esc is handled per-state for navigation.
+		if msg.Type == tea.KeyCtrlC {
 			return m, tea.Quit
 		}
 	case tea.WindowSizeMsg:
@@ -150,6 +151,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case stateSearchInput:
 		switch msg := msg.(type) {
 		case tea.KeyMsg:
+			if msg.Type == tea.KeyEsc {
+				return m, tea.Quit
+			}
 			if msg.Type == tea.KeyEnter {
 				m.searchQuery = m.searchInput.Value()
 				if m.searchQuery != "" {
@@ -186,6 +190,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case stateSearchResults:
 		switch msg := msg.(type) {
 		case tea.KeyMsg:
+			if msg.Type == tea.KeyEsc {
+				// Go back to search input
+				m.state = stateSearchInput
+				m.searchInput.SetValue("")
+				m.searchInput.Focus()
+				return m, textinput.Blink
+			}
 			if msg.Type == tea.KeyEnter {
 				if i, ok := m.resultsList.SelectedItem().(MCPResult); ok {
 					m.selectedMCP = &i
@@ -200,6 +211,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case stateTargetSelection:
 		switch msg := msg.(type) {
 		case tea.KeyMsg:
+			if msg.Type == tea.KeyEsc {
+				// Go back to search results
+				m.state = stateSearchResults
+				return m, nil
+			}
 			if msg.Type == tea.KeyEnter {
 				if i, ok := m.targetList.SelectedItem().(targetItem); ok {
 					if i.id == "custom" {
@@ -220,6 +236,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case stateCustomTargetInput:
 		switch msg := msg.(type) {
 		case tea.KeyMsg:
+			if msg.Type == tea.KeyEsc {
+				// Go back to target selection
+				m.state = stateTargetSelection
+				return m, nil
+			}
 			if msg.Type == tea.KeyEnter {
 				m.selectedTarget = m.destinationInput.Value()
 				if m.selectedTarget != "" {
@@ -241,39 +262,51 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.err = msg.err
 			m.state = stateDone
 		}
+
+	case stateDone:
+		switch msg := msg.(type) {
+		case tea.KeyMsg:
+			if msg.Type == tea.KeyEnter || msg.Type == tea.KeyEsc {
+				// Reset and go back to search
+				m.state = stateSearchInput
+				m.searchInput.SetValue("")
+				m.searchInput.Focus()
+				m.err = nil
+				m.installStatus = ""
+				m.selectedMCP = nil
+				m.selectedTarget = ""
+				return m, textinput.Blink
+			}
+		}
 	}
 
 	return m, tea.Batch(cmds...)
 }
 
 func (m model) View() string {
-	if m.err != nil {
-		return fmt.Sprintf("\nError: %v\n\nPress Esc to quit.\n", m.err)
-	}
-
 	header := titleStyle.Render("☕ muggy - Declarative MCP Manager") + "\n"
 
 	switch m.state {
 	case stateSearchInput:
-		return docStyle.Render(header + "\n" + m.searchInput.View() + "\n\n(Press Enter to search, Esc to quit)")
+		return docStyle.Render(header + "\n" + m.searchInput.View() + "\n\n(Enter: search · Esc: quit)")
 	case stateSearching:
 		return docStyle.Render(header + "\nSearching for '" + m.searchQuery + "'...")
 	case stateSearchResults:
-		return docStyle.Render(header + "\n" + m.resultsList.View())
+		return docStyle.Render(header + "\n" + m.resultsList.View() + "\n(Esc: back to search)")
 	case stateTargetSelection:
 		msg := fmt.Sprintf("Selected: %s\nWhere do you want to install it?", m.selectedMCP.Name)
-		return docStyle.Render(header + "\n" + msg + "\n\n" + m.targetList.View())
+		return docStyle.Render(header + "\n" + msg + "\n\n" + m.targetList.View() + "\n(Esc: back to results)")
 	case stateCustomTargetInput:
 		msg := fmt.Sprintf("Selected: %s\nEnter the absolute path below:", m.selectedMCP.Name)
-		return docStyle.Render(header + "\n" + msg + "\n\n" + m.destinationInput.View() + "\n\n(Press Enter to confirm)")
+		return docStyle.Render(header + "\n" + msg + "\n\n" + m.destinationInput.View() + "\n\n(Enter: confirm · Esc: back)")
 	case stateInstalling:
 		return docStyle.Render(header + "\nInstalling " + m.selectedMCP.Name + "...\nThis may take a moment.")
 	case stateDone:
 		var output string
 		if m.err != nil {
-			output = fmt.Sprintf("Installation failed: %v", m.err)
+			output = fmt.Sprintf("\n❌ Error: %v\n\nPress Enter for new search · Ctrl+C to quit.", m.err)
 		} else {
-			output = fmt.Sprintf("\n✅ Installation Complete!\n\n%s\n\nPress Esc to exit.", m.installStatus)
+			output = fmt.Sprintf("\n✅ Installation Complete!\n\n%s\n\nPress Enter for new search · Ctrl+C to quit.", m.installStatus)
 		}
 		return docStyle.Render(header + output)
 	}
