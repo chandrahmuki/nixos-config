@@ -25,5 +25,6 @@
         "WAYLAND_DISPLAY": "wayland-1"
     },
     "explorer.confirmDelete": false,
-    "workbench.colorTheme": "Tokyo Night"
+    "workbench.colorTheme": "Tokyo Night",
+    "python.languageServer": "Default"
 }

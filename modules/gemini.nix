@@ -7,15 +7,13 @@
 
   home.packages = [
     pkgs.gemini-cli
-    
-    # Wrapper for skillfish (AI agent skill manager)
-    (pkgs.writeShellScriptBin "skillfish" ''
-      exec npx -y skillfish "$@"
-    '')
+    pkgs.nodejs
+
   ];
 
   # Gestion déclarative des paramètres de Gemini CLI
   home.file."Documents/P-Project/.gemini/settings.json".text = builtins.toJSON {
+    # MCP_CONFIG_START
     mcpServers = {
       atlassian-mcp-server = {
         command = "npx";
@@ -34,7 +32,13 @@
         ];
         env = { };
       };
+      nix-cleanup = {
+        command = "npx";
+        args = [ "skillfish" "add" "tobi/dotnix" "nix-cleanup" ];
+        env = { };
+      };
     };
+    # MCP_CONFIG_END
   };
 
   # Note : Pour utiliser cet outil, tu devras configurer ta clé API.

@@ -43,6 +43,7 @@
 
 ## Vitesse & Focus Chirurgical (Anti-Lag)
 - **Priorité aux outils natifs** : J'utilise `list_dir` endowed `view_file` au lieu de `ls` ou `cat` dans le terminal. C'est instantané et ça ne "bloque" jamais.
+- **Utilisation du MCP Sequential Thinking** : Cet outil ne doit être utilisé **UNIQUEMENT** pour des tâches très complexes ou des requêtes de débogage avancées où je suis bloqué. Interdiction de l'invoquer pour les requêtes routinières afin d'éviter le lag de génération.
 - **Hygiène du Workspace (Zéro Bloat)** : 
     - Interdiction de créer des dossiers cachés inutiles (ex: `.vscode`, `.tmp`) sans demande explicite.
     - Les **Skills** doivent rester légers : pas de dossiers `references/` ou `scripts/` massifs. Si un skill dépasse 200 lignes, il doit être simplifié.
