@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -156,6 +157,64 @@ func SearchMCPMarket(query string) ([]MCPResult, error) {
 			}
 		}
 	})
+
+	return results, nil
+}
+
+// SearchGitHub provides a reliable fallback by searching GitHub repositories
+func SearchGitHub(query string) ([]MCPResult, error) {
+	// Search for repositories matching the query and are explicitly mcp servers
+	// We use "mcp-server OR mcp in:name,description" + the user's query
+	searchQuery := fmt.Sprintf("%s mcp-server in:readme,description,name", query)
+	searchURL := fmt.Sprintf("https://api.github.com/search/repositories?q=%s&sort=stars&order=desc&per_page=5", url.QueryEscape(searchQuery))
+	
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", searchURL, nil)
+	if err != nil {
+		return nil, err
+	}
+	
+	req.Header.Set("User-Agent", "Muggy-CLI")
+	req.Header.Set("Accept", "application/vnd.github.v3+json")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("github api failed with status %d", resp.StatusCode)
+	}
+
+	var data struct {
+		Items []struct {
+			Name        string `json:"name"`
+			FullName    string `json:"full_name"`
+			Description string `json:"description"`
+			HtmlURL     string `json:"html_url"`
+		} `json:"items"`
+	}
+
+	decoder := json.NewDecoder(resp.Body)
+	if err := decoder.Decode(&data); err != nil {
+		return nil, err
+	}
+
+	var results []MCPResult
+	for _, item := range data.Items {
+		desc := item.Description
+		if desc == "" {
+			desc = "GitHub Repository: " + item.FullName
+		}
+		
+		results = append(results, MCPResult{
+			Name:   item.Name,
+			Desc:   desc,
+			Source: "GitHub",
+			URL:    item.HtmlURL,
+		})
+	}
 
 	return results, nil
 }
