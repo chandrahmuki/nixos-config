@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -210,23 +211,70 @@ func SearchGitHub(query string) ([]MCPResult, error) {
 	return results, nil
 }
 
-// ScrapeInstallationCommand tries to extract the npx/uvx command from the page
+// ScrapeInstallationCommand tries to extract the npx/uvx command from the page or repo
 func ScrapeInstallationCommand(pageURL string) (string, error) {
 	client := &http.Client{}
+
+	// If it's a GitHub URL, use the GitHub API to fetch the README
+	if strings.Contains(pageURL, "github.com") {
+		// Extract owner and repo from https://github.com/owner/repo
+		cleanURL := strings.TrimRight(pageURL, "/")
+		parts := strings.Split(cleanURL, "github.com/")
+		if len(parts) == 2 {
+			repoPath := parts[1]
+			apiURL := fmt.Sprintf("https://api.github.com/repos/%s/readme", repoPath)
+			
+			req, _ := http.NewRequest("GET", apiURL, nil)
+			req.Header.Set("User-Agent", "Muggy-CLI")
+			req.Header.Set("Accept", "application/vnd.github.v3+json")
+			
+			resp, err := client.Do(req)
+			if err != nil {
+				return "", err
+			}
+			defer resp.Body.Close()
+
+			if resp.StatusCode == 200 {
+				var data struct {
+					Content  string `json:"content"`
+					Encoding string `json:"encoding"`
+				}
+				if err := json.NewDecoder(resp.Body).Decode(&data); err == nil {
+					if data.Encoding == "base64" {
+						decodedBytes, err := base64.StdEncoding.DecodeString(strings.ReplaceAll(data.Content, "\n", ""))
+						if err == nil {
+							text := string(decodedBytes)
+							lines := strings.Split(text, "\n")
+							for _, line := range lines {
+								if strings.Contains(line, "npx") || strings.Contains(line, "uvx") {
+									foundCmd := strings.TrimSpace(line)
+									foundCmd = strings.ReplaceAll(foundCmd, "`", "")
+									return foundCmd, nil
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return "", fmt.Errorf("could not find an installation command (npx/uvx) in the GitHub repository")
+	}
+
+	// Original scraping logic for other HTML sites (e.g., skill.fish, mcp market)
 	req, err := http.NewRequest("GET", pageURL, nil)
 	if err != nil {
 		return "", err
 	}
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Muggy/1.0)")
-
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
 	resp, err := client.Do(req)
+
 	if err != nil {
 		return "", err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return "", fmt.Errorf("failed to fetch page %s (status %d)", pageURL, resp.StatusCode)
+		return "", fmt.Errorf("failed to fetch page (status %d) for url %s", resp.StatusCode, pageURL)
 	}
 
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
@@ -236,11 +284,22 @@ func ScrapeInstallationCommand(pageURL string) (string, error) {
 
 	var foundCmd string
 	
-	// First look at JSON-Ld or specific code blocks
+	// Check raw text first (good for text sites)
+	text := doc.Text()
+	lines := strings.Split(text, "\n")
+	for _, line := range lines {
+		if strings.Contains(line, "npx") || strings.Contains(line, "uvx") {
+			foundCmd = strings.TrimSpace(line)
+			// Strip markdown backticks if present
+			foundCmd = strings.ReplaceAll(foundCmd, "`", "")
+			return foundCmd, nil
+		}
+	}
+
+	// Fallback to HTML parsing for specific code blocks
 	doc.Find("code, pre").Each(func(i int, s *goquery.Selection) {
 		text := strings.TrimSpace(s.Text())
 		if strings.Contains(text, "npx") || strings.Contains(text, "uvx") {
-			// Find the first line with npx or uvx
 			lines := strings.Split(text, "\n")
 			for _, line := range lines {
 				if strings.Contains(line, "npx") || strings.Contains(line, "uvx") {
