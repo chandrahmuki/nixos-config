@@ -155,9 +155,8 @@ func SearchMCPMarket(query string) ([]MCPResult, error) {
 
 // SearchGitHub provides a reliable fallback by searching GitHub repositories
 func SearchGitHub(query string) ([]MCPResult, error) {
-	// Search for repositories matching the query and are explicitly mcp servers
-	// We use "mcp-server OR mcp in:name,description" + the user's query
-	searchQuery := fmt.Sprintf("%s mcp-server in:readme,description,name", query)
+	// Search for repositories matching the query and are explicitly mcp servers using GitHub topics
+	searchQuery := fmt.Sprintf("%s topic:mcp-server", query)
 	searchURL := fmt.Sprintf("https://api.github.com/search/repositories?q=%s&sort=stars&order=desc&per_page=20", url.QueryEscape(searchQuery))
 	
 	client := &http.Client{}
