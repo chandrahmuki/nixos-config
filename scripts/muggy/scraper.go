@@ -28,6 +28,59 @@ func extractCmdIfValid(line string) string {
 	return ""
 }
 
+// searchRepos is a helper that queries the GitHub Repository Search API and returns MCPResult entries.
+// It deduplicates by URL using the provided seenKeys map.
+func searchRepos(client *http.Client, queries []string, seenKeys map[string]bool, perPage int) []MCPResult {
+	var results []MCPResult
+	for _, sq := range queries {
+		searchURL := fmt.Sprintf("https://api.github.com/search/repositories?q=%s&sort=stars&order=desc&per_page=%d", url.QueryEscape(sq), perPage)
+		req, err := http.NewRequest("GET", searchURL, nil)
+		if err != nil {
+			continue
+		}
+		req.Header.Set("User-Agent", "Muggy-CLI")
+		req.Header.Set("Accept", "application/vnd.github.v3+json")
+
+		resp, err := client.Do(req)
+		if err != nil {
+			continue
+		}
+		if resp.StatusCode != 200 {
+			resp.Body.Close()
+			continue
+		}
+
+		var data struct {
+			Items []struct {
+				Name        string `json:"name"`
+				FullName    string `json:"full_name"`
+				Description string `json:"description"`
+				HtmlURL     string `json:"html_url"`
+			} `json:"items"`
+		}
+		if err := json.NewDecoder(resp.Body).Decode(&data); err == nil {
+			for _, item := range data.Items {
+				if seenKeys[item.HtmlURL] {
+					continue
+				}
+				seenKeys[item.HtmlURL] = true
+				desc := item.Description
+				if desc == "" {
+					desc = "GitHub Repository: " + item.FullName
+				}
+				results = append(results, MCPResult{
+					Name:   item.Name,
+					Desc:   desc,
+					Source: "GitHub",
+					URL:    item.HtmlURL,
+				})
+			}
+		}
+		resp.Body.Close()
+	}
+	return results
+}
+
 // SearchGitHub provides a reliable discovery mechanism by searching GitHub repositories
 func SearchGitHub(query string, entityType string) ([]MCPResult, error) {
 	var allResults []MCPResult
@@ -36,7 +89,7 @@ func SearchGitHub(query string, entityType string) ([]MCPResult, error) {
 
 	if entityType == "skill" {
 		// --- SKILL SEARCH ---
-		// Try GitHub Code Search API first (requires auth token)
+		// Try GitHub Code Search API first (requires auth token for precise results)
 		ghToken := os.Getenv("GITHUB_TOKEN")
 		if ghToken == "" {
 			ghToken = os.Getenv("GITHUB_PERSONAL_ACCESS_TOKEN")
@@ -71,62 +124,58 @@ func SearchGitHub(query string, entityType string) ([]MCPResult, error) {
 					continue
 				}
 
-			var data struct {
-				Items []struct {
-					Name string `json:"name"`
-					Path string `json:"path"`
-					Repo struct {
-						FullName    string `json:"full_name"`
-						Description string `json:"description"`
-						HtmlURL     string `json:"html_url"`
-					} `json:"repository"`
-				} `json:"items"`
-			}
-
-			decoder := json.NewDecoder(resp.Body)
-			if err := decoder.Decode(&data); err == nil {
-				for _, item := range data.Items {
-					// Extract skill name from path: .agent/skills/code-quality/SKILL.md -> code-quality
-					skillPath := item.Path
-					parts := strings.Split(skillPath, "/")
-					skillName := "unknown-skill"
-					// Find the directory name right before SKILL.md
-					for i, p := range parts {
-						if strings.EqualFold(p, "SKILL.md") || strings.EqualFold(p, "skill.md") {
-							if i > 0 {
-								skillName = parts[i-1]
-							}
-							break
-						}
-					}
-					// If skill name is just "skills" (flat file), use repo name
-					if skillName == "skills" {
-						skillName = strings.Split(item.Repo.FullName, "/")[1]
-					}
-
-					// Deduplicate by repo+skill combination
-					dedupeKey := item.Repo.FullName + "/" + skillName
-					if seenKeys[dedupeKey] {
-						continue
-					}
-					seenKeys[dedupeKey] = true
-
-					desc := item.Repo.Description
-					if desc == "" {
-						desc = "Skill from " + item.Repo.FullName
-					}
-					// Prepend the skill path for context
-					displayName := fmt.Sprintf("%s (%s)", skillName, item.Repo.FullName)
-
-					allResults = append(allResults, MCPResult{
-						Name:   displayName,
-						Desc:   desc,
-						Source: "GitHub Code",
-						URL:    item.Repo.HtmlURL,
-					})
+				var data struct {
+					Items []struct {
+						Name string `json:"name"`
+						Path string `json:"path"`
+						Repo struct {
+							FullName    string `json:"full_name"`
+							Description string `json:"description"`
+							HtmlURL     string `json:"html_url"`
+						} `json:"repository"`
+					} `json:"items"`
 				}
-			}
-			resp.Body.Close()
+
+				if err := json.NewDecoder(resp.Body).Decode(&data); err == nil {
+					for _, item := range data.Items {
+						// Extract skill name from path: .agent/skills/code-quality/SKILL.md -> code-quality
+						parts := strings.Split(item.Path, "/")
+						skillName := "unknown-skill"
+						for i, p := range parts {
+							if strings.EqualFold(p, "SKILL.md") || strings.EqualFold(p, "skill.md") {
+								if i > 0 {
+									skillName = parts[i-1]
+								}
+								break
+							}
+						}
+						// If skill name is just "skills" (flat file), use repo name
+						if skillName == "skills" {
+							skillName = strings.Split(item.Repo.FullName, "/")[1]
+						}
+
+						// Deduplicate by repo+skill combination
+						dedupeKey := item.Repo.FullName + "/" + skillName
+						if seenKeys[dedupeKey] {
+							continue
+						}
+						seenKeys[dedupeKey] = true
+
+						desc := item.Repo.Description
+						if desc == "" {
+							desc = "Skill from " + item.Repo.FullName
+						}
+						displayName := fmt.Sprintf("%s (%s)", skillName, item.Repo.FullName)
+
+						allResults = append(allResults, MCPResult{
+							Name:   displayName,
+							Desc:   desc,
+							Source: "GitHub Code",
+							URL:    item.Repo.HtmlURL,
+						})
+					}
+				}
+				resp.Body.Close()
 			}
 		}
 
@@ -137,98 +186,14 @@ func SearchGitHub(query string, entityType string) ([]MCPResult, error) {
 				fmt.Sprintf("%s topic:claude-skill", query),
 				fmt.Sprintf("%s topic:gemini-skill", query),
 			}
-			for _, sq := range topicQueries {
-				searchURL := fmt.Sprintf("https://api.github.com/search/repositories?q=%s&sort=stars&order=desc&per_page=15", url.QueryEscape(sq))
-				req, err := http.NewRequest("GET", searchURL, nil)
-				if err != nil {
-					continue
-				}
-				req.Header.Set("User-Agent", "Muggy-CLI")
-				req.Header.Set("Accept", "application/vnd.github.v3+json")
-
-				resp, err := client.Do(req)
-				if err != nil {
-					continue
-				}
-				if resp.StatusCode != 200 {
-					resp.Body.Close()
-					continue
-				}
-
-				var data struct {
-					Items []struct {
-						Name        string `json:"name"`
-						FullName    string `json:"full_name"`
-						Description string `json:"description"`
-						HtmlURL     string `json:"html_url"`
-					} `json:"items"`
-				}
-				if err := json.NewDecoder(resp.Body).Decode(&data); err == nil {
-					for _, item := range data.Items {
-						if seenKeys[item.HtmlURL] {
-							continue
-						}
-						seenKeys[item.HtmlURL] = true
-						desc := item.Description
-						if desc == "" {
-							desc = "GitHub Repository: " + item.FullName
-						}
-						allResults = append(allResults, MCPResult{
-							Name:   item.Name,
-							Desc:   desc,
-							Source: "GitHub",
-							URL:    item.HtmlURL,
-						})
-					}
-				}
-				resp.Body.Close()
-			}
+			allResults = searchRepos(client, topicQueries, seenKeys, 15)
 		}
 	} else {
 		// --- MCP SEARCH: Use GitHub Repository Search API ---
-		searchURL := fmt.Sprintf("https://api.github.com/search/repositories?q=%s+topic:mcp-server&sort=stars&order=desc&per_page=20", url.QueryEscape(query))
-
-		req, err := http.NewRequest("GET", searchURL, nil)
-		if err != nil {
-			return nil, err
+		mcpQueries := []string{
+			fmt.Sprintf("%s topic:mcp-server", query),
 		}
-
-		req.Header.Set("User-Agent", "Muggy-CLI")
-		req.Header.Set("Accept", "application/vnd.github.v3+json")
-
-		resp, err := client.Do(req)
-		if err != nil {
-			return nil, err
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != 200 {
-			return nil, fmt.Errorf("GitHub API returned status %d", resp.StatusCode)
-		}
-
-		var data struct {
-			Items []struct {
-				Name        string `json:"name"`
-				FullName    string `json:"full_name"`
-				Description string `json:"description"`
-				HtmlURL     string `json:"html_url"`
-			} `json:"items"`
-		}
-
-		if err := json.NewDecoder(resp.Body).Decode(&data); err == nil {
-			for _, item := range data.Items {
-				desc := item.Description
-				if desc == "" {
-					desc = "GitHub Repository: " + item.FullName
-				}
-				allResults = append(allResults, MCPResult{
-					Name:   item.Name,
-					Desc:   desc,
-					Source: "GitHub",
-					URL:    item.HtmlURL,
-				})
-			}
-		}
+		allResults = searchRepos(client, mcpQueries, seenKeys, 20)
 	}
 
 	if len(allResults) == 0 {

@@ -9,3 +9,4 @@ modules/mcp_config.json
 # Build results
 result
 result-*
+scripts/muggy/muggy
