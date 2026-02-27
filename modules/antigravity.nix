@@ -5,6 +5,7 @@ let
   nixExtensions = [
     pkgs.vscode-extensions.bbenoist.nix
     pkgs.vscode-extensions.jnoortheen.nix-ide
+    pkgs.vscode-extensions.enkia.tokyo-night
   ];
 
   # Helper pour créer les liens symboliques d'extensions dans le dossier Antigravity
