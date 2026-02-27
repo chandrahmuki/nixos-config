@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/textinput"
@@ -28,6 +30,7 @@ const (
 	stateSearching
 	stateSearchResults
 	stateTargetSelection
+	stateCustomTargetInput
 	stateInstalling
 	stateDone
 )
@@ -38,9 +41,12 @@ type model struct {
 	resultsList list.Model
 	targetList  list.Model
 	
-	searchQuery string
-	selectedMCP *MCPResult
+	searchQuery    string
+	entityType     string // "mcp" or "skill"
+	selectedMCP    *MCPResult
 	selectedTarget string
+	
+	destinationInput textinput.Model // For typing the path for skills
 	
 	installStatus string
 	err           error
@@ -60,14 +66,21 @@ func (m MCPResult) Title() string       { return m.Name }
 func (m MCPResult) Description() string { return m.Desc + "\n" + m.Source }
 func (m MCPResult) FilterValue() string { return m.Name }
 
-func initialModel(subcommand string, arg string) model {
+func initialModel(entityType string, subcommand string, arg string) model {
 	ti := textinput.New()
-	ti.Placeholder = "Search for an MCP (e.g. nix, python, postgres)..."
+	ti.Placeholder = fmt.Sprintf("Search for an %s (e.g. nix, python, git)...", strings.ToUpper(entityType))
 	ti.CharLimit = 156
 	ti.Width = 50
 
+	destInput := textinput.New()
+	destInput.Placeholder = "Enter absolute path to install skill (e.g. /home/user/nixos-config/.agent/skills/)..."
+	destInput.CharLimit = 256
+	destInput.Width = 60
+
 	m := model{
-		searchInput: ti,
+		searchInput:      ti,
+		destinationInput: destInput,
+		entityType:       entityType,
 	}
 
 	if subcommand == "search" && arg != "" {
@@ -77,12 +90,13 @@ func initialModel(subcommand string, arg string) model {
         // Fast track install
 		m.searchQuery = arg
         
-        // Try to create a dummy mcpresult from url
-        m.selectedMCP = &MCPResult{
-            Name: "MCP Target",
-            URL: arg,
-            Source: "Direct Install",
-        }
+		// Try to create a dummy mcpresult from url
+		m.selectedMCP = &MCPResult{
+			Name: "Target",
+			URL: arg,
+			Source: "Direct Install",
+		}
+        
 		m.setupTargetList()
 		m.state = stateTargetSelection
 	} else {
@@ -97,8 +111,12 @@ func (m model) Init() tea.Cmd {
 	var cmds []tea.Cmd
 	cmds = append(cmds, textinput.Blink)
 
+	if m.state == stateCustomTargetInput {
+		cmds = append(cmds, textinput.Blink)
+	}
+
 	if m.state == stateSearching && m.searchQuery != "" {
-		cmds = append(cmds, performSearch(m.searchQuery))
+		cmds = append(cmds, performSearch(m.searchQuery, m.entityType))
 	} else if m.state == stateTargetSelection && m.selectedMCP != nil {
         // For direct install we can skip directly to installing if we know the target,
         // but since we don't have a target CLI arg yet, we just show the target list.
@@ -136,7 +154,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.searchQuery = m.searchInput.Value()
 				if m.searchQuery != "" {
 					m.state = stateSearching
-					return m, performSearch(m.searchQuery)
+					return m, performSearch(m.searchQuery, m.entityType)
 				}
 			}
 		}
@@ -184,13 +202,34 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case tea.KeyMsg:
 			if msg.Type == tea.KeyEnter {
 				if i, ok := m.targetList.SelectedItem().(targetItem); ok {
+					if i.id == "custom" {
+						m.state = stateCustomTargetInput
+						m.destinationInput.Focus()
+						return m, textinput.Blink
+					}
 					m.selectedTarget = i.id
 					m.state = stateInstalling
-					return m, performInstall(*m.selectedMCP, m.selectedTarget)
+					return m, performInstall(*m.selectedMCP, m.selectedTarget, m.entityType)
 				}
 			}
 		}
+		
 		m.targetList, cmd = m.targetList.Update(msg)
+		cmds = append(cmds, cmd)
+
+	case stateCustomTargetInput:
+		switch msg := msg.(type) {
+		case tea.KeyMsg:
+			if msg.Type == tea.KeyEnter {
+				m.selectedTarget = m.destinationInput.Value()
+				if m.selectedTarget != "" {
+					m.state = stateInstalling
+					return m, performInstall(*m.selectedMCP, m.selectedTarget, m.entityType)
+				}
+			}
+		}
+		
+		m.destinationInput, cmd = m.destinationInput.Update(msg)
 		cmds = append(cmds, cmd)
 		
 	case stateInstalling:
@@ -224,6 +263,9 @@ func (m model) View() string {
 	case stateTargetSelection:
 		msg := fmt.Sprintf("Selected: %s\nWhere do you want to install it?", m.selectedMCP.Name)
 		return docStyle.Render(header + "\n" + msg + "\n\n" + m.targetList.View())
+	case stateCustomTargetInput:
+		msg := fmt.Sprintf("Selected: %s\nEnter the absolute path below:", m.selectedMCP.Name)
+		return docStyle.Render(header + "\n" + msg + "\n\n" + m.destinationInput.View() + "\n\n(Press Enter to confirm)")
 	case stateInstalling:
 		return docStyle.Render(header + "\nInstalling " + m.selectedMCP.Name + "...\nThis may take a moment.")
 	case stateDone:
@@ -248,21 +290,91 @@ func (t targetItem) Title() string       { return t.title }
 func (t targetItem) Description() string { return t.desc }
 func (t targetItem) FilterValue() string { return t.title }
 
-func (m *model) setupTargetList() {
-	items := []list.Item{
-		targetItem{id: "both", title: "Both (Recommended)", desc: "Install in Gemini CLI and Antigravity IDE"},
-		targetItem{id: "gemini", title: "Gemini CLI", desc: "Install only in modules/gemini.nix"},
-		targetItem{id: "antigravity", title: "Antigravity IDE", desc: "Install only in .agent/mcp_config.json"},
+func discoverTargets(entityType string) []string {
+	home, _ := os.UserHomeDir()
+
+	// Scan the entire home directory
+	searchDirs := []string{home}
+
+	var results []string
+	seenResults := make(map[string]bool)
+
+	for _, root := range searchDirs {
+		filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error {
+			if err != nil {
+				return nil
+			}
+			if d.IsDir() {
+				// Skip noisy directories
+				if d.Name() == ".git" || d.Name() == "node_modules" || d.Name() == "result" {
+					return filepath.SkipDir
+				}
+				// Limit depth
+				rel, _ := filepath.Rel(root, path)
+				if strings.Count(rel, string(os.PathSeparator)) > 4 {
+					return filepath.SkipDir
+				}
+				// For skills: match any directory literally named "skills"
+				if entityType == "skill" && d.Name() == "skills" {
+					if !seenResults[path] {
+						results = append(results, path)
+						seenResults[path] = true
+					}
+					return filepath.SkipDir // Don't recurse inside
+				}
+			} else {
+				// For MCPs: match known config filenames
+				if entityType == "mcp" {
+					if d.Name() == "mcp_config.json" || d.Name() == "gemini.nix" || d.Name() == "claude_desktop_config.json" {
+						if !seenResults[path] {
+							results = append(results, path)
+							seenResults[path] = true
+						}
+					}
+				}
+			}
+			return nil
+		})
 	}
+
+	return results
+}
+
+func (m *model) setupTargetList() {
+	targets := discoverTargets(m.entityType)
+	var items []list.Item
+	
+	for _, t := range targets {
+		desc := "Detected config file"
+		if m.entityType == "skill" {
+			desc = "Detected skills directory"
+		}
+		items = append(items, targetItem{
+			id:    t,
+			title: t,
+			desc:  desc,
+		})
+	}
+	
+	items = append(items, targetItem{
+		id:    "custom",
+		title: "Enter custom path...",
+		desc:  "Manually type the absolute path",
+	})
+
 	delegate := list.NewDefaultDelegate()
 	w := m.width
 	if w == 0 { w = 80 }
 	h := m.height
 	if h == 0 { h = 20 }
 	m.targetList = list.New(items, delegate, w, h)
-	m.targetList.Title = "Select Target Profile"
+	if m.entityType == "skill" {
+		m.targetList.Title = "Select Skill Installation Directory"
+	} else {
+		m.targetList.Title = "Select MCP Configuration File"
+	}
 	m.targetList.SetShowStatusBar(false)
-	m.targetList.SetFilteringEnabled(false)
+	m.targetList.SetFilteringEnabled(true)
 }
 
 // --- Commands ---
@@ -274,41 +386,28 @@ type searchResultsMsg struct {
 type installResultMsg string
 type errMsg struct{ err error }
 
-func performSearch(query string) tea.Cmd {
+func performSearch(query string, entityType string) tea.Cmd {
 	return func() tea.Msg {
 		var combined []MCPResult
 		
-		skillFishResults, err1 := SearchSkillfish(query)
-		marketResults, err2 := SearchMCPMarket(query)
-		githubResults, err3 := SearchGitHub(query)
+		githubResults, err := SearchGitHub(query, entityType)
 
-		if err1 == nil {
-			combined = append(combined, skillFishResults...)
-		}
-		if err2 == nil {
-			combined = append(combined, marketResults...)
-		}
-		if err3 == nil {
+		if err == nil {
 			combined = append(combined, githubResults...)
 		}
 
 		if len(combined) == 0 {
-			errText := ""
-			if err1 != nil { errText += fmt.Sprintf("SF: %v. ", err1) }
-			if err3 != nil { errText += fmt.Sprintf("GH: %v. ", err3) }
-			
-			// Provide fallback if all APIs fail
-			combined = []MCPResult{
-				{Name: "nix-cleanup", Desc: "Fallback Result. " + errText, Source: "System", URL: "https://www.skill.fish/skill/nix-ci-code-cleanup"},
-			}
+			errText := "No results found for your query."
+			if err != nil { errText = fmt.Sprintf("%v", err) }
+			return errMsg{fmt.Errorf(errText)}
 		}
 		return searchResultsMsg{results: combined}
 	}
 }
 
-func performInstall(mcp MCPResult, target string) tea.Cmd {
+func performInstall(mcp MCPResult, target string, entityType string) tea.Cmd {
 	return func() tea.Msg {
-		status, err := InstallMCP(mcp, target)
+		status, err := InstallMCP(mcp, target, entityType)
 		if err != nil {
 			return errMsg{err} // Send error as msg!
 		}
@@ -317,17 +416,41 @@ func performInstall(mcp MCPResult, target string) tea.Cmd {
 }
 
 func main() {
-	subcmd := ""
-	arg := ""
-
-	if len(os.Args) >= 2 {
-		subcmd = os.Args[1]
-	}
-	if len(os.Args) >= 3 {
-		arg = os.Args[2]
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: muggy [search|install] <query|url> [--mcp|--skill]")
+		os.Exit(1)
 	}
 
-	p := tea.NewProgram(initialModel(subcmd, arg), tea.WithAltScreen())
+	entityType := "mcp" // Default
+	var positionalArgs []string
+
+	// Custom parser to allow flags anywhere (before, middle, or end)
+	for i := 1; i < len(os.Args); i++ {
+		arg := os.Args[i]
+		if arg == "--mcp" {
+			entityType = "mcp"
+		} else if arg == "--skill" {
+			entityType = "skill"
+		} else {
+			positionalArgs = append(positionalArgs, arg)
+		}
+	}
+
+	if len(positionalArgs) < 1 {
+		fmt.Println("Usage: muggy [search|install] <query|url> [--mcp|--skill]")
+		os.Exit(1)
+	}
+
+	subcmd := positionalArgs[0]
+	queryArg := ""
+
+	if len(positionalArgs) >= 2 {
+		// Join all remaining positional args as the search query/URL 
+		// (allows searching multiple words without quotes)
+		queryArg = strings.Join(positionalArgs[1:], " ")
+	}
+
+	p := tea.NewProgram(initialModel(entityType, subcmd, queryArg), tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("Alas, there's been an error: %v", err)
 		os.Exit(1)

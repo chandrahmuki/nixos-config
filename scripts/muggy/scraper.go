@@ -12,203 +12,100 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-// SearchSkillfish searches the skill.fish website and parses results.
-func SearchSkillfish(query string) ([]MCPResult, error) {
-	searchURL := fmt.Sprintf("https://www.skill.fish/?q=%s", url.QueryEscape(query))
+func extractCmdIfValid(line string) string {
+	cmd := strings.TrimSpace(line)
+	cmd = strings.ReplaceAll(cmd, "`", "")
+	cmd = strings.TrimPrefix(cmd, "$ ")
+	cmd = strings.TrimPrefix(cmd, "> ")
+	cmd = strings.TrimPrefix(cmd, "- ")
+	cmd = strings.TrimPrefix(cmd, "* ")
+	cmd = strings.TrimSpace(cmd)
 	
+	if strings.HasPrefix(cmd, "npx ") || strings.HasPrefix(cmd, "uvx ") || cmd == "npx" || cmd == "uvx" {
+		return cmd
+	}
+	return ""
+}
+
+// SearchGitHub provides a reliable discovery mechanism by searching GitHub repositories
+func SearchGitHub(query string, entityType string) ([]MCPResult, error) {
+	var queries []string
+	if entityType == "skill" {
+		queries = []string{
+			fmt.Sprintf("%s topic:agent-skill", query),
+			fmt.Sprintf("%s topic:claude-skill", query),
+			fmt.Sprintf("%s topic:gemini-skill", query),
+			fmt.Sprintf("%s topic:antigravity-skill", query),
+		}
+	} else {
+		queries = []string{
+			fmt.Sprintf("%s topic:mcp-server", query),
+		}
+	}
+
+	var allResults []MCPResult
+	seenURLs := make(map[string]bool)
 	client := &http.Client{}
-	req, err := http.NewRequest("GET", searchURL, nil)
-	if err != nil {
-		return nil, err
-	}
-	
-	// Mimic a real browser to avoid 429 Too Many Requests
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8")
-	req.Header.Set("Accept-Language", "en-US,en;q=0.9")
 
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
+	for _, sq := range queries {
+		searchURL := fmt.Sprintf("https://api.github.com/search/repositories?q=%s&sort=stars&order=desc&per_page=20", url.QueryEscape(sq))
+		
+		req, err := http.NewRequest("GET", searchURL, nil)
+		if err != nil {
+			continue // Skip this query on error
+		}
+		
+		req.Header.Set("User-Agent", "Muggy-CLI")
+		req.Header.Set("Accept", "application/vnd.github.v3+json")
 
-	if resp.StatusCode == 429 {
-		return nil, fmt.Errorf("Skill.fish rate limit (429)")
-	}
+		resp, err := client.Do(req)
+		if err != nil {
+			continue
+		}
 
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("skill.fish search failed with status %d", resp.StatusCode)
-	}
+		if resp.StatusCode != 200 {
+			resp.Body.Close()
+			continue
+		}
 
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
-	if err != nil {
-		return nil, err
-	}
+		var data struct {
+			Items []struct {
+				Name        string `json:"name"`
+				FullName    string `json:"full_name"`
+				Description string `json:"description"`
+				HtmlURL     string `json:"html_url"`
+			} `json:"items"`
+		}
 
-	var results []MCPResult
-
-	doc.Find("a[href^='/skill/']").Each(func(i int, s *goquery.Selection) {
-		link, _ := s.Attr("href")
-		// Extract name from URL
-		parts := strings.Split(link, "/")
-		if len(parts) > 0 {
-			name := parts[len(parts)-1]
-			desc := strings.TrimSpace(s.Text())
-			if desc == "" {
-				desc = "Skill.fish package: " + name
-			}
-			
-			isDuplicate := false
-			for _, r := range results {
-				if r.Name == name {
-					isDuplicate = true
-					break
+		decoder := json.NewDecoder(resp.Body)
+		if err := decoder.Decode(&data); err == nil {
+			for _, item := range data.Items {
+				if seenURLs[item.HtmlURL] {
+					continue
 				}
-			}
-			
-			if !isDuplicate && name != "" {
-				results = append(results, MCPResult{
-					Name:   name,
+				seenURLs[item.HtmlURL] = true
+
+				desc := item.Description
+				if desc == "" {
+					desc = "GitHub Repository: " + item.FullName
+				}
+				
+				allResults = append(allResults, MCPResult{
+					Name:   item.Name,
 					Desc:   desc,
-					Source: "Skill.fish",
-					URL:    "https://www.skill.fish" + link,
+					Source: "GitHub",
+					URL:    item.HtmlURL,
 				})
 			}
 		}
-	})
-
-	return results, nil
-}
-
-// SearchMCPMarket searches mcpmarket.com
-func SearchMCPMarket(query string) ([]MCPResult, error) {
-	// Example search pattern, adapting to typical search paths
-	searchURL := fmt.Sprintf("https://www.mcpmarket.com/search?q=%s", url.QueryEscape(query))
-	
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", searchURL, nil)
-	if err != nil {
-		return nil, err
-	}
-	
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
-	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		// Just fail silently for the market if it throws 404/429 so it doesn't break everything
-		return []MCPResult{}, nil
+		resp.Body.Close()
 	}
 
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
-	if err != nil {
-		return nil, err
+	if len(allResults) == 0 {
+		return nil, fmt.Errorf("no results found on GitHub API")
 	}
 
-	var results []MCPResult
-
-	// Guessing common link structure for MCP market items
-	doc.Find("a").Each(func(i int, s *goquery.Selection) {
-		link, exists := s.Attr("href")
-		// Often they use /mcp/ or just root paths for listings
-		if exists && (strings.Contains(link, "/mcp/") || strings.Contains(link, "/server/")) {
-			parts := strings.Split(strings.TrimRight(link, "/"), "/")
-			if len(parts) > 0 {
-				name := parts[len(parts)-1]
-				desc := strings.TrimSpace(s.Text())
-				if desc == "" {
-					desc = "MCP Market package: " + name
-				}
-				
-				isDuplicate := false
-				for _, r := range results {
-					if r.Name == name {
-						isDuplicate = true
-						break
-					}
-				}
-				
-				baseURL := "https://www.mcpmarket.com"
-				if strings.HasPrefix(link, "http") {
-					baseURL = ""
-				}
-
-				if !isDuplicate && name != "" {
-					results = append(results, MCPResult{
-						Name:   name,
-						Desc:   desc,
-						Source: "MCP Market",
-						URL:    baseURL + link,
-					})
-				}
-			}
-		}
-	})
-
-	return results, nil
-}
-
-// SearchGitHub provides a reliable fallback by searching GitHub repositories
-func SearchGitHub(query string) ([]MCPResult, error) {
-	// Search for repositories matching the query and are explicitly mcp servers using GitHub topics
-	searchQuery := fmt.Sprintf("%s topic:mcp-server", query)
-	searchURL := fmt.Sprintf("https://api.github.com/search/repositories?q=%s&sort=stars&order=desc&per_page=20", url.QueryEscape(searchQuery))
-	
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", searchURL, nil)
-	if err != nil {
-		return nil, err
-	}
-	
-	req.Header.Set("User-Agent", "Muggy-CLI")
-	req.Header.Set("Accept", "application/vnd.github.v3+json")
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("github api failed with status %d", resp.StatusCode)
-	}
-
-	var data struct {
-		Items []struct {
-			Name        string `json:"name"`
-			FullName    string `json:"full_name"`
-			Description string `json:"description"`
-			HtmlURL     string `json:"html_url"`
-		} `json:"items"`
-	}
-
-	decoder := json.NewDecoder(resp.Body)
-	if err := decoder.Decode(&data); err != nil {
-		return nil, err
-	}
-
-	var results []MCPResult
-	for _, item := range data.Items {
-		desc := item.Description
-		if desc == "" {
-			desc = "GitHub Repository: " + item.FullName
-		}
-		
-		results = append(results, MCPResult{
-			Name:   item.Name,
-			Desc:   desc,
-			Source: "GitHub",
-			URL:    item.HtmlURL,
-		})
-	}
-
-	return results, nil
+	return allResults, nil
 }
 
 // ScrapeInstallationCommand tries to extract the npx/uvx command from the page or repo
@@ -246,9 +143,7 @@ func ScrapeInstallationCommand(pageURL string) (string, error) {
 							text := string(decodedBytes)
 							lines := strings.Split(text, "\n")
 							for _, line := range lines {
-								if strings.Contains(line, "npx") || strings.Contains(line, "uvx") {
-									foundCmd := strings.TrimSpace(line)
-									foundCmd = strings.ReplaceAll(foundCmd, "`", "")
+								if foundCmd := extractCmdIfValid(line); foundCmd != "" {
 									return foundCmd, nil
 								}
 							}
@@ -288,24 +183,22 @@ func ScrapeInstallationCommand(pageURL string) (string, error) {
 	text := doc.Text()
 	lines := strings.Split(text, "\n")
 	for _, line := range lines {
-		if strings.Contains(line, "npx") || strings.Contains(line, "uvx") {
-			foundCmd = strings.TrimSpace(line)
-			// Strip markdown backticks if present
-			foundCmd = strings.ReplaceAll(foundCmd, "`", "")
+		if foundCmd := extractCmdIfValid(line); foundCmd != "" {
 			return foundCmd, nil
 		}
 	}
 
 	// Fallback to HTML parsing for specific code blocks
 	doc.Find("code, pre").Each(func(i int, s *goquery.Selection) {
+		if foundCmd != "" {
+			return // already found
+		}
 		text := strings.TrimSpace(s.Text())
-		if strings.Contains(text, "npx") || strings.Contains(text, "uvx") {
-			lines := strings.Split(text, "\n")
-			for _, line := range lines {
-				if strings.Contains(line, "npx") || strings.Contains(line, "uvx") {
-					foundCmd = strings.TrimSpace(line)
-					return // stop inside Each
-				}
+		lines := strings.Split(text, "\n")
+		for _, line := range lines {
+			if cmd := extractCmdIfValid(line); cmd != "" {
+				foundCmd = cmd
+				return // stop inside Each
 			}
 		}
 	})

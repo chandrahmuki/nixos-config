@@ -34,9 +34,9 @@
         ];
         env = { };
       };
-      nix-cleanup = {
+      html-to-markdown-mcp = {
         command = "npx";
-        args = [ "skillfish" "add" "tobi/dotnix" "nix-cleanup" ];
+        args = [ "-y" "html-to-markdown-mcp" ];
         env = { };
       };
     };

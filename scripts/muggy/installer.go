@@ -1,22 +1,18 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 )
 
-// InstallTarget defines where to install the MCP
-type InstallTarget string
 
-const (
-	TargetAntigravity InstallTarget = "antigravity"
-	TargetGemini      InstallTarget = "gemini"
-	TargetBoth        InstallTarget = "both"
-)
 
 // MCPConfig holds the structured JSON for an MCP server
 type MCPConfig struct {
@@ -26,9 +22,54 @@ type MCPConfig struct {
 }
 
 // InstallMCP handles the full flow: fetching the command, parsing it, and updating files.
-func InstallMCP(mcp MCPResult, targetStr string) (string, error) {
-	target := InstallTarget(targetStr)
+func InstallMCP(mcp MCPResult, targetStr string, entityType string) (string, error) {
 	
+	if entityType == "skill" {
+		// --- SKILL INSTALLATION ---
+		// 1. Validate Target Directory
+		if targetStr == "" {
+			return "", fmt.Errorf("skill installation requires an absolute directory path")
+		}
+
+		// Ensure target directory exists
+		if err := os.MkdirAll(targetStr, 0755); err != nil {
+			return "", fmt.Errorf("failed to create target directory %s: %v", targetStr, err)
+		}
+
+		// 2. Format Git Clone Command
+		// e.g. https://github.com/owner/repo -> https://github.com/owner/repo.git
+		cloneURL := mcp.URL
+		if !strings.HasSuffix(cloneURL, ".git") {
+			cloneURL += ".git"
+		}
+
+		// Calculate target directory name
+		repoName := filepath.Base(mcp.URL)
+		if strings.HasSuffix(repoName, ".git") {
+			repoName = strings.TrimSuffix(repoName, ".git")
+		}
+		
+		destPath := filepath.Join(targetStr, repoName)
+		
+		// Optional Check if it already exists
+		if _, err := os.Stat(destPath); err == nil {
+			return "", fmt.Errorf("destination '%s' already exists", destPath)
+		}
+
+		// Execute Git Clone natively
+		cmd := exec.Command("git", "clone", cloneURL, destPath)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		
+		err := cmd.Run()
+		if err != nil {
+			return "", fmt.Errorf("git clone failed for %s: %v", cloneURL, err)
+		}
+
+		return fmt.Sprintf("Successfully cloned Skill to:\n%s", destPath), nil
+	}
+
+	// --- MCP SERVER INSTALLATION ---
 	// 1. Get Command if not already known
 	cmdStr, err := ScrapeInstallationCommand(mcp.URL)
 	if err != nil {
@@ -41,47 +82,53 @@ func InstallMCP(mcp MCPResult, targetStr string) (string, error) {
 		return "", fmt.Errorf("failed to parse command '%s': %v", cmdStr, err)
 	}
 
+	// 2.5 Pre-flight Test
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	testCmd := exec.CommandContext(ctx, command, args...)
+	var stderrBuf strings.Builder
+	testCmd.Stderr = &stderrBuf
+
+	if err := testCmd.Start(); err != nil {
+		return "", fmt.Errorf("pre-flight error: failed to start command '%s': %v", command, err)
+	}
+
+	err = testCmd.Wait()
+	if ctx.Err() == context.DeadlineExceeded {
+		// Success: Server stayed alive for 3 seconds, likely waiting for MCP RPC connections.
+	} else if err != nil {
+		errMsg := strings.TrimSpace(stderrBuf.String())
+		if errMsg == "" {
+			errMsg = err.Error()
+		}
+		// Return friendly, structured error block so Bubble Tea displays it nicely
+		return "", fmt.Errorf("Pre-flight safety check failed!\nThe server crashed when tested.\n\nCommand: %s %s\nError Output:\n%s", command, strings.Join(args, " "), errMsg)
+	}
+
 	mcpConfig := MCPConfig{
 		Command: command,
 		Args:    args,
 		Env:     make(map[string]string),
 	}
 
-	workspaceRoot := os.Getenv("WORKSPACE_ROOT")
-	if workspaceRoot == "" {
-		workspaceRoot = "/home/david/nixos-config"
-	}
-
+	// 3. Update Target(s) based on absolute file paths
 	var status []string
-
-	// 3. Update Target(s)
-	if target == TargetAntigravity || target == TargetBoth {
-		// Antigravity has multiple potential config locations
-		// Try the workspace one first
-		wsConfig := filepath.Join(workspaceRoot, ".agent", "mcp_config.json")
-		err = updateJSONConfig(wsConfig, name, mcpConfig)
-		if err == nil {
-			status = append(status, "Updated Antigravity config: "+wsConfig)
-		}
-
-		// Try the global one
-		homeDir, _ := os.UserHomeDir()
-		if homeDir != "" {
-			globalConfig := filepath.Join(homeDir, ".gemini", "antigravity", "mcp_config.json")
-			err = updateJSONConfig(globalConfig, name, mcpConfig)
-			if err == nil {
-				status = append(status, "Updated Global Antigravity config: "+globalConfig)
-			}
-		}
-	}
-
-	if target == TargetGemini || target == TargetBoth {
-		nixPath := filepath.Join(workspaceRoot, "modules", "gemini.nix")
-		err = updateNixConfig(nixPath, name, mcpConfig)
+	
+	if strings.HasSuffix(targetStr, ".nix") {
+		err = updateNixConfig(targetStr, name, mcpConfig)
 		if err != nil {
-			return "", fmt.Errorf("failed to update Gemini Nix: %v", err)
+			return "", fmt.Errorf("failed to update Nix config: %v", err)
 		}
-		status = append(status, "Updated Gemini config: "+nixPath)
+		status = append(status, "✅ Updated Nix config: "+targetStr)
+	} else if strings.HasSuffix(targetStr, ".json") {
+		err = updateJSONConfig(targetStr, name, mcpConfig)
+		if err != nil {
+			return "", fmt.Errorf("failed to update JSON config: %v", err)
+		}
+		status = append(status, "✅ Updated JSON config: "+targetStr)
+	} else {
+		return "", fmt.Errorf("Target path must end with .nix or .json for MCPs")
 	}
 
 	return strings.Join(status, "\n"), nil
