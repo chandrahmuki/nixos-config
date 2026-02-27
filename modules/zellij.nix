@@ -24,12 +24,12 @@ in
 
       # Navigation unifiée (Alt + hjkl) compatible avec smart-splits.nvim
       keybinds = {
-        unbind = [ "Alt h" "Alt j" "Alt k" "Alt l" ]; # On libère pour nos binds propres
-        shared_except = [ "locked" ];
-        "bind \"Alt h\"" = { MoveFocusOrTab = "Left"; };
-        "bind \"Alt l\"" = { MoveFocusOrTab = "Right"; };
-        "bind \"Alt j\"" = { MoveFocus = "Down"; };
-        "bind \"Alt k\"" = { MoveFocus = "Up"; };
+        "shared_except \"locked\"" = {
+          "bind \"Alt h\"" = { MoveFocusOrTab = "Left"; };
+          "bind \"Alt l\"" = { MoveFocusOrTab = "Right"; };
+          "bind \"Alt j\"" = { MoveFocus = "Down"; };
+          "bind \"Alt k\"" = { MoveFocus = "Up"; };
+        };
       };
 
       plugins = {
