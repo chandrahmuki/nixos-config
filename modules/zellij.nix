@@ -85,7 +85,7 @@ in
             }
             tab name="Editor" focus=true {
                 pane split_direction="vertical" {
-                    pane edit="." focus=true
+                    pane edit="." name="MuggyVim" focus=true
                     pane size="25%" {
                         pane name="Gemini CLI" command="gemini"
                         pane name="Terminal"
