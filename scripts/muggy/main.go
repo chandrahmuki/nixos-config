@@ -44,6 +44,9 @@ type model struct {
 	
 	installStatus string
 	err           error
+	
+	width  int
+	height int
 }
 
 type MCPResult struct {
@@ -113,6 +116,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if msg.Type == tea.KeyCtrlC || msg.Type == tea.KeyEsc {
 			return m, tea.Quit
 		}
+	case tea.WindowSizeMsg:
+		h, v := docStyle.GetFrameSize()
+		m.width = msg.Width - h
+		m.height = msg.Height - v - 3
+		if m.state == stateSearchResults {
+			m.resultsList.SetSize(m.width, m.height)
+		}
+		if m.state == stateTargetSelection {
+			m.targetList.SetSize(m.width, m.height)
+		}
 	}
 
 	switch m.state {
@@ -138,7 +151,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				items[i] = res
 			}
 			delegate := list.NewDefaultDelegate()
-			m.resultsList = list.New(items, delegate, 0, 0)
+			w := m.width
+			if w == 0 { w = 80 }
+			h := m.height
+			if h == 0 { h = 20 }
+			m.resultsList = list.New(items, delegate, w, h)
 			m.resultsList.Title = "Search Results"
 			m.resultsList.SetShowStatusBar(false)
 			m.resultsList.SetFilteringEnabled(false)
@@ -158,9 +175,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.state = stateTargetSelection
 				}
 			}
-		case tea.WindowSizeMsg:
-			h, v := docStyle.GetFrameSize()
-			m.resultsList.SetSize(msg.Width-h, msg.Height-v-3) // Adjust for title
 		}
 		m.resultsList, cmd = m.resultsList.Update(msg)
 		cmds = append(cmds, cmd)
@@ -175,9 +189,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return m, performInstall(*m.selectedMCP, m.selectedTarget)
 				}
 			}
-		case tea.WindowSizeMsg:
-			h, v := docStyle.GetFrameSize()
-			m.targetList.SetSize(msg.Width-h, msg.Height-v-3)
 		}
 		m.targetList, cmd = m.targetList.Update(msg)
 		cmds = append(cmds, cmd)
@@ -244,7 +255,11 @@ func (m *model) setupTargetList() {
 		targetItem{id: "antigravity", title: "Antigravity IDE", desc: "Install only in .agent/mcp_config.json"},
 	}
 	delegate := list.NewDefaultDelegate()
-	m.targetList = list.New(items, delegate, 0, 0)
+	w := m.width
+	if w == 0 { w = 80 }
+	h := m.height
+	if h == 0 { h = 20 }
+	m.targetList = list.New(items, delegate, w, h)
 	m.targetList.Title = "Select Target Profile"
 	m.targetList.SetShowStatusBar(false)
 	m.targetList.SetFilteringEnabled(false)
@@ -265,6 +280,7 @@ func performSearch(query string) tea.Cmd {
 		
 		skillFishResults, err1 := SearchSkillfish(query)
 		marketResults, err2 := SearchMCPMarket(query)
+		githubResults, err3 := SearchGitHub(query)
 
 		if err1 == nil {
 			combined = append(combined, skillFishResults...)
@@ -272,14 +288,18 @@ func performSearch(query string) tea.Cmd {
 		if err2 == nil {
 			combined = append(combined, marketResults...)
 		}
+		if err3 == nil {
+			combined = append(combined, githubResults...)
+		}
 
 		if len(combined) == 0 {
 			errText := ""
-			if err1 != nil { errText += fmt.Sprintf("Skillfish msg: %v. ", err1) }
+			if err1 != nil { errText += fmt.Sprintf("SF: %v. ", err1) }
+			if err3 != nil { errText += fmt.Sprintf("GH: %v. ", err3) }
 			
-			// Provide fallback if scraping fails
+			// Provide fallback if all APIs fail
 			combined = []MCPResult{
-				{Name: "nix-cleanup", Desc: "Code formatting and linting for Nix. " + errText, Source: "Skill.fish", URL: "https://www.skill.fish/skill/nix-ci-code-cleanup"},
+				{Name: "nix-cleanup", Desc: "Fallback Result. " + errText, Source: "System", URL: "https://www.skill.fish/skill/nix-ci-code-cleanup"},
 			}
 		}
 		return searchResultsMsg{results: combined}

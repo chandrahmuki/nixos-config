@@ -33,15 +33,7 @@ func SearchSkillfish(query string) ([]MCPResult, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == 429 {
-		// Fallback to a mock for now, later we'll add MCP Market scraper
-		return []MCPResult{
-			{
-				Name:   "rate-limited",
-				Desc:   "Skill.fish is rate-limiting us (Error 429). Please try again later or use 'muggy install <url>'.",
-				Source: "System",
-				URL:    "",
-			},
-		}, nil
+		return nil, fmt.Errorf("Skill.fish rate limit (429)")
 	}
 
 	if resp.StatusCode != 200 {
@@ -166,7 +158,7 @@ func SearchGitHub(query string) ([]MCPResult, error) {
 	// Search for repositories matching the query and are explicitly mcp servers
 	// We use "mcp-server OR mcp in:name,description" + the user's query
 	searchQuery := fmt.Sprintf("%s mcp-server in:readme,description,name", query)
-	searchURL := fmt.Sprintf("https://api.github.com/search/repositories?q=%s&sort=stars&order=desc&per_page=5", url.QueryEscape(searchQuery))
+	searchURL := fmt.Sprintf("https://api.github.com/search/repositories?q=%s&sort=stars&order=desc&per_page=20", url.QueryEscape(searchQuery))
 	
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", searchURL, nil)
