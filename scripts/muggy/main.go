@@ -91,7 +91,17 @@ func initialModel(subcommand string, arg string) model {
 }
 
 func (m model) Init() tea.Cmd {
-	return textinput.Blink
+	var cmds []tea.Cmd
+	cmds = append(cmds, textinput.Blink)
+
+	if m.state == stateSearching && m.searchQuery != "" {
+		cmds = append(cmds, performSearch(m.searchQuery))
+	} else if m.state == stateTargetSelection && m.selectedMCP != nil {
+        // For direct install we can skip directly to installing if we know the target,
+        // but since we don't have a target CLI arg yet, we just show the target list.
+    }
+
+	return tea.Batch(cmds...)
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
