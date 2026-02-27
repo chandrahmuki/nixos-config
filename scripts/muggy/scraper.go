@@ -339,6 +339,29 @@ func ParseCommand(cmdStr string) (command string, args []string, name string, er
 		args = append(args, p)
 	}
 	
+	// Sanitize Smithery/mcp-get wrappers
+	for i, a := range args {
+		if (a == "@smithery/cli" || a == "mcp-get") && i+2 < len(args) && args[i+1] == "install" {
+			pkgName := args[i+2]
+			args = []string{pkgName}
+			break
+		}
+	}
+	
+	// Fast-track auto-confirm flags for npx to avoid interactive stalls
+	if command == "npx" {
+		hasY := false
+		for _, a := range args {
+			if a == "-y" || a == "--yes" {
+				hasY = true
+				break
+			}
+		}
+		if !hasY {
+			args = append([]string{"-y"}, args...)
+		}
+	}
+	
 	// Try to derive a name from the last argument
 	if len(args) > 0 {
 		lastArg := args[len(args)-1]
