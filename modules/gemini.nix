@@ -8,6 +8,8 @@
   home.packages = [
     pkgs.gemini-cli
     pkgs.nodejs
+    pkgs.go
+    pkgs.muggy
 
   ];
 

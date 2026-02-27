@@ -124,7 +124,6 @@
     '';
     shellAliases = {
       nix-switch = "sudo nixos-rebuild switch --flake .#muggy-nixos";
-      muggy = "/home/david/nixos-config/scripts/muggy/muggy";
     };
 
   };

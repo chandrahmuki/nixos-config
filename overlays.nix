@@ -10,6 +10,7 @@
     inputs.niri.overlays.niri
     (final: prev: {
       google-antigravity = final.callPackage ./pkgs/google-antigravity { };
+      muggy = final.callPackage ./pkgs/muggy { };
     })
   ];
 }
