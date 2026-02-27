@@ -14,7 +14,8 @@ L'utilisateur te demandera d'installer un MCP via `/add-mcp <nom-ou-url>`.
    - Attends sa réponse avant de continuer.
 
 2. **Recherche Intelligente du MCP (Discovery)**
-   - Utilise tes outils natifs (`search_web`, `mcp_github_search_code`) pour trouver le dépôt officiel du MCP (site web npmjs, recherche sur github.com, modelcontextprotocol.io, ou même skill.fish).
+   - Si l'utilisateur donne un nom générique (ex: "Nix CI"), utilise impérativement l'outil `fetch` (fourni par le MCP `fetch-mcp` que tu as installé) pour lire le contenu des pages de recherche comme `https://skill.fish/search?q=...` ou `https://mcpmarket.com`. Cela permet de scraper rapidement sans subir les erreurs 429 de tes outils natifs et sans la lourdeur du `browser_subagent`.
+   - Une fois le dépôt officiel du MCP trouvé sur GitHub ou npmjs :
    - Lis le `README.md` ou le `package.json` pour comprendre comment ce MCP se lance (ex: `npx -y @modelcontextprotocol/server-postgres`).
    - Identifie si ce MCP a des dépendances binaires critiques (ex: Python, Chromium/Playwright, sqlite).
 
