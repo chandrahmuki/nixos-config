@@ -5,32 +5,48 @@ let
     url = "https://github.com/dj95/zjstatus/releases/download/v0.22.0/zjstatus.wasm";
     sha256 = "0lyxah0pzgw57wbrvfz2y0bjrna9bgmsw9z9f898dgqw1g92dr2d";
   };
+  zellij-autolock = pkgs.fetchurl {
+    url = "https://github.com/fresh2dev/zellij-autolock/releases/download/0.2.2/zellij-autolock.wasm";
+    sha256 = "194fgd421w2j77jbpnq994y2ma03qzdlz932cxfhfznrpw3mdjb9";
+  };
 in
 {
   programs.zellij = {
     enable = true;
-    enableFishIntegration = true; # David utilise fish
-    
+    enableFishIntegration = true;
+
     settings = {
       pane_frames = false;
-      theme = "tokyonight-moon"; # On reste sur le thème de David
-      default_layout = "compact"; # Layout minimaliste par défaut
+      theme = "tokyonight-moon";
+      default_layout = "dev";
       mouse_mode = true;
       copy_on_select = true;
-      
-      # Configuration pour Neovim : On utilise le mode "locked" pour laisser Nvim gérer ses raccourcis
-      # On peut aussi désactiver les raccourcis conflictuels ici si nécessaire.
+
+      # Navigation unifiée (Alt + hjkl) compatible avec smart-splits.nvim
+      keybinds = {
+        unbind = [ "Alt h" "Alt j" "Alt k" "Alt l" ]; # On libère pour nos binds propres
+        shared_except = [ "locked" ];
+        "bind \"Alt h\"" = { MoveFocusOrTab = "Left"; };
+        "bind \"Alt l\"" = { MoveFocusOrTab = "Right"; };
+        "bind \"Alt j\"" = { MoveFocus = "Down"; };
+        "bind \"Alt k\"" = { MoveFocus = "Up"; };
+      };
+
+      plugins = {
+        autolock = {
+          path = "file:${zellij-autolock}";
+          is_enabled = true;
+        };
+      };
     };
 
-    # Layout personnalisé avec zjstatus
     layouts = {
-      default = ''
+      dev = ''
         layout {
             default_tab_template {
                 children
                 pane size=1 borderless=true {
                     plugin location="file:${zjstatus}" {
-                        // Configuration zjstatus
                         format_left  "{mode}#[fg=#89b4fa,bold] {session} {tabs}"
                         format_right "{command_git_branch}#[fg=#424242,bold] | {datetime}"
                         format_space ""
@@ -55,10 +71,22 @@ in
                         command_git_branch_rendermode  "static"
 
                         datetime        "#[fg=#6C7086,bold] {format} "
-                        datetime_format "%A, %d %b %Y %H:%M"
+                        datetime_format "%H:%M"
                         datetime_timezone "Europe/Paris"
                     }
                 }
+            }
+            tab name="Editor" focus=true {
+                pane split_direction="vertical" {
+                    pane edit="." focus=true
+                    pane size="25%" {
+                        pane name="Gemini CLI" command="antigravity"
+                        pane name="Terminal"
+                    }
+                }
+            }
+            tab name="Server/Logs" {
+                pane
             }
         }
       '';
