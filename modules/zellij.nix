@@ -15,22 +15,23 @@ in
     enable = true;
     enableFishIntegration = true;
 
+    extraConfig = ''
+      keybinds {
+          shared_except "locked" {
+              bind "Alt h" { MoveFocusOrTab "Left"; }
+              bind "Alt l" { MoveFocusOrTab "Right"; }
+              bind "Alt j" { MoveFocus "Down"; }
+              bind "Alt k" { MoveFocus "Up"; }
+          }
+      }
+    '';
+
     settings = {
       pane_frames = false;
       theme = "tokyonight-moon";
       default_layout = "dev";
       mouse_mode = true;
       copy_on_select = true;
-
-      # Navigation unifiée (Alt + hjkl) compatible avec smart-splits.nvim
-      keybinds = {
-        "shared_except \"locked\"" = {
-          "bind \"Alt h\"" = { MoveFocusOrTab = "Left"; };
-          "bind \"Alt l\"" = { MoveFocusOrTab = "Right"; };
-          "bind \"Alt j\"" = { MoveFocus = "Down"; };
-          "bind \"Alt k\"" = { MoveFocus = "Up"; };
-        };
-      };
 
       plugins = {
         autolock = {
