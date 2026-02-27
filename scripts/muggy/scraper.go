@@ -87,6 +87,79 @@ func SearchSkillfish(query string) ([]MCPResult, error) {
 	return results, nil
 }
 
+// SearchMCPMarket searches mcpmarket.com
+func SearchMCPMarket(query string) ([]MCPResult, error) {
+	// Example search pattern, adapting to typical search paths
+	searchURL := fmt.Sprintf("https://www.mcpmarket.com/search?q=%s", url.QueryEscape(query))
+	
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", searchURL, nil)
+	if err != nil {
+		return nil, err
+	}
+	
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		// Just fail silently for the market if it throws 404/429 so it doesn't break everything
+		return []MCPResult{}, nil
+	}
+
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var results []MCPResult
+
+	// Guessing common link structure for MCP market items
+	doc.Find("a").Each(func(i int, s *goquery.Selection) {
+		link, exists := s.Attr("href")
+		// Often they use /mcp/ or just root paths for listings
+		if exists && (strings.Contains(link, "/mcp/") || strings.Contains(link, "/server/")) {
+			parts := strings.Split(strings.TrimRight(link, "/"), "/")
+			if len(parts) > 0 {
+				name := parts[len(parts)-1]
+				desc := strings.TrimSpace(s.Text())
+				if desc == "" {
+					desc = "MCP Market package: " + name
+				}
+				
+				isDuplicate := false
+				for _, r := range results {
+					if r.Name == name {
+						isDuplicate = true
+						break
+					}
+				}
+				
+				baseURL := "https://www.mcpmarket.com"
+				if strings.HasPrefix(link, "http") {
+					baseURL = ""
+				}
+
+				if !isDuplicate && name != "" {
+					results = append(results, MCPResult{
+						Name:   name,
+						Desc:   desc,
+						Source: "MCP Market",
+						URL:    baseURL + link,
+					})
+				}
+			}
+		}
+	})
+
+	return results, nil
+}
+
 // ScrapeInstallationCommand tries to extract the npx/uvx command from the page
 func ScrapeInstallationCommand(pageURL string) (string, error) {
 	client := &http.Client{}

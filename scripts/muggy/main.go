@@ -261,17 +261,28 @@ type errMsg struct{ err error }
 
 func performSearch(query string) tea.Cmd {
 	return func() tea.Msg {
-		results, err := SearchSkillfish(query)
-		if err != nil {
-			return errMsg{err}
+		var combined []MCPResult
+		
+		skillFishResults, err1 := SearchSkillfish(query)
+		marketResults, err2 := SearchMCPMarket(query)
+
+		if err1 == nil {
+			combined = append(combined, skillFishResults...)
 		}
-		if len(results) == 0 {
+		if err2 == nil {
+			combined = append(combined, marketResults...)
+		}
+
+		if len(combined) == 0 {
+			errText := ""
+			if err1 != nil { errText += fmt.Sprintf("Skillfish msg: %v. ", err1) }
+			
 			// Provide fallback if scraping fails
-			results = []MCPResult{
-				{Name: "nix-cleanup", Desc: "Code formatting and linting for Nix (deadnix/statix)", Source: "Skill.fish", URL: "https://www.skill.fish/skill/nix-ci-code-cleanup"},
+			combined = []MCPResult{
+				{Name: "nix-cleanup", Desc: "Code formatting and linting for Nix. " + errText, Source: "Skill.fish", URL: "https://www.skill.fish/skill/nix-ci-code-cleanup"},
 			}
 		}
-		return searchResultsMsg{results: results}
+		return searchResultsMsg{results: combined}
 	}
 }
 
