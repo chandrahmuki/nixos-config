@@ -14,6 +14,13 @@ in
   programs.zellij = {
     enable = true;
     enableFishIntegration = false;
+  };
+
+  programs.fish.shellAliases = {
+    zelldev = "zellij --layout dev";
+  };
+
+  programs.zellij = {
 
     extraConfig = ''
       keybinds {
