@@ -9,6 +9,7 @@
   - **Important (Nix Flakes)** : Toujours exécuter `git add` pour les nouveaux fichiers, sinon Nix ne les verra pas dans le sandbox (erreur "path does not exist").
   - Exécuter `git add .`
   - Exécuter `git commit` avec un message descriptif approprié.
+  - **Après l'installation d'un module** : Toujours lancer le workflow `[/git-sync]`.
 
 ## Compilation et déploiement
 - J'utilise `nos` pour compiler et déployer les modifications. C'est un alias pour `nh os switch` (voir `modules/nh.nix`).

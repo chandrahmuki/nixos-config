@@ -35,6 +35,7 @@
     ./modules/gemini.nix
     ./modules/secrets.nix
     ./modules/theme.nix
+    ./modules/zellij.nix
   ];
 
   programs.home-manager.enable = true;

@@ -18,6 +18,8 @@
     matugen # Material You color generation tool
     uv # Extremely fast Python package manager (provides uvx)
     cava # Console-based Audio Visualizer for Alsa/PulseAudio/PipeWire
+    ddcutil # External monitor brightness control
+    brightnessctl # Brightness control utility
   ];
 
   programs.bat = {

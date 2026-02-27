@@ -176,6 +176,8 @@
       "networkmanager"
       "wheel"
       "video"
+      "input"
+      "i2c"
     ];
     shell = pkgs.fish;
 
@@ -183,6 +185,9 @@
       #  thunderbird
     ];
   };
+
+  # Enable I2C support for DDC/CI protocol (brightness control for external monitors)
+  hardware.i2c.enable = true;
   # niri setup using unstable
   programs.niri = {
     enable = true;
