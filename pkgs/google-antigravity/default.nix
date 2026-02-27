@@ -30,8 +30,8 @@
 , xorg
 , zlib
 , google-chrome ? null
-, version ? "1.18.4-5780041996042240"
-, sha256 ? "09jqlqm8d1mg5cd3yqrgsap920xnl80z6snvkp5qqkmp3w6pjzgr"
+, version ? "1.19.6-6514342219874304"
+, sha256 ? "sha256-gFIsnWC8wEuxPUD6E2YB0YTcg/NruQZespzEVttMKeE="
 }:
 
 let

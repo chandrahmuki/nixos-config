@@ -7,6 +7,11 @@
 
   home.packages = [
     pkgs.gemini-cli
+    
+    # Wrapper for skillfish (AI agent skill manager)
+    (pkgs.writeShellScriptBin "skillfish" ''
+      exec npx -y skillfish "$@"
+    '')
   ];
 
   # Gestion déclarative des paramètres de Gemini CLI
