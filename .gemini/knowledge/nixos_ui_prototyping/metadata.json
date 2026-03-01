@@ -1,0 +1,18 @@
+{
+    "title": "NixOS UI Prototyping (Mutable State Bypass)",
+    "summary": "Best practices for bypassing NixOS read-only store during UI prototyping (widget placement, dynamic themes) using mkOutOfStoreSymlink and Environment Variables.",
+    "created_at": "2026-03-01T20:50:00Z",
+    "updated_at": "2026-03-01T20:50:00Z",
+    "categories": [
+        "nixos",
+        "home-manager",
+        "ui",
+        "prototyping",
+        "noctalia",
+        "state"
+    ],
+    "references": [
+        "file:modules/noctalia.nix",
+        "file:modules/gemini.nix"
+    ]
+}
