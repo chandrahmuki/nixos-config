@@ -2,31 +2,49 @@
 
 {
   # --- GEMINI CLI (Google DeepMind AI Agent) ---
-  # Cet outil permet d'utiliser la puissance de Gemini directement dans ton terminal.
-  # Il peut analyser ton workspace, t'aider à coder et répondre à tes questions.
+  # Cet outil permet dutiliser la puissance de Gemini directement dans ton terminal.
+  # Il peut analyser ton workspace, taider à coder et répondre à tes questions.
 
   home.packages = [
     pkgs.gemini-cli
     pkgs.nodejs
     pkgs.go
     pkgs.muggy
-
   ];
 
   # Gestion déclarative des paramètres de Gemini CLI (projet spécifique)
-  # Le fichier est placé dans .gemini/settings.json à la racine du dépôt pour être chargé par l'agent
+  # Le fichier est placé dans .gemini/settings.json à la racine du dépôt pour être chargé par lagent
   home.file."nixos-config/.gemini/settings.json".text = builtins.toJSON {
     # GSD_CONFIG_START
-    commands = [ ".gemini/commands" ];
-    agents = [ ".gemini/agents" ];
-    skills = [ ".gemini/skills" ];
-    knowledge = [ ".gemini/knowledge" ];
-    workflows = [ ".gemini/workflows" ];
-    hooks = [
-      ".gemini/hooks/gsd-statusline.js"
-      ".gemini/hooks/gsd-context-monitor.js"
-      ".gemini/hooks/gsd-check-update.js"
-    ];
+    commands.directories = [ ".gemini/commands" ];
+    agents.directories = [ ".gemini/agents" ];
+    skills = {
+      enabled = true;
+      directories = [ ".gemini/skills" ];
+    };
+    knowledge.directories = [ ".gemini/knowledge" ];
+    workflows.directories = [ ".gemini/workflows" ];
+    hooks = {
+      BeforeTool = [
+        {
+          matcher = ".*";
+          hooks = [
+            {
+              type = "command";
+              command = "node .gemini/hooks/gsd-statusline.js";
+            }
+            {
+              type = "command";
+              command = "node .gemini/hooks/gsd-context-monitor.js";
+            }
+            {
+              type = "command";
+              command = "node .gemini/hooks/gsd-check-update.js";
+            }
+          ];
+        }
+      ];
+    };
     # GSD_CONFIG_END
 
     # MCP_CONFIG_START
