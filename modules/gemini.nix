@@ -16,6 +16,16 @@
   # Gestion déclarative des paramètres de Gemini CLI (projet spécifique)
   # Le fichier est placé dans .gemini/settings.json à la racine du dépôt pour être chargé par l'agent
   home.file."nixos-config/.gemini/settings.json".text = builtins.toJSON {
+    # GSD_CONFIG_START
+    commands = [ ".gemini/commands" ];
+    agents = [ ".gemini/agents" ];
+    hooks = [
+      ".gemini/hooks/gsd-statusline.js"
+      ".gemini/hooks/gsd-context-monitor.js"
+      ".gemini/hooks/gsd-check-update.js"
+    ];
+    # GSD_CONFIG_END
+
     # MCP_CONFIG_START
     mcpServers = {
       github = {
