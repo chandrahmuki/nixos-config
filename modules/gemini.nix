@@ -43,7 +43,6 @@
     # MCP_CONFIG_END
   };
 
-  # Variable d'environnement globale pour TOUS les outils (Gemini CLI, OpenCode, etc.)
-  # GOOGLE_API_KEY est le nom standard reconnu par la majorité des SDK Google
-  home.sessionVariables.GOOGLE_API_KEY = "$(cat ${config.home.homeDirectory}/.config/antigravity/gemini_api_key)";
+  # NOTE: GOOGLE_API_KEY est chargé dynamiquement via Fish interactiveShellInit
+  # dans terminal.nix (home.sessionVariables ne supporte pas $(cat ...) avec Fish)
 }

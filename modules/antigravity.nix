@@ -57,8 +57,10 @@ in
     run ln -sf $HOME/nixos-config/.agent/antigravity-settings.json $HOME/.config/Antigravity/User/settings.json
   '';
 
+  # ANTIGRAVITY_EDITOR est une valeur statique, compatible avec sessionVariables
   home.sessionVariables = {
     ANTIGRAVITY_EDITOR = "code";
-    GEMINI_API_KEY = "$(cat ${config.home.homeDirectory}/.config/antigravity/gemini_api_key)";
   };
+  # NOTE: GEMINI_API_KEY est chargé dynamiquement via Fish interactiveShellInit
+  # dans terminal.nix (home.sessionVariables ne supporte pas $(cat ...) avec Fish)
 }

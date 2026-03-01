@@ -79,6 +79,14 @@
     interactiveShellInit = ''
       set -g fish_greeting ""
 
+      # Chargement dynamique des clés API depuis sops-nix
+      # home.sessionVariables ne supporte pas $(cat ...) avec Fish (traité littéralement)
+      set -l _key_file ~/.config/antigravity/gemini_api_key
+      if test -f $_key_file
+        set -gx GEMINI_API_KEY (cat $_key_file)
+        set -gx GOOGLE_API_KEY (cat $_key_file)
+      end
+
       if status is-interactive
         # Fonction pour les outils visuels (Starship, Fastfetch)
         # On les regroupe pour plus de clarté
