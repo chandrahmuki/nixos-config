@@ -67,11 +67,6 @@
         args = [ "mcp-server-fetch" "--ignore-robots-txt" ];
         env = { };
       };
-      sequential-thinking = {
-        command = "npx";
-        args = [ "-y" "@modelcontextprotocol/server-sequential-thinking" ];
-        env = { };
-      };
       html-to-markdown-mcp = {
         command = "npx";
         args = [ "-y" "html-to-markdown-mcp" ];
