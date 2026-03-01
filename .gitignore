@@ -1,4 +1,6 @@
 # Secrets
+.env
+.envrc
 modules/mcp_config.json
 .agent/mcp_config.json
 .agent/antigravity-settings.json

@@ -43,7 +43,8 @@
     # MCP_CONFIG_END
   };
 
-  # Note : Pour utiliser cet outil, tu devras configurer ta clé API.
-  # Tu peux le faire en ajoutant 'export GEMINI_API_KEY="ta_clé"' dans ton .envrc 
-  # ou via un module de secrets.
+  # Note : Pour utiliser cet outil avec une clé API (recommandé) :
+  # 1. Crée un fichier '.env' à la racine du projet avec 'GEMINI_API_KEY=ta_cle'
+  # 2. Utilise 'direnv allow' pour charger la variable.
+  # Alternativement, tu peux l'ajouter dans ton .envrc ou via un module de secrets.
 }
