@@ -11,6 +11,10 @@ The Triple Relay system ensures code quality, architectural consistency, and kno
 - `/auto-doc`: Automates documentation synchronization after a major change.
 - `/audit`: Triggers a code review by the Auditor.
 - `/archive`: Triggers the Archiving process by the Archivist.
+- `/git-sync`: Full Git synchronization (add, review, commit, pull, push).
+
+## Command Locations
+- Custom commands (`archive.toml`, `audit.toml`, `auto-doc.toml`, `full-index.toml`, `git-sync.toml`, `gravity-update.toml`) have been moved from `.gemini/commands/gsd/` to `.gemini/commands/` to separate them from the GSD (Get Shit Done) framework and improve workspace clarity.
 
 ## Principles
 - **Surgical Focus**: Tasks should be completed in 5-10 turns.
