@@ -15,6 +15,9 @@
   # Gestion déclarative des paramètres de Gemini CLI (projet spécifique)
   # Le fichier est placé dans .gemini/settings.json à la racine du dépôt pour être chargé par lagent
   home.file."nixos-config/.gemini/settings.json".text = builtins.toJSON {
+    model = {
+      name = "gemini-3.1-pro";
+    };
     # GSD_CONFIG_START
     commands.directories = [ ".gemini/commands" ];
     agents.directories = [ ".gemini/agents" ];
