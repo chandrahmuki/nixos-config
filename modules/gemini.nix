@@ -19,6 +19,9 @@
     # GSD_CONFIG_START
     commands = [ ".gemini/commands" ];
     agents = [ ".gemini/agents" ];
+    skills = [ ".gemini/skills" ];
+    knowledge = [ ".gemini/knowledge" ];
+    workflows = [ ".gemini/workflows" ];
     hooks = [
       ".gemini/hooks/gsd-statusline.js"
       ".gemini/hooks/gsd-context-monitor.js"
