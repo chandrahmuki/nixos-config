@@ -8,6 +8,7 @@
   pkgs,
   inputs,
   username,
+  hostname,
   ...
 }:
 
@@ -58,7 +59,7 @@
   # Use latest kernel via Chaotic Nyx definition below
   # boot.kernelPackages = pkgs.linuxPackages_latest; # Removed to favor CachyOS kernel
 
-  networking.hostName = "muggy-nixos"; # Define your hostname.
+  networking.hostName = hostname; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary

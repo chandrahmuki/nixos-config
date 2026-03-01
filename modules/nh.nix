@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, hostname, ... }:
 
 {
   programs.nh = {
@@ -19,7 +19,7 @@
   programs.fish.functions = {
     nos = ''
       cd ${config.home.homeDirectory}/nixos-config
-      nh os switch . --hostname muggy-nixos
+      nh os switch . --hostname ${hostname}
     '';
   };
 }

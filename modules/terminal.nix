@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, hostname, ... }:
 
 {
   programs.foot = {
@@ -131,7 +131,7 @@
       end
     '';
     shellAliases = {
-      nix-switch = "sudo nixos-rebuild switch --flake .#muggy-nixos";
+      nix-switch = "sudo nixos-rebuild switch --flake .#${hostname}";
     };
 
   };

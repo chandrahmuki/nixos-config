@@ -51,44 +51,31 @@ print_info "Starting post-installation setup..."
 print_info "Script location: $SCRIPT_DIR"
 print_info "Current hostname: $CURRENT_HOSTNAME"
 
-# Step 0: Personalize username
-# ... (already there, skipping to next part in actual file)
+# Step 0: Personalize username and hostname
+print_info "\nStep 0: Personalizing configuration..."
+read -p "Enter your desired username (default: david): " FINAL_USERNAME
+if [ -z "$FINAL_USERNAME" ]; then
+    FINAL_USERNAME="david"
+fi
 
-# Step 0.5: Personalize hostname
-print_info "\nStep 0.5: Personalizing hostname..."
 read -p "Enter your desired hostname (default: $CONFIG_HOSTNAME): " FINAL_HOSTNAME
 if [ -z "$FINAL_HOSTNAME" ]; then
     FINAL_HOSTNAME="$CONFIG_HOSTNAME"
 fi
 
-if [ "$FINAL_HOSTNAME" != "$CONFIG_HOSTNAME" ]; then
-    if [ -d "$SCRIPT_DIR/hosts/$CONFIG_HOSTNAME" ]; then
-        print_info "Renaming host configuration from '$CONFIG_HOSTNAME' to '$FINAL_HOSTNAME'..."
-        
-        # Rename directory
-        mv "$SCRIPT_DIR/hosts/$CONFIG_HOSTNAME" "$SCRIPT_DIR/hosts/$FINAL_HOSTNAME"
-        
-        # Update all file references
-        print_info "Updating file references..."
-        sed -i "s/$CONFIG_HOSTNAME/$FINAL_HOSTNAME/g" "$SCRIPT_DIR/flake.nix"
-        sed -i "s/$CONFIG_HOSTNAME/$FINAL_HOSTNAME/g" "$SCRIPT_DIR/modules/nh.nix"
-        sed -i "s/$CONFIG_HOSTNAME/$FINAL_HOSTNAME/g" "$SCRIPT_DIR/modules/terminal.nix"
-        sed -i "s/$CONFIG_HOSTNAME/$FINAL_HOSTNAME/g" "$SCRIPT_DIR/hosts/$FINAL_HOSTNAME/default.nix"
-    else
-        print_warning "Directory hosts/$CONFIG_HOSTNAME not found. Skipping rename (maybe already done?)"
-    fi
-    
-    # Update script variables for the rest of the execution
-    CONFIG_HOSTNAME="$FINAL_HOSTNAME"
-    FLAKE_NAME="$FINAL_HOSTNAME"
-    print_success "Hostname personalization complete!"
-else
-    print_info "Using default hostname: $CONFIG_HOSTNAME"
-fi
+# Update flake.nix using sed (one-stop shop)
+print_info "Updating flake.nix with username='$FINAL_USERNAME' and hostname='$FINAL_HOSTNAME'..."
+sed -i "s/username = \".*\";/username = \"$FINAL_USERNAME\";/" "$SCRIPT_DIR/flake.nix"
+sed -i "s/hostname = \".*\";/hostname = \"$FINAL_HOSTNAME\";/" "$SCRIPT_DIR/flake.nix"
+
+# Update variables for the rest of the script
+CONFIG_HOSTNAME="$FINAL_HOSTNAME"
+FLAKE_NAME="$FINAL_HOSTNAME"
+print_success "Personalization complete!"
 
 # Step 1: Generate hardware configuration
 print_info "\nStep 1: Generating hardware configuration..."
-HARDWARE_CONFIG="$SCRIPT_DIR/hosts/$CONFIG_HOSTNAME/hardware-configuration.nix"
+HARDWARE_CONFIG="$SCRIPT_DIR/hosts/system/hardware-configuration.nix"
 
 if [ -f "$HARDWARE_CONFIG" ]; then
     print_warning "hardware-configuration.nix already exists!"

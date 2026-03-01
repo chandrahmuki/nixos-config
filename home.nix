@@ -1,4 +1,4 @@
-{ username, ... }: # <-- N'oublie pas d'ajouter { config, pkgs, ... }: en haut !
+{ username, hostname, ... }: # <-- N'oublie pas d'ajouter { config, pkgs, ... }: en haut !
 
 {
   home.username = username;

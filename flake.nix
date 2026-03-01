@@ -42,13 +42,14 @@
     }@inputs:
     let
       username = "david";
+      hostname = "muggy-nixos";
     in
     {
-      nixosConfigurations.muggy-nixos = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.${hostname} = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = { inherit inputs username; };
+        specialArgs = { inherit inputs username hostname; };
         modules = [
-          ./hosts/muggy-nixos/default.nix
+          ./hosts/system/default.nix
           ./overlays.nix
 
           noctalia.nixosModules.default
@@ -60,7 +61,7 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.users.${username} = import ./home.nix;
-            home-manager.extraSpecialArgs = { inherit inputs username; };
+            home-manager.extraSpecialArgs = { inherit inputs username hostname; };
           }
         ];
       };

@@ -7,7 +7,7 @@ buildGoModule {
   pname = "muggy";
   version = "0.1.0";
 
-  src = ../../scripts/muggy;
+  src = ./src;
 
   vendorHash = "sha256-qVtO25+8u4NzXb3tYKfs4g63UAtn2iThlkTP26ntlJQ=";
 
