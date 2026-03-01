@@ -1,0 +1,23 @@
+{
+    "title": "NixOS Declarative Refactoring & Architecture",
+    "summary": "Standards for making a NixOS Flake truly declarative: using specialArgs for global variables (username, hostname) and correct package source organization.",
+    "created_at": "2026-03-01T12:00:00Z",
+    "updated_at": "2026-03-01T12:00:00Z",
+    "categories": [
+        "nixos",
+        "architecture",
+        "refactoring",
+        "declarative",
+        "flakes"
+    ],
+    "references": [
+        {
+            "type": "file",
+            "path": "/home/david/nixos-config/flake.nix"
+        },
+        {
+            "type": "file",
+            "path": "/home/david/nixos-config/pkgs/muggy/default.nix"
+        }
+    ]
+}

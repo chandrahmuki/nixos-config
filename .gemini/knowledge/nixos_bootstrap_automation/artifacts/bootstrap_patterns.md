@@ -25,25 +25,18 @@ else
 fi
 ```
 
-### Global Configuration Refactoring
-When the user chooses a custom hostname or username, the script should update all internal references:
-1.  **Directory Renaming**: Move host-specific directories to match the new hostname.
-2.  **Ad-hoc `sed` Updates**: Replace placeholder values across the codebase.
+### Declarative Global Configuration (Modern Approach)
+Instead of using `sed` across multiple files to update hardcoded hostnames and usernames, the modern approach uses centralized variables in `flake.nix`.
+The bootstrap script updates ONLY these centralized variables:
 ```bash
-sed -i "s/$OLD_HOSTNAME/$NEW_HOSTNAME/g" "$SCRIPT_DIR/flake.nix"
-sed -i "s/$OLD_HOSTNAME/$NEW_HOSTNAME/g" "$SCRIPT_DIR/modules/nh.nix"
+# Update flake.nix using sed (one-stop shop)
+sed -i "s/username = \".*\";/username = \"$FINAL_USERNAME\";/" "$SCRIPT_DIR/flake.nix"
+sed -i "s/hostname = \".*\";/hostname = \"$FINAL_HOSTNAME\";/" "$SCRIPT_DIR/flake.nix"
 ```
+These variables are then passed downstream to all modules via `specialArgs` and `extraSpecialArgs`, making the configuration truly declarative and resilient.
 
 ## Idempotence and Safety
 Bootstrap scripts should be safe to run multiple times.
-
-### Directory Check before Move
-Always verify the source directory exists before attempting a rename to avoid errors on subsequent runs:
-```bash
-if [ -d "$SCRIPT_DIR/hosts/$CONFIG_HOSTNAME" ]; then
-    mv "$SCRIPT_DIR/hosts/$CONFIG_HOSTNAME" "$SCRIPT_DIR/hosts/$FINAL_HOSTNAME"
-fi
-```
 
 ### Build Verification with Ad-hoc Flags
 Check if the configuration is valid using:
@@ -53,5 +46,6 @@ nix flake metadata . --extra-experimental-features 'nix-command flakes'
 
 ## Benefits
 - **Zero-Manual-Config**: Users only need to clone the repo and run one script.
+- **Declarative Purity**: Avoids brittle search-and-replace across the codebase.
 - **Consistent Environment**: Ensures the target hostname and hardware configuration are correctly set before the first reboot.
 - **Improved UX**: Reduces the barrier to entry for complex flake-based systems.
