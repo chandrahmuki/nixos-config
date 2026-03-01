@@ -1,5 +1,6 @@
 description = "Capitalisation du savoir (Archiviste)."
-prompt = "<objective>
+prompt = """
+<objective>
 Exécuter le workflow d'archivage du savoir.
 
 Output ONLY the reference content below. Do NOT add:
@@ -15,4 +16,5 @@ Output ONLY the reference content below. Do NOT add:
 
 <process>
 Suivre rigoureusement les étapes définies dans @./.gemini/workflows/archive.md.
-</process>"
+</process>
+"""

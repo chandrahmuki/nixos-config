@@ -1,5 +1,6 @@
 description = "Automatisation de la documentation et de la synchronisation après un changement."
-prompt = "<objective>
+prompt = """
+<objective>
 Exécuter le workflow d'automatisation de la documentation.
 
 Output ONLY the reference content below. Do NOT add:
@@ -15,4 +16,5 @@ Output ONLY the reference content below. Do NOT add:
 
 <process>
 Suivre rigoureusement les étapes définies dans @./.gemini/workflows/auto-doc.md.
-</process>"
+</process>
+"""

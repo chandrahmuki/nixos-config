@@ -1,5 +1,6 @@
 description = "Synchroniser les changements avec Git (Add, Review, Commit, Pull, Push)"
-prompt = "<objective>
+prompt = """
+<objective>
 Exécuter le workflow de synchronisation Git.
 
 Output ONLY the reference content below. Do NOT add:
@@ -15,4 +16,5 @@ Output ONLY the reference content below. Do NOT add:
 
 <process>
 Suivre rigoureusement les étapes définies dans @./.gemini/workflows/git-sync.md.
-</process>"
+</process>
+"""

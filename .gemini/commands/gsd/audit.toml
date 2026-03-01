@@ -1,5 +1,6 @@
 description = "Revue de code et conformité (Auditeur)."
-prompt = "<objective>
+prompt = """
+<objective>
 Exécuter le workflow d'audit de code.
 
 Output ONLY the reference content below. Do NOT add:
@@ -15,4 +16,5 @@ Output ONLY the reference content below. Do NOT add:
 
 <process>
 Suivre rigoureusement les étapes définies dans @./.gemini/workflows/audit.md.
-</process>"
+</process>
+"""

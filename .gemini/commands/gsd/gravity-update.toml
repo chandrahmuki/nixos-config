@@ -1,5 +1,6 @@
 description = "Mise à jour du système (Noctalia, Antigravity, etc.)."
-prompt = "<objective>
+prompt = """
+<objective>
 Mise à jour du système et des composants noctalia/antigravity.
 
 Output ONLY the reference content below. Do NOT add:
@@ -15,4 +16,5 @@ Output ONLY the reference content below. Do NOT add:
 
 <process>
 Suivre rigoureusement les étapes définies dans @./.gemini/workflows/GravityUpdate.md.
-</process>"
+</process>
+"""
