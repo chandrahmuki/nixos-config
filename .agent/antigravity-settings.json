@@ -23,7 +23,8 @@
     "terminal.integrated.env.linux": {
         "ELECTRON_OZONE_PLATFORM_HINT": "auto",
         "WAYLAND_DISPLAY": "wayland-1",
-        "GEMINI_API_KEY": "${env:GEMINI_API_KEY}"
+        "GEMINI_API_KEY": "${env:GEMINI_API_KEY}",
+        "GOOGLE_API_KEY": "${env:GOOGLE_API_KEY}"
     },
     "explorer.confirmDelete": false,
     "workbench.colorTheme": "Tokyo Night",
