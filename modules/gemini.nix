@@ -12,14 +12,9 @@
     pkgs.muggy
   ];
 
-  # Activation Script : Force Brute pour le settings.json (Mutable)
-  # On force ici un lien symbolique vers notre fichier mutable après l'activation.
-  # Cela permet à l'agent d'écrire son état de session sans être bloqué par le Read-Only de Nix.
-  home.activation.linkGeminiSettings = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    run mkdir -p $HOME/nixos-config/.gemini
-    run rm -f $HOME/nixos-config/.gemini/settings.json
-    run ln -sf $HOME/nixos-config/.agent/gemini-settings.json $HOME/nixos-config/.gemini/settings.json
-  '';
+  # Utilisation de mkOutOfStoreSymlink pour lier le fichier de configuration mutable.
+  # Cela permet à l'agent d'écrire son état de session sans être bloqué par le Read-Only du Nix Store.
+  home.file."nixos-config/.gemini/settings.json".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/.agent/gemini-settings.json";
 
   # NOTE: GOOGLE_API_KEY est chargé dynamiquement via Fish interactiveShellInit
   # dans terminal.nix (home.sessionVariables ne supporte pas $(cat ...) avec Fish)
