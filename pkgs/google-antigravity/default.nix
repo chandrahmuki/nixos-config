@@ -154,10 +154,13 @@ let
       export CHROME_BIN=${chrome-wrapper}
       export CHROME_PATH=${chrome-wrapper}
 
-      # Charger la clé API Gemini depuis le fichier sops-nix (si disponible)
+      # Charger la clé API Google/Gemini depuis le fichier sops-nix (si disponible)
+      # On exporte les deux noms de variables pour une compatibilité maximale
       GEMINI_KEY_FILE="$HOME/.config/antigravity/gemini_api_key"
       if [ -f "$GEMINI_KEY_FILE" ]; then
-        export GEMINI_API_KEY="$(cat "$GEMINI_KEY_FILE")"
+        KEY_VAL="$(cat "$GEMINI_KEY_FILE")"
+        export GEMINI_API_KEY="$KEY_VAL"
+        export GOOGLE_API_KEY="$KEY_VAL"
       fi
 
       exec ${antigravity-unwrapped}/lib/antigravity/bin/antigravity "$@"
