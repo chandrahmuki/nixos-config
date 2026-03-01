@@ -14,24 +14,31 @@
   ];
 
   # Gestion déclarative des paramètres de Gemini CLI (projet spécifique)
-  home.file."Documents/P-Project/.gemini/settings.json".text = builtins.toJSON {
+  # Le fichier est placé dans .gemini/settings.json à la racine du dépôt pour être chargé par l'agent
+  home.file."nixos-config/.gemini/settings.json".text = builtins.toJSON {
     # MCP_CONFIG_START
     mcpServers = {
-      atlassian-mcp-server = {
-        command = "npx";
-        args = [
-          "-y"
-          "mcp-remote"
-          "https://mcp.atlassian.com/v1/sse"
-        ];
-        env = { };
-      };
       github = {
         command = "bash";
         args = [
           "-c"
           "GITHUB_PERSONAL_ACCESS_TOKEN=$(cat ${config.home.homeDirectory}/.config/antigravity/github_token) npx -y @modelcontextprotocol/server-github"
         ];
+        env = { };
+      };
+      nixos = {
+        command = "uvx";
+        args = [ "mcp-nixos" ];
+        env = { };
+      };
+      fetch = {
+        command = "uvx";
+        args = [ "mcp-server-fetch" "--ignore-robots-txt" ];
+        env = { };
+      };
+      sequential-thinking = {
+        command = "npx";
+        args = [ "-y" "@modelcontextprotocol/server-sequential-thinking" ];
         env = { };
       };
       html-to-markdown-mcp = {
