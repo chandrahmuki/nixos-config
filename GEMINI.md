@@ -26,13 +26,10 @@
 - **Utilisation de Fetch** : Si et seulement si le MCP NixOS ne renvoie rien, utiliser l'outil de fetch pour lire la documentation officielle.
 - **Précision Extrême** : Ne jamais deviner le nom ou le format d'une option NixOS/Home Manager. Toujours valider son existence exacte via le MCP (`mcp_nixos_nix`) pour garantir que le build ne cassera pas.
 
-## Contexte LLM / Repomix / Diff
-- J'utilise `repomix` pour avoir une vision globale du projet.
-- Avant toute analyse globale, je devrais consulter `repomix-nixos-config.md` s'il existe.
-- **Pour une analyse rapide des changements récents**, je dois prioriser `git log --stat` et `git show --stat` au lieu de scanner tous les fichiers un par un.
-- Si des changements structurels majeurs sont faits, il est recommandé de mettre à jour le fichier repomix avec `repomix --output repomix-nixos-config.md`.
+## Analyse Chirurgicale et Contexte
+- **Focus Chirurgical** : Pour toute analyse de la base de code, je dois utiliser mes outils de recherche (`grep_search`, `glob`, `codebase_investigator`) au lieu de lire de gros fichiers statiques.
+- **Analyse des Changements** : Pour comprendre les changements récents, je priorise `git log --stat` et `git show --stat`.
 - J'utilise le workflow `/auto-doc` pour automatiser la documentation rapide.
-- J'utilise le workflow `/full-index` pour les mises à jour majeures du contexte (Repomix).
 
 ## Répartition des Rôles (Relais Triple)
 - **Codeur (Toi)** : Focus 100% sur l'implémentation et la vérification fonctionnelle (tests).
