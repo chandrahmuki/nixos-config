@@ -19,7 +19,7 @@
         # 'listen' : lance mpv dans le terminal sans fenêtre vidéo pour l'audio
         listen = [
           {
-            run = ''${pkgs.mpv}/bin/mpv --audio-display=no --no-video "$@"'';
+            run = ''mpv --audio-display=no --no-video "$@"'';
             block = true; # Bloque yazi et affiche mpv dans le terminal (permet le contrôle clavier)
             desc = "Listen";
           }

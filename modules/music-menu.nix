@@ -24,7 +24,7 @@
       
       # Play with mpv (kill previous instance first to avoid parallel playback)
       ${pkgs.procps}/bin/pkill mpv || true
-      ${pkgs.mpv}/bin/mpv --no-video "$CHOICE"
+      mpv --no-video "$CHOICE"
     '')
   ];
 }

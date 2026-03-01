@@ -39,7 +39,7 @@
       MPV_FLAGS=""
       [[ "$AUDIO_ONLY" == "true" ]] && MPV_FLAGS="--no-video"
       
-      ${pkgs.mpv}/bin/mpv $MPV_FLAGS "https://www.youtube.com/watch?v=$SELECTED_ID"
+      mpv $MPV_FLAGS "https://www.youtube.com/watch?v=$SELECTED_ID"
     '')
   ];
 }
