@@ -22,6 +22,7 @@ in
     pkgs.google-antigravity
     pkgs.nil # Language Server for Nix
     pkgs.nixfmt # Formatter for Nix
+    pkgs.sops # Tool for managing secrets
   ];
 
   # Fichiers et configurations Antigravity
@@ -33,6 +34,18 @@ in
     # Gestion persistante de la config MCP
     ".gemini/antigravity/mcp_config.json".source =
       config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-config/.agent/mcp_config.json";
+
+    # Script utilitaire pour mettre à jour la clé Gemini et relancer la config
+    ".local/bin/update-gemini-key".source = pkgs.writeShellScript "update-gemini-key" ''
+      if [ -z "$1" ]; then
+        echo "Usage: update-gemini-key <TA_CLE_API>"
+        exit 1
+      fi
+      echo "Updating Gemini API Key in sops..."
+      sops --set "[\"gemini_api_key\"] \"$1\"" ~/nixos-config/secrets/secrets.yaml
+      echo "Applying configuration with nos..."
+      nos
+    '';
   };
 
   # Activation Script : Force Brute pour le settings.json
@@ -46,5 +59,6 @@ in
 
   home.sessionVariables = {
     ANTIGRAVITY_EDITOR = "code";
+    GEMINI_API_KEY = "$(cat ${config.home.homeDirectory}/.config/antigravity/gemini_api_key)";
   };
 }
