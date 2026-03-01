@@ -1,0 +1,10 @@
+{
+    "title": "Nix Flakes & Git Workflow Patterns",
+    "summary": "Technical guidelines on the interaction between Nix Flakes and Git, focusing on untracked files and sandbox evaluation.",
+    "created_at": "2026-02-19T16:33:00+01:00",
+    "last_updated": "2026-02-19T16:33:00+01:00",
+    "references": [
+        "https://nixos.wiki/wiki/Flakes#Git_integration",
+        "Conversation d9a3046d-ba9b-4dad-8fba-da80f22984da"
+    ]
+}

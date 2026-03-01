@@ -1,0 +1,14 @@
+{
+    "title": "Shell Enhancements: Atuin, Zoxide & Fish Vi Mode",
+    "summary": "Technical overview of shell productivity tools, including declarative Zoxide, Atuin history management, and the Fish Vi mode configuration with custom cursor shapes and jk shortcut.",
+    "created_at": "2026-02-07T23:51:00Z",
+    "lastUpdated": "2026-02-16T09:28:00Z",
+    "references": [
+        "modules/atuin.nix",
+        "modules/terminal.nix",
+        "home.nix",
+        "nvim/lua/plugins/whichkey.lua",
+        "nvim/lua/plugins/snacks.lua",
+        "nvim/lua/core/keymaps.lua"
+    ]
+}

@@ -1,0 +1,17 @@
+{
+    "title": "IBus & Xorg Optimization in NixOS (GNOME/Niri)",
+    "summary": "Technical solution for disabling IBus completely on NixOS/GNOME/Niri to avoid notification popups, and fixing Xorg library deprecation warnings in nix-ld.",
+    "created_at": "2026-02-16T08:32:00Z",
+    "updated_at": "2026-02-16T08:32:00Z",
+    "categories": [
+        "NixOS",
+        "GNOME",
+        "X11",
+        "InputMethod"
+    ],
+    "references": [
+        "commit:4ac7bbb",
+        "commit:8089ee0",
+        "hosts/muggy-nixos/default.nix"
+    ]
+}

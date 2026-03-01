@@ -1,0 +1,17 @@
+{
+    "title": "Antigravity IDE Setup & Configuration",
+    "summary": "Configuration details for Antigravity LSP (nil), nixfmt, Extensions (Tokyo Night), and SSH key recovery.",
+    "created_at": "2026-02-07T13:57:00Z",
+    "updated_at": "2026-02-27T08:55:18Z",
+    "categories": [
+        "antigravity",
+        "lsp",
+        "ssh",
+        "nixos",
+        "theming"
+    ],
+    "references": [
+        "modules/antigravity.nix",
+        ".agent/antigravity-settings.json"
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "title": "Nautilus Standalone Integration on NixOS",
+    "summary": "Technical guide for running Nautilus without a full GNOME environment. Documents mandatory services (GVfs, Tumbler, Sushi) for drive mounting, thumbnails, and quick previews.",
+    "created_at": "2026-02-23T08:42:00Z",
+    "updated_at": "2026-02-23T08:42:00Z",
+    "categories": [
+        "nixos",
+        "nautilus",
+        "file-manager",
+        "wayland"
+    ],
+    "references": [
+        "conversation:2880af4b-9cbc-43c2-b039-9a8fcb362621",
+        "file:modules/nautilus.nix"
+    ]
+}

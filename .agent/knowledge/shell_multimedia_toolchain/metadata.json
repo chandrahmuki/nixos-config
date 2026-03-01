@@ -1,0 +1,16 @@
+{
+    "title": "Shell & Multimedia Toolchain (yt-dlp, printf, rename)",
+    "summary": "Best practices for handling files with special characters (spaces, quotes) in Fish/Bash, and configuring yt-dlp for safe filename generation.",
+    "created_at": "2026-02-18T10:35:00+01:00",
+    "updated_at": "2026-02-18T10:35:00+01:00",
+    "categories": [
+        "yt-dlp",
+        "shell",
+        "bash",
+        "fish",
+        "rename"
+    ],
+    "references": [
+        "modules/yt-dlp.nix"
+    ]
+}

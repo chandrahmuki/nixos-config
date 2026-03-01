@@ -1,0 +1,11 @@
+{
+    "title": "Bluetooth Restoration on NixOS (Post-GNOME)",
+    "summary": "Technical guide on explicitly enabling Bluetooth on NixOS after removing a Desktop Environment (like GNOME) that handled it implicitly. Includes robust configuration for audio devices and Noctalia Shell service management.",
+    "created_at": "2026-02-21T14:35:00Z",
+    "updated_at": "2026-02-21T14:35:00Z",
+    "references": [
+        "hosts/muggy-nixos/default.nix",
+        "modules/bluetooth.nix",
+        "modules/noctalia.nix"
+    ]
+}

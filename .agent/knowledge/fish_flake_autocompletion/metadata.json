@@ -1,0 +1,19 @@
+{
+    "title": "Fish Autocompletion for Flake Inputs",
+    "summary": "Méthode pour ajouter une autocomplétion dynamique aux commandes Nix Flake (comme `update`) en parsant le fichier `flake.lock` avec `jq` dans un shell Fish.",
+    "created_at": "2026-02-16T08:52:00Z",
+    "updated_at": "2026-02-16T08:58:00Z",
+    "categories": [
+        "nix",
+        "shell",
+        "fish",
+        "productivity"
+    ],
+    "references": [
+        "commit:4ac7bbb",
+        "commit:fbbee2b",
+        "commit:8089ee0",
+        "modules/terminal.nix",
+        "modules/utils.nix"
+    ]
+}

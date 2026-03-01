@@ -1,0 +1,13 @@
+{
+    "title": "Zellij-Neovim Perfect Dev Setup",
+    "summary": "Architecture unifiée fusionnant Neovim (édition), Zellij (multiplexage) et Gemini (IA) avec navigation partagée et automatisation du verrouillage.",
+    "tags": [
+        "zellij",
+        "neovim",
+        "nixos",
+        "autolock",
+        "smart-splits"
+    ],
+    "created_at": "2026-02-27T12:20:00Z",
+    "updated_at": "2026-02-27T12:20:00Z"
+}

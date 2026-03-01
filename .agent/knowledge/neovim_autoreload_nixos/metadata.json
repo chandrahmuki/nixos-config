@@ -1,0 +1,18 @@
+{
+    "title": "Neovim Autoreload on NixOS",
+    "summary": "Technical implementation and pitfalls of Neovim's autoreload feature in a NixOS environment, focusing on Nix store module resolution issues.",
+    "created_at": "2026-02-20T08:04:00Z",
+    "updated_at": "2026-02-20T08:04:00Z",
+    "categories": [
+        "neovim",
+        "nixos",
+        "configuration"
+    ],
+    "references": [
+        {
+            "type": "commit",
+            "id": "072a70cc2fb8285e6097254e9c7d09b04af437fd",
+            "description": "fix(nvim): inline autocmds to avoid module resolution issues in Nix store"
+        }
+    ]
+}

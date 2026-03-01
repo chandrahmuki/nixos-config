@@ -1,0 +1,8 @@
+{
+    "summary": "Official procedure for updating the Google Antigravity package locally. Details the usage of the local package definition in pkgs/google-antigravity/default.nix and the overlays.nix wrapper.",
+    "title": "Antigravity Local Update Procedure",
+    "references": [
+        "file:///home/david/nixos-config/pkgs/google-antigravity/default.nix",
+        "file:///home/david/nixos-config/overlays.nix"
+    ]
+}

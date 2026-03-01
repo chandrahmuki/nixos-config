@@ -1,0 +1,16 @@
+{
+    "title": "Hybrid AI Strategy: RAG vs Fine-tuning on Gemini & Gemma",
+    "summary": "Strategic overview of using cloud vs local models. Documents why RAG (Knowledge Items) is preferred for dynamic system configurations (NixOS) over static fine-tuning (LoRA).",
+    "created_at": "2026-02-23T10:55:00Z",
+    "updated_at": "2026-02-23T10:55:00Z",
+    "categories": [
+        "ai",
+        "strategy",
+        "mcp",
+        "rag",
+        "finetuning"
+    ],
+    "references": [
+        "conversation:2880af4b-9cbc-43c2-b039-9a8fcb362621"
+    ]
+}

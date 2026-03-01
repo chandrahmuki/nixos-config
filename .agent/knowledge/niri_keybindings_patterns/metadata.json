@@ -1,0 +1,16 @@
+{
+    "title": "Niri Keybinding Patterns & Troubleshooting",
+    "summary": "Technical patterns for configuring reliable keybindings in Niri, including spawn syntax (list-based), XKB keysym names, and absolute path usage within Home Manager.",
+    "created_at": "2026-02-18T16:15:00Z",
+    "updated_at": "2026-02-18T16:15:00Z",
+    "categories": [
+        "Window Manager",
+        "Wayland",
+        "Niri",
+        "Keybindings"
+    ],
+    "references": [
+        "https://github.com/YaLTeR/niri/wiki/Configuration:-Key-Bindings",
+        "https://github.com/YaLTeR/niri/blob/main/resources/default-config.kdl"
+    ]
+}

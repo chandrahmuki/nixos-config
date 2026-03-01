@@ -1,0 +1,27 @@
+{
+    "title": "Triple Relay Workflows",
+    "summary": "Documentation of the collaborative agentic workflow system: Coder -> Auditor -> Archivist. Includes slash commands /audit and /archive.",
+    "created_at": "2026-02-08T13:52:00Z",
+    "updated_at": "2026-02-08T13:52:00Z",
+    "tags": [
+        "workflow",
+        "agentic",
+        "collaboration",
+        "audit",
+        "archive"
+    ],
+    "references": [
+        {
+            "type": "file",
+            "path": "/home/david/nixos-config/.agent/workflows/audit.md"
+        },
+        {
+            "type": "file",
+            "path": "/home/david/nixos-config/.agent/workflows/archive.md"
+        },
+        {
+            "type": "file",
+            "path": "/home/david/nixos-config/MEMORY[GEMINI.md]"
+        }
+    ]
+}

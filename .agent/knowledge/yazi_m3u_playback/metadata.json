@@ -1,0 +1,15 @@
+{
+    "title": "Yazi M3U Playback & MIME Handling",
+    "summary": "Configuration technique to force Yazi to open .m3u playlists with mpv, overriding detailed MIME type detection (text/plain). Includes robust rule prioritization and playlist generation commands.",
+    "created_at": "2026-02-18T10:35:00+01:00",
+    "updated_at": "2026-02-18T10:35:00+01:00",
+    "categories": [
+        "yazi",
+        "mpv",
+        "files",
+        "mime-types"
+    ],
+    "references": [
+        "modules/yazi.nix"
+    ]
+}

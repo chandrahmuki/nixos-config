@@ -1,0 +1,16 @@
+{
+  "title": "Module Tealdeer (TLDR Client)",
+  "summary": "Technical overview of the tealdeer module, a fast Rust implementation of tldr pages. Covers setup for compact display and automatic updates in NixOS.",
+  "created_at": "2026-02-07T19:29:00Z",
+  "updated_at": "2026-02-07T19:29:00Z",
+  "references": [
+    {
+      "type": "file",
+      "path": "/home/david/nixos-config/modules/tealdeer.nix"
+    },
+    {
+      "type": "file",
+      "path": "/home/david/nixos-config/docs/tealdeer.md"
+    }
+  ]
+}

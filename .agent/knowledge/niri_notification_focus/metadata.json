@@ -1,0 +1,24 @@
+{
+    "title": "Niri Notification Focus (Mako + xdg-activation)",
+    "summary": "Fix pour le changement de workspace automatique quand on clique une notification dans Niri. SwayNC ne supporte pas correctement xdg-activation. La solution est d'utiliser Mako qui envoie nativement les tokens d'activation au compositeur.",
+    "created": "2026-02-12T20:57:00+01:00",
+    "updated": "2026-02-12T20:57:00+01:00",
+    "tags": [
+        "niri",
+        "mako",
+        "notifications",
+        "xdg-activation",
+        "wayland",
+        "focus"
+    ],
+    "references": [
+        {
+            "type": "conversation",
+            "id": "e3ac6b72-af65-4dc3-adcf-bb7c8b55c93b",
+            "title": "Niri Workspace Focus"
+        }
+    ],
+    "artifacts": [
+        "notification_focus_specs.md"
+    ]
+}

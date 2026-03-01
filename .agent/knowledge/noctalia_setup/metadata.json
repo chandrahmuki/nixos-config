@@ -1,0 +1,16 @@
+{
+    "title": "Noctalia Bar Configuration",
+    "summary": "Technical documentation of the Noctalia bar setup in David's NixOS config. Covers monitor targeting, widget selection (minimalist), and dynamic theming integration.",
+    "created_at": "2026-02-07T19:16:00Z",
+    "updated_at": "2026-02-07T19:16:00Z",
+    "references": [
+        {
+            "type": "conversation",
+            "id": "cd7808e1-1b60-4412-aad0-454c4cdb58cc"
+        },
+        {
+            "type": "file",
+            "path": "/home/david/nixos-config/modules/noctalia.nix"
+        }
+    ]
+}

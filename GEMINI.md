@@ -56,6 +56,6 @@
 ## Gestion du Savoir (Knowledge)
 - **Différence Doc vs Knowledge** : 
     - `./docs/` est pour les humains (fiches, guides).
-    - `~/.gemini/antigravity/knowledge/` est pour la mémoire IA (Knowledge Items).
+    - `./agent/knowledge/` est pour la mémoire IA (Knowledge Items).
 - **Consommation Obligatoire** : Avant de rédiger quoi que ce soit, **VÉRIFIER** si un KI existe déjà sur le sujet pour le mettre à jour au lieu d'en créer un nouveau.
 - **Priorité KI** : Pour toute modification technique structurelle, la création/mise à jour d'un **Knowledge Item** est LA priorité absolue par rapport à la doc Markdown classique.
