@@ -13,7 +13,7 @@
 
   ];
 
-  # Gestion déclarative des paramètres de Gemini CLI
+  # Gestion déclarative des paramètres de Gemini CLI (projet spécifique)
   home.file."Documents/P-Project/.gemini/settings.json".text = builtins.toJSON {
     # MCP_CONFIG_START
     mcpServers = {
@@ -43,8 +43,7 @@
     # MCP_CONFIG_END
   };
 
-  # Note : Pour utiliser cet outil avec une clé API (recommandé) :
-  # 1. Crée un fichier '.env' à la racine du projet avec 'GEMINI_API_KEY=ta_cle'
-  # 2. Utilise 'direnv allow' pour charger la variable.
-  # Alternativement, tu peux l'ajouter dans ton .envrc ou via un module de secrets.
+  # Variable d'environnement globale pour TOUS les outils (Gemini CLI, OpenCode, etc.)
+  # GOOGLE_API_KEY est le nom standard reconnu par la majorité des SDK Google
+  home.sessionVariables.GOOGLE_API_KEY = "$(cat ${config.home.homeDirectory}/.config/antigravity/gemini_api_key)";
 }
