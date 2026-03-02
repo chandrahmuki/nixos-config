@@ -1,0 +1,24 @@
+# --- SECRETS & SENSITIVE ---
+.env
+.envrc
+secrets/secrets.yaml
+modules/mcp_config.json
+
+# --- AI & AGENT ISOLATION (Vault-Clean) ---
+.gemini/
+.agent/
+.planning/
+.direnv/
+repomix-*.md
+*.tmp
+.tmp/
+
+# --- NIX & BUILD ---
+result
+result-*
+flake.lock
+
+# --- APP SPECIFIC ---
+scripts/muggy/muggy
+muggy
+generated/
