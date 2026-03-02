@@ -22,3 +22,4 @@ flake.lock
 scripts/muggy/muggy
 muggy
 generated/
+GEMINI.md
