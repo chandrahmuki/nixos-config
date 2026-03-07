@@ -16,7 +16,6 @@ repomix-*.md
 # --- NIX & BUILD ---
 result
 result-*
-flake.lock
 
 # --- APP SPECIFIC ---
 scripts/muggy/muggy

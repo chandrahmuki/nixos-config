@@ -145,21 +145,21 @@
       pkgs.openssl
       pkgs.curl
       pkgs.expat
-      # Bibliothèques X11 explicites (xorg.*) pour éviter les warnings de dépréciation
-      pkgs.xorg.libX11
-      pkgs.xorg.libXScrnSaver
-      pkgs.xorg.libXcomposite
-      pkgs.xorg.libXcursor
-      pkgs.xorg.libXdamage
-      pkgs.xorg.libXext
-      pkgs.xorg.libXfixes
-      pkgs.xorg.libXi
-      pkgs.xorg.libXrandr
-      pkgs.xorg.libXrender
-      pkgs.xorg.libXtst
-      pkgs.xorg.libxcb
-      pkgs.xorg.libxshmfence
-      pkgs.xorg.libxkbfile
+      # Bibliothèques X11 explicites pour éviter les warnings de dépréciation
+      pkgs.libx11
+      pkgs.libxscrnsaver
+      pkgs.libxcomposite
+      pkgs.libxcursor
+      pkgs.libxdamage
+      pkgs.libxext
+      pkgs.libxfixes
+      pkgs.libxi
+      pkgs.libxrandr
+      pkgs.libxrender
+      pkgs.libxtst
+      pkgs.libxcb
+      pkgs.libxshmfence
+      pkgs.libxkbfile
     ];
   };
 
