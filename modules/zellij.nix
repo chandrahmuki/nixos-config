@@ -87,9 +87,12 @@ in
                 pane split_direction="vertical" {
                     pane command="nvim" name="MuggyVim" focus=true {
                         args "."
+                        start_suspended false
                     }
                     pane size="25%" {
-                        pane name="Gemini CLI" command="gemini"
+                        pane name="Gemini CLI" command="gemini" {
+                            start_suspended false
+                        }
                         pane name="Terminal"
                     }
                 }
