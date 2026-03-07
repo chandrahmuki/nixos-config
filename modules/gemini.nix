@@ -9,7 +9,6 @@
     pkgs.gemini-cli
     pkgs.nodejs
     pkgs.go
-    pkgs.muggy
   ];
 
   # Utilisation de mkOutOfStoreSymlink pour lier le fichier de configuration mutable.

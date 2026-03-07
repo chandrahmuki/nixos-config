@@ -20,6 +20,6 @@ flake.lock
 
 # --- APP SPECIFIC ---
 scripts/muggy/muggy
-muggy
+/muggy
 generated/
 GEMINI.md
