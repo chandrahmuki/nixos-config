@@ -3,6 +3,9 @@
 {
   home.packages = with pkgs; [
     fd # Used for the search function
+    dust # Modern du rewritten in Rust (beautiful overview)
+    gdu # Fast interactive disk analyzer in Go (great for cleanup)
+    ncdu # Classic interactive disk analyzer
     playerctl # MPRIS media player control (required for DMS media widget)
     nvd # Differenz between builds (shows package changes)
     manix # Fast Nix documentation searcher

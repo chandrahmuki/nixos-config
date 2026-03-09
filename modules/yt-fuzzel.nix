@@ -1,39 +1,37 @@
 { pkgs, ... }: {
   home.packages = [
     (pkgs.writeShellScriptBin "yt-search" ''
-      # Vérifier si on est en mode audio seul
+      # 1. Mode de lecture (Audio ou Vidéo)
       AUDIO_ONLY=false
-      [[ "$1" == "--audio" ]] && AUDIO_ONLY=true
+      PROMPT="YouTube Video ❯ "
+      [[ "$1" == "--audio" ]] && AUDIO_ONLY=true && PROMPT="YouTube Audio ❯ "
 
-      # 1. Demander la recherche via Fuzzel
-      PROMPT="YouTube Search ❯ "
-      [[ "$AUDIO_ONLY" == "true" ]] && PROMPT="YouTube Audio ❯ "
-
+      # 2. Recherche via Walker dmenu
       QUERY=$(echo "" | walker --dmenu --placeholder "$PROMPT")
-      
-      # Quitter si vide
       [ -z "$QUERY" ] && exit
       
-      # 2. Récupérer les résultats via yt-dlp
+      # 3. Récupérer les résultats via yt-dlp
       TAB=$'\t'
-      RESULTS=$(${pkgs.yt-dlp}/bin/yt-dlp \
+      RESULTS=$(yt-dlp \
         --flat-playlist \
         --print "%(title)s$TAB%(id)s" \
-        "ytsearch20:$QUERY")
+        "ytsearch10:$QUERY" 2>/dev/null)
       
-      # 3. Sélectionner la vidéo
-      SELECTED_ID=$(echo -e "$RESULTS" | walker --dmenu \
-        --placeholder "Select ❯ ")
-        
-      [ -z "$SELECTED_ID" ] && exit
+      [ -z "$RESULTS" ] && exit
+
+      # 4. Sélection de la vidéo
+      SELECTED=$(echo -e "$RESULTS" | walker --dmenu --placeholder "Select ❯ ")
+      [ -z "$SELECTED" ] && exit
+      VIDEO_ID=$(echo "$SELECTED" | cut -f2)
       
-      # 4. Lancer la lecture
+      # 5. Lecture (kill précédent)
       ${pkgs.procps}/bin/pkill mpv || true
       
-      MPV_FLAGS=""
-      [[ "$AUDIO_ONLY" == "true" ]] && MPV_FLAGS="--no-video"
-      
-      mpv $MPV_FLAGS "https://www.youtube.com/watch?v=$SELECTED_ID"
+      if [ "$AUDIO_ONLY" = true ]; then
+        mpv --no-video "https://www.youtube.com/watch?v=$VIDEO_ID"
+      else
+        mpv "https://www.youtube.com/watch?v=$VIDEO_ID"
+      fi
     '')
   ];
 }

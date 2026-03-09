@@ -1,9 +1,8 @@
-{ pkgs, inputs, ... }:
+{ ... }:
 
 {
   programs.yt-dlp = {
     enable = true;
-    package = inputs.nixpkgs-master.legacyPackages.${pkgs.stdenv.hostPlatform.system}.yt-dlp;
     settings = {
       embed-thumbnail = true;
       add-metadata = true;
@@ -14,6 +13,8 @@
   };
 
   programs.fish.functions = {
-    yt = "yt-dlp -x --audio-format m4a $argv";
+    # Télécharge et extrait l'audio directement dans ~/Music
+    # Les fichiers seront ainsi visibles dans le menu Walker
+    yt = "yt-dlp -x --audio-format m4a -o '~/Music/%(title)s.%(ext)s' $argv";
   };
 }
