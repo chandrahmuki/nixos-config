@@ -8,7 +8,7 @@ A high-performance, modern NixOS configuration featuring **Niri** (Wayland compo
 - **UI/UX**: [Niri](https://github.com/YaLTeR/niri) (unstable) with a custom [Noctalia shell](https://github.com/Noctatia/noctalia) setup.
 - **Kernel**: Optimized CachyOS Bore kernel for low-latency desktop performance.
 - **Gaming**: Pre-configured Steam, GameMode, and AMD GPU optimizations.
-- **Shell**: Fish shell equipped with Atuin (SQLite history) and Zoxide (smart navigation).
+- **Shell**: Fish shell equipped with FZF (history search) and Zoxide (smart navigation).
 - **Tools**: Ghostty terminal, VSCode/Antigravity, and declarative Brave/Chromium policy management.
 - **Portability**: Completely decoupled username and home paths for easy adoption.
 

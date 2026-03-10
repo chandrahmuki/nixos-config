@@ -92,7 +92,6 @@
         # On les regroupe pour plus de clarté
         function setup_visual_tools
           starship init fish | source
-          atuin init fish | source
         end
 
         # On ne lance les outils visuels que si on n'est pas dans un terminal "dumb"

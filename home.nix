@@ -29,7 +29,6 @@
     ./modules/discord.nix
     ./modules/xdg.nix
     ./modules/tealdeer.nix
-    ./modules/atuin.nix
     ./modules/pdf.nix
     ./modules/notifications.nix
     ./modules/gemini.nix
