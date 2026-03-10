@@ -83,5 +83,15 @@
       };
     };
 
+    window-rules = [
+      {
+        # Force Steam et les jeux sur le 2K et verrouille en plein écran
+        # pour éviter qu'ils ne "sautent" sur le 4K après l'ouverture.
+        matches = [ { app-id = "^steam.*$"; } ];
+        open-on-output = "DP-2";
+        open-fullscreen = true;
+      }
+    ];
+
   };
 }
