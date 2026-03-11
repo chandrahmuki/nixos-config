@@ -19,10 +19,15 @@
       
       [ -z "$RESULTS" ] && exit
 
-      # 4. Sélection de la vidéo
-      SELECTED=$(echo -e "$RESULTS" | walker --dmenu --placeholder "Select ❯ ")
-      [ -z "$SELECTED" ] && exit
-      VIDEO_ID=$(echo "$SELECTED" | cut -f2)
+      # 4. Sélection de la vidéo (Affichage uniquement des titres via cut -f1)
+      # On récupère l'INDEX pour mapper vers l'ID vidéo proprement
+      INDEX=$(echo -e "$RESULTS" | cut -f1 | walker --dmenu --index --placeholder "Select ❯ ")
+        
+      [ -z "$INDEX" ] && exit
+      
+      # Récupération de l'ID depuis la liste originale (INDEX est 0-based)
+      LINE_NUM=$((INDEX + 1))
+      VIDEO_ID=$(echo -e "$RESULTS" | sed -n "''${LINE_NUM}p" | cut -f2)
       
       # 5. Lecture (kill précédent)
       ${pkgs.procps}/bin/pkill mpv || true

@@ -6,15 +6,14 @@
     settings = {
       embed-thumbnail = true;
       add-metadata = true;
-      restrict-filenames = true;
+      restrict-filenames = false; # On autorise les espaces
       windows-filenames = true;
       output = "%(title)s.%(ext)s";
     };
   };
 
   programs.fish.functions = {
-    # Télécharge et extrait l'audio directement dans ~/Music
-    # Les fichiers seront ainsi visibles dans le menu Walker
-    yt = "yt-dlp -x --audio-format m4a -o '~/Music/%(title)s.%(ext)s' $argv";
+    # Télécharge et extrait l'audio dans le répertoire COURANT
+    yt = "yt-dlp -x --audio-format m4a -o '%(title)s.%(ext)s' $argv";
   };
 }
