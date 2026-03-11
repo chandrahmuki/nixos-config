@@ -19,7 +19,7 @@
   programs.fish.functions = {
     nos = ''
       cd ${config.home.homeDirectory}/nixos-config
-      nh os switch . --hostname ${hostname} -L --show-activation-logs -v
+      nh os switch . --hostname ${hostname}
     '';
   };
 }
