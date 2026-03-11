@@ -25,6 +25,7 @@
     ./modules/yt-search.nix
     ./modules/yazi.nix
     ./modules/utils.nix
+    ./modules/obsidian.nix
     ./modules/neovim.nix
     ./modules/discord.nix
     ./modules/xdg.nix
