@@ -15,6 +15,10 @@
     "Mod+Space".action = switch-focus-between-floating-and-tiling;
     "Mod+O".action.toggle-overview = [ ];
 
+    # Scratchpads
+    "Mod+N".action = spawn [ "niri-scratchpad" "toggle" "heynote" "--command" "heynote" ];
+    "Mod+Shift+T".action = spawn [ "niri-scratchpad" "toggle" "scratch-term" "--command" "foot --title scratch-term" ];
+
     "Mod+W".action = switch-preset-column-width;
     "Mod+H".action = switch-preset-window-height;
     "Mod+C".action = consume-window-into-column;

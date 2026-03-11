@@ -34,6 +34,11 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    niri-scratchpad = {
+      url = "github:Vortriz/niri-scratchpad-rs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -43,6 +48,7 @@
       nixpkgs-master,
       home-manager,
       niri,
+      niri-scratchpad,
       noctalia,
       nix-cachyos,
       sops-nix,

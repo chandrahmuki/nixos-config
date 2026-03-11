@@ -91,6 +91,20 @@
         open-on-output = "DP-2";
         open-fullscreen = true;
       }
+      {
+        # Heynote Scratchpad
+        matches = [ { app-id = "heynote"; } ];
+        open-floating = true;
+        default-floating-width = 1200;
+        default-floating-height = 800;
+      }
+      {
+        # Terminal Scratchpad
+        matches = [ { title = "scratch-term"; } ];
+        open-floating = true;
+        default-floating-width = 1000;
+        default-floating-height = 600;
+      }
     ];
 
   };
