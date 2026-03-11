@@ -8,7 +8,7 @@
         font = "JetBrainsMono Nerd Font:size=18";
         pad = "15x15";
       };
-      colors = {
+      colors-dark = {
         foreground = "c0caf5";
         background = "1a1b26";
 
