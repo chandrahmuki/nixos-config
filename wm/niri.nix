@@ -35,10 +35,6 @@
 
     environment."DISPLAY" = ":0";
 
-    workspaces = {
-      "stash" = { };
-    };
-
     layout.default-column-width = {
       proportion = 1. / 2.;
     };
@@ -94,27 +90,6 @@
         matches = [ { app-id = "^steam.*$"; } ];
         open-on-output = "DP-2";
         open-fullscreen = true;
-      }
-      {
-        # Neovim Notes Scratchpad
-        matches = [ { app-id = "notes-term"; } ];
-        open-floating = true;
-        default-column-width = { fixed = 1200; };
-        default-window-height = { fixed = 800; };
-      }
-      {
-        # Obsidian Scratchpad
-        matches = [ { app-id = "obsidian"; } ];
-        open-floating = true;
-        default-column-width = { proportion = 2. / 3.; };
-        default-window-height = { proportion = 2. / 3.; };
-      }
-      {
-        # Terminal Scratchpad
-        matches = [ { app-id = "scratch-term"; } ];
-        open-floating = true;
-        default-column-width = { fixed = 1000; };
-        default-window-height = { fixed = 600; };
       }
     ];
 
