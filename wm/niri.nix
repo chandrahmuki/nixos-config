@@ -97,7 +97,7 @@
       }
       {
         # Neovim Notes Scratchpad
-        matches = [ { title = "notes-term"; } ];
+        matches = [ { app-id = "notes-term"; } ];
         open-floating = true;
         default-column-width = { fixed = 1200; };
         default-window-height = { fixed = 800; };
@@ -111,7 +111,7 @@
       }
       {
         # Terminal Scratchpad
-        matches = [ { title = "scratch-term"; } ];
+        matches = [ { app-id = "scratch-term"; } ];
         open-floating = true;
         default-column-width = { fixed = 1000; };
         default-window-height = { fixed = 600; };
