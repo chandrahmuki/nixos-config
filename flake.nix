@@ -36,7 +36,7 @@
     };
 
     niri-scratchpad = {
-      url = "github:Vortriz/niri-scratchpad-rs";
+      url = "github:argosnothing/niri-scratchpad-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
