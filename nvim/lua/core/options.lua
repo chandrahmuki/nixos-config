@@ -16,3 +16,7 @@ vim.opt.updatetime = 300
 vim.opt.scrolloff = 7
 vim.opt.mouse = ""
 vim.opt.cmdheight = 0 -- Hide command line when not used (MuggyVim Premium Style)
+
+-- Render-markdown and general UI settings
+vim.opt.conceallevel = 2 -- Hide markdown symbols for a cleaner rendered look
+vim.opt.concealcursor = "nc" -- Conceal in Normal and Command mode
