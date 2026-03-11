@@ -95,15 +95,15 @@
         # Heynote Scratchpad
         matches = [ { app-id = "heynote"; } ];
         open-floating = true;
-        default-floating-width = 1200;
-        default-floating-height = 800;
+        default-column-width = { fixed = 1200; };
+        default-window-height = { fixed = 800; };
       }
       {
         # Terminal Scratchpad
         matches = [ { title = "scratch-term"; } ];
         open-floating = true;
-        default-floating-width = 1000;
-        default-floating-height = 600;
+        default-column-width = { fixed = 1000; };
+        default-window-height = { fixed = 600; };
       }
     ];
 
