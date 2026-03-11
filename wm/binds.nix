@@ -15,9 +15,10 @@
     "Mod+Space".action = switch-focus-between-floating-and-tiling;
     "Mod+O".action.toggle-overview = [ ];
 
-    # Scratchpads
-    "Mod+N".action = spawn [ "niri-scratchpad" "toggle" "heynote" "--command" "heynote" ];
-    "Mod+Shift+T".action = spawn [ "niri-scratchpad" "toggle" "scratch-term" "--command" "foot --title scratch-term" ];
+    # Scratchpads (Note: Requires "stash" workspace defined in niri.nix)
+    "Mod+N".action = spawn [ "niri-scratchpad" "target" "--spawn" "foot --title notes-term -e nvim ~/Documents/notes.md" "title" "notes-term" ];
+    "Mod+Shift+N".action = spawn [ "niri-scratchpad" "target" "--spawn" "obsidian" "appid" "obsidian" ];
+    "Mod+Shift+T".action = spawn [ "niri-scratchpad" "target" "--spawn" "foot --title scratch-term" "title" "scratch-term" ];
 
     "Mod+W".action = switch-preset-column-width;
     "Mod+H".action = switch-preset-window-height;
