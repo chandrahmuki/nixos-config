@@ -16,12 +16,15 @@ return {
             nixpkgs = {
               expr = "import (builtins.getFlake \"/home/david/nixos-config\").inputs.nixpkgs { }",
             },
+            formatting = {
+              command = { "nixfmt" },
+            },
             options = {
               nixos = {
                 expr = "(builtins.getFlake \"/home/david/nixos-config\").nixosConfigurations.muggy-nixos.options",
               },
               home_manager = {
-                expr = "(builtins.getFlake \"/home/david/nixos-config\").nixosConfigurations.muggy-nixos.options.home-manager.users.value.david.options",
+                expr = "(builtins.getFlake \"/home/david/nixos-config\").nixosConfigurations.muggy-nixos.options.home-manager.users.type.getSubOptions [ ]",
               },
             },
           },

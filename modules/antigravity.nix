@@ -20,7 +20,7 @@ in
 {
   home.packages = [
     pkgs.google-antigravity
-    pkgs.nil # Language Server for Nix
+    pkgs.nixd # Language Server for Nix
     pkgs.nixfmt # Formatter for Nix
     pkgs.sops # Tool for managing secrets
   ];
