@@ -14,3 +14,11 @@ vim.api.nvim_create_autocmd("FileChangedShellPost", {
     vim.notify("Fichier synchronisé 📂🔄", vim.log.levels.INFO, { title = "MuggyVim", timeout = 2000 })
   end,
 })
+
+-- Formatage automatique des fichiers Nix à la sauvegarde
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*.nix",
+  callback = function()
+    vim.lsp.buf.format({ async = false })
+  end,
+})
