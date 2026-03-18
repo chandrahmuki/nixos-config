@@ -24,7 +24,7 @@
       # nodejs (Managed by utils.nix)
       python3
       lua-language-server
-      nil # Nix LSP
+      nixd # Nix LSP (instead of nil)
       nixfmt # Nix Formatter
       stylua # For stylua.toml in your config
     ];
