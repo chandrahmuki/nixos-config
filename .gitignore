@@ -5,6 +5,7 @@ secrets/secrets.yaml
 modules/mcp_config.json
 
 # --- AI & AGENT ISOLATION (Vault-Clean) ---
+.worktrees/
 .gemini/
 .agent/
 .planning/
