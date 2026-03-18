@@ -7,10 +7,25 @@ return {
         capabilities = require("cmp_nvim_lsp").default_capabilities()
       end
 
-      -- Nix
-      vim.lsp.enable("nil_ls")
-      vim.lsp.config("nil_ls", {
+      -- Nix (using nixd for better docs/completion)
+      vim.lsp.enable("nixd")
+      vim.lsp.config("nixd", {
         capabilities = capabilities,
+        settings = {
+          nixd = {
+            nixpkgs = {
+              expr = "import (builtins.getFlake \"/home/david/nixos-config\").inputs.nixpkgs { }",
+            },
+            options = {
+              nixos = {
+                expr = "(builtins.getFlake \"/home/david/nixos-config\").nixosConfigurations.muggy-nixos.options",
+              },
+              home_manager = {
+                expr = "(builtins.getFlake \"/home/david/nixos-config\").nixosConfigurations.muggy-nixos.options.home-manager.users.value.david.options",
+              },
+            },
+          },
+        },
       })
 
       -- Lua
