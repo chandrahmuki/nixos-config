@@ -14,7 +14,7 @@ return {
         settings = {
           nixd = {
             nixpkgs = {
-              expr = "import (builtins.getFlake \"/home/david/nixos-config\").inputs.nixpkgs { }",
+              expr = "import <nixpkgs> { }",
             },
             formatting = {
               command = { "nixfmt" },
@@ -23,7 +23,7 @@ return {
               nixos = {
                 expr = "(builtins.getFlake \"/home/david/nixos-config\").nixosConfigurations.muggy-nixos.options",
               },
-              home_manager = {
+              ["home-manager"] = {
                 expr = "(builtins.getFlake \"/home/david/nixos-config\").nixosConfigurations.muggy-nixos.options.home-manager.users.type.getSubOptions [ ]",
               },
             },
