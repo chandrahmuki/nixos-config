@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 let
   zjstatus = pkgs.fetchurl {
@@ -11,6 +11,9 @@ let
   };
 in
 {
+  home.file.".config/zellij/plugins/zjstatus.wasm".source = zjstatus;
+  home.file.".config/zellij/plugins/zellij-autolock.wasm".source = zellij-autolock;
+
   programs.zellij = {
     enable = true;
     enableFishIntegration = false;
@@ -41,7 +44,7 @@ in
 
       plugins = {
         autolock = {
-          path = "file:${zellij-autolock}";
+          path = "file:${config.home.homeDirectory}/.config/zellij/plugins/zellij-autolock.wasm";
           is_enabled = true;
         };
       };
@@ -53,7 +56,7 @@ in
             default_tab_template {
                 children
                 pane size=1 borderless=true {
-                    plugin location="file:${zjstatus}" {
+                    plugin location="file:${config.home.homeDirectory}/.config/zellij/plugins/zjstatus.wasm" {
                         format_left  "{mode}#[fg=#89b4fa,bold] {session} {tabs}"
                         format_right "{command_git_branch}#[fg=#424242,bold] | {datetime}"
                         format_space ""
