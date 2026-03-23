@@ -28,16 +28,13 @@ return {
       -- Top-level
       { "<leader><space>", icon = " " },
       { "<leader>,",       icon = "󰓩 " },
-      { "<leader>.",       icon = "󰉋 " },
       { "<leader>/",       icon = "󰍉 " },
       { "<leader>:",       icon = " " },
-      { "<leader>e",       icon = "󰙅 " },
       -- Sous-menus [f]ile
       { "<leader>ff", icon = " " },
       { "<leader>fr", icon = " " },
       { "<leader>fg", icon = "󰊢 " },
       { "<leader>fb", icon = "󰓩 " },
-      { "<leader>fe", icon = "󰉋 " },
       { "<leader>fs", icon = "󰆓 " },
       -- Sous-menus [g]it
       { "<leader>gs", icon = "󰊢 " },
