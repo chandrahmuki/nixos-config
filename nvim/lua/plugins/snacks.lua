@@ -35,18 +35,15 @@ return {
     -- Top Level (Essential)
     { "<leader><space>", function() Snacks.picker.smart() end, desc = "Find File" },
     { "<leader>,",       function() Snacks.picker.buffers() end, desc = "Switch Buffer" },
-    { "<leader>.",       function() Snacks.explorer() end, desc = "Browse Files" },
     { "<leader>/",       function() Snacks.picker.grep() end, desc = "Search" },
     { "<leader>:",       function() Snacks.picker.command_history() end, desc = "Command History" },
     { "<leader>P",       function() Snacks.picker.commands() end, desc = "Command Palette" },
-    { "<leader>e",       function() Snacks.explorer() end, desc = "File Explorer" },
 
     -- [f]ile / find
     { "<leader>ff", function() Snacks.picker.files() end, desc = "Find Files" },
     { "<leader>fr", function() Snacks.picker.recent() end, desc = "Recent" },
     { "<leader>fg", function() Snacks.picker.git_files() end, desc = "Find Git Files" },
     { "<leader>fb", function() Snacks.picker.buffers() end, desc = "Buffers (Alternative)" },
-    { "<leader>fe", function() Snacks.explorer() end, desc = "Explorer" },
 
     -- [g]it
     { "<leader>gs", function() Snacks.picker.git_status() end, desc = "Git Status" },
