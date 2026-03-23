@@ -88,6 +88,7 @@ in
             }
             tab name="Editor" focus=true {
                 pane split_direction="vertical" {
+                    pane size="15%" name="Files" command="yazi"
                     pane command="nvim" name="MuggyVim" focus=true {
                         args "."
                         start_suspended false
