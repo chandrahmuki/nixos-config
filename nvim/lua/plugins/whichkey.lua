@@ -19,6 +19,8 @@ return {
     },
     spec = {
       { "<leader>b", group = "buffer", icon = "󰓩 " },
+      { "<leader>e", icon = "󰙅 " },
+      { "<leader>E", icon = "󱏒 " },
       { "<leader>f", group = "file", icon = "󰈔 " },
       { "<leader>g", group = "git", icon = "󰊢 " },
       { "<leader>q", group = "quit/session", icon = "󰗼 " },
