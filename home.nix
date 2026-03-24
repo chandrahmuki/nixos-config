@@ -1,4 +1,4 @@
-{ username, hostname, ... }: # <-- N'oublie pas d'ajouter { config, pkgs, ... }: en haut !
+{ username, hostname, config, pkgs, ... }: # <-- N'oublie pas d'ajouter { config, pkgs, ... }: en haut !
 
 {
   home.username = username;
@@ -39,4 +39,8 @@
   ];
 
   programs.home-manager.enable = true;
+
+  # Silencing Home Manager 26.05 warnings by keeping legacy behavior
+  gtk.gtk4.theme = config.gtk.theme;
+  xdg.userDirs.setSessionVariables = true;
 }
