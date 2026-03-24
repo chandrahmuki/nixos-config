@@ -10,7 +10,7 @@
     ./modules/btop.nix
     ./modules/terminal.nix
     ./modules/git.nix
-    ./modules/fastfetch.nix
+    ./modules/microfetch.nix
     ./modules/brave.nix
     ./modules/vscode.nix
     ./wm/niri.nix
