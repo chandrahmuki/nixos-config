@@ -217,6 +217,7 @@
     xwayland-satellite
     nvtopPackages.amd
     via
+    nvd # Differenz between builds (shows package changes)
   ];
 
   # VIA / QMK Udev rules

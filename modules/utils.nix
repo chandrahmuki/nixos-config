@@ -7,7 +7,6 @@
     gdu # Fast interactive disk analyzer in Go (great for cleanup)
     ncdu # Classic interactive disk analyzer
     playerctl # MPRIS media player control (required for DMS media widget)
-    nvd # Differenz between builds (shows package changes)
     manix # Fast Nix documentation searcher
     pamixer # CLI mixer for PulseAudio/PipeWire (volume control)
     pavucontrol # GUI volume control for PulseAudio/PipeWire
