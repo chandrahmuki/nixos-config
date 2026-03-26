@@ -23,6 +23,7 @@
     ../../modules/performance-tuning.nix
     ../../modules/bluetooth.nix
     ../../modules/nautilus.nix
+    ../../modules/backup.nix
   ];
 
   # Bootloader.

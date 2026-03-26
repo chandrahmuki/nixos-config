@@ -31,6 +31,12 @@
       options = [ "subvol=@log" "compress=zstd:3" "noatime" ];
     };
 
+  fileSystems."/mnt/btrfs-system" =
+    { device = "/dev/disk/by-uuid/59f5b271-11c1-41f9-927d-ed3221a6b404";
+      fsType = "btrfs";
+      options = [ "subvol=/" "noatime" ];
+    };
+
   fileSystems."/home" =
     { device = "/dev/disk/by-uuid/59f5b271-11c1-41f9-927d-ed3221a6b404";
       fsType = "btrfs";
