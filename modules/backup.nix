@@ -11,7 +11,7 @@
         # Jour de référence pour les backups hebdomadaires
         preserve_day_of_week = "monday";
         # Heure de référence pour les backups quotidiens
-        reserve_hour_of_day = "0";
+        preserve_hour_of_day = "0";
 
         # POLITIQUE DE RÉTENTION ÉQUILIBRÉE
         # -------------------------------
@@ -27,7 +27,7 @@
         # ------------------------
         # Volume principal (NVMe)
         volume."/mnt/btrfs-system" = {
-          # Le subvolume à sauvegarder
+          # Le subvolume à sauvegarder (on utilise une chaîne brute pour éviter toute confusion)
           subvolume = "@home";
           # Où stocker les snapshots locaux (sur le même disque)
           snapshot_dir = "@snapshots";
