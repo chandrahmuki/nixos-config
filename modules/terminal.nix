@@ -114,29 +114,6 @@
           bind -M insert -m default jk backward-char force-repaint
         end
 
-        # Générer une playlist dans le dossier Musique
-        function gen-playlist
-          if test (count $argv) -eq 0
-            echo "Usage: gen-playlist <nom_playlist>"
-            echo "Exemple: gen-playlist MaSuperMusique"
-            return 1
-          end
-
-          set -l playlist_name "$argv[1].m3u"
-          set -l music_dir ~/Music
-
-          if not test -d "$music_dir"
-            mkdir -p "$music_dir"
-          end
-
-          # On se place dans le dossier pour avoir des chemins relatifs propres
-          pushd "$music_dir"
-          find . -type f \( -name "*.mp3" -o -name "*.m4a" -o -name "*.flac" -o -name "*.ogg" \) | sort > "$playlist_name"
-          popd
-
-          echo "✅ Playlist '$playlist_name' générée avec succès dans ~/Music !"
-        end
-
         # Complétion pour nfu (nix flake update)
         # On extrait les inputs du flake.lock et on exclut ceux déjà présents sur la ligne de commande
         complete -c nfu -f -a "(

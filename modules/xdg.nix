@@ -17,6 +17,10 @@
     templates = "${config.home.homeDirectory}/Templates";
   };
 
+  # Symlinks vers les disques de données
+  home.file."Games".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.local/share/Steam/steamapps";
+  home.file."Storage".source = config.lib.file.mkOutOfStoreSymlink "/mnt/storage";
+
   # On peut aussi s'assurer que XDG lui-même est bien là (souvent implicite mais bon à avoir)
   xdg.enable = true;
 

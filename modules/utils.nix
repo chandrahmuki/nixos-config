@@ -69,11 +69,12 @@
     # Audio-only playback with mpv
     mpno = "mpv --no-video $argv";
 
-    # Create an M3U playlist from audio files in the current directory and subdirectories
+    # Create an M3U playlist from audio files in the CURRENT directory ONLY
     mkpl = ''
       set -l name (if test (count $argv) -gt 0; echo $argv[1]; else; echo "playlist.m3u"; end)
-      ${pkgs.fd}/bin/fd -e mp3 -e flac -e m4a -e wav -e ogg . > $name
-      echo "✅ Playlist created: $name"
+      # --max-depth 1: limite la recherche au répertoire courant uniquement
+      ${pkgs.fd}/bin/fd --max-depth 1 -e mp3 -e flac -e m4a -e wav -e ogg . > $name
+      echo "✅ Playlist created in current dir: $name"
     '';
 
     # Quick flake update with input name

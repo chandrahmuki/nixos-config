@@ -224,6 +224,21 @@
   # VIA / QMK Udev rules
   services.udev.packages = [ pkgs.via ];
 
+  # --- BTRFS MAINTENANCE ---
+  # Periodic scrub to check for data corruption (silent errors)
+  services.btrfs.autoScrub = {
+    enable = true;
+    interval = "weekly";
+    fileSystems = [ "/" "/mnt/storage" "/mnt/games" "/mnt/backup" ];
+  };
+
+  # --- DATA DIRECTORIES PERMISSIONS ---
+  # Ensures that david owns the mount points on the second disk at each boot
+  systemd.tmpfiles.rules = [
+    "d /mnt/games 0755 ${username} users -"
+    "d /mnt/storage 0755 ${username} users -"
+  ];
+
   # --- OPTIMIZATIONS ---
 
   # 1. Memory Management (ZRAM)
