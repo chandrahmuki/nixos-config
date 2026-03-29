@@ -88,6 +88,11 @@
               set -gx GOOGLE_API_KEY (cat $_key_file)
             end
 
+            set -l _gh_token_file ~/.config/antigravity/github_token
+            if test -f $_gh_token_file
+              set -gx GITHUB_TOKEN (cat $_gh_token_file)
+            end
+
             if status is-interactive
               # Fonction pour les outils visuels (Starship, Fastfetch)
               # On les regroupe pour plus de clarté
