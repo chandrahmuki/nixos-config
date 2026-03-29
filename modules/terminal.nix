@@ -137,6 +137,7 @@
           '';
           shellAliases = {
             nix-switch = "sudo nixos-rebuild switch --flake .#${hostname}";
+            tx = "tmux attach || tmux new-session";
           };
 
         };
