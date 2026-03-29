@@ -109,6 +109,15 @@
               # Mode Vim pour Fish
               fish_vi_key_bindings
 
+              # On désactive les raccourcis Fish par défaut qui pourraient gêner tmux
+              # Alt+l (list_directories) et Alt+h/j/k
+              bind -M insert \ch kill-word # Exemple : Alt+h fait autre chose
+              # On les unbind proprement
+              bind -M insert \el true
+              bind -M insert \ej true
+              bind -M insert \ek true
+              bind -M insert \eh true
+
               # Configuration du curseur pour les modes Vi (premium touch)
               set -g fish_cursor_default block
               set -g fish_cursor_insert line

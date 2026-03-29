@@ -42,22 +42,21 @@
       ];
 
       extraConfig = ''
-        # Seamless navigation with Alt + h/j/k/l
-        bind-key -n 'M-h' if-shell "$is_vim" 'send-keys M-h' 'select-pane -L'
-        bind-key -n 'M-j' if-shell "$is_vim" 'send-keys M-j' 'select-pane -D'
-        bind-key -n 'M-k' if-shell "$is_vim" 'send-keys M-k' 'select-pane -U'
-        bind-key -n 'M-l' if-shell "$is_vim" 'send-keys M-l' 'select-pane -R'
+        # Navigation fluide entre panneaux avec Alt + h/j/k/l (comme Zellij)
+        bind-key -n M-h if-shell "$is_vim" "send-keys M-h"  "select-pane -L"
+        bind-key -n M-j if-shell "$is_vim" "send-keys M-j"  "select-pane -D"
+        bind-key -n M-k if-shell "$is_vim" "send-keys M-k"  "select-pane -U"
+        bind-key -n M-l if-shell "$is_vim" "send-keys M-l"  "select-pane -R"
 
-        # Intuitive splits
+        # Splits plus intuitifs
         bind s split-window -v -c "#{pane_current_path}"
         bind v split-window -h -c "#{pane_current_path}"
 
-        # Quick reload
+        # Rechargement rapide
         bind r source-file ~/.config/tmux/tmux.conf \; display "Config reloaded!"
 
-        # Neovim detection
-        is_vim="ps -o state= -o comm= -t '#{pane_tty}' \
-            | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
+        # Détection de Neovim
+        is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
       '';
     };
   };
