@@ -1,18 +1,27 @@
 { config, lib, pkgs, username, inputs, ... }:
 
 {
+  # 1. Importation du module NixOS du flake
   imports = [
     inputs.niri.nixosModules.niri
   ];
 
+  # 2. Configuration au niveau Système (NixOS)
+  programs.niri = {
+    enable = true;
+    package = pkgs.niri-unstable; # On garde ton package habituel
+  };
+
+  # 3. Configuration au niveau Utilisateur (Dendritic)
+  # Le module NixOS de sodiboo expose les réglages HM via cette structure
   home-manager.users.${username} = { config, lib, ... }: {
+    
     # jq est nécessaire pour certains scripts niri
     home.packages = [ pkgs.jq ];
 
+    # Ici, on ne ré-importe PAS le module HM, le module NixOS s'en occupe.
     programs.niri.settings = {
-      # --- CONFIGURATION DE BASE (from wm/niri.nix) ---
-      
-      # Désactive le panneau d'aide au démarrage
+      # --- CONFIGURATION DE BASE ---
       hotkey-overlay.skip-at-startup = true;
 
       input.keyboard.xkb = {
@@ -28,9 +37,7 @@
       ];
 
       debug = {
-        # Permet le focus même si le token d'activation est "imparfait"
         honor-xdg-activation-with-invalid-serial = true;
-        # Corrige les soucis de focus pour les apps Chromium/Electron
         deactivate-unfocused-windows = true;
       };
 
@@ -53,31 +60,20 @@
         { proportion = 2. / 3.; }
       ];
 
-      # Configuration des écrans
-      # DP-2 (2K) à gauche, HDMI-A-1 (4K) à droite
       outputs = {
         "DP-2" = {
-          mode = {
-            width = 2560;
-            height = 1440;
-            refresh = 74.968;
-          };
+          mode = { width = 2560; height = 1440; refresh = 74.968; };
           scale = 1.0;
           position = { x = 0; y = 0; };
         };
         "HDMI-A-1" = {
-          mode = {
-            width = 3840;
-            height = 2160;
-            refresh = 60.0;
-          };
+          mode = { width = 3840; height = 2160; refresh = 60.0; };
           scale = 2.0;
           position = { x = 2560; y = 0; };
         };
       };
 
-      # --- STYLE ET APPARENCE (from wm/style.nix) ---
-      
+      # --- STYLE ET APPARENCE ---
       layout = {
         gaps = 16;
         focus-ring.width = 6;
@@ -87,30 +83,24 @@
 
       window-rules = [
         {
-          # Force Steam et les jeux sur le 2K et verrouille en plein écran
           matches = [ { app-id = "^steam.*$"; } ];
           open-on-output = "DP-2";
           open-fullscreen = true;
         }
         {
-          # Brave browser specific rules
           matches = [ { app-id = "brave-browser"; } ];
           open-focused = true;
         }
         {
-          # Rounded corners for all windows
           geometry-corner-radius = {
-            bottom-left = 12.0;
-            bottom-right = 12.0;
-            top-left = 12.0;
-            top-right = 12.0;
+            bottom-left = 12.0; bottom-right = 12.0;
+            top-left = 12.0; top-right = 12.0;
           };
           clip-to-geometry = true;
         }
       ];
 
-      # --- RACCOURCIS CLAVIER (from wm/binds.nix) ---
-      
+      # --- RACCOURCIS CLAVIER ---
       binds = with config.lib.niri.actions; {
         "Mod+D".action = spawn "walker";
         "Mod+M".action = spawn [ "music-menu" ];
@@ -131,7 +121,6 @@
         "Mod+C".action = consume-window-into-column;
         "Mod+X".action = expel-window-from-column;
 
-        # Focus
         "Mod+Left".action = focus-column-or-monitor-left;
         "Mod+Right".action = focus-column-or-monitor-right;
         "Mod+Up".action = focus-window-or-workspace-up;
@@ -150,7 +139,6 @@
         "XF86MonBrightnessUp".action = spawn "brightnessctl s +10%";
         "XF86MonBrightnessDown".action = spawn "brightnessctl s -10%";
 
-        # Audio & Media Control
         "Mod+Ctrl+equal".action = spawn [ "${pkgs.pamixer}/bin/pamixer" "-i" "5" ];
         "Mod+Ctrl+minus".action = spawn [ "${pkgs.pamixer}/bin/pamixer" "-d" "5" ];
         "Mod+Ctrl+0".action = spawn [ "${pkgs.pamixer}/bin/pamixer" "-t" ];
@@ -158,7 +146,6 @@
         "Mod+Ctrl+bracketright".action = spawn [ "${pkgs.playerctl}/bin/playerctl" "next" ];
         "Mod+Ctrl+bracketleft".action = spawn [ "${pkgs.playerctl}/bin/playerctl" "previous" ];
         
-        # Move
         "Mod+Shift+Left".action = move-column-left-or-to-monitor-left;
         "Mod+Shift+Right".action = move-column-right-or-to-monitor-right;
         "Mod+Shift+Up".action = move-window-up-or-to-workspace-up;
@@ -174,13 +161,11 @@
         "Mod+Shift+8".action = move-column-to-index 8;
         "Mod+Shift+9".action = move-column-to-index 9;
 
-        # Souris
         "Mod+WheelScrollDown".action = focus-column-right;
         "Mod+WheelScrollUp".action = focus-column-left;
         "Mod+Shift+WheelScrollDown".action = focus-workspace-down;
         "Mod+Shift+WheelScrollUp".action = focus-workspace-up;
 
-        # Screenshots
         "Ctrl+Mod+S".action.screenshot = [ ];
         "Ctrl+Mod+Shift+S".action.screenshot-screen = [ ];
       };

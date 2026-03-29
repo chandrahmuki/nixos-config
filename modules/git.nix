@@ -4,20 +4,26 @@
   home-manager.users.${username} = { config, lib, ... }: {
     programs.git = {
       enable = true;
-      userName = username;
-      userEmail = "email@exemple.com";
 
-      # Des raccourcis qui vont te faire gagner un temps fou
-      aliases = {
-        s = "status";
-        a = "add";
-        c = "commit";
-        cm = "commit -m";
-        p = "push";
-        lg = "log --graph --oneline --all"; # Une jolie vue de ton historique
-      };
+      # Les nouvelles options utilisent la structure 'settings'
+      # pour correspondre au format du fichier .gitconfig
+      settings = {
+        user = {
+          name = username;
+          email = "email@exemple.com";
+        };
 
-      extraConfig = {
+        # Les alias sont maintenant sous settings.alias
+        alias = {
+          s = "status";
+          a = "add";
+          c = "commit";
+          cm = "commit -m";
+          p = "push";
+          lg = "log --graph --oneline --all"; # Une jolie vue de ton historique
+        };
+
+        # Configuration extra (anciennement extraConfig)
         init.defaultBranch = "main";
         pull.rebase = true; # Plus propre pour éviter les commits de "merge" inutiles
       };

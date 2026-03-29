@@ -25,11 +25,8 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Automatic garbage collection (weekly, keep 5 days of builds)
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 7d";
-  };
+  # Disabled to favor nh.clean (see modules/nh.nix)
+  nix.gc.automatic = false;
 
   #AMD
   boot.initrd.kernelModules = [ "amdgpu" ];
@@ -183,11 +180,6 @@
 
   # Enable I2C support for DDC/CI protocol (brightness control for external monitors)
   hardware.i2c.enable = true;
-  # niri setup using unstable
-  programs.niri = {
-    enable = true;
-    package = pkgs.niri-unstable;
-  };
 
   # XDG Desktop Portal is handled by Sodiboo's Niri module
   # We specify the default configuration to use gnome and gtk portals for Niri session

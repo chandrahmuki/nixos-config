@@ -13,6 +13,10 @@
         # Heure de référence pour les backups quotidiens
         preserve_hour_of_day = "0";
 
+        # Toujours créer le snapshot local même si le backup distant échoue
+        # Cela évite que le service s'arrête en erreur si le disque de backup est plein
+        snapshot_create = "always";
+
         # POLITIQUE DE RÉTENTION ÉQUILIBRÉE
         # -------------------------------
         # Snapshots locaux (sur le NVMe, pour rollback rapide)
@@ -38,6 +42,8 @@
     };
   };
 
-  # On s'assure que btrbk a les permissions et les outils nécessaires
-  # (Géré automatiquement par le module NixOS normalement)
+  # Correction du comportement du timer pour éviter le spam au boot
+  systemd.timers.btrbk-local = {
+    timerConfig.Persistent = lib.mkForce false;
+  };
 }
