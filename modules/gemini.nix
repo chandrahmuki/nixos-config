@@ -7,7 +7,7 @@ let
       command = "${pkgs.nodejs}/bin/npx";
       args = [ "-y" "@modelcontextprotocol/server-github" ];
       env = {
-        GITHUB_TOKEN = "$(cat /home/${username}/.config/antigravity/github_token)";
+        GITHUB_TOKEN = "$(cat /home/${username}/.config/sops/github_token)";
       };
     };
   };

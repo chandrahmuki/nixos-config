@@ -82,13 +82,13 @@
 
             # Chargement dynamique des clés API depuis sops-nix
             # home.sessionVariables ne supporte pas $(cat ...) avec Fish (traité littéralement)
-            set -l _key_file ~/.config/antigravity/gemini_api_key
+            set -l _key_file ~/.config/sops/gemini_api_key
             if test -f $_key_file
               set -gx GEMINI_API_KEY (cat $_key_file)
               set -gx GOOGLE_API_KEY (cat $_key_file)
             end
 
-            set -l _gh_token_file ~/.config/antigravity/github_token
+            set -l _gh_token_file ~/.config/sops/github_token
             if test -f $_gh_token_file
               set -gx GITHUB_TOKEN (cat $_gh_token_file)
             end
