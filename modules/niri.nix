@@ -6,11 +6,6 @@
   ];
 
   home-manager.users.${username} = { config, lib, ... }: {
-    # On importe le module Home Manager de Niri depuis le flake pour avoir accès aux options
-    imports = [
-      inputs.niri.homeModules.niri
-    ];
-
     # jq est nécessaire pour certains scripts niri
     home.packages = [ pkgs.jq ];
 
