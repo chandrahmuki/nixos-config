@@ -1,7 +1,9 @@
-{ pkgs, ... }:
+{ config, lib, pkgs, username, ... }:
 
 {
-  programs.obsidian = {
-    enable = true;
+  home-manager.users.${username} = { config, lib, ... }: {
+    programs.obsidian = {
+          enable = true;
+        };
   };
 }

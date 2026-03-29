@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}:
+{ config, lib, pkgs, ... }:
 
 {
   # Enable GVfs for mounting drives (required for Nautilus sidebar)

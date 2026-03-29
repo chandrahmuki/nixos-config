@@ -1,8 +1,10 @@
-{ pkgs, ... }:
+{ config, lib, pkgs, username, ... }:
 
 {
-  # Installation de Vesktop (client Discord alternatif optimisé pour Wayland)
-  home.packages = with pkgs; [
-    vesktop # Supporte le partage d'écran audio/vidéo sous Wayland et inclut Vencord
-  ];
+  home-manager.users.${username} = { config, lib, ... }: {
+    # Installation de Vesktop (client Discord alternatif optimisé pour Wayland)
+    home.packages = with pkgs; [
+      vesktop # Supporte le partage d'écran audio/vidéo sous Wayland et inclut Vencord
+    ];
+  };
 }

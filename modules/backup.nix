@@ -1,4 +1,4 @@
-{ ... }:
+{ config, lib, pkgs, ... }:
 
 {
   # Configuration de btrbk pour les backups automatiques

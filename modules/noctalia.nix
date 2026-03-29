@@ -1,23 +1,29 @@
-{ config, inputs, ... }:
+{ config, lib, pkgs, username, inputs, ... }:
 
 {
   imports = [
-    inputs.noctalia.homeModules.default
+    inputs.noctalia.nixosModules.default
   ];
 
-  # Configuration du fond d'écran pour Noctalia
-  home.file.".cache/noctalia/wallpapers.json".text = builtins.toJSON {
-    defaultWallpaper = "${config.home.homeDirectory}/Pictures/wallpaper/wallpaper.png";
-  };
+  home-manager.users.${username} = { config, lib, ... }: {
+    imports = [
+          inputs.noctalia.homeModules.default
+        ];
 
-  programs.noctalia-shell = {
-    enable = true;
-    systemd.enable = true; # Auto-start avec Niri/Wayland
-  };
+        # Configuration du fond d'écran pour Noctalia
+        home.file.".cache/noctalia/wallpapers.json".text = builtins.toJSON {
+          defaultWallpaper = "/home/${username}/Pictures/wallpaper/wallpaper.png";
+        };
 
-  # Définition de la variable d'environnement pour que Noctalia lise et écrive
-  # ses paramètres (dont la position des widgets) directement dans le dossier Git.
-  home.sessionVariables = {
-    NOCTALIA_SETTINGS_FILE = "${config.home.homeDirectory}/nixos-config/generated/noctalia-settings.json";
+        programs.noctalia-shell = {
+          enable = true;
+          systemd.enable = true; # Auto-start avec Niri/Wayland
+        };
+
+        # Définition de la variable d'environnement pour que Noctalia lise et écrive
+        # ses paramètres (dont la position des widgets) directement dans le dossier Git.
+        home.sessionVariables = {
+          NOCTALIA_SETTINGS_FILE = "/home/${username}/nixos-config/generated/noctalia-settings.json";
+        };
   };
 }

@@ -16,14 +16,7 @@
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
-    ../../modules/font.nix
-    ../../modules/steam.nix
-    ../../modules/lact.nix
-    ../../modules/brave-system.nix
-    ../../modules/performance-tuning.nix
-    ../../modules/bluetooth.nix
-    ../../modules/nautilus.nix
-    ../../modules/backup.nix
+    ../../modules
   ];
 
   # Bootloader.

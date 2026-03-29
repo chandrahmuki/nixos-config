@@ -1,11 +1,13 @@
-{ pkgs, ... }:
+{ config, lib, pkgs, username, ... }:
 
 {
-  programs.btop = {
-    enable = true;
-    settings = {
-      color_theme = "dracula";
-      vim_keys = true;
+  home-manager.users.${username} = { config, lib, ... }: {
+    programs.btop = {
+      enable = true;
+      settings = {
+        color_theme = "dracula";
+        vim_keys = true;
+      };
     };
   };
 }

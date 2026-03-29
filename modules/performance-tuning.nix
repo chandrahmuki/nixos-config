@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   # --- PERFORMANCE TUNING (performance-engineer skill) ---

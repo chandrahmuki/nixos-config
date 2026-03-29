@@ -1,9 +1,11 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, username, ... }:
 
 {
-  programs.direnv = {
-    enable = true;
-    nix-direnv.enable = true;
-    enableFishIntegration = true;
+  home-manager.users.${username} = { config, lib, ... }: {
+    programs.direnv = {
+      enable = true;
+      nix-direnv.enable = true;
+      enableFishIntegration = true;
+    };
   };
 }

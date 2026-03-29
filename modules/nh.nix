@@ -1,4 +1,11 @@
-{ config, hostname, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  username,
+  hostname,
+  ...
+}:
 
 {
   programs.nh = {
@@ -6,7 +13,7 @@
 
     # Chemin vers votre flake NixOS
     # Adaptez ce chemin selon votre configuration
-    flake = "${config.home.homeDirectory}/nixos-config";
+    flake = "/home/${username}/nixos-config";
 
     # Nettoyage automatique des anciennes générations
     clean = {
@@ -16,10 +23,12 @@
     };
   };
 
-  programs.fish.functions = {
-    nos = ''
-      cd ${config.home.homeDirectory}/nixos-config
-      nh os switch . --hostname ${hostname} --ask -L --diff always
-    '';
+  home-manager.users.${username} = { config, lib, ... }: {
+    programs.fish.functions = {
+      nos = ''
+        cd /home/${username}/nixos-config
+        nh os switch . --hostname ${hostname} --ask -L --diff always
+      '';
+    };
   };
 }

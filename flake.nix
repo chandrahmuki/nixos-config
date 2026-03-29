@@ -60,10 +60,6 @@
           ./hosts/system/default.nix
           ./overlays.nix
 
-          noctalia.nixosModules.default
-          niri.nixosModules.niri
-          sops-nix.nixosModules.sops
-
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;

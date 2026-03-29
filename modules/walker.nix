@@ -1,216 +1,218 @@
-{ inputs, pkgs, ... }:
+{ config, lib, pkgs, username, inputs, ... }:
 
 {
-  imports = [
-    inputs.walker.homeManagerModules.default
-  ];
+  home-manager.users.${username} = { config, lib, ... }: {
+    imports = [
+          inputs.walker.homeManagerModules.default
+        ];
 
-  programs.walker = {
-    enable = true;
-    runAsService = true;
-    
-    # Configuration de base pour Walker
-    config = {
-      theme = "tokyonight";
-      app_launch_prefix = "";
-      selection_prefix = "❯";
-      
-      search = {
-        placeholder = "Search Applications...";
-      };
+        programs.walker = {
+          enable = true;
+          runAsService = true;
 
-      # Walker intègre nativement de nombreux providers
-      providers = {
-        websearch.prefix = "?";
-        calculator.prefix = "=";
-      };
-    };
+          # Configuration de base pour Walker
+          config = {
+            theme = "tokyonight";
+            app_launch_prefix = "";
+            selection_prefix = "❯";
 
-    themes.tokyonight = {
-      style = ''
-        @define-color window_bg_color #1a1b26;
-        @define-color accent_bg_color #2d3f76;
-        @define-color theme_fg_color #c0caf5;
-        @define-color error_bg_color #f7768e;
-        @define-color error_fg_color #c0caf5;
-        @define-color match_color #7aa2f7;
+            search = {
+              placeholder = "Search Applications...";
+            };
 
-        * {
-          all: unset;
-        }
+            # Walker intègre nativement de nombreux providers
+            providers = {
+              websearch.prefix = "?";
+              calculator.prefix = "=";
+            };
+          };
 
-        popover {
-          background: lighter(@window_bg_color);
-          border: 1px solid darker(@accent_bg_color);
-          border-radius: 18px;
-          padding: 10px;
-        }
+          themes.tokyonight = {
+            style = ''
+              @define-color window_bg_color #1a1b26;
+              @define-color accent_bg_color #2d3f76;
+              @define-color theme_fg_color #c0caf5;
+              @define-color error_bg_color #f7768e;
+              @define-color error_fg_color #c0caf5;
+              @define-color match_color #7aa2f7;
 
-        .normal-icons {
-          -gtk-icon-size: 16px;
-        }
+              * {
+                all: unset;
+              }
 
-        .large-icons {
-          -gtk-icon-size: 32px;
-        }
+              popover {
+                background: lighter(@window_bg_color);
+                border: 1px solid darker(@accent_bg_color);
+                border-radius: 18px;
+                padding: 10px;
+              }
 
-        scrollbar {
-          opacity: 0;
-        }
+              .normal-icons {
+                -gtk-icon-size: 16px;
+              }
 
-        .box-wrapper {
-          box-shadow:
-            0 19px 38px rgba(0, 0, 0, 0.3),
-            0 15px 12px rgba(0, 0, 0, 0.22);
-          background: @window_bg_color;
-          padding: 20px;
-          border-radius: 10px;
-          border: 2px solid #7aa2f7;
-        }
+              .large-icons {
+                -gtk-icon-size: 32px;
+              }
 
-        .preview-box,
-        .elephant-hint,
-        .placeholder {
-          color: @theme_fg_color;
-        }
+              scrollbar {
+                opacity: 0;
+              }
 
-        .search-container {
-          border-radius: 10px;
-        }
+              .box-wrapper {
+                box-shadow:
+                  0 19px 38px rgba(0, 0, 0, 0.3),
+                  0 15px 12px rgba(0, 0, 0, 0.22);
+                background: @window_bg_color;
+                padding: 20px;
+                border-radius: 10px;
+                border: 2px solid #7aa2f7;
+              }
 
-        .input placeholder {
-          opacity: 0.5;
-        }
+              .preview-box,
+              .elephant-hint,
+              .placeholder {
+                color: @theme_fg_color;
+              }
 
-        .input selection {
-          background: @accent_bg_color;
-        }
+              .search-container {
+                border-radius: 10px;
+              }
 
-        .input {
-          caret-color: @theme_fg_color;
-          background: @window_bg_color;
-          padding: 10px;
-          color: @theme_fg_color;
-        }
+              .input placeholder {
+                opacity: 0.5;
+              }
 
-        .list {
-          color: @theme_fg_color;
-        }
+              .input selection {
+                background: @accent_bg_color;
+              }
 
-        .item-box {
-          border-radius: 10px;
-          padding: 10px;
-        }
+              .input {
+                caret-color: @theme_fg_color;
+                background: @window_bg_color;
+                padding: 10px;
+                color: @theme_fg_color;
+              }
 
-        .item-quick-activation {
-          background: alpha(@accent_bg_color, 0.5);
-          border-radius: 5px;
-          padding: 10px;
-        }
+              .list {
+                color: @theme_fg_color;
+              }
 
-        child:selected .item-box,
-        row:selected .item-box {
-          background: @accent_bg_color;
-        }
+              .item-box {
+                border-radius: 10px;
+                padding: 10px;
+              }
 
-        .item-subtext {
-          font-size: 12px;
-          opacity: 0.5;
-        }
+              .item-quick-activation {
+                background: alpha(@accent_bg_color, 0.5);
+                border-radius: 5px;
+                padding: 10px;
+              }
 
-        .providerlist .item-subtext {
-          font-size: unset;
-          opacity: 0.75;
-        }
+              child:selected .item-box,
+              row:selected .item-box {
+                background: @accent_bg_color;
+              }
 
-        .item-image-text {
-          font-size: 28px;
-        }
+              .item-subtext {
+                font-size: 12px;
+                opacity: 0.5;
+              }
 
-        .preview {
-          border: 1px solid alpha(@accent_bg_color, 0.25);
-          border-radius: 10px;
-          color: @theme_fg_color;
-        }
+              .providerlist .item-subtext {
+                font-size: unset;
+                opacity: 0.75;
+              }
 
-        .calc .item-text {
-          font-size: 24px;
-        }
+              .item-image-text {
+                font-size: 28px;
+              }
 
-        .symbols .item-image {
-          font-size: 24px;
-        }
+              .preview {
+                border: 1px solid alpha(@accent_bg_color, 0.25);
+                border-radius: 10px;
+                color: @theme_fg_color;
+              }
 
-        .todo.done .item-text-box {
-          opacity: 0.25;
-        }
+              .calc .item-text {
+                font-size: 24px;
+              }
 
-        .todo.urgent {
-          font-size: 24px;
-        }
+              .symbols .item-image {
+                font-size: 24px;
+              }
 
-        .todo.active {
-          font-weight: bold;
-        }
+              .todo.done .item-text-box {
+                opacity: 0.25;
+              }
 
-        .bluetooth.disconnected {
-          opacity: 0.5;
-        }
+              .todo.urgent {
+                font-size: 24px;
+              }
 
-        .preview .large-icons {
-          -gtk-icon-size: 64px;
-        }
+              .todo.active {
+                font-weight: bold;
+              }
 
-        .keybinds {
-          padding-top: 10px;
-          border-top: 1px solid lighter(@window_bg_color);
-          font-size: 12px;
-          color: @theme_fg_color;
-        }
+              .bluetooth.disconnected {
+                opacity: 0.5;
+              }
 
-        .keybind-button {
-          opacity: 0.5;
-        }
+              .preview .large-icons {
+                -gtk-icon-size: 64px;
+              }
 
-        .keybind-button:hover {
-          opacity: 0.75;
-        }
+              .keybinds {
+                padding-top: 10px;
+                border-top: 1px solid lighter(@window_bg_color);
+                font-size: 12px;
+                color: @theme_fg_color;
+              }
 
-        .keybind-bind {
-          text-transform: lowercase;
-          opacity: 0.35;
-        }
+              .keybind-button {
+                opacity: 0.5;
+              }
 
-        .keybind-label {
-          padding: 2px 4px;
-          border-radius: 4px;
-          border: 1px solid @theme_fg_color;
-        }
+              .keybind-button:hover {
+                opacity: 0.75;
+              }
 
-        .error {
-          padding: 10px;
-          background: @error_bg_color;
-          color: @error_fg_color;
-        }
+              .keybind-bind {
+                text-transform: lowercase;
+                opacity: 0.35;
+              }
 
-        :not(.calc).current {
-          font-style: italic;
-        }
+              .keybind-label {
+                padding: 2px 4px;
+                border-radius: 4px;
+                border: 1px solid @theme_fg_color;
+              }
 
-        .preview-content.archlinuxpkgs,
-        .preview-content.dnfpackages {
-          font-family: monospace;
-        }
+              .error {
+                padding: 10px;
+                background: @error_bg_color;
+                color: @error_fg_color;
+              }
 
-        label.match {
-          color: @match_color;
-          font-weight: bold;
-        }
-      '';
-    };
+              :not(.calc).current {
+                font-style: italic;
+              }
 
+              .preview-content.archlinuxpkgs,
+              .preview-content.dnfpackages {
+                font-family: monospace;
+              }
+
+              label.match {
+                color: @match_color;
+                font-weight: bold;
+              }
+            '';
+          };
+
+        };
+
+        # On s'assure que Fuzzel est désactivé
+        programs.fuzzel.enable = false;
   };
-
-  # On s'assure que Fuzzel est désactivé
-  programs.fuzzel.enable = false;
 }

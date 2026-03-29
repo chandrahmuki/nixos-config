@@ -1,35 +1,37 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, username, ... }:
 
 {
-  # Gestion des répertoires utilisateurs standards (Documents, Images, etc.)
-  xdg.userDirs = {
-    enable = true;
-    createDirectories = true; # Crée les dossiers s'ils n'existent pas
-    
-    # Chemins par défaut
-    documents = "${config.home.homeDirectory}/Documents";
-    download = "${config.home.homeDirectory}/Downloads";
-    music = "${config.home.homeDirectory}/Music";
-    pictures = "${config.home.homeDirectory}/Pictures";
-    videos = "${config.home.homeDirectory}/Videos";
-    desktop = "${config.home.homeDirectory}/Desktop";
-    publicShare = "${config.home.homeDirectory}/Public";
-    templates = "${config.home.homeDirectory}/Templates";
-  };
+  home-manager.users.${username} = { config, lib, ... }: {
+    # Gestion des répertoires utilisateurs standards (Documents, Images, etc.)
+        xdg.userDirs = {
+          enable = true;
+          createDirectories = true; # Crée les dossiers s'ils n'existent pas
 
-  # Symlinks vers les disques de données
-  home.file."Games".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.local/share/Steam/steamapps";
-  home.file."Storage".source = config.lib.file.mkOutOfStoreSymlink "/mnt/storage";
+          # Chemins par défaut
+          documents = "/home/${username}/Documents";
+          download = "/home/${username}/Downloads";
+          music = "/home/${username}/Music";
+          pictures = "/home/${username}/Pictures";
+          videos = "/home/${username}/Videos";
+          desktop = "/home/${username}/Desktop";
+          publicShare = "/home/${username}/Public";
+          templates = "/home/${username}/Templates";
+        };
 
-  # On peut aussi s'assurer que XDG lui-même est bien là (souvent implicite mais bon à avoir)
-  xdg.enable = true;
+        # Symlinks vers les disques de données
+        home.file."Games".source = config.lib.file.mkOutOfStoreSymlink "/home/${username}/.local/share/Steam/steamapps";
+        home.file."Storage".source = config.lib.file.mkOutOfStoreSymlink "/mnt/storage";
 
-  xdg.mimeApps = {
-    enable = true;
-    defaultApplications = {
-      "text/html" = "com.brave.Browser.desktop";
-      "x-scheme-handler/http" = "com.brave.Browser.desktop";
-      "x-scheme-handler/https" = "com.brave.Browser.desktop";
-    };
+        # On peut aussi s'assurer que XDG lui-même est bien là (souvent implicite mais bon à avoir)
+        xdg.enable = true;
+
+        xdg.mimeApps = {
+          enable = true;
+          defaultApplications = {
+            "text/html" = "com.brave.Browser.desktop";
+            "x-scheme-handler/http" = "com.brave.Browser.desktop";
+            "x-scheme-handler/https" = "com.brave.Browser.desktop";
+          };
+        };
   };
 }
