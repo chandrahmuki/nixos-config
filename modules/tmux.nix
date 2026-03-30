@@ -1,7 +1,35 @@
 { config, lib, pkgs, username, ... }:
 
+let
+  # 1. Le script qui lance tmux dans foot avec la petite police
+  tmux-small-script = pkgs.writeShellScriptBin "tmux-small" ''
+    ${pkgs.foot}/bin/foot -f "JetBrainsMono Nerd Font:size=10" \
+      ${pkgs.fish}/bin/fish -c "${pkgs.tmux}/bin/tmux attach || ${pkgs.tmux}/bin/tmux new-session"
+  '';
+
+  # 2. L'entrée desktop proprement packagée
+  tmux-small-desktop = pkgs.makeDesktopItem {
+    name = "tmux-small";
+    desktopName = "Tmux (Small Font)";
+    genericName = "Terminal Multiplexer";
+    exec = "${tmux-small-script}/bin/tmux-small";
+    icon = "utilities-terminal";
+    categories = [ "System" "TerminalEmulator" "Development" ];
+    terminal = false;
+  };
+in
 {
   home-manager.users.${username} = { config, lib, ... }: {
+    # On installe le script et l'entrée desktop
+    home.packages = [ 
+      tmux-small-script 
+      tmux-small-desktop
+    ];
+
+    # 3. Le "Pont" : On crée un lien symbolique dans le dossier que Walker scanne forcément
+    home.file.".local/share/applications/tmux-small.desktop".source = 
+      "${tmux-small-desktop}/share/applications/tmux-small.desktop";
+
     programs.tmux = {
       enable = true;
       shortcut = "b";
@@ -29,6 +57,7 @@
           extraConfig = ''
             set -g @resurrect-strategy-nvim 'session'
             set -g @resurrect-capture-pane-contents 'on'
+            set -g @resurrect-dir '~/.config/tmux/resurrect'
           '';
         }
         {
