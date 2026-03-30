@@ -40,9 +40,10 @@
           config = {
             # --- OPTIMISATIONS GPU AMD ---
             hwdec = "auto-safe"; # Utilise le meilleur décodeur matériel disponible
-            vo = "gpu"; # Sortie vidéo via le GPU
+            vo = "gpu-next"; # Version moderne de la sortie vidéo GPU
             gpu-context = "wayland"; # Force le contexte Wayland pour Niri
             hwdec-codecs = "all"; # Tente le décodage matériel pour tous les formats
+            gpu-api = "vulkan"; # Utilise Vulkan pour de meilleures perfs sur AMD
             
             # --- ÉCONOMIE DE RAM (pour mpvpaper) ---
             cache = "no"; # Désactive le cache disque pour économiser la RAM

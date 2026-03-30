@@ -58,6 +58,7 @@ in
             set -g @resurrect-strategy-nvim 'session'
             set -g @resurrect-capture-pane-contents 'on'
             set -g @resurrect-dir '~/.config/tmux/resurrect'
+            set -g @resurrect-save-on-exit 'on'
           '';
         }
         {
