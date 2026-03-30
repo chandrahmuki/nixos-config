@@ -42,7 +42,27 @@
     };
   };
 
-  # Correction du comportement du timer pour éviter le spam au boot
+  # Correction du comportement du service pour éviter les erreurs au boot
+  systemd.services.btrbk-local = {
+    # On force le service à attendre que le disque de backup soit monté
+    after = [ "mnt-backup.mount" "mnt-btrfs\\x2dsystem.mount" ];
+    requires = [ "mnt-backup.mount" "mnt-btrfs\\x2dsystem.mount" ];
+    
+    unitConfig = {
+      # Si le disque n'est pas là, on ne considère pas ça comme une erreur critique du système
+      ConditionPathIsMountPoint = "/mnt/backup";
+    };
+
+    serviceConfig = {
+      # AUTO-CLEAN : On lance un nettoyage automatique AVANT le backup
+      # Le "-" au début dit à systemd de continuer même si le clean ne trouve rien
+      ExecStartPre = [
+        "-${pkgs.btrbk}/bin/btrbk -c /etc/btrbk/local.conf clean /mnt/backup"
+      ];
+    };
+  };
+
+  # On garde le timer non-persistant pour ne pas spammer au boot
   systemd.timers.btrbk-local = {
     timerConfig.Persistent = lib.mkForce false;
   };
