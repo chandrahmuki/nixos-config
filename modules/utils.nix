@@ -38,12 +38,19 @@
             mpris # MPRIS support for media player detection (DMS, playerctl)
           ];
           config = {
-            # --- OPTIMISATIONS GPU AMD ---
-            hwdec = "auto-safe"; # Utilise le meilleur décodeur matériel disponible
+            # --- OPTIMISATIONS GPU AMD (Zero-Copy) ---
+            hwdec = "vaapi"; # Force VA-API (Zero-copy sur AMD)
             vo = "gpu-next"; # Version moderne de la sortie vidéo GPU
             gpu-context = "wayland"; # Force le contexte Wayland pour Niri
             hwdec-codecs = "all"; # Tente le décodage matériel pour tous les formats
             gpu-api = "vulkan"; # Utilise Vulkan pour de meilleures perfs sur AMD
+            
+            # --- RÉDUCTION CHARGE GPU (Scaling) ---
+            scale = "nearest"; # Utilise l'algorithme le plus simple pour le scaling
+            cscale = "nearest";
+            dscale = "nearest";
+            sws-scaler = "fast-bilinear";
+            hdr-compute-peak = "no"; # Désactive le calcul HDR (lourd)
             
             # --- ÉCONOMIE DE RAM (pour mpvpaper) ---
             cache = "no"; # Désactive le cache disque pour économiser la RAM
