@@ -80,6 +80,14 @@
           interactiveShellInit = ''
             set -g fish_greeting ""
 
+            # Fonction tmux qui lance une nouvelle fenêtre Foot avec une petite police (taille 10)
+            function tx
+                # On lance Foot en arrière-plan avec la police de taille 10
+                # On utilise tmux attach ou new-session à l'intérieur
+                foot -f "JetBrainsMono Nerd Font:size=10" bash -c "tmux attach || tmux new-session" &
+                disown
+            end
+
             # Chargement dynamique des clés API depuis sops-nix
             # home.sessionVariables ne supporte pas $(cat ...) avec Fish (traité littéralement)
             set -l _key_file ~/.config/sops/gemini_api_key
@@ -146,7 +154,6 @@
           '';
           shellAliases = {
             nix-switch = "sudo nixos-rebuild switch --flake .#${hostname}";
-            tx = "tmux attach || tmux new-session";
           };
 
         };
