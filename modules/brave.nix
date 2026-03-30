@@ -34,6 +34,8 @@
         "--force-dark-mode"
         "--enable-gpu-rasterization"
         "--enable-zero-copy"
+        "--ignore-gpu-blocklist"
+        "--enable-hardware-overlays"
       ];
     };
 
