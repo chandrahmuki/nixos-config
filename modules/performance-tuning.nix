@@ -43,7 +43,7 @@
       libva
       libva-vdpau-driver
       libvdpau-va-gl
-      mesa.drivers
+      mesa
       rocmPackages.clr.icd # OpenCL pour AMD
     ];
   };
