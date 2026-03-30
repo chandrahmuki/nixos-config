@@ -35,4 +35,22 @@
   # 4. AMD GPU & Kernel Features
   # ntsync for Proton/Wine performance
   boot.kernelModules = [ "ntsync" ];
+
+  # Hardware acceleration (VA-API)
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [
+      libva
+      vaapiVdpau
+      libvdpau-va-gl
+      mesa.drivers
+      rocmPackages.clr.icd # OpenCL pour AMD
+    ];
+  };
+  
+  # Forcer VA-API sur radeonsi pour AMD
+  environment.sessionVariables = {
+    LIBVA_DRIVER_NAME = "radeonsi";
+    VDPAU_DRIVER = "radeonsi";
+  };
 }

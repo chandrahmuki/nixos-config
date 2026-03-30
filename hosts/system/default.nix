@@ -202,6 +202,7 @@
     #  wget
     xwayland-satellite
     mpvpaper
+    libva-utils
     nvtopPackages.amd
     via
     nvd # Differenz between builds (shows package changes)
