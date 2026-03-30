@@ -11,6 +11,8 @@
         "cjpalhdlnbpafiamejdnhcphjbkeiagm;https://clients2.google.com/service/update2/crx" # uBlock Origin
         "dcbfghmdnnkkkjjpmghnoaidojfickmj;https://clients2.google.com/service/update2/crx" # Theme: Thassos Sea View
       ];
+      "MemorySaverModeEnabled" = 1; # Active l'économiseur de mémoire pour libérer les onglets inactifs
+      "MemorySaverModeAggressiveness" = 1; # Mode Medium pour un bon équilibre performance/confort
       "WebAppInstallForceList" = [
         {
           url = "https://teams.microsoft.com/";
@@ -30,6 +32,8 @@
         "--enable-features=UseOzonePlatform,WebContentsForceDark"
         "--ozone-platform=wayland"
         "--force-dark-mode"
+        "--enable-gpu-rasterization"
+        "--enable-zero-copy"
       ];
     };
 
