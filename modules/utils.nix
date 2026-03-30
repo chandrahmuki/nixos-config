@@ -37,6 +37,17 @@
           scripts = with pkgs.mpvScripts; [
             mpris # MPRIS support for media player detection (DMS, playerctl)
           ];
+          config = {
+            # --- OPTIMISATIONS GPU AMD ---
+            hwdec = "vaapi"; # Force décodage matériel via VA-API (GPU AMD)
+            vo = "gpu"; # Utilise le moteur de rendu GPU haute performance
+            profile = "gpu-hq"; # Qualité maximale avec consommation GPU optimisée
+            
+            # --- ÉCONOMIE DE RAM (pour mpvpaper) ---
+            cache = "no"; # Désactive le cache disque pour économiser la RAM
+            demuxer-max-bytes = "50MiB"; # Limite la mémoire tampon du flux vidéo
+            demuxer-max-back-bytes = "10MiB"; # Limite la mémoire tampon du flux précédent
+          };
         };
 
         programs.fzf = {
