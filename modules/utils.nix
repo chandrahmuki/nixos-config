@@ -39,9 +39,10 @@
           ];
           config = {
             # --- OPTIMISATIONS GPU AMD ---
-            hwdec = "vaapi"; # Force décodage matériel via VA-API (GPU AMD)
-            vo = "gpu"; # Utilise le moteur de rendu GPU haute performance
-            profile = "gpu-hq"; # Qualité maximale avec consommation GPU optimisée
+            hwdec = "auto-safe"; # Utilise le meilleur décodeur matériel disponible
+            vo = "gpu"; # Sortie vidéo via le GPU
+            gpu-context = "wayland"; # Force le contexte Wayland pour Niri
+            hwdec-codecs = "all"; # Tente le décodage matériel pour tous les formats
             
             # --- ÉCONOMIE DE RAM (pour mpvpaper) ---
             cache = "no"; # Désactive le cache disque pour économiser la RAM
