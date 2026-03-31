@@ -3,6 +3,7 @@
 {
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
+    noto-fonts
     
     # Optionnel : Emojis et polices de base si tu ne les as pas
     noto-fonts-color-emoji

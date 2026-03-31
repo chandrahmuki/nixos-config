@@ -19,7 +19,8 @@
             ) > /tmp/music_menu_full.list
 
             # Send ONLY the labels (column 1) to Walker and get the index (0-based)
-            INDEX=$(cut -f1 /tmp/music_menu_full.list | walker --dmenu --index --placeholder "Music ❯ ")
+            # -d is required for dmenu mode
+            INDEX=$(cut -f1 /tmp/music_menu_full.list | walker -d -i -p "Music ❯ ")
 
             # Exit if nothing selected
             [ -z "$INDEX" ] && exit
@@ -29,11 +30,21 @@
             CHOICE=$(sed -n "''${LINE_NUM}p" /tmp/music_menu_full.list | cut -f2)
 
             # Exit if a separator/header is picked (empty choice)
-            [ -z "$CHOICE" ] || [ ! -f "$CHOICE" ] && exit
+            if [ -z "$CHOICE" ] || [ ! -f "$CHOICE" ]; then
+                ${pkgs.libnotify}/bin/notify-send -t 2000 "⚠️ Music" "Selection invalide ou dossier"
+                exit
+            fi
 
-            # Play with mpv
-            ${pkgs.procps}/bin/pkill mpv || true
-            mpv --no-video "$CHOICE"
+            # Play with mpv using IPC socket to allow "changing" without pkill
+            SOCKET="/tmp/mpv-music.sock"
+            if [ -S "$SOCKET" ]; then
+                # Replace current song
+                echo "{\"command\": [\"loadfile\", \"$CHOICE\"]}" | ${pkgs.socat}/bin/socat - "$SOCKET"
+            else
+                # Start new instance
+                mpv --no-video --ao=pipewire --vo=null --hwdec=no --input-ipc-server="$SOCKET" "$CHOICE" &
+            fi
+            ${pkgs.libnotify}/bin/notify-send -t 2000 "🎵 Musique" "$(basename "$CHOICE")"
           '')
         ];
   };

@@ -203,6 +203,8 @@
     xwayland-satellite
     swww
     ffmpeg
+    mpvpaper
+    socat
     libva-utils
     nvtopPackages.amd
     via

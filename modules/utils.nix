@@ -42,6 +42,7 @@
             hwdec = "auto-safe";
             vo = "gpu-next";
             gpu-context = "wayland";
+            # Note: On laisse vide ou minimal pour ne pas perturber mpvpaper si nécessaire
           };
         };
 
@@ -73,8 +74,18 @@
               --preview "${pkgs.bat}/bin/bat --color=always --style=numbers --line-range=:500 {}"
           '';
 
-          # Audio-only playback with mpv
-          mpno = "mpv --no-video $argv";
+          # Audio-only playback with mpv (Isolé via IPC pour ne pas toucher au wallpaper)
+          mpno = ''
+            set -l SOCKET /tmp/mpv-music.sock
+            set -l FILE $argv[1]
+            if test -S $SOCKET
+                echo "{\"command\": [\"loadfile\", \"$FILE\"]}" | ${pkgs.socat}/bin/socat - $SOCKET
+            else
+                mpv --no-video --ao=pipewire --vo=null --hwdec=no --input-ipc-server=$SOCKET "$FILE" &
+                disown
+            end
+            ${pkgs.libnotify}/bin/notify-send -t 2000 "🎵 Musique" (basename "$FILE")
+          '';
 
           # Create an M3U playlist from audio files in the CURRENT directory ONLY
           mkpl = ''
