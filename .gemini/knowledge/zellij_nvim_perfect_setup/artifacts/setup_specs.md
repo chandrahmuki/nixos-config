@@ -25,5 +25,11 @@ Le layout `dev.kdl` structure l'espace de manière logique :
 - **AI Workspace (Droite haut, 12%)** : Pane dédié à `antigravity` (ou `gemini-cli`).
 - **Shell (Droite bas, 13%)** : Exécution rapide de commandes.
 
+## 🛠️ Commandes Zellij CLI Utiles
+- **Voir les sessions** : `zellij list-sessions` (ou `zellij ls`)
+- **Attacher à une session** : `zellij attach <nom-de-session>`
+- **Supprimer une session** : `zellij delete-session <nom-de-session>`
+- **Tuer toutes les sessions** : `zellij delete-all-sessions`
+
 ## Maintenance NixOS
 La configuration est entièrement déclarative dans `modules/zellij.nix`. Le déploiement via Home Manager garantit la cohérence entre les binaires, les plugins et les fichiers de configuration.

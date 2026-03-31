@@ -22,7 +22,7 @@
       };
 
       programs.fish.shellAliases = {
-        zelldev = "zellij --layout dev";
+        zelldev = "zellij --layout dev attach -c dev";
       };
 
       programs.zellij = {
@@ -55,11 +55,10 @@
           dev = ''
             layout {
                 default_tab_template {
-                    children
                     pane size=1 borderless=true {
                         plugin location="file:/home/${username}/.config/zellij/plugins/zjstatus.wasm" {
-                            format_left  "{mode}#[fg=#89b4fa,bold] {session} {tabs}"
-                            format_right "{command_git_branch}#[fg=#424242,bold] | {datetime}"
+                            format_left  "{mode} #[fg=#89b4fa,bold]{tabs}"
+                            format_right "#[fg=#89b4fa,bold]󰉖 {session} #[fg=#424242]| #[fg=#89b4fa]󰊢 {command_git_branch} #[fg=#424242]| {datetime}"
                             format_space ""
 
                             border_enabled  "false"
@@ -69,9 +68,9 @@
 
                             hide_frame_for_single_pane "true"
 
-                            mode_normal  "#[bg=#89b4fa,fg=#181825,bold] NORMAL "
-                            mode_locked  "#[bg=#f38ba8,fg=#181825,bold] LOCKED "
-                            mode_tmux    "#[bg=#ff9e64,fg=#181825,bold] TMUX "
+                            mode_normal  "#[bg=#89b4fa,fg=#181825,bold] 󰣆 "
+                            mode_locked  "#[bg=#f38ba8,fg=#181825,bold] 󰌾 "
+                            mode_tmux    "#[bg=#ff9e64,fg=#181825,bold] 󰓩 "
 
                             tab_normal   "#[fg=#6C7086] {name} "
                             tab_active   "#[fg=#89b4fa,bold,italic] {name} "
@@ -81,28 +80,26 @@
                             command_git_branch_interval    "10"
                             command_git_branch_rendermode  "static"
 
-                            datetime        "#[fg=#6C7086,bold] {format} "
+                            datetime        "#[fg=#89b4fa,bold] {format} "
                             datetime_format "%H:%M"
                             datetime_timezone "Europe/Paris"
                         }
                     }
+                    children
                 }
-                tab name="Editor" focus=true {
+
+                tab name="Dev" focus=true {
                     pane split_direction="vertical" {
                         pane command="nvim" name="MuggyVim" focus=true {
                             args "."
-                            start_suspended false
+                            size "70%"
                         }
-                        pane size="25%" {
-                            pane name="Gemini CLI" command="gemini" {
-                                start_suspended false
-                            }
-                            pane name="Terminal"
+                        pane name="Gemini CLI" {
+                            command "gemini"
+                            size "30%"
                         }
                     }
-                }
-                tab name="Server/Logs" {
-                    pane
+                    pane name="Terminal" size="20%"
                 }
             }
           '';

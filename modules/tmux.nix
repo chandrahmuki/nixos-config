@@ -36,10 +36,11 @@ in
         Description = "Tmux Server";
       };
       Service = {
-        Type = "forking";
+        Type = "oneshot";
         ExecStart = "${pkgs.tmux}/bin/tmux start-server";
         ExecStop = "${pkgs.tmux}/bin/tmux kill-server";
-        Restart = "always";
+        RemainAfterExit = true;
+        Restart = "on-failure";
       };
       Install = {
         WantedBy = [ "default.target" ];
