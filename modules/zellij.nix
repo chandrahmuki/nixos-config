@@ -42,6 +42,8 @@
           theme = "tokyonight-moon";
           mouse_mode = true;
           copy_on_select = true;
+          session_serialization = true;
+          pane_viewport_serialization = true;
 
           plugins = {
             autolock = {
@@ -90,12 +92,10 @@
 
                 tab name="Dev" focus=true {
                     pane split_direction="vertical" {
-                        pane command="nvim" name="MuggyVim" focus=true {
-                            args "."
+                        pane name="MuggyVim" focus=true {
                             size "70%"
                         }
                         pane name="Gemini CLI" {
-                            command "gemini"
                             size "30%"
                         }
                     }
