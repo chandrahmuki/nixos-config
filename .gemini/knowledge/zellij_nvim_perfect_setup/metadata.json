@@ -1,16 +1,17 @@
 {
     "title": "Zellij-Neovim Perfect Dev Setup",
-    "summary": "Architecture unifiée fusionnant Neovim (édition), Zellij (multiplexage) et Gemini (IA) avec navigation partagée et persistante.",
+    "summary": "Architecture unifiée fusionnant Neovim, Zellij et Gemini avec navigation partagée, persistance de session (serialization) et flexibilité des panes (style tmux).",
     "tags": [
         "zellij",
         "neovim",
         "nixos",
         "autolock",
         "smart-splits",
-        "persistence"
+        "persistence",
+        "serialization"
     ],
     "created_at": "2026-02-27T12:20:00Z",
-    "updated_at": "2026-03-18T14:45:00Z",
+    "updated_at": "2026-03-31T17:50:00Z",
     "references": [
         {
             "type": "spec",

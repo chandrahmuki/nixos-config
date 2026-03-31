@@ -25,9 +25,14 @@ Le layout `dev.kdl` structure l'espace de manière logique :
 - **AI Workspace (Droite haut, 12%)** : Pane dédié à `antigravity` (ou `gemini-cli`).
 - **Shell (Droite bas, 13%)** : Exécution rapide de commandes.
 
+### 4. Persistance Manuelle (Style Tmux)
+- **Sérialisation** : Activation de `session_serialization` et `pane_viewport_serialization` dans les `settings`.
+- **Flexibilité** : Suppression des commandes forcées (`nvim`, `gemini`) dans le layout Nix pour permettre à Zellij de mémoriser les outils lancés manuellement.
+- **Résultat** : Les fenêtres reviennent avec leurs outils après un reboot du PC, tout en conservant la structure définie par Nix.
+
 ## 🛠️ Commandes Zellij CLI Utiles
 - **Voir les sessions** : `zellij list-sessions` (ou `zellij ls`)
-- **Attacher à une session** : `zellij attach <nom-de-session>`
+- **Attacher à une session** : `zellij attach -c <nom-de-session>` (le flag `-c` crée la session si elle n'existe pas)
 - **Supprimer une session** : `zellij delete-session <nom-de-session>`
 - **Tuer toutes les sessions** : `zellij delete-all-sessions`
 
