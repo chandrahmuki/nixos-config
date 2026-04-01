@@ -90,9 +90,11 @@
 
                 tab name="Dev" focus=true {
                     pane split_direction="vertical" {
-                        pane name="MuggyVim" focus=true size="75%"
+                        pane command="nvim" name="MuggyVim" focus=true size="75%" {
+                            args "."
+                        }
                         pane {
-                            pane name="AI Workspace" size="12%"
+                            pane command="gemini" name="AI Workspace" size="12%"
                             pane name="Terminal" size="13%"
                         }
                     }
