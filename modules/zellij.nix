@@ -44,8 +44,8 @@
           theme = "tokyonight-moon";
           mouse_mode = true;
           copy_on_select = true;
-          session_serialization = true;
-          pane_viewport_serialization = true;
+          session_serialization = false;
+          pane_viewport_serialization = false;
           
           plugins = {
             autolock = {
