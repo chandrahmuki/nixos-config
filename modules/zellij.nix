@@ -73,7 +73,8 @@
                             mode_tmux    "#[fg=#ff9e64,bold]TMUX"
 
                             tab_normal              "#[fg=#565f89] {name} "
-                            tab_active              "#[fg=#82a1ff,bold,italic] {name} "
+                            tab_active              "#[fg=#7aa2f7,bold,italic] {name} "
+                            tab_separator           "#[fg=#3b4261,bold]|"
 
                             command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
                             command_git_branch_format      "#[fg=#7aa2f7] {stdout} "
