@@ -1,4 +1,4 @@
-{ config, lib, pkgs, username, ... }:
+{ config, lib, pkgs, username, inputs, ... }:
 
 {
   home-manager.users.${username} = { config, lib, ... }:
@@ -55,7 +55,7 @@
             layout {
                 default_tab_template {
                     pane size=1 borderless=true {
-                        plugin location="file:${pkgs.zjstatus}/bin/zjstatus.wasm" {
+                        plugin location="file:${inputs.zjstatus.packages.${pkgs.system}.default}/bin/zjstatus.wasm" {
                             format_left  "{mode} #[fg=#89b4fa,bold]{tabs}"
                             format_right "#[fg=#89b4fa,bold]󰉖 {session} #[fg=#424242]| #[fg=#89b4fa]󰊢 {command_git_branch} #[fg=#424242]| {datetime}"
                             format_space ""
