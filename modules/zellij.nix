@@ -9,8 +9,6 @@
       };
     in
     {
-      home.file.".config/zellij/plugins/zellij-autolock.wasm".source = zellij-autolock;
-
       programs.zellij = {
         enable = true;
         enableFishIntegration = false;
@@ -46,7 +44,7 @@
 
           plugins = {
             autolock = {
-              path = "file:/home/${username}/.config/zellij/plugins/zellij-autolock.wasm";
+              path = "file:${zellij-autolock}";
               is_enabled = true;
             };
           };
