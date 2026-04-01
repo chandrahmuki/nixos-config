@@ -3,17 +3,12 @@
 {
   home-manager.users.${username} = { config, lib, ... }:
     let
-      zjstatus = pkgs.fetchurl {
-        url = "https://github.com/dj95/zjstatus/releases/download/v0.22.0/zjstatus.wasm";
-        sha256 = "0lyxah0pzgw57wbrvfz2y0bjrna9bgmsw9z9f898dgqw1g92dr2d";
-      };
       zellij-autolock = pkgs.fetchurl {
         url = "https://github.com/fresh2dev/zellij-autolock/releases/download/0.2.2/zellij-autolock.wasm";
         sha256 = "194fgd421w2j77jbpnq994y2ma03qzdlz932cxfhfznrpw3mdjb9";
       };
     in
     {
-      home.file.".config/zellij/plugins/zjstatus.wasm".source = zjstatus;
       home.file.".config/zellij/plugins/zellij-autolock.wasm".source = zellij-autolock;
 
       programs.zellij = {
@@ -62,7 +57,7 @@
             layout {
                 default_tab_template {
                     pane size=1 borderless=true {
-                        plugin location="file:/home/${username}/.config/zellij/plugins/zjstatus.wasm" {
+                        plugin location="file:${pkgs.zjstatus}/bin/zjstatus.wasm" {
                             format_left  "{mode} #[fg=#89b4fa,bold]{tabs}"
                             format_right "#[fg=#89b4fa,bold]󰉖 {session} #[fg=#424242]| #[fg=#89b4fa]󰊢 {command_git_branch} #[fg=#424242]| {datetime}"
                             format_space ""

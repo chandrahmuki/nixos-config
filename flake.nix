@@ -34,6 +34,10 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    zjstatus = {
+      url = "github:dj95/zjstatus";
+    };
   };
 
   outputs =
@@ -46,6 +50,7 @@
       noctalia,
       nix-cachyos,
       sops-nix,
+      zjstatus,
       ...
     }@inputs:
     let
