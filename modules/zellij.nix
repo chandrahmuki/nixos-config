@@ -89,15 +89,13 @@
                 }
 
                 tab name="Dev" focus=true {
-                    pane split_direction="vertical" {
+                    pane split_direction="vertical" size="80%" {
                         pane command="nvim" name="MuggyVim" focus=true size="75%" {
                             args "."
                         }
-                        pane {
-                            pane command="gemini" name="AI Workspace" size="12%"
-                            pane name="Terminal" size="13%"
-                        }
+                        pane command="gemini" name="AI Workspace" size="25%"
                     }
+                    pane name="Terminal" size="20%"
                 }
             }
           '';
