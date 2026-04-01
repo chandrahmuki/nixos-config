@@ -43,20 +43,10 @@
                 exit
             fi
 
-            # Play with mpv using IPC socket to allow "changing" without pkill
-            SOCKET="/tmp/mpv-music.sock"
-            # Check if socket is stale (file exists but no listener)
-            if [ -S "$SOCKET" ] && ! echo "{\"command\": [\"get_property\", \"path\"]}" | ${pkgs.socat}/bin/socat - "$SOCKET" >/dev/null 2>&1; then
-                rm -f "$SOCKET"
-            fi
-
-            if [ -S "$SOCKET" ]; then
-                # Replace current song
-                echo "{\"command\": [\"loadfile\", \"$CHOICE\"]}" | ${pkgs.socat}/bin/socat - "$SOCKET"
-            else
-                # Start new instance
-                mpv --no-video --ao=pipewire --vo=null --hwdec=no --input-ipc-server="$SOCKET" "$CHOICE" &
-            fi
+            # Play with selective pkill to avoid stopping other mpv instances
+            pkill -f "mpv --no-video --input-ipc-server=/tmp/mpv-music.sock" || true
+            mpv --no-video --ao=pipewire --vo=null --hwdec=no --input-ipc-server="/tmp/mpv-music.sock" "$CHOICE" &
+            
             ${pkgs.libnotify}/bin/notify-send -t 2000 "🎵 Musique" "$(basename "$CHOICE")"
           '')
         ];
