@@ -22,7 +22,7 @@
       };
 
       programs.fish.shellAliases = {
-        zelldev = "cd /home/${username}/nixos-config && zellij --layout dev attach -c dev";
+        zelldev = "zellij kill-session dev 2>/dev/null; cd /home/${username}/nixos-config && zellij --layout dev attach -c dev";
       };
 
       programs.zellij = {
