@@ -17,7 +17,7 @@
       home.file.".config/zellij/plugins/zellij-autolock.wasm".source = zellij-autolock;
 
       programs.fish.shellAliases = {
-        zelldev = "zellij --layout dev attach -c dev";
+        zelldev = "cd /home/${username}/nixos-config && zellij --layout dev attach -c dev";
       };
 
       programs.zellij = {
@@ -102,10 +102,15 @@
                     pane split_direction="vertical" size="80%" {
                         pane command="nvim" name="MuggyVim" focus=true size="75%" {
                             args "."
+                            cwd "/home/${username}/nixos-config"
                         }
-                        pane command="gemini" name="AI Workspace" size="25%"
+                        pane command="gemini" name="AI Workspace" size="25%" {
+                            cwd "/home/${username}/nixos-config"
+                        }
                     }
-                    pane name="Terminal" size="20%"
+                    pane name="Terminal" size="20%" {
+                        cwd "/home/${username}/nixos-config"
+                    }
                 }
             }
           '';
