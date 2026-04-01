@@ -58,15 +58,12 @@
         layouts = {
           dev = ''
             layout {
-                default_tab_template {
+                tab name="Dev" focus=true split_direction="horizontal" {
                     pane size=1 borderless=true {
                         plugin location="file:${zjstatus}" {
                             format_left  "#[fg=#82a1ff,bold] 󰣆 {mode} #[fg=#3b4261,bold]| {tabs}"
                             format_right "#[fg=#82a1ff,bold]󰉖 {session} #[fg=#3b4261]| #[fg=#7aa2f7]󰊢 {command_git_branch} #[fg=#3b4261]| #[fg=#82a1ff]{datetime}"
                             format_space "#[bg=#1e2030]"
-
-                            border_enabled  "false"
-                            hide_frame_for_single_pane "true"
 
                             mode_normal  "#[fg=#82a1ff,bold]NORMAL"
                             mode_locked  "#[fg=#f7768e,bold]LOCKED"
@@ -80,49 +77,28 @@
                             command_git_branch_format      "#[fg=#7aa2f7]{stdout}"
                             command_git_branch_interval    "10"
                             command_git_branch_rendermode  "static"
-layouts = {
-  dev = ''
-    layout {
-        tab name="Dev" focus=true split_direction="horizontal" {
-            pane size=1 {
-                plugin location="file:${zjstatus}" {
-                    format_left  "#[fg=#82a1ff,bold] 󰣆 {mode} #[fg=#3b4261,bold]| {tabs}"
-                    format_right "#[fg=#82a1ff,bold]󰉖 {session} #[fg=#3b4261]| #[fg=#7aa2f7]󰊢 {command_git_branch} #[fg=#3b4261]| #[fg=#82a1ff]{datetime}"
-                    format_space "#[bg=#1e2030]"
 
-                    mode_normal  "#[fg=#82a1ff,bold]NORMAL"
-                    mode_locked  "#[fg=#f7768e,bold]LOCKED"
-                    mode_tmux    "#[fg=#ff9e64,bold]TMUX"
-
-                    tab_normal              "#[fg=#565f89] {name} "
-                    tab_active              "#[fg=#7aa2f7,bold,italic] {name} "
-                    tab_separator           "#[fg=#3b4261,bold]|"
-
-                    command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
-                    command_git_branch_format      "#[fg=#7aa2f7]{stdout}"
-                    command_git_branch_interval    "10"
-                    command_git_branch_rendermode  "static"
-
-                    datetime        "#[fg=#82a1ff,bold]{format}"
-                    datetime_format "%H:%M"
-                    datetime_timezone "Europe/Paris"
+                            datetime        "#[fg=#82a1ff,bold]{format}"
+                            datetime_format "%H:%M"
+                            datetime_timezone "Europe/Paris"
+                        }
+                    }
+                    pane split_direction="vertical" size="80%" {
+                        pane command="nvim" name="MuggyVim" focus=true size="75%" {
+                            args "."
+                            cwd "/home/${username}/nixos-config"
+                        }
+                        pane command="gemini" name="AI Workspace" size="25%" {
+                            cwd "/home/${username}/nixos-config"
+                        }
+                    }
+                    pane name="Terminal" size="20%" {
+                        cwd "/home/${username}/nixos-config"
+                    }
                 }
             }
-            pane split_direction="vertical" size="80%" {
-                pane command="nvim" name="MuggyVim" focus=true size="75%" {
-                    args "."
-                    cwd "/home/${username}/nixos-config"
-                }
-                pane command="gemini" name="AI Workspace" size="25%" {
-                    cwd "/home/${username}/nixos-config"
-                }
-            }
-            pane name="Terminal" size="20%" {
-                cwd "/home/${username}/nixos-config"
-            }
-        }
-    }
-  '';
-};
+          '';
+        };
+      };
     };
 }
