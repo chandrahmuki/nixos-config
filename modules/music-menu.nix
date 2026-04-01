@@ -44,8 +44,8 @@
             fi
 
             # Play with selective pkill to avoid stopping other mpv instances
-            pkill -f "mpv --no-video --input-ipc-server=/tmp/mpv-music.sock" || true
-            mpv --no-video --ao=pipewire --vo=null --hwdec=no --input-ipc-server="/tmp/mpv-music.sock" "$CHOICE" &
+            pkill -f "title=music-player" || true
+            mpv --no-video --ao=pipewire --vo=null --hwdec=no --title="music-player" "$CHOICE" &
             
             ${pkgs.libnotify}/bin/notify-send -t 2000 "🎵 Musique" "$(basename "$CHOICE")"
           '')
