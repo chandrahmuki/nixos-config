@@ -54,11 +54,13 @@
           dev = ''
             layout {
                 default_tab_template {
+                    children
                     pane size=1 borderless=true {
                         plugin location="file:${inputs.zjstatus.packages.${pkgs.system}.default}/bin/zjstatus.wasm" {
-                            format_left  "{mode} #[fg=#89b4fa,bold]{tabs}"
-                            format_right "#[fg=#89b4fa,bold]󰉖 {session} #[fg=#424242]| #[fg=#89b4fa]󰊢 {command_git_branch} #[fg=#424242]| {datetime}"
-                            format_space ""
+                            format_left   "{mode} #[fg=#89B4FA,bold]{session}"
+                            format_center "{tabs}"
+                            format_right  "{command_git_branch} {datetime}"
+                            format_space  ""
 
                             border_enabled  "false"
                             border_char     "─"
@@ -67,24 +69,22 @@
 
                             hide_frame_for_single_pane "true"
 
-                            mode_normal  "#[bg=#89b4fa,fg=#181825,bold] 󰣆 "
-                            mode_locked  "#[bg=#f38ba8,fg=#181825,bold] 󰌾 "
-                            mode_tmux    "#[bg=#ff9e64,fg=#181825,bold] 󰓩 "
+                            mode_normal  "#[bg=blue] "
+                            mode_tmux    "#[bg=#ffc387] "
 
                             tab_normal   "#[fg=#6C7086] {name} "
-                            tab_active   "#[fg=#89b4fa,bold,italic] {name} "
+                            tab_active   "#[fg=#9399B2,bold,italic] {name} "
 
                             command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
                             command_git_branch_format      "#[fg=blue] {stdout} "
                             command_git_branch_interval    "10"
                             command_git_branch_rendermode  "static"
 
-                            datetime        "#[fg=#89b4fa,bold] {format} "
-                            datetime_format "%H:%M"
+                            datetime        "#[fg=#6C7086,bold] {format} "
+                            datetime_format "%A, %d %b %Y %H:%M"
                             datetime_timezone "Europe/Paris"
                         }
                     }
-                    children
                 }
 
                 tab name="Dev" focus=true {
