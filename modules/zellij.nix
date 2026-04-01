@@ -61,27 +61,36 @@
                 default_tab_template {
                     pane size=1 borderless=true {
                         plugin location="file:/home/${username}/.config/zellij/plugins/zjstatus.wasm" {
-                            format_left  "#[fg=#82a1ff,bold] 󰣆  {mode} #[fg=#3b4261,bold] {tabs}"
-                            format_right "#[fg=#82a1ff,bold]󰉖 {session} #[fg=#3b4261]| #[fg=#7aa2f7]󰊢 {command_git_branch} #[fg=#3b4261]| #[fg=#82a1ff]{datetime}"
-                            format_space "#[bg=#1e2030]"
+                            // --- Color Aliases (Tokyonight Moon) ---
+                            color_bg "#1e2030"
+                            color_fg "#82a1ff"
+                            color_cyan "#7bc124"
+                            color_magenta "#c099ff"
+                            color_orange "#ff9e64"
+                            color_red "#f7768e"
+                            color_blue "#7aa2f7"
+
+                            format_left  "#[bg=$blue,fg=$bg,bold] 󰣆 {mode} #[bg=$bg,fg=$blue] {tabs}"
+                            format_right "#[fg=$blue,bold]#[bg=$blue,fg=$bg,bold] 󰉖 {session} #[bg=$blue,fg=$magenta]#[bg=$magenta,fg=$bg,bold] 󰊢 {command_git_branch} #[bg=$magenta,fg=$cyan]#[bg=$cyan,fg=$bg,bold] {datetime} "
+                            format_space "#[bg=$bg]"
 
                             border_enabled  "false"
                             hide_frame_for_single_pane "true"
 
-                            mode_normal  "#[fg=#82a1ff,bold]NORMAL"
-                            mode_locked  "#[fg=#f7768e,bold]LOCKED"
-                            mode_tmux    "#[fg=#ff9e64,bold]TMUX"
+                            mode_normal  "NORMAL"
+                            mode_locked  "#[bg=$red,fg=$bg,bold] LOCKED "
+                            mode_tmux    "#[bg=$orange,fg=$bg,bold] TMUX "
 
                             tab_normal              "#[fg=#565f89] {name} "
-                            tab_active              "#[fg=#7aa2f7,bold,italic] {name} "
-                            tab_separator           "#[fg=#3b4261,bold]|"
+                            tab_active              "#[fg=$blue,bold,italic] {name} "
+                            tab_separator           "#[fg=#3b4261] | "
 
                             command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
-                            command_git_branch_format      "#[fg=#7aa2f7] {stdout} "
+                            command_git_branch_format      "{stdout}"
                             command_git_branch_interval    "10"
                             command_git_branch_rendermode  "static"
 
-                            datetime        "#[fg=#82a1ff,bold] {format} "
+                            datetime        "{format}"
                             datetime_format "%H:%M"
                             datetime_timezone "Europe/Paris"
                         }
