@@ -1,30 +1,18 @@
 { config, lib, pkgs, username, ... }:
 
 let
-  # Hook qui fixe les chemins cassés du store par les wrappers stables
-  fix-resurrect-paths = pkgs.writeShellScriptBin "fix-resurrect-paths" ''
-    RESURRECT_DIR=~/.local/share/tmux/resurrect
-
-    if [ -d "$RESURRECT_DIR" ]; then
-      # Remplacer tous les chemins nvim cassés par le wrapper stable
-      ${pkgs.findutils}/bin/find "$RESURRECT_DIR" -type f -exec \
-        ${pkgs.sed}/bin/sed -i "s|/nix/store/[^/]*-neovim[^/]*/bin/nvim|~/.local/bin/nvim|g" {} \;
-
-      # Remplacer les chemins claude-code
-      ${pkgs.findutils}/bin/find "$RESURRECT_DIR" -type f -exec \
-        ${pkgs.sed}/bin/sed -i "s|/nix/store/[^/]*-claude-code[^/]*/bin/claude-code|~/.local/bin/claude-code|g" {} \;
-
-      # Remplacer les chemins fish
-      ${pkgs.findutils}/bin/find "$RESURRECT_DIR" -type f -exec \
-        ${pkgs.sed}/bin/sed -i "s|/nix/store/[^/]*-fish[^/]*/bin/fish|~/.local/bin/fish|g" {} \;
+  # Script pour sanitizer les chemins du store dans resurrect
+  sanitize-resurrect = pkgs.writeShellScriptBin "sanitize-resurrect" ''
+    target=$(readlink -f ~/.local/share/tmux/resurrect/last)
+    if [ -f "$target" ]; then
+      ${pkgs.gnused}/bin/sed -i "s| --cmd .*-vim-pack-dir||g" "$target"
+      ${pkgs.gnused}/bin/sed -i "s|/etc/profiles/per-user/$USER/bin/||g" "$target"
+      ${pkgs.gnused}/bin/sed -i "s|/home/$USER/.nix-profile/bin/||g" "$target"
     fi
   '';
 
   # Le script qui lance tmux dans foot avec la petite police
   tmux-small-script = pkgs.writeShellScriptBin "tmux-small" ''
-    # D'abord fixer les chemins cassés du store
-    ${fix-resurrect-paths}/bin/fix-resurrect-paths
-
     ${pkgs.foot}/bin/foot -f "JetBrainsMono Nerd Font:size=10" \
       ${pkgs.fish}/bin/fish -c "${pkgs.tmux}/bin/tmux attach || ${pkgs.tmux}/bin/tmux new-session"
   '';
@@ -44,37 +32,10 @@ in
   home-manager.users.${username} = { config, lib, ... }: {
     # On installe le script et l'entrée desktop
     home.packages = [
-      fix-resurrect-paths
+      sanitize-resurrect
       tmux-small-script
       tmux-small-desktop
     ];
-
-    # Créer des wrappers stables dans ~/.local/bin/
-    # Chaque rebuild recrée ces scripts avec les nouveaux chemins du store
-    # Resurrect sauvegarde ces chemins stables (~/.local/bin/nvim) au lieu des chemins du store
-    home.file.".local/bin/nvim" = {
-      text = ''
-        #!/bin/bash
-        exec ${pkgs.neovim}/bin/nvim "$@"
-      '';
-      executable = true;
-    };
-
-    home.file.".local/bin/fish" = {
-      text = ''
-        #!/bin/bash
-        exec ${pkgs.fish}/bin/fish "$@"
-      '';
-      executable = true;
-    };
-
-    home.file.".local/bin/claude-code" = {
-      text = ''
-        #!/bin/bash
-        exec ${pkgs.claude-code}/bin/claude-code "$@"
-      '';
-      executable = true;
-    };
 
     # 3. Le "Pont" : On crée un lien symbolique dans le dossier que Walker scanne forcément
     home.file.".local/share/applications/tmux-small.desktop".source = 
@@ -88,7 +49,6 @@ in
       Service = {
         Type = "oneshot";
         ExecStart = "${pkgs.tmux}/bin/tmux start-server";
-        ExecStartPost = "${fix-resurrect-paths}/bin/fix-resurrect-paths";
         ExecStop = "${pkgs.tmux}/bin/tmux kill-server";
         RemainAfterExit = true;
         Restart = "on-failure";
@@ -121,6 +81,8 @@ in
             set -g @resurrect-strategy-nvim 'session'
             set -g @resurrect-capture-pane-contents 'on'
             set -g @resurrect-dir '~/.local/share/tmux/resurrect'
+            # NixOS: sanitize store paths after save
+            set -g @resurrect-hook-post-save-all '${sanitize-resurrect}/bin/sanitize-resurrect'
           '';
         }
         {

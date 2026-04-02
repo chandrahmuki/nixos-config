@@ -31,8 +31,6 @@
   #AMD
   boot.initrd.kernelModules = [ "amdgpu" ];
 
-  #Manage backup for config in home manager
-  home-manager.backupFileExtension = "backup";
 
   #Steam and games
   hardware.graphics = {
