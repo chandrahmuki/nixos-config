@@ -6,7 +6,10 @@
           inputs.walker.homeManagerModules.default
         ];
 
-        programs.walker = {
+    # Allow home-manager to overwrite config files without backups
+    xdg.configFile."walker/config.toml".force = true;
+
+    programs.walker = {
           enable = true;
           runAsService = true;
 

@@ -9,5 +9,8 @@
         vim_keys = true;
       };
     };
+
+    # Allow home-manager to overwrite config files without backups
+    xdg.configFile."btop/btop.conf".force = true;
   };
 }

@@ -2,6 +2,10 @@
 
 {
   home-manager.users.${username} = { config, lib, ... }: {
+    # Allow home-manager to overwrite config files without backups
+    xdg.configFile."foot/foot.ini".force = true;
+    xdg.configFile."gtk-4.0/gtk.css".force = true;
+
     programs.foot = {
           enable = true;
           settings = {
