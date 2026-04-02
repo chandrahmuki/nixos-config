@@ -1,57 +1,46 @@
 { config, lib, pkgs, username, ... }:
 
 let
-  # Script pour sanitizer les chemins du store dans resurrect
-  sanitize-resurrect = pkgs.writeShellScriptBin "sanitize-resurrect" ''
-    target=$(readlink -f ~/.local/share/tmux/resurrect/last)
-    if [ -f "$target" ]; then
-      ${pkgs.gnused}/bin/sed -i "s| --cmd .*-vim-pack-dir||g" "$target"
-      ${pkgs.gnused}/bin/sed -i "s|/etc/profiles/per-user/$USER/bin/||g" "$target"
-      ${pkgs.gnused}/bin/sed -i "s|/home/$USER/.nix-profile/bin/||g" "$target"
+  # Script qui setup les sessions tmux avec les commandes
+  setup-tmux-sessions = pkgs.writeShellScriptBin "setup-tmux-sessions" ''
+    # Start tmux server if not running
+    ${pkgs.tmux}/bin/tmux start-server
+
+    # Create main session if it doesn't exist
+    if ! ${pkgs.tmux}/bin/tmux has-session -t main 2>/dev/null; then
+      ${pkgs.tmux}/bin/tmux new-session -d -s main -x 200 -y 50
+
+      # Window 1: nvim
+      ${pkgs.tmux}/bin/tmux send-keys -t main "nvim" Enter
+
+      # Window 2: claude-code
+      ${pkgs.tmux}/bin/tmux new-window -t main
+      ${pkgs.tmux}/bin/tmux send-keys -t main "claude-code" Enter
+
+      # Window 3: empty (for manual work)
+      ${pkgs.tmux}/bin/tmux new-window -t main
+
+      # Select first window
+      ${pkgs.tmux}/bin/tmux select-window -t main:1
     fi
   '';
-
-  # Le script qui lance tmux dans foot avec la petite police
-  tmux-small-script = pkgs.writeShellScriptBin "tmux-small" ''
-    ${pkgs.foot}/bin/foot -f "JetBrainsMono Nerd Font:size=10" \
-      ${pkgs.fish}/bin/fish -c "${pkgs.tmux}/bin/tmux attach || ${pkgs.tmux}/bin/tmux new-session"
-  '';
-
-  # 2. L'entrée desktop proprement packagée
-  tmux-small-desktop = pkgs.makeDesktopItem {
-    name = "tmux-small";
-    desktopName = "Tmux (Small Font)";
-    genericName = "Terminal Multiplexer";
-    exec = "${tmux-small-script}/bin/tmux-small";
-    icon = "utilities-terminal";
-    categories = [ "System" "TerminalEmulator" "Development" ];
-    terminal = false;
-  };
 in
 {
   home-manager.users.${username} = { config, lib, ... }: {
-    # On installe le script et l'entrée desktop
     home.packages = [
-      sanitize-resurrect
-      tmux-small-script
-      tmux-small-desktop
+      setup-tmux-sessions
     ];
 
-    # 3. Le "Pont" : On crée un lien symbolique dans le dossier que Walker scanne forcément
-    home.file.".local/share/applications/tmux-small.desktop".source = 
-      "${tmux-small-desktop}/share/applications/tmux-small.desktop";
-
-    # FIX NIXOS: Tmux server must be started automatically to allow continuum restore
-    systemd.user.services.tmux = {
+    # Auto-setup tmux sessions at startup
+    systemd.user.services.tmux-setup = {
       Unit = {
-        Description = "Tmux Server";
+        Description = "Setup Tmux Sessions";
+        After = [ "default.target" ];
       };
       Service = {
         Type = "oneshot";
-        ExecStart = "${pkgs.tmux}/bin/tmux start-server";
-        ExecStop = "${pkgs.tmux}/bin/tmux kill-server";
+        ExecStart = "${setup-tmux-sessions}/bin/setup-tmux-sessions";
         RemainAfterExit = true;
-        Restart = "on-failure";
       };
       Install = {
         WantedBy = [ "default.target" ];
@@ -75,23 +64,6 @@ in
         tokyo-night-tmux
         tmux-sessionx
         tmux-fzf
-        {
-          plugin = resurrect;
-          extraConfig = ''
-            set -g @resurrect-strategy-nvim 'session'
-            set -g @resurrect-capture-pane-contents 'on'
-            set -g @resurrect-dir '~/.local/share/tmux/resurrect'
-            # NixOS: sanitize store paths after save
-            set -g @resurrect-hook-post-save-all '${sanitize-resurrect}/bin/sanitize-resurrect'
-          '';
-        }
-        {
-          plugin = continuum;
-          extraConfig = ''
-            set -g @continuum-restore 'on'
-            set -g @continuum-save-interval '5'
-          '';
-        }
         vim-tmux-navigator
       ];
 
@@ -110,7 +82,7 @@ in
         set -g status-position top
         set -s exit-empty off
 
-        # Navigation fluide entre panneaux avec Alt + h/j/k/l (comme Zellij)
+        # Navigation fluide entre panneaux avec Alt + h/j/k/l
         bind-key -n M-h if-shell "$is_vim" "send-keys M-h"  "select-pane -L"
         bind-key -n M-j if-shell "$is_vim" "send-keys M-j"  "select-pane -D"
         bind-key -n M-k if-shell "$is_vim" "send-keys M-k"  "select-pane -U"
@@ -142,8 +114,7 @@ in
 
         # SessionX : Fuzzy Finder Alt + s
         set -g @sessionx-bind 's'
-        # On bind aussi sur Alt+s directement via tmux
-        bind -n M-s run-shell "tmux-sessionx" 
+        bind -n M-s run-shell "tmux-sessionx"
 
         # Détection de Neovim
         is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
