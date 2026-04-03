@@ -46,7 +46,7 @@ Read `~/.claude/projects/-home-david-nixos-config/memory/reference/project_map.m
 
 ## Session Resume
 
-To resume the last session: run `ls -lt .../sessions/` to find the most recent dir by mtime, then read its `summary.md` (and `todos.md` if it exists).
+Read the most recent session from `~/.claude/projects/-home-david-nixos-config/memory/sessions/` directly, or use the `snapshot` skill if available.
 
 ## Key Design Patterns
 
