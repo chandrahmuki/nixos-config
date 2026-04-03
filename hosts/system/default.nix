@@ -45,6 +45,10 @@
     "flakes"
   ];
 
+  # Pin le registry + nixPath sur le flake lock → nix shell nixpkgs#foo instantané et cohérent
+  nix.registry.nixpkgs.flake = inputs.nixpkgs;
+  nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
+
   # Use latest kernel via Chaotic Nyx definition below
   # boot.kernelPackages = pkgs.linuxPackages_latest; # Removed to favor CachyOS kernel
 
@@ -234,8 +238,8 @@
   # 2. SSD Maintenance (Trim)
   services.fstrim.enable = true;
 
-  # 3. Store Optimization (Deduplication)
-  nix.settings.auto-optimise-store = true;
+  # 3. Store Optimization (Deduplication) — async, non-bloquant pendant les builds
+  nix.optimise.automatic = true;
 
   # 4. Gaming & GPU
   programs.gamemode.enable = true;
@@ -248,8 +252,14 @@
 
   # 7. Advanced: CachyOS Latest Kernel via xddxdd
   nix.settings = {
-    substituters = [ "https://attic.xuyh0120.win/lantian" ];
-    trusted-public-keys = [ "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
+    substituters = [
+      "https://nix-community.cachix.org"
+      "https://attic.xuyh0120.win/lantian"
+    ];
+    trusted-public-keys = [
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCUSDs="
+      "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
+    ];
     trusted-users = [
       "root"
       "@wheel"
