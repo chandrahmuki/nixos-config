@@ -19,19 +19,61 @@
       home.file.".config/zellij/layouts/dev.kdl".text = ''
         layout {
             default_tab_template {
-                children
-                pane size=1 {
-                    plugin location="zellij:compact-bar"
+                pane size=1 borderless=true {
+                    plugin location="file:/home/${username}/.config/zellij/plugins/zjstatus.wasm" {
+                        format_left  "{mode}#[fg=#89b4fa,bold] {session} {tabs}"
+                        format_right "{command_git_branch}#[fg=#424242,bold] | {datetime}"
+                        format_space ""
+
+                        border_enabled  "false"
+                        border_char     "─"
+                        border_format   "#[fg=#6C7086]{char}"
+                        border_position "top"
+
+                        hide_frame_for_single_pane "true"
+
+                        mode_normal  "#[bg=#89b4fa,fg=#181825,bold] NORMAL "
+                        mode_locked  "#[bg=#f38ba8,fg=#181825,bold] LOCKED "
+                        mode_tmux    "#[bg=#ff9e64,fg=#181825,bold] TMUX "
+
+                        tab_normal   "#[fg=#6C7086] {name} "
+                        tab_active   "#[fg=#89b4fa,bold,italic] {name} "
+
+                        command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
+                        command_git_branch_format      "#[fg=blue] {stdout} "
+                        command_git_branch_interval    "10"
+                        command_git_branch_rendermode  "static"
+
+                        datetime          "#[fg=#6C7086,bold] {format} "
+                        datetime_format   "%H:%M"
+                        datetime_timezone "Europe/Paris"
+                    }
                 }
+                children
             }
-            tab name="Editor" focus=true
-            tab name="Server/Logs"
+            tab name="Dev" focus=true cwd="/home/${username}/nixos-config" {
+                pane split_direction="vertical" {
+                    pane name="neovim" command="nvim" size="56%"
+                    pane size="43%" {
+                        pane name="claude" command="claude" size="73%"
+                        pane name="terminal" size="26%"
+                    }
+                }
+                pane size=12 name="shell"
+            }
+            tab name="Monitoring" {
+                pane command="btop"
+            }
         }
       '';
 
       programs.fish.shellAliases = {
         zelldev = "zellij --layout dev";
       };
+
+      programs.fish.functions.zj = ''
+        zellij attach main 2>/dev/null; or zellij --session main
+      '';
 
       programs.zellij = {
         enable = true;

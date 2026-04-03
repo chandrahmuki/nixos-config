@@ -1,1 +1,0 @@
-- fix: Zellij layout startup (start_suspended=false)

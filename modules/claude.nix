@@ -9,7 +9,10 @@
     # Claude Code MCP Configuration
     xdg.configHome = lib.mkDefault "${config.home.homeDirectory}/.config";
     home.file.".claude/settings.json".text = lib.generators.toJSON {} {
-      model = "haiku";
+      model = "sonnet";
+      env = {
+        MAX_THINKING_TOKENS = "8000";
+      };
       mcpServers = {
         github = {
           command = "bash";
