@@ -54,7 +54,7 @@
     in
     {
       nixosConfigurations.${hostname} = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
+        pkgs = import nixpkgs { };
         specialArgs = { inherit inputs username hostname; };
         modules = [
           ./hosts/system/default.nix
