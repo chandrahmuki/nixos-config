@@ -60,13 +60,15 @@
             }
             tab name="Dev" focus=true cwd="/home/${username}/nixos-config" {
                 pane split_direction="vertical" {
-                    pane name="neovim" command="nvim" size="56%"
-                    pane size="43%" {
-                        pane name="opencode" command="opencode" size="73%"
-                        pane name="terminal" size="26%"
+                    pane split_direction="horizontal" {
+                        pane name="neovim" command="nvim" size="56%"
+                        pane split_direction="vertical" {
+                            pane name="opencode" command="opencode" size="73%"
+                            pane name="terminal" size="26%"
+                        }
                     }
+                    pane size=12 name="shell"
                 }
-                pane size=12 name="shell"
             }
             tab name="Monitoring" {
                 pane command="btop"
