@@ -46,7 +46,13 @@ Read `~/.claude/projects/-home-david-nixos-config/memory/reference/project_map.m
 
 ## Session Resume
 
-Read the most recent session from `~/.claude/projects/-home-david-nixos-config/memory/sessions/` directly, or use the `snapshot` skill if available.
+**NEVER use glob/ls on memory/sessions/** — direct read only!
+```
+# Get latest session dir name:
+ls -t ~/.claude/projects/-home-david-nixos-config/memory/sessions/ | head -1
+# Then read that session's summary.md directly
+cat ~/.claude/projects/-home-david-nixos-config/memory/sessions/<latest>/summary.md
+```
 
 ## Key Design Patterns
 
