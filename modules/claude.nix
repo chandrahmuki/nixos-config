@@ -1,9 +1,12 @@
-{ config, lib, pkgs, username, ... }:
+{ config, lib, pkgs, inputs, username, ... }:
 
+let
+  pkgs-master = import inputs.nixpkgs-master { inherit (pkgs) system; config = pkgs.config; };
+in
 {
   home-manager.users.${username} = { config, lib, ... }: {
     home.packages = [
-      pkgs.claude-code
+      pkgs-master.claude-code
     ];
 
     # Claude Code MCP Configuration

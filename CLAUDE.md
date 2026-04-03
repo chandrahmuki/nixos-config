@@ -40,6 +40,10 @@ Every `.nix` in `modules/` is **automatically imported** — just create a file:
 - Reference other modules via `config.programs.fish.enable`
 - Home Manager is wired as a NixOS module (not standalone)
 
+## Codebase Index
+
+You MUST read `~/.claude/projects/-home-david-nixos-config/memory/reference/project_map.md` at the start of every conversation before touching any file — it contains a compact index of all modules (with tags), flake inputs, and entry points. Never scan the codebase without reading this first. Use `/project-map` to regenerate it when modules are added.
+
 ## Session Resume
 
 To resume the last session: run `ls -lt ~/.claude/projects/-home-david-nixos-config/memory/sessions/` to find the most recent dir by mtime, then read its `summary.md` and `todos.md`. Do NOT rely on the order in `index_sessions.md` — it is not sorted by recency.
