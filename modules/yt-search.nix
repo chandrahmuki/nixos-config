@@ -32,13 +32,13 @@
             LINE_NUM=$((INDEX + 1))
             VIDEO_ID=$(echo -e "$RESULTS" | sed -n "''${LINE_NUM}p" | cut -f2)
 
-            # 5. Lecture (kill précédent)
-            ${pkgs.procps}/bin/pkill mpv || true
+            # 5. Lecture (kill sélectif — laisse mpvpaper tranquille)
+            pkill -f "title=yt-player" || true
 
             if [ "$AUDIO_ONLY" = true ]; then
-              mpv --no-video "https://www.youtube.com/watch?v=$VIDEO_ID"
+              mpv --no-video --title="yt-player" "https://www.youtube.com/watch?v=$VIDEO_ID"
             else
-              mpv "https://www.youtube.com/watch?v=$VIDEO_ID"
+              mpv --title="yt-player" "https://www.youtube.com/watch?v=$VIDEO_ID"
             fi
           '')
         ];
