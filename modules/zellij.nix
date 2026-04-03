@@ -1,7 +1,14 @@
-{ config, lib, pkgs, username, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  username,
+  ...
+}:
 
 {
-  home-manager.users.${username} = { config, lib, ... }:
+  home-manager.users.${username} =
+    { config, lib, ... }:
     let
       zjstatus = pkgs.fetchurl {
         url = "https://github.com/dj95/zjstatus/releases/download/v0.22.0/zjstatus.wasm";
@@ -55,7 +62,7 @@
                 pane split_direction="vertical" {
                     pane name="neovim" command="nvim" size="56%"
                     pane size="43%" {
-                        pane name="claude" command="claude" size="73%"
+                        pane name="opencode" command="opencode" size="73%"
                         pane name="terminal" size="26%"
                     }
                 }
@@ -77,7 +84,7 @@
 
       programs.zellij = {
         enable = true;
-        enableFishIntegration = false;
+        enableFishIntegration = true;
 
         extraConfig = ''
           keybinds {
