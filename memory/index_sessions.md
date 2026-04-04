@@ -1,5 +1,6 @@
 # Sessions Index
 
+- [2026-04-04_memory-consolidation](./sessions/2026-04-04_memory-consolidation/summary.md)
 - [2026-04-04_zellij_layout](./sessions/2026-04-04_zellij_layout/summary.md)
 - [2026-04-03_zjstatus-fix](./sessions/2026-04-03_zjstatus-fix/summary.md)
 - [2026-04-03_zellij-opencode](./sessions/2026-04-03_zellij-opencode/summary.md)
