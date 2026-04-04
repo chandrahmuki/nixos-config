@@ -1,0 +1,82 @@
+[
+  {
+    "query": "I've been working on fixing the tmux resurrection issue for NixOS for the past couple hours and now we've got a working solution. I want to save this session so I remember what decisions we made and what still needs to be done",
+    "should_trigger": true
+  },
+  {
+    "query": "/snapshot",
+    "should_trigger": true
+  },
+  {
+    "query": "create a snapshot of what we just did with the home-manager force=true fix",
+    "should_trigger": true
+  },
+  {
+    "query": "I just added three new modules to the config: neovim, tmux, and zellij. Can you take a snapshot of the work?",
+    "should_trigger": true
+  },
+  {
+    "query": "we decided to use systemd for auto-launching tmux instead of using resurrect. also discovered that NixOS rebuilds are slow when you have lots of options. can we snapshot this?",
+    "should_trigger": true
+  },
+  {
+    "query": "save the important learnings from today's session about nix flakes and git workflows",
+    "should_trigger": true
+  },
+  {
+    "query": "I want to document what we accomplished today and what's still left to do",
+    "should_trigger": true
+  },
+  {
+    "query": "take a snapshot called 'noctalia-wallpaper' with the configuration changes we made",
+    "should_trigger": true
+  },
+  {
+    "query": "extract the key decisions, fixes, and remaining tasks from this session and save them",
+    "should_trigger": true
+  },
+  {
+    "query": "snapshot the neovim LSP setup we just finished with all the nixd configuration",
+    "should_trigger": true
+  },
+  {
+    "query": "what's the best way to configure git in nixos? i'm looking for the declarative approach",
+    "should_trigger": false
+  },
+  {
+    "query": "can you explain how nix flakes work and show me some examples?",
+    "should_trigger": false
+  },
+  {
+    "query": "i need help debugging this error in my nixos config - it says attribute 'sed' missing",
+    "should_trigger": false
+  },
+  {
+    "query": "add this new module to my configuration and then rebuild",
+    "should_trigger": false
+  },
+  {
+    "query": "what's a good backup strategy for nixos systems?",
+    "should_trigger": false
+  },
+  {
+    "query": "review my code changes and suggest improvements",
+    "should_trigger": false
+  },
+  {
+    "query": "how do i set up home-manager on nixos?",
+    "should_trigger": false
+  },
+  {
+    "query": "can you help me refactor this tmux configuration to be more modular?",
+    "should_trigger": false
+  },
+  {
+    "query": "create a test case for the snapshot skill but don't actually take a snapshot yet",
+    "should_trigger": false
+  },
+  {
+    "query": "i made a typo in my commit message, can you help me fix it?",
+    "should_trigger": false
+  }
+]

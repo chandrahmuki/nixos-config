@@ -1,0 +1,23 @@
+{
+  "skill_name": "snapshot",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I've been working on fixing tmux session persistence on NixOS for the last hour. We decided to use a simple auto-setup script instead of resurrect because the store paths kept breaking. I created a new module and added it to the config. Can you take a snapshot of what we accomplished?",
+      "expected_output": "Creates snapshot directory with files for decisions (resurrect vs auto-script), modules_added (new tmux module), and summary of work done",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Just finished debugging that home-manager backup file issue. Turns out we needed to add force=true to the config files. I also discovered that NixOS rebuilds are really slow when you have lots of options. What should I snapshot from this session?",
+      "expected_output": "Captures fix (backup file handling), learning (NixOS rebuild performance), and any decisions made about the approach",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Today I added support for the snapshot skill itself - created the SKILL.md, test cases, and the main script. We're using a sessions/ subdirectory structure with dates. /snapshot",
+      "expected_output": "Creates snapshot with modules_added (snapshot skill files), decisions (directory structure approach), and todos (still need to test and iterate)",
+      "files": []
+    }
+  ]
+}

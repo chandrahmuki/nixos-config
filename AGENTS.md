@@ -4,7 +4,8 @@ This document provides guidelines for agents working with this NixOS flake-based
 
 ## Knowledge & Memory
 
-- **Session snapshots**: `memory/sessions/<date>_<topic>/summary.md` — never use glob/ls on sessions
+- **Session snapshots**: `memory/sessions/<date>_<topic>/summary.md` — stored in `memory/sessions/`
+- **Skills**: `~/.config/opencode/skills/` — custom skills (project-map, snapshot, find-skills)
 - **Reference docs**: `memory/reference/*.md` — project-specific learnings
 - **Index**: `memory/index_sessions.md` — all sessions log
 
@@ -157,9 +158,9 @@ The `modules/vscode.nix` provides VSCode configuration. Use the Nix language ser
 **NEVER use glob/ls on memory/sessions/** — direct read only!
 ```
 # Get latest session dir name:
-ls -t ~/.claude/projects/-home-david-nixos-config/memory/sessions/ | head -1
+ls -t /home/david/nixos-config/memory/sessions/ | head -1
 # Then read that session's summary.md directly
-cat ~/.claude/projects/-home-david-nixos-config/memory/sessions/<latest>/summary.md
+cat /home/david/nixos-config/memory/sessions/<latest>/summary.md
 ```
 
 ## Key Design Patterns
