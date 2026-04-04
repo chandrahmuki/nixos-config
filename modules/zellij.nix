@@ -87,6 +87,7 @@
         enableFishIntegration = false;
 
         extraConfig = ''
+          bind "Alt Enter" { ToggleFullscreen; }
           keybinds {
               shared_except "locked" {
                   bind "Alt h" { MoveFocusOrTab "Left"; }
