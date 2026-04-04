@@ -87,6 +87,34 @@
         enableFishIntegration = false;
 
         extraConfig = ''
+          themes {
+              tokyonight-moon {
+                  frame_selected {
+                      base 136 180 250
+                      background 136 180 250
+                      emphasis_0 136 180 250
+                      emphasis_1 136 180 250
+                      emphasis_2 136 180 250
+                      emphasis_3 136 180 250
+                  }
+                  frame_unselected {
+                      base 108 112 134
+                      background 108 112 134
+                      emphasis_0 108 112 134
+                      emphasis_1 108 112 134
+                      emphasis_2 108 112 134
+                      emphasis_3 108 112 134
+                  }
+                  frame_highlight {
+                      base 137 180 250
+                      background 137 180 250
+                      emphasis_0 137 180 250
+                      emphasis_1 137 180 250
+                      emphasis_2 137 180 250
+                      emphasis_3 137 180 250
+                  }
+              }
+          }
           keybinds {
               normal {
                   bind "Alt Enter" { ToggleFocusFullscreen; }
