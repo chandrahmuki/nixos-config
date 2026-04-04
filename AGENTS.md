@@ -2,6 +2,12 @@
 
 This document provides guidelines for agents working with this NixOS flake-based configuration.
 
+## Knowledge & Memory
+
+- **Session snapshots**: `memory/sessions/<date>_<topic>/summary.md` — never use glob/ls on sessions
+- **Reference docs**: `memory/reference/*.md` — project-specific learnings
+- **Index**: `memory/index_sessions.md` — all sessions log
+
 ## Project Overview
 
 - **Type**: NixOS flake configuration with Home Manager

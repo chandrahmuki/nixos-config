@@ -29,8 +29,8 @@
                 pane size=1 borderless=true {
                     plugin location="file:/home/${username}/.config/zellij/plugins/zjstatus.wasm" {
                         format_left  "{mode}#[fg=#89b4fa,bold] {session} {tabs}"
-                        format_right "{command_git_branch}#[fg=#424242,bold] | {datetime}"
-                        format_space ""
+                        format_right  "{command_git_branch}#[fg=#424242,bold] | {datetime}"
+                        format_space  ""
 
                         border_enabled  "false"
                         border_char     "─"
@@ -60,15 +60,13 @@
             }
             tab name="Dev" focus=true cwd="/home/${username}/nixos-config" {
                 pane split_direction="vertical" {
-                    pane split_direction="horizontal" {
-                        pane name="neovim" command="nvim" size="56%"
-                        pane split_direction="vertical" {
-                            pane name="opencode" command="opencode" size="73%"
-                            pane name="terminal" size="26%"
-                        }
+                    pane name="neovim" command="nvim" size="56%"
+                    pane size="43%" {
+                        pane name="opencode" command="opencode" size="73%"
+                        pane name="terminal" size="26%"
                     }
-                    pane size=12 name="shell"
                 }
+                pane size=12 name="shell"
             }
             tab name="Monitoring" {
                 pane command="btop"
