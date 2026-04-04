@@ -1,5 +1,6 @@
 # Sessions Index
 
+- [2026-04-04_zellij-theme-customization](./sessions/2026-04-04_zellij-theme-customization/summary.md)
 - [2026-04-04_zellij-fullscreen-fix](./sessions/2026-04-04_zellij-fullscreen-fix/summary.md)
 - [2026-04-04_zellij-fullscreen](./sessions/2026-04-04_zellij-fullscreen/summary.md)
 - [2026-04-04_memory-consolidation](./sessions/2026-04-04_memory-consolidation/summary.md)
