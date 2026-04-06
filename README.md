@@ -1,59 +1,108 @@
-# ❄️ NixOS Configuration (Muggy-NixOS)
+# ❄️ NixOS Configuration
 
-A high-performance, modern NixOS configuration featuring **Niri** (Wayland compositor) and **GNOME** (as a robust fallback), optimized for gaming and productivity.
+![NixOS](https://img.shields.io/badge/NixOS-Unstable-blue?style=for-the-badge&logo=nixos&logoColor=white)
+[![GitHub Stars](https://img.shields.io/github/stars/chandrahmuki/nixos-config)](https://github.com/chandrahmuki/nixos-config/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/chandrahmuki/nixos-config)](https://github.com/chandrahmuki/nixos-config/network/members)
 
-![Desktop Screenshot](https://github.com/user-attachments/assets/0ed74bc7-cd22-45a3-86f3-e17897266439)
+## Screenshots
 
-## ✨ Key Features
-- **UI/UX**: [Niri](https://github.com/YaLTeR/niri) (unstable) with a custom [Noctalia shell](https://github.com/Noctatia/noctalia) setup.
-- **Kernel**: Optimized CachyOS Bore kernel for low-latency desktop performance.
-- **Gaming**: Pre-configured Steam, GameMode, and AMD GPU optimizations.
-- **Shell**: Fish shell equipped with FZF (history search) and Zoxide (smart navigation).
-- **Tools**: Ghostty terminal, VSCode/Antigravity, and declarative Brave/Chromium policy management.
-- **Portability**: Completely decoupled username and home paths for easy adoption.
+[![Screenshot](.github/assets/screenshot.png)](.github/assets/screenshot.png)
 
----
+[More screenshots](#)
 
-## 🚀 Installation Guide
+## Table of Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Managing Hosts](#managing-hosts)
+  - [Rebuilding](#rebuilding)
+  - [Rollbacks](#rollbacks)
+- [Credits](#creditsinspiration)
+
+## Installation
 
 > [!NOTE]
-> This guide is designed for a fresh NixOS installation. The script handles hardware configuration and enabling Flakes automatically.
+> Before proceeding with the installation, check these files and adjust them for your system:
+> - `hosts/Default/variables.nix`: Contains host-specific variables.
+> - `hosts/Default/host-packages.nix`: Lists installed packages for the host.
+> - `hosts/Default/configuration.nix`: Module imports for the host and extra configuration.
 
-### 2. Run the Installation Script
-The `install.sh` script will automate everything for you (username detection, hardware configuration, and the first system build):
+You can install on a running system or from the NixOS live installer. Get the minimal ISO from the [NixOS website](https://nixos.org/download/#nixos-iso).
+
+### Installation Steps
+
+1. Clone the Repository:
+   ```bash
+   git clone https://github.com/chandrahmuki/nixos-config.git ~/nixos-config
+   ```
+
+2. Change Directory:
+   ```bash
+   cd ~/nixos-config
+   ```
+
+3. Run the Installer:
+   ```bash
+   ./install.sh
+   ```
+
+The install script automates the setup process, including hosts, username, and applying the configuration.
+
+## Usage
+
+### Managing Hosts
+
+**Method 1: Automatic** - run the installer again to select or create another host:
 ```bash
-chmod +x install.sh
 ./install.sh
 ```
 
-**What the script does:**
-0.  **Personalization**: Automatically detects your username and prompts for your desired hostname, updating `flake.nix` and renaming host directories accordingly.
-1.  **Hardware**: Generates a `hardware-configuration.nix` for your specific machine.
-2.  **Flakes**: Ensures Flakes are supported for the initial build.
-3.  **Hostname**: Sets your system hostname to your chosen value.
-4.  **Build**: Performs the initial `nixos-rebuild switch`.
+**Method 2: Manual:**
+1. Copy `hosts/Default` to a new directory (e.g., `hosts/Laptop`)
+2. Edit the new host's `variables.nix` and `host-packages.nix`
+3. Add the host to `flake.nix`:
+   ```nix
+   nixosConfigurations = {
+     Default = mkHost "Default";
+     Laptop = mkHost "Laptop";
+   };
+   ```
+4. Track the new host with git:
+   ```bash
+   git add hosts/Laptop
+   ```
+5. Rebuild with the new hostname using either `nixos-rebuild` or `nh`.
 
-### 4. Final Steps
-After the script finishes, **reboot** your system:
-```bash
-sudo reboot
-```
+### Rebuilding
 
----
+Apply configuration changes:
+- **Command:** `nos` (alias for `nh os switch`)
+- **nixos-rebuild:** `sudo nixos-rebuild switch --flake ~/nixos-config#<HOST>`
+- **nh:** `nh os switch --hostname <HOST>`
 
-## 🛠️ Maintenance & Common Commands
+### Rollbacks
 
-This config uses [**nh**](https://github.com/viperML/nh) for a faster and cleaner NixOS experience.
+- **List generations:** `list-gens`
+- **Rollback:** `rollback N` (replace N with generation number)
 
-- **Apply changes**: `nos` (a built-in alias for `nh os switch`)
-- **Update system**: `nix flake update` (then run `nos`)
-- **Cleanup**: `nh clean all`
+## Credits/Inspiration
 
-## 📁 Project Structure
-- `hosts/`: Host-specific configurations (hostname: `muggy-nixos`).
-- `modules/`: Reusable components (Brave, Shell, Gaming, etc.).
-- `home.nix`: Main Home-Manager user configuration.
-- `docs/`: Detailed guides for specific components (Brave extensions, Triple Relay workflow).
+| Credit | Reason |
+|--------|--------|
+| [Sly-Harvey/NixOS](https://github.com/Sly-Harvey/NixOS) | Main inspiration for this config |
+| [Niri](https://github.com/YaLTeR/niri) | Wayland compositor |
+| [Noctalia](https://github.com/noctalia-dev/noctalia-shell) | Shell customization |
+| [Home Manager](https://github.com/nix-community/home-manager) | User configuration management |
+| [CachyOS Kernel](https://github.com/CachyOS/kernel-patches) | Optimized kernel |
 
----
-*Maintained by chandrahmuki. Built with ❄️ and Antigravity AI.*
+## About
+
+NixOS + Niri (Wayland compositor) + Home Manager configuration with gaming and productivity optimizations.
+
+### Topics
+
+linux nix nixos nixos-configuration flake home-manager niri
+
+### License
+
+[MIT License](LICENSE)
