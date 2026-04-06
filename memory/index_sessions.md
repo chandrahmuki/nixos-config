@@ -1,5 +1,6 @@
 # Sessions Index
 
+- [2026-04-06_skills-superpowers](./sessions/2026-04-06_skills-superpowers/summary.md)
 - [2026-04-04_gpu-screen-recorder](./sessions/2026-04-04_gpu-screen-recorder/summary.md)
 - [2026-04-04_zellij-theme-customization](./sessions/2026-04-04_zellij-theme-customization/summary.md)
 - [2026-04-04_zellij-fullscreen-fix](./sessions/2026-04-04_zellij-fullscreen-fix/summary.md)
