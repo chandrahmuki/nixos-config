@@ -48,8 +48,8 @@ return {
     { "<leader>/",       function() Snacks.picker.grep() end, desc = "Search" },
     { "<leader>:",       function() Snacks.picker.command_history() end, desc = "Command History" },
     { "<leader>P",       function() Snacks.picker.commands() end, desc = "Command Palette" },
-    { "<leader>e", function() Snacks.explorer() end, desc = "File Explorer" },
-    { "<leader>E", function() Snacks.explorer({ cwd = vim.fn.expand("%:p:h") }) end, desc = "Explorer (Current Dir)" },
+    { "<leader>e", function() require("mini.files").open() end, desc = "File Explorer" },
+    { "<leader>E", function() require("mini.files").open(vim.fn.expand("%:p:h"), false) end, desc = "Explorer (Current Dir)" },
 
     -- [f]ile / find
     { "<leader>ff", function() Snacks.picker.files() end, desc = "Find Files" },
