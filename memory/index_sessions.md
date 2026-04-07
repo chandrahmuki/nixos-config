@@ -1,5 +1,6 @@
 # Sessions Index
 
+- [2026-04-07_minifiles-explorer](./sessions/2026-04-07_minifiles-explorer/summary.md)
 - [2026-04-06_readme-sly-harvey-style](./sessions/2026-04-06_readme-sly-harvey-style/summary.md)
 - [2026-04-06_skills-superpowers](./sessions/2026-04-06_skills-superpowers/summary.md)
 - [2026-04-04_gpu-screen-recorder](./sessions/2026-04-04_gpu-screen-recorder/summary.md)
