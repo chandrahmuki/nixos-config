@@ -8,7 +8,7 @@ return {
           close = "q",
           go_in = "<CR>",
           go_in_plus = "L",
-          go_out = "<BS>",
+          go_out = { "h", "<BS>" },
           go_out_plus = "H",
           reset_cursor = "<C-o>",
           reveal_cwd = "@",
