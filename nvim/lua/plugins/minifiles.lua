@@ -20,20 +20,6 @@ return {
           use_as_default_explorer = true,
         },
       })
-      vim.api.nvim_create_autocmd("User", {
-        pattern = "MiniFilesBufferOpen",
-        callback = function(args)
-          local buf = args.data.buf_id
-          vim.keymap.set("n", "<CR>", function()
-            vim.cmd("normal! l")
-            require("mini.files").close()
-          end, { buffer = buf, nowait = true })
-          vim.keymap.set("n", "l", function()
-            vim.cmd("normal! l")
-            require("mini.files").close()
-          end, { buffer = buf, nowait = true })
-        end,
-      })
     end,
   }
 }
