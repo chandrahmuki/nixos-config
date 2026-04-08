@@ -21,8 +21,8 @@ This document provides guidelines for agents working with this NixOS flake-based
   - `hosts/system/default.nix` — Bootloader, AMD GPU, networking, greetd+niri login
   - `hosts/system/hardware-configuration.nix` — AUTO-GENERATED, never edit
   - `modules/` — Auto-imported recursively via modules/default.nix
-  - `overlays.nix` — Package overrides
-  - `pkgs/google-antigravity/` — Custom package
+  - `overlays.nix` — Package overrides (niri, opencode, deno fix)
+  - `lib/colors.nix` — Shared Tokyonight color palette
 
 ## Build/Deploy Commands
 ```bash
@@ -112,6 +112,14 @@ Avoid legacy `extraConfig` - use `settings` instead.
 - Use `lib.mkIf` for conditional configuration
 - Use `lib.mkDefault` for sensible defaults
 - Use `lib.mkForce` to override unconditionally
+
+### Shared Colors
+
+Use `lib/colors.nix` for Tokyonight palette values:
+```nix
+let colors = (import ../lib/colors.nix).tokyonight; in
+# Then use colors.bg, colors.fg, colors.blue, etc.
+```
 
 ### Package References
 

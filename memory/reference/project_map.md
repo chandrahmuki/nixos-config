@@ -14,9 +14,9 @@ flake.nix                          # Root — inputs, nixosSystem wiring
 home.nix                           # HM entry point (imports modules/default.nix)
 hosts/system/default.nix           # Bootloader, AMD GPU, networking, greetd+niri login
 hosts/system/hardware-configuration.nix  # AUTO-GENERATED — never edit
-overlays.nix                       # Package overrides
-pkgs/google-antigravity/default.nix  # Custom pkg
+overlays.nix                       # Package overrides (niri, opencode, deno fix)
 modules/default.nix                # Auto-imports all *.nix in modules/ recursively
+lib/colors.nix                     # Shared Tokyonight color definitions
 ```
 
 ## Flake Inputs
@@ -34,47 +34,40 @@ opencode             github:anomalyco/opencode  (overlay in overlays.nix)
 ```
 
 ## Modules
-Tags: [nixos]=system-level  [hm]=Home Manager  [both]=both  [secrets]=SOPS  [pkg]=custom package
+Tags: [nixos]=system-level  [hm]=Home Manager  [both]=both  [secrets]=SOPS
 
 ```
-antigravity.nix       Google Antigravity browser extension          [hm,pkg]
-backup.nix            btrbk Btrfs snapshots service                 [nixos]
+ai.nix                AI tools (claude-code, opencode, gemini)      [hm]
+backup.nix            btrbk Btrfs snapshots service                  [nixos]
 bluetooth.nix         Bluetooth stack                               [nixos]
-brave.nix             Brave browser config                          [hm]
+brave.nix             Brave browser config + extensions              [both]
 btop.nix              btop system monitor                           [hm]
-claude.nix            Claude Code CLI config                        [hm]
 direnv.nix            direnv + nix-direnv                           [hm]
 discord.nix           Discord                                       [hm]
 font.nix              Nerd fonts, Noto, emoji fonts                 [nixos]
-gemini.nix            Gemini AI CLI                                 [hm]
+gaming.nix            Steam, GameMode, LACT, GPU screen recorder    [nixos]
 git.nix               Git config                                    [hm]
-lact.nix              LACT AMD GPU control tool                     [nixos]
+media.nix             mpv, yt-dlp, music-menu, yt-search            [hm]
 microfetch.nix        Microfetch system info display                [hm]
-music-menu.nix        yt-search music player menu (rofi/walker UI)  [hm]
-nautilus.nix          Nautilus file manager                         [hm]
+nautilus.nix          Nautilus file manager                          [hm]
 neovim.nix            Neovim + LSP config                          [hm]
 nh.nix                nh nix helper + fish aliases                  [both]
-opencode.nix          OpenCode AI coding agent                      [hm]
 niri.nix              Niri Wayland compositor config                [both]
 noctalia.nix          Noctalia shell theme                          [hm]
-notifications.nix     Mako notification daemon                      [hm]
+notifications.nix     libnotify (noctalia handles daemon)           [hm]
 obsidian.nix          Obsidian notes                                [hm]
 parsec.nix            Parsec remote gaming                          [hm]
 pdf.nix               Zathura PDF viewer                            [hm]
 performance-tuning.nix  CPU/kernel performance settings             [nixos]
 secrets.nix           SOPS-Nix encrypted secrets                    [nixos,secrets]
-steam.nix             Steam + gaming                                [nixos]
 tealdeer.nix          tldr pages (tealdeer)                         [hm]
-terminal.nix          Foot terminal + Fish shell + GTK4 css         [hm]
-theme.nix             GTK theme (Noctalia)                          [hm]
-tmux.nix              Tmux config                                   [hm]
-utils.nix             CLI utils: fd, dust, gdu, etc.                [hm]
+terminal.nix          Foot terminal + Fish shell + Starship         [hm]
+theme.nix             GTK theme (Tokyonight)                         [hm]
+utils.nix             CLI utils: fd, dust, gdu, jq, etc.            [hm]
 vscode.nix            VS Code                                       [hm]
 walker.nix            Walker app launcher                           [hm]
 xdg.nix               XDG user dirs                                 [hm]
 yazi.nix              Yazi TUI file manager                         [hm]
-yt-dlp.nix            yt-dlp youtube downloader                     [hm]
-yt-search.nix         yt-search TUI + mpv music player              [hm]
 zellij.nix            Zellij terminal workspace + dev layout        [hm]
 ```
 
@@ -82,5 +75,6 @@ zellij.nix            Zellij terminal workspace + dev layout        [hm]
 - All modules auto-imported via `modules/default.nix` (recursive scan)
 - HM wired as NixOS module (not standalone) — `home-manager.users.david`
 - `specialArgs`/`extraSpecialArgs`: `{inputs, username, hostname}`
-- Secrets: SOPS-Nix, encrypted at rest, decrypted at build time
+- Theme colors centralized in `lib/colors.nix` (Tokyonight palette)
+- No antigravity, tmux, mako, or fuzzel — removed during rearchitecture
 - Build: `nos` (nh os switch) | rollback: `nos --rollback`
