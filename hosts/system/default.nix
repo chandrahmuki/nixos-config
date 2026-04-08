@@ -31,7 +31,6 @@
   #AMD
   boot.initrd.kernelModules = [ "amdgpu" ];
 
-
   #Steam and games
   hardware.graphics = {
     enable = true;
@@ -187,8 +186,14 @@
   # We specify the default configuration to use gnome and gtk portals for Niri session
   xdg.portal = {
     enable = true;
-    config.niri.default = [ "gnome" "gtk" ];
-    extraPortals = [ pkgs.xdg-desktop-portal-gnome pkgs.xdg-desktop-portal-gtk ];
+    config.niri.default = [
+      "gnome"
+      "gtk"
+    ];
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gnome
+      pkgs.xdg-desktop-portal-gtk
+    ];
   };
 
   # Polkit for niri using the gnome one.
@@ -220,7 +225,12 @@
   services.btrfs.autoScrub = {
     enable = true;
     interval = "weekly";
-    fileSystems = [ "/" "/mnt/storage" "/mnt/games" "/mnt/backup" ];
+    fileSystems = [
+      "/"
+      "/mnt/storage"
+      "/mnt/games"
+      "/mnt/backup"
+    ];
   };
 
   # --- DATA DIRECTORIES PERMISSIONS ---
@@ -241,10 +251,7 @@
   # 3. Store Optimization (Deduplication) — async, non-bloquant pendant les builds
   nix.optimise.automatic = true;
 
-  # 4. Gaming & GPU
-  programs.gamemode.enable = true;
-
-  # 5. Kernel Scheduler (SCX - CachyOS-like)
+  # 4. Kernel Scheduler (SCX - CachyOS-like)
   services.scx = {
     enable = true;
     scheduler = "scx_lavd"; # Retour vers LAVD, plus stable pour les transitions de focus
@@ -271,7 +278,6 @@
   # 8. Advanced: Build in RAM (tmpfs) - 62GB RAM required
   boot.tmp.useTmpfs = true;
   boot.tmp.tmpfsSize = "75%"; # Use up to 75% of RAM for build
-
 
   # (Settings for Cubic, amgdpu gttsize, and ntsync moved to modules/performance-tuning.nix)
 
