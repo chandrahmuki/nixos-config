@@ -1,5 +1,6 @@
 # Sessions Index
 
+- [2026-04-08_opencode-flake](./sessions/2026-04-08_opencode-flake/summary.md)
 - [2026-04-08_gemini-rules](./sessions/2026-04-08_gemini-rules/summary.md)
 - [2026-04-07_minifiles-v2](./sessions/2026-04-07_minifiles-v2/summary.md)
 - [2026-04-07_minifiles-explorer](./sessions/2026-04-07_minifiles-explorer/summary.md)
