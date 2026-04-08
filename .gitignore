@@ -18,6 +18,7 @@ memory/sessions/
 # --- NIX & BUILD ---
 result
 result-*
+.ruff_cache/
 
 # --- APP SPECIFIC ---
 *.png
