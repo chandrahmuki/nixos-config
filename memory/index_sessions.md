@@ -1,5 +1,6 @@
 # Sessions Index
 
+- [2026-04-08_codebase-rearchitecture](./sessions/2026-04-08_codebase-rearchitecture/summary.md)
 - [2026-04-08_project-map-reference](./sessions/2026-04-08_project-map-reference/summary.md)
 - [2026-04-08_opencode-flake](./sessions/2026-04-08_opencode-flake/summary.md)
 - [2026-04-08_gemini-rules](./sessions/2026-04-08_gemini-rules/summary.md)
