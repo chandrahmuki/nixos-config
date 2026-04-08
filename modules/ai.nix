@@ -18,10 +18,15 @@ in
     { config, lib, ... }:
     {
       home.packages = [
+        pkgs.opencode
+        pkgs.opencode-claude-auth
+        pkgs.gemini-cli
+        pkgs.go
         pkgs-master.claude-code
       ];
 
       xdg.configHome = lib.mkDefault "${config.home.homeDirectory}/.config";
+
       home.file.".claude/settings.json" = {
         force = true;
         text = lib.generators.toJSON { } {
@@ -54,5 +59,8 @@ in
           };
         };
       };
+
+      home.file."nixos-config/.gemini/settings.json".source =
+        config.lib.file.mkOutOfStoreSymlink "/home/${username}/nixos-config/.agent/gemini-settings.json";
     };
 }
