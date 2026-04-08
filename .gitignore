@@ -13,6 +13,7 @@ modules/mcp_config.json
 repomix-*.md
 *.tmp
 .tmp/
+memory/sessions/
 
 # --- NIX & BUILD ---
 result
