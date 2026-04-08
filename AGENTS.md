@@ -8,6 +8,7 @@ This document provides guidelines for agents working with this NixOS flake-based
 - **Skills**: `~/.config/opencode/skills/` — custom skills (project-map, snapshot, find-skills)
 - **Reference docs**: `memory/reference/*.md` — project-specific learnings
 - **Index**: `memory/index_sessions.md` — all sessions log
+- **Project map**: `memory/reference/project_map.md` — always check this first to understand project structure
 
 ## Project Overview
 
