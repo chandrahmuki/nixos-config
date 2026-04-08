@@ -20,6 +20,9 @@ result
 result-*
 
 # --- APP SPECIFIC ---
+*.png
+*.jpg
+*.jpeg
 scripts/muggy/muggy
 /muggy
 generated/
