@@ -1,3 +1,6 @@
+let
+  colors = (import ../lib/colors.nix).tokyonight;
+in
 {
   config,
   lib,
@@ -22,28 +25,28 @@
             pad = "15x15";
           };
           colors-dark = {
-            foreground = "c0caf5";
-            background = "1a1b26";
+            foreground = colors.fg;
+            background = colors.bg;
 
-            regular0 = "15161e";
-            regular1 = "f7768e";
-            regular2 = "9ece6a";
-            regular3 = "e0af68";
-            regular4 = "7aa2f7";
-            regular5 = "bb9af7";
-            regular6 = "7dcfff";
+            regular0 = colors.dark;
+            regular1 = colors.red;
+            regular2 = colors.green;
+            regular3 = colors.yellow;
+            regular4 = colors.blue;
+            regular5 = colors.magenta;
+            regular6 = colors.cyan;
             regular7 = "a9b1d6";
 
-            bright0 = "414868";
-            bright1 = "f7768e";
-            bright2 = "9ece6a";
-            bright3 = "e0af68";
-            bright4 = "7aa2f7";
-            bright5 = "bb9af7";
-            bright6 = "7dcfff";
-            bright7 = "c0caf5";
+            bright0 = colors.selection;
+            bright1 = colors.red;
+            bright2 = colors.green;
+            bright3 = colors.yellow;
+            bright4 = colors.blue;
+            bright5 = colors.magenta;
+            bright6 = colors.cyan;
+            bright7 = colors.fg;
 
-            dim0 = "ff9e64";
+            dim0 = colors.orange;
             dim1 = "db4b4b";
           };
         };
