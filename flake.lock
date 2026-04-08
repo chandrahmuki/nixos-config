@@ -325,6 +325,26 @@
         "type": "github"
       }
     },
+    "opencode": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1775610204,
+        "narHash": "sha256-lDmdmAZUrBVFWqxRHM5JJh+ARkAr5FqF+aqCGUu5Zes=",
+        "owner": "anomalyco",
+        "repo": "opencode",
+        "rev": "ae614d919f262c78d3d2feb099f2fe0f42d9cef5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "anomalyco",
+        "repo": "opencode",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "elephant": "elephant",
@@ -334,6 +354,7 @@
         "nixpkgs": "nixpkgs_3",
         "nixpkgs-master": "nixpkgs-master",
         "noctalia": "noctalia",
+        "opencode": "opencode",
         "sops-nix": "sops-nix",
         "walker": "walker"
       }
