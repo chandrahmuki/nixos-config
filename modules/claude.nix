@@ -34,7 +34,7 @@ in
               command = "bash";
               args = [
                 "-c"
-                "GITHUB_TOKEN=$(cat ~/.config/antigravity/github_token) npx -y @modelcontextprotocol/server-github"
+                "GITHUB_TOKEN=$(cat ~/.config/sops/github_token) npx -y @modelcontextprotocol/server-github"
               ];
               env = { };
             };
