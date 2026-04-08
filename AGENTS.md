@@ -168,3 +168,8 @@ cat /home/david/nixos-config/memory/sessions/<latest>/summary.md
 - **Secrets:** `modules/secrets.nix` uses SOPS-Nix — encrypted at rest, decrypted at build time
 - **Flake inputs:** Most follow `nixpkgs` via `inputs.nixpkgs.follows`; `nixpkgs-master` is independent
 - **hardware-configuration.nix** is machine-specific and auto-generated — never touch it
+
+## Interaction Rules
+
+- **Always ask before taking action** — Never delete, modify, or commit files without explicit permission. Ask "Shall I proceed?" before doing anything that changes the codebase or git state.
+- When asked to update git, first check what needs to be staged and ask for confirmation before committing.
