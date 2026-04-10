@@ -34,8 +34,10 @@
           # fzf (Managed by utils.nix)
           # nodejs (Managed by utils.nix)
           lua-language-server
-          nixd # Nix LSP (instead of nil)
-          nixfmt # Nix Formatter
+          nixd
+          alejandra
+          deadnix
+          statix
           stylua # For stylua.toml in your config
         ];
       };
