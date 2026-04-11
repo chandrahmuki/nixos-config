@@ -1,5 +1,7 @@
 # Sessions Index
 
+- [2026-04-11_aria2-lint-agents](./sessions/2026-04-11_aria2-lint-agents/summary.md)
+- [2026-04-10_lint-agents](./sessions/2026-04-10_lint-agents/summary.md)
 - [2026-04-08_minifiles-enter](./sessions/2026-04-08_minifiles-enter/summary.md)
 - [2026-04-08_rearchitecture-complete](./sessions/2026-04-08_rearchitecture-complete/summary.md)
 - [2026-04-08_codebase-rearchitecture](./sessions/2026-04-08_codebase-rearchitecture/summary.md)
