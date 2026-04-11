@@ -31,6 +31,7 @@
         cava
         ddcutil
         brightnessctl
+        aria2
       ];
 
       programs.bat = {
