@@ -22,31 +22,33 @@
         force = true;
         text = ''
           import weechat
+          import os
 
-          def setup_rizon_cb(data, buffer, args):
-              servers = weechat.infolist_get("irc_server", "", "")
-              rizon_exists = False
-              while weechat.infolist_next(servers):
-                  if weechat.infolist_string(servers, "name") == "rizon":
-                      rizon_exists = True
-                      break
-              weechat.infolist_free(servers)
+          SCRIPT_NAME = "setup_rizon"
+          SETUP_FLAG = os.path.expanduser("~/.local/share/weechat/setup_rizon_done")
 
-              if not rizon_exists:
-                  weechat.command("", "/server add rizon irc.rizon.net/6697 -tls")
-                  weechat.command("", "/set irc.server.rizon.autoconnect on")
-                  weechat.command("", "/set irc.server.rizon.autojoin #kanadi")
-                  weechat.command("", "/set irc.server.rizon.nicks ${username}")
-                  weechat.command("", "/set irc.server.rizon.username ${username}")
-                  weechat.command("", "/set irc.server.rizon.realname ${username}")
-                  weechat.command("", "/set xfer.file.download_directory ~/Downloads/manga")
-                  weechat.command("", "/save")
+          def setup_rizon_cb(data, remaining_calls):
+              if os.path.exists(SETUP_FLAG):
+                  return weechat.WEECHAT_RC_OK
+
+              weechat.command("", "/server add rizon irc.rizon.net/6697 -tls")
+              weechat.command("", "/set irc.server.rizon.autoconnect on")
+              weechat.command("", "/set irc.server.rizon.autojoin #kanadi")
+              weechat.command("", "/set irc.server.rizon.nicks ${username}")
+              weechat.command("", "/set irc.server.rizon.username ${username}")
+              weechat.command("", "/set irc.server.rizon.realname ${username}")
+              weechat.command("", "/set xfer.file.download_directory ~/Downloads/manga")
+              weechat.command("", "/save")
+              weechat.command("", "/connect rizon")
+
+              with open(SETUP_FLAG, "w") as f:
+                  f.write("done")
 
               weechat.command("", "/script remove setup_rizon")
               return weechat.WEECHAT_RC_OK
 
-          weechat.register("setup_rizon", "${username}", "1.0", "MIT", "Setup Rizon server", "", "")
-          weechat.hook_timer(1000, 0, 1, "setup_rizon_cb", "")
+          weechat.register(SCRIPT_NAME, "${username}", "1.0", "MIT", "Setup Rizon server", "", "")
+          weechat.hook_timer(2000, 0, 1, "setup_rizon_cb", "")
         '';
       };
 
