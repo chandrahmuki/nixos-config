@@ -26,6 +26,9 @@
         autojoin = "#kanadi"
         username = "${username}"
         realname = "${username}"
+
+        [xfer]
+        file.download_dir = "~/Downloads/manga"
       '';
 
       xdg.userDirs = {
