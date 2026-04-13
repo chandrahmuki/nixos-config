@@ -18,23 +18,29 @@
         pkgs.weechat
       ];
 
-      xdg.configFile."weechat/irc.conf".text = ''
-        [server_default]
-        nicks = "${username}"
-        username = "${username}"
-        realname = "${username}"
+      xdg.configFile."weechat/irc.conf" = {
+        force = true;
+        text = ''
+          [server_default]
+          nicks = "${username}"
+          username = "${username}"
+          realname = "${username}"
 
-        [server.rizon]
-        addresses = "irc.rizon.net/6697"
-        tls = on
-        autojoin = "#kanadi"
-        autoconnect = on
-      '';
+          [server.rizon]
+          addresses = "irc.rizon.net/6697"
+          tls = on
+          autojoin = "#kanadi"
+          autoconnect = on
+        '';
+      };
 
-      xdg.configFile."weechat/xfer.conf".text = ''
-        [file]
-        download_dir = "~/Downloads/manga"
-      '';
+      xdg.configFile."weechat/xfer.conf" = {
+        force = true;
+        text = ''
+          [file]
+          download_dir = "~/Downloads/manga"
+        '';
+      };
 
       xdg.userDirs = {
         download = "${config.home.homeDirectory}/Downloads";
