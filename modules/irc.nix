@@ -27,5 +27,14 @@
         username = "${username}"
         realname = "${username}"
       '';
+
+      xdg.userDirs = {
+        download = "${config.home.homeDirectory}/Downloads";
+      };
+
+      home.file."Downloads/manga/.keep" = {
+        text = "";
+        force = true;
+      };
     };
 }
