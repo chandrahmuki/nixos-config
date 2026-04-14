@@ -112,6 +112,7 @@ cat /home/david/nixos-config/memory/sessions/<latest>/summary.md
 
 - **Always ask before taking action** — Never delete, modify, or commit files without explicit permission
 - When asked to update git, first check what needs to be staged and ask for confirmation before committing
+- **Always `git add` new files** — After creating any new file, run `git add <path>` immediately or the flake won't pick it up
 
 ## Verification Workflow
 

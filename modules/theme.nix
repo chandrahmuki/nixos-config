@@ -7,6 +7,10 @@
 }:
 
 {
+  environment.sessionVariables = {
+    GTK_THEME = "Tokyonight-Moon-BL-LB:dark";
+  };
+
   home-manager.users.${username} =
     { config, lib, ... }:
     {
