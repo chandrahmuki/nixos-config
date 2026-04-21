@@ -31,6 +31,7 @@
           };
 
           providers = {
+            run.enable = true;
             websearch.prefix = "?";
             calculator.prefix = "=";
           };
