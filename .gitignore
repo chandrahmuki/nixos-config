@@ -10,6 +10,7 @@ modules/mcp_config.json
 .agent/
 .planning/
 .direnv/
+docs/superpowers/
 repomix-*.md
 *.tmp
 .tmp/

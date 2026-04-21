@@ -8,17 +8,16 @@
 
 {
   environment.sessionVariables = {
-    GTK_THEME = "Tokyonight-Moon-BL-LB:dark";
+    GTK_THEME = "Tokyonight-Dark:dark";
   };
 
   home-manager.users.${username} =
     { config, lib, ... }:
     {
-      # GTK Theme Configuration
       gtk = {
         enable = true;
         theme = {
-          name = "Tokyonight-Moon-BL-LB";
+          name = "Tokyonight-Dark";
           package = pkgs.tokyonight-gtk-theme;
         };
         iconTheme = {
