@@ -42,4 +42,4 @@
 - [2026-04-03_cost-optimization](./sessions/2026-04-03_cost-optimization/summary.md)
 - [2026-04-03_context-optimization-test](./sessions/2026-04-03_context-optimization-test/summary.md)
 - [2026-04-21_noctalia-opencode-fix](./sessions/2026-04-21_noctalia-opencode-fix/summary.md)
-- [2026-04-21_noctalia-shell-launch-fix](./sessions/2026-04-21_noctalia-shell-launch-fix/summary.md)
+- [2026-04-21_noctalia-shell-launch-fix](./sessions/2026-04-21_noctalia-shell-launch-fix/summary.md)- [2026-04-23_opencode-unpin](./sessions/2026-04-23_opencode-unpin/summary.md)
