@@ -29,3 +29,4 @@ scripts/muggy/muggy
 /muggy
 generated/
 GEMINI.md
+.opencode/
