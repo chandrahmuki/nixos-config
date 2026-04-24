@@ -19,6 +19,12 @@ map("n", "<leader>wl", "<C-w>l", { desc = "Move to right window" })
 map("n", "<leader>wj", "<C-w>j", { desc = "Move to lower window" })
 map("n", "<leader>wk", "<C-w>k", { desc = "Move to upper window" })
 
+-- Window splits (independent views)
+map("n", "<leader>w-", "<cmd>split<cr>", { desc = "Split Horizontal" })
+map("n", "<leader>w|", "<cmd>vsplit<cr>", { desc = "Split Vertical" })
+map("n", "<leader>wd", "<cmd>close<cr>", { desc = "Close Split" })
+map("n", "<leader>wo", "<cmd>only<cr>", { desc = "Keep Only This Split" })
+
 -- Diagnostic navigation
 map("n", "[d", vim.diagnostic.goto_prev, { desc = "Prev Diagnostic" })
 map("n", "]d", vim.diagnostic.goto_next, { desc = "Next Diagnostic" })
