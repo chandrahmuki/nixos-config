@@ -15,10 +15,28 @@ vim.api.nvim_create_autocmd("FileChangedShellPost", {
   end,
 })
 
--- Formatage automatique des fichiers Nix à la sauvegarde
+-- Formatage automatique à la sauvegarde (tous les fichiers avec LSP)
 vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = "*.nix",
+  callback = function(args)
+    local bufnr = args.buf
+    local clients = vim.lsp.get_clients({ bufnr = bufnr })
+    if #clients > 0 then
+      vim.lsp.buf.format({ async = false, bufnr = bufnr })
+    end
+  end,
+})
+
+-- Highlight du texte yanké (flash visuel)
+vim.api.nvim_create_autocmd("TextYankPost", {
   callback = function()
-    vim.lsp.buf.format({ async = false })
+    vim.highlight.on_yank({ higroup = "Visual", timeout = 200 })
+  end,
+})
+
+-- Retour à la ligne douce (conserver indent)
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "nix", "lua", "rust", "markdown" },
+  callback = function()
+    vim.opt_local.formatoptions:remove({ "c", "r", "o" })
   end,
 })

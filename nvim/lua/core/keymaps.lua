@@ -19,5 +19,25 @@ map("n", "<leader>wl", "<C-w>l", { desc = "Move to right window" })
 map("n", "<leader>wj", "<C-w>j", { desc = "Move to lower window" })
 map("n", "<leader>wk", "<C-w>k", { desc = "Move to upper window" })
 
+-- Diagnostic navigation
+map("n", "[d", vim.diagnostic.goto_prev, { desc = "Prev Diagnostic" })
+map("n", "]d", vim.diagnostic.goto_next, { desc = "Next Diagnostic" })
+map("n", "<leader>cd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
+
+-- Clear search highlight
+map("n", "<Esc>", "<cmd>nohlsearch<cr>", { desc = "Clear Search" })
+
+-- Better window resize
+map("n", "<C-Up>", "<cmd>resize +2<cr>", { desc = "Resize +2" })
+map("n", "<C-Down>", "<cmd>resize -2<cr>", { desc = "Resize -2" })
+map("n", "<C-Left>", "<cmd>vertical resize -2<cr>", { desc = "V-Resize -2" })
+map("n", "<C-Right>", "<cmd>vertical resize +2<cr>", { desc = "V-Resize +2" })
+
+-- Keep cursor centered on scroll
+map("n", "<C-d>", "<C-d>zz", { desc = "Scroll down (centered)" })
+map("n", "<C-u>", "<C-u>zz", { desc = "Scroll up (centered)" })
+map("n", "n", "nzzzv", { desc = "Next match (centered)" })
+map("n", "N", "Nzzzv", { desc = "Prev match (centered)" })
+
 
 
