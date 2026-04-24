@@ -3,8 +3,8 @@ return {
     "nvim-mini/mini.nvim",
     version = false,
     config = function()
+      -- mini.files (explorer)
       local minifiles = require("mini.files")
-
       local function go_in_and_close()
         local entry = minifiles.get_fs_entry()
         if entry and entry.fs_type == "file" then
@@ -14,7 +14,6 @@ return {
           minifiles.go_in()
         end
       end
-
       minifiles.setup({
         mappings = {
           close = "q",
@@ -29,7 +28,6 @@ return {
           toggle_preview = "P",
         },
       })
-
       vim.api.nvim_create_autocmd("User", {
         pattern = "MiniFilesWindowOpen",
         callback = function(args)
@@ -37,6 +35,12 @@ return {
           vim.keymap.set("n", "<CR>", go_in_and_close, { buffer = buf_id, desc = "mini.files: open and close" })
         end,
       })
+
+      -- mini.pairs (auto-pairs)
+      require("mini.pairs").setup()
+
+      -- mini.comment (toggle comment)
+      require("mini.comment").setup()
     end,
   }
 }
