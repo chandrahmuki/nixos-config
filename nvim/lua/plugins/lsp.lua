@@ -2,6 +2,19 @@ return {
   {
     "neovim/nvim-lspconfig",
     config = function()
+      -- Diagnostic config
+      vim.diagnostic.config({
+        virtual_text = { prefix = "●", spacing = 4 },
+        signs = true,
+        underline = true,
+        update_in_insert = false,
+        severity_sort = true,
+        float = {
+          border = "rounded",
+          source = true,
+        },
+      })
+
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       if pcall(require, "cmp_nvim_lsp") then
         capabilities = require("cmp_nvim_lsp").default_capabilities()
