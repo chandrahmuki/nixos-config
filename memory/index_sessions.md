@@ -44,3 +44,4 @@
 - [2026-04-21_noctalia-opencode-fix](./sessions/2026-04-21_noctalia-opencode-fix/summary.md)
 - [2026-04-21_noctalia-shell-launch-fix](./sessions/2026-04-21_noctalia-shell-launch-fix/summary.md)- [2026-04-23_opencode-unpin](./sessions/2026-04-23_opencode-unpin/summary.md)
 - [2026-04-24_neovim-modernization](./sessions/2026-04-24_neovim-modernization/summary.md)
+- [2026-04-25_neovim-explorer-fix](./sessions/2026-04-25_neovim-explorer-fix/summary.md)
