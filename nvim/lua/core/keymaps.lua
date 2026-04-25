@@ -25,6 +25,9 @@ map("n", "<leader>w|", "<cmd>vsplit<cr>", { desc = "Split Vertical" })
 map("n", "<leader>wd", "<cmd>close<cr>", { desc = "Close Split" })
 map("n", "<leader>wo", "<cmd>only<cr>", { desc = "Keep Only This Split" })
 
+-- Quick split navigation
+map("n", "<S-Tab>", "<C-w>w", { desc = "Next Split" })
+
 -- Diagnostic navigation
 map("n", "[d", vim.diagnostic.goto_prev, { desc = "Prev Diagnostic" })
 map("n", "]d", vim.diagnostic.goto_next, { desc = "Next Diagnostic" })
