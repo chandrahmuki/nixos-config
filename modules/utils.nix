@@ -32,6 +32,7 @@
         ddcutil
         brightnessctl
         aria2
+        lftp
       ];
 
       programs.bat = {

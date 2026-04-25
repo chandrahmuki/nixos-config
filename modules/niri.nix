@@ -47,7 +47,7 @@
           deactivate-unfocused-windows = true;
         };
 
-        environment."DISPLAY" = ":0";
+        environment."NIXOS_OZONE_WL" = "1";
 
         layout.default-column-width = {
           proportion = 1. / 2.;

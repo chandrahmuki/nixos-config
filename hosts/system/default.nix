@@ -186,10 +186,13 @@
   # We specify the default configuration to use gnome and gtk portals for Niri session
   xdg.portal = {
     enable = true;
-    config.niri.default = [
-      "gnome"
-      "gtk"
-    ];
+    config.niri = {
+      default = [
+        "gnome"
+        "gtk"
+      ];
+      "org.freedesktop.impl.portal.FileChooser" = "gtk";
+    };
     extraPortals = [
       pkgs.xdg-desktop-portal-gnome
       pkgs.xdg-desktop-portal-gtk
