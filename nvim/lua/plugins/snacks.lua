@@ -29,10 +29,14 @@ return {
     indent = { enabled = true },
     input = { enabled = true },
     notifier = { enabled = true },
-    picker = { enabled = true },
-    styles = {
-      explorer = {
-        layout = "float",
+    picker = {
+      enabled = true,
+      sources = {
+        explorer = {
+          layout = { preset = "dropdown", preview = false },
+          auto_close = true,
+          jump = { close = true },
+        },
       },
     },
     quickfile = { enabled = true },
@@ -42,6 +46,8 @@ return {
     words = { enabled = true },
   },
   keys = {
+    { "<leader>e", function() Snacks.explorer() end, desc = "File Explorer" },
+    { "<leader>E", function() Snacks.explorer({ cwd = vim.fn.expand("%:p:h") }) end, desc = "Explorer (Current Dir)" },
     { "<leader>u.", function() Snacks.scratch() end, desc = "Scratch Buffer" },
     { "<leader>uS", function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
     { "<c-/>", function() Snacks.terminal() end, desc = "Toggle Terminal" },

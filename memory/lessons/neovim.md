@@ -5,3 +5,5 @@
 - 2026-04-24: `fzf-lua` > `snacks.picker` (meilleure UX + perf)
 - 2026-04-24: Smart-splits/tmux en conflit avec zellij Alt+hjkl → supprimer
 - 2026-04-24: Tester plugins avec `NVIM_APPNAME=test nvim` (isolation)
+- 2026-04-25: `snacks.explorer` > `mini.files` (standard LazyVim, picker intégré, UI moderne) → garder snacks, drop mini.files
+- 2026-04-25: Ne pas supprimer les keymaps lors d'un cleanup sans les migrer → `<leader>e` était mort depuis 1 jour
