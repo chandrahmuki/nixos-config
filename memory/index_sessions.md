@@ -46,3 +46,4 @@
 - [2026-04-24_neovim-modernization](./sessions/2026-04-24_neovim-modernization/summary.md)
 - [2026-04-25_neovim-explorer-fix](./sessions/2026-04-25_neovim-explorer-fix/summary.md)
 - [2026-04-25_discord-screenshare](./sessions/2026-04-25_discord-screenshare/summary.md)
+- [2026-04-26_thunar-nautilus-rtk](./sessions/2026-04-26_thunar-nautilus-rtk/summary.md)
