@@ -33,6 +33,7 @@
         brightnessctl
         aria2
         lftp
+        gimp
       ];
 
       programs.bat = {
