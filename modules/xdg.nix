@@ -38,9 +38,9 @@
       xdg.mimeApps = {
         enable = true;
         defaultApplications = {
-          "text/html" = "com.brave.Browser.desktop";
-          "x-scheme-handler/http" = "com.brave.Browser.desktop";
-          "x-scheme-handler/https" = "com.brave.Browser.desktop";
+          "text/html" = "zen-browser.desktop";
+          "x-scheme-handler/http" = "zen-browser.desktop";
+          "x-scheme-handler/https" = "zen-browser.desktop";
         };
       };
     };

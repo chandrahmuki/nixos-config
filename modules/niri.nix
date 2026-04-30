@@ -108,7 +108,7 @@
             open-fullscreen = true;
           }
           {
-            matches = [ { app-id = "brave-browser"; } ];
+            matches = [ { app-id = "zen-browser"; } ];
             open-focused = true;
           }
           {
