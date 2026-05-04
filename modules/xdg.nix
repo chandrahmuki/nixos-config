@@ -35,13 +35,6 @@
       # On peut aussi s'assurer que XDG lui-même est bien là (souvent implicite mais bon à avoir)
       xdg.enable = true;
 
-      xdg.mimeApps = {
-        enable = true;
-        defaultApplications = {
-          "text/html" = "zen-browser.desktop";
-          "x-scheme-handler/http" = "zen-browser.desktop";
-          "x-scheme-handler/https" = "zen-browser.desktop";
-        };
-      };
+      
     };
 }
