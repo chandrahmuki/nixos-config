@@ -37,3 +37,4 @@ alejandra --check . && deadnix --check . && statix check .  # Lint+format
 - Secrets: `modules/secrets.nix` uses SOPS-Nix
 - Session resume: `ls -t memory/sessions/ | head -1` then read summary.md directly
 - Every 15 messages: remind user to run `/compact` now to save tokens
+

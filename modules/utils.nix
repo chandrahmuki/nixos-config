@@ -21,6 +21,7 @@
         pavucontrol
         pulseaudio
         nodejs
+        bun
         rich-cli
         python3
         repomix

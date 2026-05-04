@@ -30,3 +30,4 @@ scripts/muggy/muggy
 generated/
 GEMINI.md
 .opencode/
+.omnigraph/
