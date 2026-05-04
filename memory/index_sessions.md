@@ -48,3 +48,4 @@
 - [2026-04-25_discord-screenshare](./sessions/2026-04-25_discord-screenshare/summary.md)
 - [2026-04-26_thunar-nautilus-rtk](./sessions/2026-04-26_thunar-nautilus-rtk/summary.md)
 - [2026-05-04_zen-browser-deno-overlay](./sessions/2026-05-04_zen-browser-deno-overlay/summary.md)
+- [2026-05-04_omnigraph-creation](./sessions/2026-05-04_omnigraph-creation/summary.md)
