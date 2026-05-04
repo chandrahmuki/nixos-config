@@ -11,5 +11,8 @@
 ## Git
 - [git-workflow](lessons/git-workflow.md) — Commits, worktrees, lint
 
+## Dev Tools
+- [dev-tools](lessons/dev-tools.md) — CLI, visualization, extraction
+
 ## Store
 - [nixos-store](lessons/nixos-store.md) — GC, optimisation, cleanup
