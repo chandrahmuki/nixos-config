@@ -35,6 +35,7 @@
         aria2
         lftp
         gimp
+        gh
       ];
 
       programs.bat = {

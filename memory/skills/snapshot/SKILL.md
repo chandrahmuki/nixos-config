@@ -30,6 +30,14 @@ Persist key session info to `memory/sessions/YYYY-MM-DD_<topic>/summary.md`.
 
 5. **Update** `memory/index_sessions.md`
 
+6. **Update omnigraph** — Parse the summary for modules modified/inputs/lessons produced, then insert edges into `.omnigraph/graph.db`:
+   ```
+   sqlite3 .omnigraph/graph.db "INSERT OR IGNORE INTO nodes (id,type,label,file_path) VALUES ('<SESSION_ID>','session','<SESSION_ID>','memory/sessions/<SESSION_ID>/summary.md');"
+   sqlite3 .omnigraph/graph.db "INSERT OR IGNORE INTO edges (from_id,to_id,type) VALUES ('<SESSION_ID>','<MODULE>','session_modified');"
+   sqlite3 .omnigraph/graph.db "INSERT OR IGNORE INTO edges (from_id,to_id,type) VALUES ('memory/index_sessions.md','<SESSION_ID>','indexes');"
+   ```
+   Skip if `.omnigraph/graph.db` doesn't exist.
+
 ## Output Format
 ```markdown
 ---

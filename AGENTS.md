@@ -38,3 +38,9 @@ alejandra --check . && deadnix --check . && statix check .  # Lint+format
 - Session resume: `ls -t memory/sessions/ | head -1` then read summary.md directly
 - Every 15 messages: remind user to run `/compact` now to save tokens
 
+## OmniGraph
+- Before editing a `.nix` module: run `omnigraph check <file>` to see deps, sessions, lessons
+- After session snapshot: update `.omnigraph/graph.db` with session_modified edges
+- Periodically: run `omnigraph orphans` to detect unused inputs and dead references
+- Skill: `/graph-check <module>` for full dependency report
+
