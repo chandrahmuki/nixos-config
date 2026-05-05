@@ -50,3 +50,4 @@
 - [2026-05-04_omnigraph-creation](./sessions/2026-05-04_omnigraph-creation/summary.md)
 - [2026-05-04_omnigraph-fix-viz](./sessions/2026-05-04_omnigraph-fix-viz/summary.md)
 - [2026-05-05_omnigraph-v2-tree-sitter-memory](./sessions/2026-05-05_omnigraph-v2-tree-sitter-memory/summary.md)
+- [2026-05-05_omnigraph-skill-gsd-cleanup](./sessions/2026-05-05_omnigraph-skill-gsd-cleanup/summary.md)
