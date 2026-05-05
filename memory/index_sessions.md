@@ -58,3 +58,4 @@
 - [2026-05-05_omnigraph-v2-tree-sitter-memory](./sessions/2026-05-05_omnigraph-v2-tree-sitter-memory/summary.md)
 - [2026-05-05_skills-cleanup-commands](./sessions/2026-05-05_skills-cleanup-commands/summary.md)
 - [2026-05-05_skills-cleanup-gsd](./sessions/2026-05-05_skills-cleanup-gsd/summary.md)
+- [2026-05-05_omnigraph-v2-upgrades](./sessions/2026-05-05_omnigraph-v2-upgrades/summary.md)
