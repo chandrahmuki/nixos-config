@@ -30,6 +30,7 @@
         matugen
         uv
         cava
+        cliamp
         ddcutil
         brightnessctl
         aria2
