@@ -38,6 +38,8 @@ Persist key session info to `memory/sessions/YYYY-MM-DD_<topic>/summary.md`.
    ```
    Skip if `.omnigraph/graph.db` doesn't exist.
 
+7. **Rebuild omnigraph** — Run `bun run ~/.local/share/omnigraph/omnigraph.ts build` from project root to refresh the full graph (nodes, edges, visualization).
+
 ## Output Format
 ```markdown
 ---
