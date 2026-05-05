@@ -35,12 +35,12 @@ alejandra --check . && deadnix --check . && statix check .  # Lint+format
 - `git add` new files immediately (flake needs it)
 - After `.nix` changes: run `nix eval` to verify
 - Secrets: `modules/secrets.nix` uses SOPS-Nix
-- Session resume: `ls -t memory/sessions/ | head -1` then read summary.md directly
+- Session resume: `/omnigraph session-resume` (queries graph for last session context + summary)
 - Every 15 messages: remind user to run `/compact` now to save tokens
 
 ## OmniGraph
-- Before editing a `.nix` module: run `omnigraph check <file>` to see deps, sessions, lessons
-- After session snapshot: update `.omnigraph/graph.db` with session_modified edges
-- Periodically: run `omnigraph orphans` to detect unused inputs and dead references
-- Skill: `/graph-check <module>` for full dependency report
+- Skill: `/omnigraph <command>` — check, query, orphans, session-resume
+- Before editing `.nix`: `/omnigraph check <file>` for deps, sessions, lessons, risk
+- After snapshot: graph DB updated automatically via snapshot skill
+- Periodically: `/omnigraph orphans` to detect unused inputs and dead refs
 

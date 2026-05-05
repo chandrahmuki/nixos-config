@@ -49,3 +49,4 @@
 - [2026-04-26_thunar-nautilus-rtk](./sessions/2026-04-26_thunar-nautilus-rtk/summary.md)
 - [2026-05-04_omnigraph-creation](./sessions/2026-05-04_omnigraph-creation/summary.md)
 - [2026-05-04_omnigraph-fix-viz](./sessions/2026-05-04_omnigraph-fix-viz/summary.md)
+- [2026-05-05_omnigraph-v2-tree-sitter-memory](./sessions/2026-05-05_omnigraph-v2-tree-sitter-memory/summary.md)
