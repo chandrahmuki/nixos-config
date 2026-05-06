@@ -65,3 +65,4 @@
 - [2026-05-05_omnigraph-nix-ast-extraction](./sessions/2026-05-05_omnigraph-nix-ast-extraction/summary.md)
 - [2026-05-06_parsec-update](./sessions/2026-05-06_parsec-update/summary.md)
 - [2026-05-06_cliamp-lazygit](./sessions/2026-05-06_cliamp-lazygit/summary.md)
+- [2026-05-06_cliamp-fix](./sessions/2026-05-06_cliamp-fix/summary.md)
