@@ -37,6 +37,7 @@
         lftp
         gimp
         gh
+        lazygit
       ];
 
       programs.bat = {
