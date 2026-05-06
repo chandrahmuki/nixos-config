@@ -60,3 +60,7 @@
 - [2026-05-05_skills-cleanup-gsd](./sessions/2026-05-05_skills-cleanup-gsd/summary.md)
 - [2026-05-05_omnigraph-v2-upgrades](./sessions/2026-05-05_omnigraph-v2-upgrades/summary.md)
 - [2026-05-05_omnigraph-lessons-v2](./sessions/2026-05-05_omnigraph-lessons-v2/summary.md)
+- [2026-05-05_omnigraph-semantic-memory](./sessions/2026-05-05_omnigraph-semantic-memory/summary.md)
+- [2026-05-05_omnigraph-merge-main](./sessions/2026-05-05_omnigraph-merge-main/summary.md)
+- [2026-05-05_omnigraph-nix-ast-extraction](./sessions/2026-05-05_omnigraph-nix-ast-extraction/summary.md)
+- [2026-05-06_parsec-update](./sessions/2026-05-06_parsec-update/summary.md)
