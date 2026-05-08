@@ -24,6 +24,10 @@ in
             font = "JetBrainsMono Nerd Font:size=18";
             pad = "15x15";
           };
+          key-bindings = {
+            increase-font-size = "Control+Plus";
+            decrease-font-size = "Control+Minus";
+          };
           colors-dark = {
             foreground = colors.fg;
             background = colors.bg;
