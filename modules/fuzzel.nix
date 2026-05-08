@@ -7,7 +7,7 @@
 }:
 
 let
-  colors = (import ../lib/colors.nix).tokyonight;
+  colors = (import ../lib/colors.nix).tokyonight-storm;
 in
 
 {
@@ -27,7 +27,7 @@ in
             inner-pad = 8;
           };
           colors = {
-            background = "#${colors.bg}ff";
+            background = "#24283bff";
             text = "#${colors.fg}ff";
             prompt = "#${colors.fg}ff";
             placeholder = "#${colors.comment}ff";
