@@ -18,29 +18,36 @@ in
         enable = true;
         settings = {
           main = {
-            font = "JetBrainsMono Nerd Font:size=12";
+            font = "JetBrainsMono Nerd Font:size=13";
             dpi-aware = "no";
-            lines = 10;
-            width = 40;
-            horizontal-pad = 20;
-            vertical-pad = 16;
-            inner-pad = 8;
+            lines = 12;
+            width = 45;
+            horizontal-pad = 24;
+            vertical-pad = 20;
+            inner-pad = 12;
+            line-height = 28;
+            tabs = 4;
+            layer = "overlay";
+            anchor = "center";
           };
           colors = {
-            background = "#24283bff";
+            background = "#${colors.bg}f0";
             text = "#${colors.fg}ff";
-            prompt = "#${colors.fg}ff";
-            placeholder = "#${colors.comment}ff";
+            prompt = "#${colors.blue}ff";
+            placeholder = "#${colors.comment}80";
             input = "#${colors.fg}ff";
-            match = "#${colors.blue}ff";
+            match = "#${colors.orange}ff";
             selection = "#${colors.accent}ff";
             selection-text = "#${colors.fg}ff";
-            selection-match = "#${colors.blue}ff";
-            border = "#${colors.blue}ff";
+            selection-match = "#${colors.orange}ff";
+            border = "#${colors.blue}cc";
           };
           border = {
             width = 2;
-            radius = 12;
+            radius = 16;
+          };
+          cursor = {
+            style = "beam";
           };
         };
       };
