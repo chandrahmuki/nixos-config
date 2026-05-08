@@ -47,7 +47,7 @@
             find "$MUSIC_DIR" -type f \( -name "*.m4a" -o -name "*.mp3" -o -name "*.flac" \) -printf "  %f$TAB%p\n" | sort
           ) > "''${XDG_RUNTIME_DIR:-/tmp}/music_menu_full.list"
 
-          INDEX=$(cut -f1 "''${XDG_RUNTIME_DIR:-/tmp}/music_menu_full.list" | walker -d -i -p "Music ❯ ")
+          INDEX=$(cut -f1 "''${XDG_RUNTIME_DIR:-/tmp}/music_menu_full.list" | bemenu -d --backend wayland -p "Music ❯ ")
 
           [ -z "$INDEX" ] && exit
 
@@ -74,7 +74,7 @@
           PROMPT="YouTube Video ❯ "
           [[ "$1" == "--audio" ]] && AUDIO_ONLY=true && PROMPT="YouTube Audio ❯ "
 
-          QUERY=$(echo "" | walker --dmenu --placeholder "$PROMPT")
+          QUERY=$(echo "" | bemenu -d --backend wayland -p "$PROMPT")
           [ -z "$QUERY" ] && exit
 
           TAB=$'\t'
@@ -85,7 +85,7 @@
 
           [ -z "$RESULTS" ] && exit
 
-          INDEX=$(echo -e "$RESULTS" | cut -f1 | walker --dmenu --index --placeholder "Select ❯ ")
+          INDEX=$(echo -e "$RESULTS" | cut -f1 | bemenu -d --backend wayland -p "Select ❯ ")
 
           [ -z "$INDEX" ] && exit
 

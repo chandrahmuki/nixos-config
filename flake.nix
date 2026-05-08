@@ -22,14 +22,6 @@
 
     nix-cachyos.url = "github:xddxdd/nix-cachyos-kernel/release";
 
-    elephant.url = "github:abenz1267/elephant";
-
-    walker = {
-      url = "github:abenz1267/walker";
-      inputs.elephant.follows = "elephant";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -57,6 +49,8 @@
       noctalia,
       nix-cachyos,
       sops-nix,
+      opencode,
+      zen-browser,
       ...
     }@inputs:
     let
