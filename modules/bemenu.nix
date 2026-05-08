@@ -20,7 +20,7 @@ in
           tb = "${colors.bg}";
           nb = "${colors.bg}";
           fb = "${colors.bg}";
-          hb = "${colors.accent_bg}";
+          hb = "${colors.accent}";
           fb2 = "${colors.bg}";
           nb2 = "${colors.bg}";
           tb2 = "${colors.bg}";
@@ -31,7 +31,7 @@ in
           hf = "${colors.fg}";
           af = "${colors.fg}";
 
-          ab = "${colors.accent_bg}";
+          ab = "${colors.accent}";
 
           border = "${colors.blue}";
           border-width = 2;
