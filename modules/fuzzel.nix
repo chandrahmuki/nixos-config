@@ -27,16 +27,16 @@ in
             inner-pad = 8;
           };
           colors = {
-            background = "${colors.bg}ff";
-            text = "${colors.fg}ff";
-            prompt = "${colors.fg}ff";
-            placeholder = "${colors.comment}ff";
-            input = "${colors.fg}ff";
-            match = "${colors.blue}ff";
-            selection = "${colors.accent}ff";
-            selection-text = "${colors.fg}ff";
-            selection-match = "${colors.blue}ff";
-            border = "${colors.blue}ff";
+            background = "#${colors.bg}ff";
+            text = "#${colors.fg}ff";
+            prompt = "#${colors.fg}ff";
+            placeholder = "#${colors.comment}ff";
+            input = "#${colors.fg}ff";
+            match = "#${colors.blue}ff";
+            selection = "#${colors.accent}ff";
+            selection-text = "#${colors.fg}ff";
+            selection-match = "#${colors.blue}ff";
+            border = "#${colors.blue}ff";
           };
           border = {
             width = 2;
