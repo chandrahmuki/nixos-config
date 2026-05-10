@@ -18,17 +18,18 @@ in
         enable = true;
         settings = {
           main = {
-            font = "JetBrainsMono Nerd Font:size=13";
+            font = "JetBrainsMono Nerd Font:size=11";
             dpi-aware = "no";
-            lines = 12;
-            width = 45;
-            horizontal-pad = 24;
-            vertical-pad = 20;
-            inner-pad = 12;
-            line-height = 28;
+            lines = 8;
+            width = 35;
+            horizontal-pad = 12;
+            vertical-pad = 10;
+            inner-pad = 6;
+            line-height = 22;
             tabs = 4;
             layer = "overlay";
             anchor = "center";
+            icons-enabled = false;
           };
           colors = {
             background = "#${colors.bg}f0";
