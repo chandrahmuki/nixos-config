@@ -23,7 +23,6 @@ in
         pkgs.gemini-cli
         pkgs.go
         pkgs-master.claude-code
-        pkgs.rtk
       ];
 
       xdg.configHome = lib.mkDefault "${config.home.homeDirectory}/.config";
