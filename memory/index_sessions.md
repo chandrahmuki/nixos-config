@@ -70,3 +70,4 @@
 - [2026-05-08_walker-to-fuzzel](./sessions/2026-05-08_walker-to-fuzzel/summary.md)
 - [2026-05-10_cliamp-radios](./sessions/2026-05-10_cliamp-radios/summary.md)
 - [2026-05-10_rtk-removal](./sessions/2026-05-10_rtk-removal/summary.md)
+- [2026-05-10_walker-cleanup](./sessions/2026-05-10_walker-cleanup/summary.md)
