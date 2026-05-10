@@ -37,6 +37,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
+
+    omnigraph = {
+      url = "github:chandrahmuki/OmniGraph";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -51,6 +56,7 @@
       sops-nix,
       opencode,
       zen-browser,
+      omnigraph,
       ...
     }@inputs:
     let
