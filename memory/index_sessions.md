@@ -66,3 +66,7 @@
 - [2026-05-06_parsec-update](./sessions/2026-05-06_parsec-update/summary.md)
 - [2026-05-06_cliamp-lazygit](./sessions/2026-05-06_cliamp-lazygit/summary.md)
 - [2026-05-06_cliamp-fix](./sessions/2026-05-06_cliamp-fix/summary.md)
+- [2026-05-08_foot-font-zoom-fix](./sessions/2026-05-08_foot-font-zoom-fix/summary.md)
+- [2026-05-08_walker-to-fuzzel](./sessions/2026-05-08_walker-to-fuzzel/summary.md)
+- [2026-05-10_cliamp-radios](./sessions/2026-05-10_cliamp-radios/summary.md)
+- [2026-05-10_rtk-removal](./sessions/2026-05-10_rtk-removal/summary.md)

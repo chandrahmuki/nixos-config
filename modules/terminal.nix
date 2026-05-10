@@ -25,8 +25,8 @@ in
             pad = "15x15";
           };
           key-bindings = {
-            increase-font-size = "Control+Plus";
-            decrease-font-size = "Control+Minus";
+            font-increase = "Control+plus";
+            font-decrease = "Control+minus";
           };
           colors-dark = {
             foreground = colors.fg;
