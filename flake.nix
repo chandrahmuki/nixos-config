@@ -39,7 +39,7 @@
     };
 
     omnigraph = {
-      url = "github:chandrahmuki/OmniGraph";
+      url = "path:/home/david/projects/omnigraph";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
