@@ -2,9 +2,15 @@
 
 {
   home-manager.users.${username} = { pkgs, ... }: {
-    home.packages = [
-      inputs.helium.packages.${pkgs.system}.helium
-    ];
+    imports = [ inputs.helium.homeModules.default ];
+
+    programs.helium = {
+      enable = true;
+      flags = [
+        "--ozone-platform-hint=auto"
+        "--enable-features=WaylandWindowDecorations"
+      ];
+    };
 
     xdg.mimeApps.defaultApplications = {
       "text/html" = [ "helium.desktop" ];

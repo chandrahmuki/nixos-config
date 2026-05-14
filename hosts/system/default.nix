@@ -263,6 +263,7 @@
 
   # 7. Advanced: CachyOS Latest Kernel via xddxdd
   nix.settings = {
+    fallback = true;
     substituters = [
       "https://nix-community.cachix.org"
       "https://attic.xuyh0120.win/lantian"
@@ -278,6 +279,19 @@
   };
 
   boot.kernelPackages = pkgs.linuxPackagesFor inputs.nix-cachyos.packages.x86_64-linux.linux-cachyos-bore;
+
+  # Helium policies (écrites dans /etc/chromium/policies/managed/ pour fiabilité)
+  environment.etc."chromium/policies/managed/helium.json".text = builtins.toJSON {
+    BrowserSignin = 0;
+    PasswordManagerEnabled = false;
+    CredentialsEnableService = false;
+    SyncDisabled = true;
+    DefaultBrowserSettingEnabled = false;
+    MetricsReportingEnabled = false;
+    BackgroundModeEnabled = false;
+    ChromeCleanupEnabled = false;
+    ChromeCleanupReportingEnabled = false;
+  };
 
   # 8. Advanced: Build in RAM (tmpfs) - 62GB RAM required
   boot.tmp.useTmpfs = true;

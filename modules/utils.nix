@@ -39,7 +39,6 @@
         gh
         lazygit
         bitwarden-desktop
-        widevine-cdm
       ];
 
       programs.bat = {
