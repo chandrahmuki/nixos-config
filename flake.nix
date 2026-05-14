@@ -38,6 +38,11 @@
       inputs.home-manager.follows = "home-manager";
     };
 
+    helium = {
+      url = "github:oxcl/nix-flake-helium-browser";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     omnigraph = {
       url = "path:/home/david/projects/omnigraph";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -56,6 +61,7 @@
       sops-nix,
       opencode,
       zen-browser,
+      helium,
       omnigraph,
       ...
     }@inputs:
