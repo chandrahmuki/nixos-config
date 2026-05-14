@@ -104,19 +104,20 @@ Omnigraph tracks module dependencies, sessions, lessons, and orphans. The graph 
 
 ### Commands
 ```
-/omnigraph check <file>       # Pre-edit: deps, sessions, lessons, risk
-/omnigraph query <term>       # Search nodes and edges
-/omnigraph orphans             # Detect unused inputs and dead refs
-/omnigraph session-resume      # Load last session context + summary
-/omnigraph lessons             # List all lessons
-/omnigraph impact <file>       # Blast radius of changing a file
-/omnigraph path <a> <b>        # Shortest path between two modules
+omnigraph check <file>       # Pre-edit: deps, sessions, lessons, risk
+omnigraph query <term>       # Search nodes and edges
+omnigraph orphans            # Detect unused inputs and dead refs
+omnigraph session-resume     # Load last session context + summary
+omnigraph lessons            # List all lessons
+omnigraph impact <file>      # Blast radius of changing a file
+omnigraph path <a> <b>       # Shortest path between two modules
+omnigraph save               # Git commit + snapshot + rebuild graph (all-in-one)
 ```
 
 ### Workflow
-- **Before editing** a `.nix` file: `/omnigraph check <file>` to understand dependencies
-- **After snapshot**: session node + edges inserted into graph DB automatically
-- **Periodically**: `/omnigraph orphans` to clean up dead refs
+- **Before editing** a `.nix` file: `omnigraph check <file>` to understand dependencies
+- **After important changes**: `omnigraph save` to commit, snapshot, and rebuild graph
+- **Periodically**: `omnigraph orphans` to clean up dead refs
 - **Lessons**: stored as nodes with `lesson_applies_to` edges pointing to affected modules
 
 ### Graph schema
@@ -128,15 +129,14 @@ Omnigraph tracks module dependencies, sessions, lessons, and orphans. The graph 
 ## Skills to use
 
 - **`/omnigraph`** — Query the dependency graph before editing modules. Always run `check` before changes, `session-resume` to restore context.
-- **`/snapshot`** — Create structured session summaries. Run after important decisions, fixes, or new modules.
 - **`/project-map`** — Regenerate the compact NixOS config project map. Use after adding new modules.
 
 Golden path for a non-trivial change:
-1. `/omnigraph check <file>` to understand dependencies
+1. `omnigraph check <file>` to understand dependencies
 2. Plan the change (ask if unsure)
 3. Implement the narrowest change that works
 4. `nix eval` to verify
-5. `/snapshot` to record the session
+5. `omnigraph save` to commit, snapshot, and rebuild graph
 
 ---
 
