@@ -72,3 +72,4 @@
 - [2026-05-10_rtk-removal](./sessions/2026-05-10_rtk-removal/summary.md)
 - [2026-05-10_walker-cleanup](./sessions/2026-05-10_walker-cleanup/summary.md)
 - [2026-05-10_fuzzel-icons-fix](./sessions/2026-05-10_fuzzel-icons-fix/summary.md)
+- [2026-05-12_zellij-dev-flex](./sessions/2026-05-12_zellij-dev-flex/summary.md)

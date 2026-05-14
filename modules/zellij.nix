@@ -10,9 +10,9 @@
   home-manager.users.${username} =
     { config, lib, ... }:
     let
-      zjstatus = pkgs.fetchurl {
-        url = "https://github.com/dj95/zjstatus/releases/download/v0.22.0/zjstatus.wasm";
-        sha256 = "0lyxah0pzgw57wbrvfz2y0bjrna9bgmsw9z9f898dgqw1g92dr2d";
+      zellij-status = pkgs.fetchurl {
+        url = "https://github.com/scottames/zellij-status/releases/download/v0.4.0/zellij-status.wasm";
+        sha256 = "0l53qbjhb0qfb72sil1vwgwiswsmi3hdsavd6bwd4203rf2aarq4";
       };
       zellij-autolock = pkgs.fetchurl {
         url = "https://github.com/fresh2dev/zellij-autolock/releases/download/0.2.2/zellij-autolock.wasm";
@@ -20,40 +20,18 @@
       };
     in
     {
-      home.file.".config/zellij/plugins/zjstatus.wasm".source = zjstatus;
+      home.file.".config/zellij/plugins/zellij-status.wasm".source = zellij-status;
       home.file.".config/zellij/plugins/zellij-autolock.wasm".source = zellij-autolock;
 
       home.file.".config/zellij/layouts/dev.kdl".text = ''
         layout {
             default_tab_template {
                 pane size=1 borderless=true {
-                    plugin location="file:/home/${username}/.config/zellij/plugins/zjstatus.wasm" {
-                        format_left  "{mode}#[fg=#89b4fa,bold] {session} {tabs}"
-                        format_right  "{command_git_branch}#[fg=#424242,bold] | {datetime}"
-                        format_space  ""
-
-                        border_enabled  "false"
-                        border_char     "─"
-                        border_format   "#[fg=#6C7086]{char}"
-                        border_position "top"
-
-                        hide_frame_for_single_pane "true"
-
-                        mode_normal  "#[bg=#89b4fa,fg=#181825,bold] NORMAL "
-                        mode_locked  "#[bg=#f38ba8,fg=#181825,bold] LOCKED "
-                        mode_tmux    "#[bg=#ff9e64,fg=#181825,bold] TMUX "
-
-                        tab_normal   "#[fg=#6C7086] {name} "
-                        tab_active   "#[fg=#89b4fa,bold,italic] {name} "
-
-                        command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
-                        command_git_branch_format      "#[fg=blue] {stdout} "
-                        command_git_branch_interval    "10"
-                        command_git_branch_rendermode  "static"
-
-                        datetime          "#[fg=#6C7086,bold] {format} "
-                        datetime_format   "%H:%M"
-                        datetime_timezone "Europe/Paris"
+                    plugin location="zellij:tab-bar" {
+                        position "bottom"
+                        show_tabs true
+                        show_mode true
+                        show_session true
                     }
                 }
                 children
@@ -78,33 +56,11 @@
         layout {
             default_tab_template {
                 pane size=1 borderless=true {
-                    plugin location="file:/home/${username}/.config/zellij/plugins/zjstatus.wasm" {
-                        format_left  "{mode}#[fg=#89b4fa,bold] {session} {tabs}"
-                        format_right  "{command_git_branch}#[fg=#424242,bold] | {datetime}"
-                        format_space  ""
-
-                        border_enabled  "false"
-                        border_char     "─"
-                        border_format   "#[fg=#6C7086]{char}"
-                        border_position "top"
-
-                        hide_frame_for_single_pane "true"
-
-                        mode_normal  "#[bg=#89b4fa,fg=#181825,bold] NORMAL "
-                        mode_locked  "#[bg=#f38ba8,fg=#181825,bold] LOCKED "
-                        mode_tmux    "#[bg=#ff9e64,fg=#181825,bold] TMUX "
-
-                        tab_normal   "#[fg=#6C7086] {name} "
-                        tab_active   "#[fg=#89b4fa,bold,italic] {name} "
-
-                        command_git_branch_command     "git rev-parse --abbrev-ref HEAD"
-                        command_git_branch_format      "#[fg=blue] {stdout} "
-                        command_git_branch_interval    "10"
-                        command_git_branch_rendermode  "static"
-
-                        datetime          "#[fg=#6C7086,bold] {format} "
-                        datetime_format   "%H:%M"
-                        datetime_timezone "Europe/Paris"
+                    plugin location="zellij:tab-bar" {
+                        position "bottom"
+                        show_tabs true
+                        show_mode true
+                        show_session true
                     }
                 }
                 children
@@ -138,25 +94,60 @@
         extraConfig = ''
           themes {
               tokyonight-moon {
-                  frame_selected {
-                      base 136 180 250
-                      background 136 180 250
-                      emphasis_0 136 180 250
-                      emphasis_1 136 180 250
-                      emphasis_2 136 180 250
-                      emphasis_3 136 180 250
-                  }
-                  frame_unselected {
+                  bg 30 30 46
+                  fg 197 202 221
+                  black 69 71 90
+                  red 243 139 168
+                  green 166 227 161
+                  blue 137 180 250
+                  yellow 249 226 175
+                  magenta 203 166 247
+                  cyan 148 226 213
+                  white 197 202 221
+                  orange 255 158 100
+                  text_unselected {
                       base 108 112 134
-                      background 108 112 134
+                      background 24 24 38
                       emphasis_0 108 112 134
                       emphasis_1 108 112 134
                       emphasis_2 108 112 134
                       emphasis_3 108 112 134
                   }
-                  frame_highlight {
+                  text_selected {
                       base 137 180 250
-                      background 137 180 250
+                      background 49 50 68
+                      emphasis_0 137 180 250
+                      emphasis_1 137 180 250
+                      emphasis_2 137 180 250
+                      emphasis_3 137 180 250
+                  }
+                  ribbon_unselected {
+                      base 108 112 134
+                      background 30 30 46
+                      emphasis_0 108 112 134
+                      emphasis_1 108 112 134
+                      emphasis_2 108 112 134
+                      emphasis_3 108 112 134
+                  }
+                  ribbon_selected {
+                      base 137 180 250
+                      background 49 50 68
+                      emphasis_0 137 180 250
+                      emphasis_1 137 180 250
+                      emphasis_2 137 180 250
+                      emphasis_3 137 180 250
+                  }
+                  frame_unselected {
+                      base 69 71 90
+                      background 24 24 38
+                      emphasis_0 69 71 90
+                      emphasis_1 69 71 90
+                      emphasis_2 69 71 90
+                      emphasis_3 69 71 90
+                  }
+                  frame_selected {
+                      base 137 180 250
+                      background 24 24 38
                       emphasis_0 137 180 250
                       emphasis_1 137 180 250
                       emphasis_2 137 180 250
@@ -173,11 +164,6 @@
                   bind "Alt l" { MoveFocusOrTab "Right"; }
                   bind "Alt j" { MoveFocus "Down"; }
                   bind "Alt k" { MoveFocus "Up"; }
-              }
-          }
-          ui {
-              pane_frames {
-                  rounded_corners true
               }
           }
         '';

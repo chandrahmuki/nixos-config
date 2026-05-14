@@ -29,6 +29,8 @@
   boot.kernelParams = [
     "transparent_hugepage=always"
     "amdgpu.gttsize=16384"
+    "amdgpu.runpm=0"
+    "amdgpu.gpu_recovery=1"
   ];
 
   # 4. AMD GPU & Kernel Features
