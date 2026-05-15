@@ -77,3 +77,7 @@
 
 - [help](sessions/2026-05-14_help/)
 - [chore-remove-obsolete-snapshot-skill-update-omnigr](sessions/2026-05-14_chore-remove-obsolete-snapshot-skill-update-omnigr/)
+
+## 2026-05-15
+
+- [chore-remove-bitwarden-desktop-from-utils-packages](sessions/2026-05-15_chore-remove-bitwarden-desktop-from-utils-packages/)
