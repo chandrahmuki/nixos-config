@@ -336,8 +336,8 @@
         ]
       },
       "locked": {
-        "lastModified": 1778693406,
-        "narHash": "sha256-qZBpUTM94MODZQhy8hme/cOoLBuj1FV70Uokhm3tWyk=",
+        "lastModified": 1778766245,
+        "narHash": "sha256-bh9uqtRhalkCST452WkyrqSq5JeZ2tV8dH5/rR1Q724=",
         "path": "/home/david/projects/omnigraph",
         "type": "path"
       },

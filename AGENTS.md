@@ -116,9 +116,18 @@ omnigraph save               # Git commit + snapshot + rebuild graph (all-in-one
 
 ### Workflow
 - **Before editing** a `.nix` file: `omnigraph check <file>` to understand dependencies
+- **Before editing** any file: `omnigraph query error` to review past mistakes on that file/module
+- **Before editing** any file: `omnigraph impact <file>` to understand blast radius
 - **After important changes**: `omnigraph save` to commit, snapshot, and rebuild graph
 - **Periodically**: `omnigraph orphans` to clean up dead refs
 - **Lessons**: stored as nodes with `lesson_applies_to` edges pointing to affected modules
+
+### Error prevention workflow (mandatory)
+1. `omnigraph check <file>` — check deps, sessions, lessons, risk
+2. `omnigraph query error` — review past errors on this file
+3. `omnigraph impact <file>` — understand what could break
+4. Implement the change
+5. `nix eval` to verify
 
 ### Graph schema
 - **Nodes**: `file`, `input`, `option`, `session`, `lesson`, `skill`, `error`, `concept`, `function`
@@ -133,10 +142,12 @@ omnigraph save               # Git commit + snapshot + rebuild graph (all-in-one
 
 Golden path for a non-trivial change:
 1. `omnigraph check <file>` to understand dependencies
-2. Plan the change (ask if unsure)
-3. Implement the narrowest change that works
-4. `nix eval` to verify
-5. `omnigraph save` to commit, snapshot, and rebuild graph
+2. `omnigraph query error` to review past mistakes
+3. `omnigraph impact <file>` to understand blast radius
+4. Plan the change (ask if unsure)
+5. Implement the narrowest change that works
+6. `nix eval` to verify
+7. `omnigraph save` to commit, snapshot, and rebuild graph
 
 ---
 

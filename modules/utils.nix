@@ -38,7 +38,6 @@
         gimp
         gh
         lazygit
-        bitwarden-desktop
       ];
 
       programs.bat = {
