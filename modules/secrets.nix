@@ -27,6 +27,11 @@
             gemini_api_key = {
               path = "/home/${username}/.config/sops/gemini_api_key";
             };
+
+            # Clé API OpenCode pour Muggy
+            opencode_api_key = {
+              path = "/home/${username}/.config/sops/opencode_api_key";
+            };
           };
         };
   };

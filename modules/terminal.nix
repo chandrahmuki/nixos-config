@@ -108,6 +108,11 @@ in
             set -gx GITHUB_TOKEN (cat $_gh_token_file)
           end
 
+          set -l _opencode_key ~/.config/sops/opencode_api_key
+          if test -f $_opencode_key
+            set -gx OPENCODE_API_KEY (cat $_opencode_key)
+          end
+
           if status is-interactive
             function setup_visual_tools
               starship init fish | source

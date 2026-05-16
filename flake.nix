@@ -47,6 +47,11 @@
       url = "path:/home/david/projects/omnigraph";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    muggy = {
+      url = "path:/home/david/projects/muggy";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -63,6 +68,7 @@
       zen-browser,
       helium,
       omnigraph,
+      muggy,
       ...
     }@inputs:
     let

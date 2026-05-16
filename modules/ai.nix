@@ -23,6 +23,7 @@ in
         pkgs.gemini-cli
         pkgs.go
         pkgs-master.claude-code
+        inputs.muggy.packages.${pkgs.system}.default
       ];
 
       xdg.configHome = lib.mkDefault "${config.home.homeDirectory}/.config";
