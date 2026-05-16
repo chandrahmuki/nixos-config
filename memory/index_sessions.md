@@ -80,4 +80,7 @@
 
 ## 2026-05-15
 
+## 2026-05-16
+- [muggy-nix-flake-opencode-provider](./sessions/2026-05-16_muggy-nix-flake-opencode-provider/summary.md)
+
 - [chore-remove-bitwarden-desktop-from-utils-packages](sessions/2026-05-15_chore-remove-bitwarden-desktop-from-utils-packages/)
