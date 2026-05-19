@@ -76,7 +76,7 @@ alejandra --check . && deadnix --check . && statix check .  # Lint+format
 - **Colors**: `let colors = (import ../lib/colors.nix).tokyonight; in` then `colors.bg`, `colors.fg`, `colors.blue`
 - **New modules**: `modules/<name>.nix` — auto-imported, no registration needed
 - **Prefer** `settings` over `extraConfig` | use `lib.mkIf` / `lib.mkDefault` / `lib.mkForce`
-- **xdg.configFile**: always set `force = true` if the target file may already exist on disk
+- **xdg.configFile**: ne JAMAIS utiliser `force = true`. Utiliser `home-manager.backupFileExtension = "backup"` au niveau système pour gérer les conflits de fichiers.
 - **2-space indent** | no comments unless asked | no emojis
 - **Minimal diffs**: edit in place, no speculative abstractions
 
