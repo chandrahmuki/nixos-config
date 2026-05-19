@@ -30,7 +30,6 @@
 
     home.file."Downloads/manga/.keep" = {
       text = "";
-      force = true;
     };
 
     home.file."${config.home.homeDirectory}/.local/share/weechat/python/autoload/xdccq.py" = {

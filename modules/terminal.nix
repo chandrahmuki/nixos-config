@@ -14,8 +14,6 @@ in
   home-manager.users.${username} =
     { config, lib, ... }:
     {
-      xdg.configFile."foot/foot.ini".force = true;
-      xdg.configFile."gtk-4.0/gtk.css".force = true;
 
       programs.foot = {
         enable = true;
@@ -147,7 +145,6 @@ in
           end
         '';
         shellAliases = {
-          nix-switch = "sudo nixos-rebuild switch --flake .#${hostname}";
         };
       };
     };

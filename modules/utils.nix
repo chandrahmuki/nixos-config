@@ -43,7 +43,7 @@
       programs.bat = {
         enable = true;
         config = {
-          theme = "Dracula";
+          theme = "ansi";
         };
       };
 
@@ -62,8 +62,8 @@
           end
 
           ${pkgs.fzf}/bin/fzf --disabled --query "$argv" \
-            --bind "start:reload:${pkgs.fd}/bin/fd {q} / 2>/dev/null" \
-            --bind "change:reload:${pkgs.fd}/bin/fd {q} / 2>/dev/null" \
+            --bind "start:reload:${pkgs.fd}/bin/fd {q} /home/${username} --exclude /nix 2>/dev/null" \
+            --bind "change:reload:${pkgs.fd}/bin/fd {q} /home/${username} --exclude /nix 2>/dev/null" \
             --preview "${pkgs.bat}/bin/bat --color=always --style=numbers --line-range=:500 {}"
         '';
 

@@ -19,6 +19,8 @@
     ../../modules
   ];
 
+  home-manager.backupFileExtension = "backup";
+
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.configurationLimit = 5; # Keep only 5 generations in boot menu

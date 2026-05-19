@@ -21,7 +21,6 @@
         client_id = ""
         client_secret = ""
       '';
-      force = true;
     };
 
     xdg.configFile."cliamp/radios.toml" = {
@@ -94,7 +93,6 @@
         name = "SomaFM Doomed"
         url = "https://ice1.somafm.com/doomed-128-mp3"
       '';
-      force = true;
     };
 
     home.activation.createCliampPlaylistsDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''

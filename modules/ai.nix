@@ -29,7 +29,6 @@ in
       xdg.configHome = lib.mkDefault "${config.home.homeDirectory}/.config";
 
       home.file.".claude/settings.json" = {
-        force = true;
         text = lib.generators.toJSON { } {
           model = "sonnet";
           env = {

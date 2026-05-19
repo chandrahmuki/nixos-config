@@ -25,10 +25,7 @@
 
   home-manager.users.${username} = { config, lib, ... }: {
     programs.fish.functions = {
-      nos = ''
-        cd /home/${username}/nixos-config
-        nh os switch . --hostname ${hostname} --ask -L --diff always
-      '';
+      nos = "nh os switch /home/${username}/nixos-config --hostname ${hostname} --ask -L --diff always";
     };
   };
 }
