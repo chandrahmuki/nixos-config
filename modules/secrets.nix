@@ -23,11 +23,6 @@
               path = "/home/${username}/.config/sops/github_token";
             };
 
-            # Clé API Gemini pour Gemini CLI
-            gemini_api_key = {
-              path = "/home/${username}/.config/sops/gemini_api_key";
-            };
-
             # Clé API OpenCode pour Muggy
             opencode_api_key = {
               path = "/home/${username}/.config/sops/opencode_api_key";
