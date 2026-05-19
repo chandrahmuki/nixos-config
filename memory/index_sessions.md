@@ -89,3 +89,4 @@
 ## 2026-05-19
 
 - [refactor-cleanup-force-true-and-optimize-search-no](sessions/2026-05-19_refactor-cleanup-force-true-and-optimize-search-no/)
+- [docs-update-agents-md-with-the-new-force-true-proh](sessions/2026-05-19_docs-update-agents-md-with-the-new-force-true-proh/)

@@ -29,7 +29,7 @@
       };
 
       home.sessionVariables = {
-        NOCTALIA_SETTINGS_FILE = "/home/${username}/nixos-config/generated/noctalia-settings.json";
+        NOCTALIA_SETTINGS_FILE = "${config.xdg.configHome}/noctalia/settings.json";
       };
     };
 }

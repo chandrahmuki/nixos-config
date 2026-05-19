@@ -11,7 +11,6 @@
     protonup-qt
     lutris
     lact
-    gpu-screen-recorder-gtk
   ];
 
   programs.steam = {
@@ -21,9 +20,7 @@
     gamescopeSession.enable = true;
   };
 
-  programs.gamescope = {
-    enable = true;
-  };
+  programs.gamescope.enable = true;
 
   programs.gamemode = {
     enable = true;
@@ -47,14 +44,7 @@
 
   programs.gpu-screen-recorder.enable = true;
 
-  systemd.services.lactd = {
-    description = "AMDGPU Control Daemon";
-    enable = true;
-    serviceConfig = {
-      ExecStart = "${pkgs.lact}/bin/lact daemon";
-    };
-    wantedBy = [ "multi-user.target" ];
-  };
+  services.lact.enable = true;
 
   boot.kernelParams = [ "amdgpu.ppfeaturemask=0xffffffff" ];
 }
