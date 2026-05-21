@@ -95,3 +95,4 @@
 ## 2026-05-21
 
 - [docs-update-session-index](sessions/2026-05-21_docs-update-session-index/)
+- [feat-enable-webrtcpipewirecapturer-flag-in-helium](sessions/2026-05-21_feat-enable-webrtcpipewirecapturer-flag-in-helium/)
