@@ -8,7 +8,7 @@
       enable = true;
       flags = [
         "--ozone-platform-hint=auto"
-        "--enable-features=WaylandWindowDecorations"
+        "--enable-features=WaylandWindowDecorations,WebRTCPipeWireCapturer"
       ];
     };
 
