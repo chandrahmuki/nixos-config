@@ -10,7 +10,7 @@
 
       programs.zen-browser = {
         enable = true;
-        setAsDefaultBrowser = true;
+        setAsDefaultBrowser = false;
         policies = {
           DisableAppUpdate = true;
           DisableTelemetry = true;
