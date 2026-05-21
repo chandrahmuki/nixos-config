@@ -96,3 +96,4 @@
 
 - [docs-update-session-index](sessions/2026-05-21_docs-update-session-index/)
 - [feat-enable-webrtcpipewirecapturer-flag-in-helium](sessions/2026-05-21_feat-enable-webrtcpipewirecapturer-flag-in-helium/)
+- [feat-wrap-parsec-bin-with-gdk-backend-x11-and-remo](sessions/2026-05-21_feat-wrap-parsec-bin-with-gdk-backend-x11-and-remo/)
