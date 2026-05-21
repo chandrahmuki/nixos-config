@@ -99,3 +99,4 @@
 - [feat-wrap-parsec-bin-with-gdk-backend-x11-and-remo](sessions/2026-05-21_feat-wrap-parsec-bin-with-gdk-backend-x11-and-remo/)
 - [docs-update-session-index-for-parsec-wrapping](sessions/2026-05-21_docs-update-session-index-for-parsec-wrapping/)
 - [feat-set-zen-browser-setasdefaultbrowser-to-false-](sessions/2026-05-21_feat-set-zen-browser-setasdefaultbrowser-to-false-/)
+- [docs-update-session-index-for-zen-browser-default-](sessions/2026-05-21_docs-update-session-index-for-zen-browser-default-/)
