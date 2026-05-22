@@ -98,6 +98,14 @@
     xdg.configFile."cliamp/playlists/ambi.toml" = {
       text = ''
         [[track]]
+        path = "${config.home.homeDirectory}/Music/Likes/Ambi/3_Aphex.m4a"
+        title = "#3"
+        artist = "Aphex Twin"
+        album = "Selected Ambient Works Volume II"
+        genre = "Music"
+        year = 1994
+
+        [[track]]
         path = "${config.home.homeDirectory}/Music/Likes/Ambi/Alien_3_92.m4a"
         title = "Alien 3 (1992) | Ambient Soundscape"
         artist = "A L I E N W O R L D S"
@@ -217,6 +225,13 @@
         year = 2023
 
         [[track]]
+        path = "${config.home.homeDirectory}/Music/Likes/Ambi/Encapsulation_-_Alternate_Resident_Evil_Save_Room_Music.m4a"
+        title = "Encapsulation - Alternate Resident Evil Save Room Music"
+        artist = "Survival Spheres"
+        genre = "Music"
+        year = 2021
+
+        [[track]]
         path = "${config.home.homeDirectory}/Music/Likes/Ambi/GTO_Study.m4a"
         title = "Study Hard with Onizuka Sensei || 1 hour of music for studying"
         artist = "Inuyasha Listens to music"
@@ -252,6 +267,14 @@
         artist = "A L I E N W O R L D S"
         genre = "Music"
         year = 2024
+
+        [[track]]
+        path = "${config.home.homeDirectory}/Music/Likes/Ambi/The_White_Arcades.m4a"
+        title = "The White Arcades"
+        artist = "Harold Budd"
+        album = "The White Arcades"
+        genre = "Music"
+        year = 1988
 
         [[track]]
         path = "${config.home.homeDirectory}/Music/Likes/Ambi/TwinPeaks_Cooper.m4a"
