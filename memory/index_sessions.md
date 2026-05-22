@@ -101,3 +101,7 @@
 - [feat-set-zen-browser-setasdefaultbrowser-to-false-](sessions/2026-05-21_feat-set-zen-browser-setasdefaultbrowser-to-false-/)
 - [docs-update-session-index-for-zen-browser-default-](sessions/2026-05-21_docs-update-session-index-for-zen-browser-default-/)
 - [docs-index-session-update](sessions/2026-05-21_docs-index-session-update/)
+
+## 2026-05-22
+
+- [feat-cliamp-update-ambi-playlist-with-new-tracks](sessions/2026-05-22_feat-cliamp-update-ambi-playlist-with-new-tracks/)
