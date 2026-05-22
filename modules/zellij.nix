@@ -78,13 +78,72 @@
         }
       '';
 
+      home.file.".config/zellij/layouts/ai-dev.kdl".text = ''
+        layout {
+            default_tab_template {
+                pane size=1 borderless=true {
+                    plugin location="zellij:tab-bar" {
+                        position "bottom"
+                        show_tabs true
+                        show_mode true
+                        show_session true
+                    }
+                }
+                children
+            }
+            tab name="Code & IA" focus=true {
+                pane split_direction="vertical" {
+                    pane name="neovim" command="nvim" size="60%"
+                    pane split_direction="horizontal" size="40%" {
+                        pane name="Antigravity CLI" command="agy" size="65%"
+                        pane name="Shell" size="35%"
+                    }
+                }
+            }
+            tab name="Monitoring" {
+                pane command="btop"
+            }
+        }
+      '';
+
       programs.fish.shellAliases = {
         zellnix = "zellij --layout dev";
         zelldev = "zellij --layout dev-flex";
+        zellai = "zellij --layout ai-dev";
       };
 
       programs.fish.functions.zj = ''
-        zellij attach main 2>/dev/null; or zellij --session main
+        if test (count $argv) -gt 0
+            zellij attach -c $argv[1]
+        else
+            set -l sessions (zellij list-sessions 2>/dev/null | string match -r '^[^\s]+' | string trim)
+            
+            if test (count $sessions) -eq 0
+                set -l default_name (basename (pwd) | tr . _)
+                if test -z "$default_name"
+                    set default_name "main"
+                end
+                echo "Pas de session active. Lancement de la session '$default_name'..."
+                zellij attach -c $default_name
+            else
+                set -l choices "[ Nouvelle Session ]" $sessions
+                set -l selected (printf "%s\n" $choices | fzf --prompt="Choisir une session Zellij: " --height=40% --reverse)
+                
+                if test -z "$selected"
+                    return
+                else if test "$selected" = "[ Nouvelle Session ]"
+                    read -P "Nom de la nouvelle session : " new_session
+                    if test -n "$new_session"
+                        zellij attach -c (string replace -a ' ' '_' $new_session)
+                    else
+                        set -l default_name (basename (pwd) | tr . _)
+                        zellij attach -c $default_name
+                    end
+                else
+                    zellij attach $selected
+                end
+            end
+        end
       '';
 
       programs.zellij = {
@@ -174,6 +233,11 @@
           mouse_mode = true;
           copy_on_select = true;
           layout_dir = "/home/${username}/.config/zellij/layouts";
+
+          # Persistance et resurrection des sessions zellij
+          session_serialization = true;
+          pane_viewport_serialization = true;
+          scrollback_lines_to_serialize = 1000;
 
           plugins = {
             autolock = {

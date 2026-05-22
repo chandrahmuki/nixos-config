@@ -11,7 +11,8 @@
         nativeBuildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/parsecd \
-            --set GDK_BACKEND x11
+            --set GDK_BACKEND x11 \
+            --unset WAYLAND_DISPLAY
         '';
       })
     ];
