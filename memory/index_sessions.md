@@ -105,3 +105,4 @@
 ## 2026-05-22
 
 - [feat-cliamp-update-ambi-playlist-with-new-tracks](sessions/2026-05-22_feat-cliamp-update-ambi-playlist-with-new-tracks/)
+- [feat-cliamp-add-new-ambient-tracks-from-ambi-muggy](sessions/2026-05-22_feat-cliamp-add-new-ambient-tracks-from-ambi-muggy/)
