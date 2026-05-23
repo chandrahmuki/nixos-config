@@ -15,6 +15,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
+
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -54,48 +59,56 @@
     };
   };
 
-  outputs =
-    {
-      self,
-      nixpkgs,
-      nixpkgs-master,
-      home-manager,
-      niri,
-      noctalia,
-      nix-cachyos,
-      sops-nix,
-      opencode,
-      zen-browser,
-      helium,
-      omnigraph,
-      muggy,
-      ...
-    }@inputs:
-    let
-      username = "david";
-      hostname = "muggy-nixos";
-    in
-    {
-      nixosConfigurations.${hostname} = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs username hostname; };
-        modules = [
-          ./hosts/system/default.nix
-          ./overlays.nix
+  outputs = inputs:
+    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [ "x86_64-linux" ];
 
-           home-manager.nixosModules.home-manager
-           {
-             home-manager.useGlobalPkgs = true;
-             home-manager.useUserPackages = true;
-             home-manager.sharedModules = [
-               omnigraph.homeManagerModules.default
-             ];
-             home-manager.users.${username} = { ... }: {
-               imports = [ ./home.nix ];
-               programs.omnigraph.enable = true;
-             };
-             home-manager.extraSpecialArgs = { inherit inputs username hostname; };
-           }
-        ];
+      perSystem = { config, self', inputs', pkgs, system, ... }: {
+        packages = {
+          antigravity-cli = pkgs.stdenvNoCC.mkDerivation {
+            name = "antigravity-cli-1.0.0";
+            src = pkgs.fetchurl {
+              url = "https://storage.googleapis.com/antigravity-public/antigravity-cli/1.0.0-5288553236791296/linux-x64/cli_linux_x64.tar.gz";
+              sha512 = "5ccdcc01fb863c7e8e56473c6c95dba75fed4fd2a242200d80cfc4c7fab811b733f5a7fab25332130aad298e72627e1018e6911a5658f4f059ef6e019f211972";
+            };
+            sourceRoot = ".";
+            installPhase = ''
+              install -m755 -D antigravity $out/bin/agy
+            '';
+          };
+        };
+      };
+
+      flake = {
+        nixosConfigurations.muggy-nixos = inputs.nixpkgs.lib.nixosSystem {
+          specialArgs = {
+            inherit inputs;
+            username = "david";
+            hostname = "muggy-nixos";
+          };
+          modules = [
+            ./hosts/system/default.nix
+            ./overlays.nix
+
+            inputs.home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.sharedModules = [
+                inputs.omnigraph.homeManagerModules.default
+              ];
+              home-manager.users.david = { ... }: {
+                imports = [ ./home.nix ];
+                programs.omnigraph.enable = true;
+              };
+              home-manager.extraSpecialArgs = {
+                inherit inputs;
+                username = "david";
+                hostname = "muggy-nixos";
+              };
+            }
+          ];
+        };
       };
     };
 }
