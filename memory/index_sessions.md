@@ -107,3 +107,4 @@
 - [feat-cliamp-update-ambi-playlist-with-new-tracks](sessions/2026-05-22_feat-cliamp-update-ambi-playlist-with-new-tracks/)
 - [feat-cliamp-add-new-ambient-tracks-from-ambi-muggy](sessions/2026-05-22_feat-cliamp-add-new-ambient-tracks-from-ambi-muggy/)
 - [feat-cliamp-automate-playlist-synchronization-from](sessions/2026-05-22_feat-cliamp-automate-playlist-synchronization-from/)
+- [fix-parsec-force-entire-parsec-process-to-x11-by-u](sessions/2026-05-22_fix-parsec-force-entire-parsec-process-to-x11-by-u/)
