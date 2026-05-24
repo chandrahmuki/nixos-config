@@ -112,3 +112,4 @@
 ## 2026-05-23
 
 - [fix-xwayland-use-unstable-version-to-prevent-crash](sessions/2026-05-23_fix-xwayland-use-unstable-version-to-prevent-crash/)
+- [refactor-transition-configuration-to-use-flake-par](sessions/2026-05-23_refactor-transition-configuration-to-use-flake-par/)

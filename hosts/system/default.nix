@@ -84,19 +84,6 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
-  # Enable greetd for a minimal login experience
-  services.greetd = {
-    enable = true;
-    settings = {
-      default_session = {
-        # --remember-user-session was removed to prevent tuigreet from caching the wrong command
-        # Use simple command name so tuigreet doesn't display the ugly nix-store path
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd niri-session";
-        user = "greeter";
-      };
-    };
-  };
-
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
