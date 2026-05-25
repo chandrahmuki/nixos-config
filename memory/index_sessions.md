@@ -113,3 +113,7 @@
 
 - [fix-xwayland-use-unstable-version-to-prevent-crash](sessions/2026-05-23_fix-xwayland-use-unstable-version-to-prevent-crash/)
 - [refactor-transition-configuration-to-use-flake-par](sessions/2026-05-23_refactor-transition-configuration-to-use-flake-par/)
+
+## 2026-05-24
+
+- [feat-greetd-move-greetd-to-dedicated-module-and-st](sessions/2026-05-24_feat-greetd-move-greetd-to-dedicated-module-and-st/)
