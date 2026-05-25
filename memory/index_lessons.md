@@ -16,3 +16,6 @@
 
 ## Store
 - [nixos-store](lessons/nixos-store.md) — GC, optimisation, cleanup
+
+## Fish Shell
+- [fish](lessons/fish.md) — Shell, commands, string matching

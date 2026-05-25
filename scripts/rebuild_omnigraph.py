@@ -214,6 +214,7 @@ lessons = [
     "neovim",
     "git-workflow",
     "dev-tools",
+    "fish",
 ]
 for l in lessons:
     add_node(l, "lesson", l, f"memory/lessons/{l}.md")
@@ -370,6 +371,7 @@ add_edge("nix-build", "overlays.nix", "lesson_applies_to")
 add_edge("neovim", "modules/neovim.nix", "lesson_applies_to")
 add_edge("git-workflow", "modules/git.nix", "lesson_applies_to")
 add_edge("dev-tools", "modules/utils.nix", "lesson_applies_to")
+add_edge("fish", "modules/zellij.nix", "lesson_applies_to")
 
 # ── indexes (index → item) ──
 for s in sessions:
@@ -381,6 +383,7 @@ add_edge("memory/index_lessons.md", "nixos-store", "indexes")
 add_edge("memory/index_lessons.md", "neovim", "indexes")
 add_edge("memory/index_lessons.md", "git-workflow", "indexes")
 add_edge("memory/index_lessons.md", "dev-tools", "indexes")
+add_edge("memory/index_lessons.md", "fish", "indexes")
 
 # ── uses_module (module → external flake module) ──
 add_edge("modules/niri.nix", "inputs.niri", "uses_module")
