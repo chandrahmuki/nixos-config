@@ -106,11 +106,39 @@
         }
       '';
 
-      programs.fish.shellAliases = {
-        zellnix = "zellij --layout dev";
-        zelldev = "zellij --layout dev-flex";
-        zellai = "zellij --layout ai-dev";
-      };
+      programs.fish.functions.zellnix = ''
+        if contains -- -n $argv; or contains -- --new $argv
+            zellij --layout dev
+        else if zellij list-sessions 2>/dev/null | string match -q -r '^nixos-config\s'
+            zellij attach nixos-config
+        else
+            zellij --session nixos-config --layout dev
+        end
+      '';
+
+      programs.fish.functions.zelldev = ''
+        set -l session_name (basename (pwd) | tr . _)
+        if test -z "$session_name"
+            set session_name "dev"
+        end
+        if contains -- -n $argv; or contains -- --new $argv
+            zellij --layout dev-flex
+        else if zellij list-sessions 2>/dev/null | string match -q -r "^$session_name\s"
+            zellij attach $session_name
+        else
+            zellij --session $session_name --layout dev-flex
+        end
+      '';
+
+      programs.fish.functions.zellai = ''
+        if contains -- -n $argv; or contains -- --new $argv
+            zellij --layout ai-dev
+        else if zellij list-sessions 2>/dev/null | string match -q -r '^ai\s'
+            zellij attach ai
+        else
+            zellij --session ai --layout ai-dev
+        end
+      '';
 
       programs.fish.functions.zj = ''
         if test (count $argv) -gt 0
