@@ -114,7 +114,7 @@
         end
         if contains -- -n $argv; or contains -- --new $argv
             zellij --layout dev
-        else if zellij list-sessions 2>/dev/null | string match -r '^[^\s]+' | string match -q -x nixos-config
+        else if zellij list-sessions 2>/dev/null | string match -r '^[^\s]+' | string match -q nixos-config
             zellij attach nixos-config
         else
             zellij --session nixos-config --layout dev
@@ -133,7 +133,7 @@
         end
         if contains -- -n $argv; or contains -- --new $argv
             zellij --layout dev-flex
-        else if zellij list-sessions 2>/dev/null | string match -r '^[^\s]+' | string match -q -x "$session_name"
+        else if zellij list-sessions 2>/dev/null | string match -r '^[^\s]+' | string match -q "$session_name"
             zellij attach $session_name
         else
             zellij --session $session_name --layout dev-flex
@@ -148,7 +148,7 @@
         end
         if contains -- -n $argv; or contains -- --new $argv
             zellij --layout ai-dev
-        else if zellij list-sessions 2>/dev/null | string match -r '^[^\s]+' | string match -q -x ai
+        else if zellij list-sessions 2>/dev/null | string match -r '^[^\s]+' | string match -q ai
             zellij attach ai
         else
             zellij --session ai --layout ai-dev
