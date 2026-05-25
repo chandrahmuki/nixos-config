@@ -107,9 +107,14 @@
       '';
 
       programs.fish.functions.zellnix = ''
+        if set -q ZELLIJ
+            echo "Vous êtes déjà dans la session Zellij '$ZELLIJ_SESSION_NAME'."
+            echo "Pour rejoindre la session 'nixos-config', détachez-vous d'abord (Ctrl+o puis d)."
+            return 1
+        end
         if contains -- -n $argv; or contains -- --new $argv
             zellij --layout dev
-        else if zellij list-sessions 2>/dev/null | string match -q -r '^nixos-config\s'
+        else if zellij list-sessions 2>/dev/null | string match -q -r '^nixos-config\b'
             zellij attach nixos-config
         else
             zellij --session nixos-config --layout dev
@@ -117,13 +122,18 @@
       '';
 
       programs.fish.functions.zelldev = ''
+        if set -q ZELLIJ
+            echo "Vous êtes déjà dans la session Zellij '$ZELLIJ_SESSION_NAME'."
+            echo "Pour rejoindre une autre session, détachez-vous d'abord (Ctrl+o puis d)."
+            return 1
+        end
         set -l session_name (basename (pwd) | tr . _)
         if test -z "$session_name"
             set session_name "dev"
         end
         if contains -- -n $argv; or contains -- --new $argv
             zellij --layout dev-flex
-        else if zellij list-sessions 2>/dev/null | string match -q -r "^$session_name\s"
+        else if zellij list-sessions 2>/dev/null | string match -q -r "^$session_name\b"
             zellij attach $session_name
         else
             zellij --session $session_name --layout dev-flex
@@ -131,14 +141,20 @@
       '';
 
       programs.fish.functions.zellai = ''
+        if set -q ZELLIJ
+            echo "Vous êtes déjà dans la session Zellij '$ZELLIJ_SESSION_NAME'."
+            echo "Pour rejoindre la session 'ai', détachez-vous d'abord (Ctrl+o puis d)."
+            return 1
+        end
         if contains -- -n $argv; or contains -- --new $argv
             zellij --layout ai-dev
-        else if zellij list-sessions 2>/dev/null | string match -q -r '^ai\s'
+        else if zellij list-sessions 2>/dev/null | string match -q -r '^ai\b'
             zellij attach ai
         else
             zellij --session ai --layout ai-dev
         end
       '';
+
 
       programs.fish.functions.zj = ''
         if test (count $argv) -gt 0

@@ -117,3 +117,7 @@
 ## 2026-05-24
 
 - [feat-greetd-move-greetd-to-dedicated-module-and-st](sessions/2026-05-24_feat-greetd-move-greetd-to-dedicated-module-and-st/)
+
+## 2026-05-25
+
+- [feat-zellij-smart-session-management-for-aliases-a](sessions/2026-05-25_feat-zellij-smart-session-management-for-aliases-a/)
