@@ -124,3 +124,4 @@
 - [feat-zellij-prevent-nested-sessions-and-use-word-b](sessions/2026-05-25_feat-zellij-prevent-nested-sessions-and-use-word-b/)
 - [fix-zellij-use-exact-string-matching-for-session-c](sessions/2026-05-25_fix-zellij-use-exact-string-matching-for-session-c/)
 - [fix-zellij-fix-invalid-x-option-in-fish-string-mat](sessions/2026-05-25_fix-zellij-fix-invalid-x-option-in-fish-string-mat/)
+- [docs-lessons-add-fish-shell-lessons-learned-about-](sessions/2026-05-25_docs-lessons-add-fish-shell-lessons-learned-about-/)
