@@ -95,7 +95,10 @@
                 pane split_direction="vertical" {
                     pane name="neovim" command="nvim" size="60%"
                     pane split_direction="horizontal" size="40%" {
-                        pane name="Antigravity CLI" command="agy" size="65%"
+                        pane name="Antigravity CLI" size="65%" {
+                            command "agy"
+                            args "-c"
+                        }
                         pane name="Shell" size="35%"
                     }
                 }

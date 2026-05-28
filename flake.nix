@@ -72,6 +72,13 @@
               sha512 = "5ccdcc01fb863c7e8e56473c6c95dba75fed4fd2a242200d80cfc4c7fab811b733f5a7fab25332130aad298e72627e1018e6911a5658f4f059ef6e019f211972";
             };
             sourceRoot = ".";
+            nativeBuildInputs = [
+              pkgs.autoPatchelfHook
+            ];
+            buildInputs = [
+              pkgs.stdenv.cc.cc.lib
+              pkgs.zlib
+            ];
             installPhase = ''
               install -m755 -D antigravity $out/bin/agy
             '';
