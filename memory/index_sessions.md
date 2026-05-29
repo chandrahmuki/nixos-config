@@ -129,3 +129,7 @@
 ## 2026-05-26
 
 - [fix-zellij-use-native-zellij-attach-c-command-for-](sessions/2026-05-26_fix-zellij-use-native-zellij-attach-c-command-for-/)
+
+## 2026-05-28
+
+- [feat-ai-patch-agy-binary-and-configure-auto-sessio](sessions/2026-05-28_feat-ai-patch-agy-binary-and-configure-auto-sessio/)
