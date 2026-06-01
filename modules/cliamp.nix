@@ -45,8 +45,12 @@ in
   home-manager.users.${username} = { config, lib, pkgs, ... }: {
     home.packages = [ sync-playlists ];
 
-    xdg.configFile."cliamp/config.toml" = {
-      text = ''
+    sops.secrets.cliamp_client_id = {};
+    sops.secrets.cliamp_client_secret = {};
+
+    sops.templates."cliamp-config.toml" = {
+      path = "${config.home.homeDirectory}/.config/cliamp/config.toml";
+      content = ''
         volume = 0
         repeat = "off"
         shuffle = false
@@ -61,8 +65,8 @@ in
         provider = "ytmusic"
 
         [ytmusic]
-        client_id = ""
-        client_secret = ""
+        client_id = "${config.sops.placeholder.cliamp_client_id}"
+        client_secret = "${config.sops.placeholder.cliamp_client_secret}"
       '';
     };
 

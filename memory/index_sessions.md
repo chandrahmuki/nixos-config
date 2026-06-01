@@ -133,3 +133,7 @@
 ## 2026-05-28
 
 - [feat-ai-patch-agy-binary-and-configure-auto-sessio](sessions/2026-05-28_feat-ai-patch-agy-binary-and-configure-auto-sessio/)
+
+## 2026-05-29
+
+- [feat-xdg-enable-xdg-mimeapps-to-apply-helium-as-de](sessions/2026-05-29_feat-xdg-enable-xdg-mimeapps-to-apply-helium-as-de/)
