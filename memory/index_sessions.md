@@ -142,3 +142,4 @@
 
 - [feat-cliamp-integrate-youtube-api-credentials-with](sessions/2026-06-01_feat-cliamp-integrate-youtube-api-credentials-with/)
 - [feat-cliamp-add-encrypted-youtube-credentials-to-s](sessions/2026-06-01_feat-cliamp-add-encrypted-youtube-credentials-to-s/)
+- [feat-secrets-add-fish-function-wrapper-for-sops-to](sessions/2026-06-01_feat-secrets-add-fish-function-wrapper-for-sops-to/)
