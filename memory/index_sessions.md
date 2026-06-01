@@ -137,3 +137,7 @@
 ## 2026-05-29
 
 - [feat-xdg-enable-xdg-mimeapps-to-apply-helium-as-de](sessions/2026-05-29_feat-xdg-enable-xdg-mimeapps-to-apply-helium-as-de/)
+
+## 2026-06-01
+
+- [feat-cliamp-integrate-youtube-api-credentials-with](sessions/2026-06-01_feat-cliamp-integrate-youtube-api-credentials-with/)
