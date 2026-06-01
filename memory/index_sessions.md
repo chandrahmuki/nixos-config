@@ -141,3 +141,4 @@
 ## 2026-06-01
 
 - [feat-cliamp-integrate-youtube-api-credentials-with](sessions/2026-06-01_feat-cliamp-integrate-youtube-api-credentials-with/)
+- [feat-cliamp-add-encrypted-youtube-credentials-to-s](sessions/2026-06-01_feat-cliamp-add-encrypted-youtube-credentials-to-s/)

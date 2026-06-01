@@ -29,5 +29,9 @@
             };
           };
         };
+
+        programs.fish.functions = {
+          sops = "SOPS_AGE_SSH_PRIVATE_KEY_FILE=~/.ssh/id_ed25519 nix run nixpkgs#sops -- $argv";
+        };
   };
 }
