@@ -143,3 +143,7 @@
 - [feat-cliamp-integrate-youtube-api-credentials-with](sessions/2026-06-01_feat-cliamp-integrate-youtube-api-credentials-with/)
 - [feat-cliamp-add-encrypted-youtube-credentials-to-s](sessions/2026-06-01_feat-cliamp-add-encrypted-youtube-credentials-to-s/)
 - [feat-secrets-add-fish-function-wrapper-for-sops-to](sessions/2026-06-01_feat-secrets-add-fish-function-wrapper-for-sops-to/)
+
+## 2026-06-05
+
+- [chore-clean-and-modularize-nixos-configuration](sessions/2026-06-05_chore-clean-and-modularize-nixos-configuration/)
