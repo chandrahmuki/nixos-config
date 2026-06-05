@@ -1,49 +1,60 @@
-{ config, lib, pkgs, username, ... }:
-
-let
-  sync-playlists = pkgs.writeShellScriptBin "sync-cliamp-playlists" ''
-    PLAYLISTS_DIR="$HOME/.config/cliamp/playlists"
-    mkdir -p "$PLAYLISTS_DIR"
-
-    if [ -d "$HOME/Music/Likes" ]; then
-      find "$HOME/Music/Likes" -type f -name "*.m3u" | while read -r m3u_file; do
-        playlist_name=$(basename "$m3u_file" .m3u | tr '[:upper:]' '[:lower:]' | tr ' ' '_')
-        toml_file="$PLAYLISTS_DIR/$playlist_name.toml"
-        
-        echo "Syncing playlist: $(basename "$m3u_file") -> $playlist_name.toml"
-        echo -n "" > "$toml_file"
-        m3u_dir=$(dirname "$m3u_file")
-        
-        while IFS= read -r line || [ -n "$line" ]; do
-          [[ "$line" =~ ^[[:space:]]*$ ]] && continue
-          [[ "$line" =~ ^# ]] && continue
-          
-          if [[ "$line" = /* ]]; then
-            audio_path="$line"
-          else
-            audio_path="$m3u_dir/$line"
-          fi
-          
-          if [ -f "$audio_path" ]; then
-            filename=$(basename "$audio_path")
-            title="''${filename%.*}"
-            title="''${title//_/ }"
-            
-            cat <<EOF >> "$toml_file"
-[[track]]
-path = "$audio_path"
-title = "$title"
-
-EOF
-          fi
-        done < "$m3u_file"
-      done
-    fi
-  '';
-in
 {
-  home-manager.users.${username} = { config, lib, pkgs, ... }: {
-    home.packages = [ sync-playlists ];
+  config,
+  lib,
+  pkgs,
+  username,
+  ...
+}: let
+  sync-playlists = pkgs.writeShellScriptBin "sync-cliamp-playlists" ''
+        PLAYLISTS_DIR="$HOME/.config/cliamp/playlists"
+        mkdir -p "$PLAYLISTS_DIR"
+
+        if [ -d "$HOME/Music/Likes" ]; then
+          find "$HOME/Music/Likes" -type f -name "*.m3u" | while read -r m3u_file; do
+            playlist_name=$(basename "$m3u_file" .m3u | tr '[:upper:]' '[:lower:]' | tr ' ' '_')
+            toml_file="$PLAYLISTS_DIR/$playlist_name.toml"
+
+            echo "Syncing playlist: $(basename "$m3u_file") -> $playlist_name.toml"
+            echo -n "" > "$toml_file"
+            m3u_dir=$(dirname "$m3u_file")
+
+            while IFS= read -r line || [ -n "$line" ]; do
+              [[ "$line" =~ ^[[:space:]]*$ ]] && continue
+              [[ "$line" =~ ^# ]] && continue
+
+              if [[ "$line" = /* ]]; then
+                audio_path="$line"
+              else
+                audio_path="$m3u_dir/$line"
+              fi
+
+              if [ -f "$audio_path" ]; then
+                filename=$(basename "$audio_path")
+                title="''${filename%.*}"
+                title="''${title//_/ }"
+
+                cat <<EOF >> "$toml_file"
+    [[track]]
+    path = "$audio_path"
+    title = "$title"
+
+    EOF
+              fi
+            done < "$m3u_file"
+          done
+        fi
+  '';
+in {
+  home-manager.users.${username} = {
+    config,
+    lib,
+    pkgs,
+    ...
+  }: {
+    home.packages = [
+      sync-playlists
+      pkgs.cliamp
+    ];
 
     sops.secrets.cliamp_client_id = {};
     sops.secrets.cliamp_client_secret = {};
@@ -142,7 +153,7 @@ in
       '';
     };
 
-    home.activation.createCliampPlaylistsDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    home.activation.createCliampPlaylistsDir = lib.hm.dag.entryAfter ["writeBoundary"] ''
       $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.config/cliamp/playlists
       $DRY_RUN_CMD ${sync-playlists}/bin/sync-cliamp-playlists
     '';

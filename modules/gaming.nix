@@ -3,9 +3,7 @@
   lib,
   pkgs,
   ...
-}:
-
-{
+}: {
   environment.systemPackages = with pkgs; [
     mangohud
     protonup-qt
@@ -46,5 +44,5 @@
 
   services.lact.enable = true;
 
-  boot.kernelParams = [ "amdgpu.ppfeaturemask=0xffffffff" ];
+  boot.kernelParams = ["amdgpu.ppfeaturemask=0xffffffff"];
 }

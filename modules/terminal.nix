@@ -1,20 +1,19 @@
 let
   colors = (import ../lib/colors.nix).tokyonight;
 in
-{
-  config,
-  lib,
-  pkgs,
-  username,
-  hostname,
-  ...
-}:
-
-{
-  home-manager.users.${username} =
-    { config, lib, ... }:
-    {
-
+  {
+    config,
+    lib,
+    pkgs,
+    username,
+    hostname,
+    ...
+  }: {
+    home-manager.users.${username} = {
+      config,
+      lib,
+      ...
+    }: {
       programs.foot = {
         enable = true;
         settings = {
@@ -82,7 +81,7 @@ in
       programs.zoxide = {
         enable = true;
         enableFishIntegration = true;
-        options = [ "--cmd cd" ];
+        options = ["--cmd cd"];
       };
 
       programs.fish = {
@@ -106,14 +105,6 @@ in
           end
 
           if status is-interactive
-            function setup_visual_tools
-              starship init fish | source
-            end
-
-            if test "$TERM" != "dumb"
-              setup_visual_tools
-            end
-
             fish_vi_key_bindings
 
             bind -M insert \ch kill-word
@@ -148,4 +139,4 @@ in
         };
       };
     };
-}
+  }

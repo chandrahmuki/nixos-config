@@ -60,10 +60,17 @@
   };
 
   outputs = inputs:
-    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = [ "x86_64-linux" ];
+    inputs.flake-parts.lib.mkFlake {inherit inputs;} {
+      systems = ["x86_64-linux"];
 
-      perSystem = { config, self', inputs', pkgs, system, ... }: {
+      perSystem = {
+        config,
+        self',
+        inputs',
+        pkgs,
+        system,
+        ...
+      }: {
         packages = {
           antigravity-cli = pkgs.stdenvNoCC.mkDerivation {
             name = "antigravity-cli-1.0.0";
@@ -104,8 +111,8 @@
               home-manager.sharedModules = [
                 inputs.omnigraph.homeManagerModules.default
               ];
-              home-manager.users.david = { ... }: {
-                imports = [ ./home.nix ];
+              home-manager.users.david = {...}: {
+                imports = [./home.nix];
                 programs.omnigraph.enable = true;
               };
               home-manager.extraSpecialArgs = {

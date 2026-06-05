@@ -1,5 +1,11 @@
-{ username, hostname, config, pkgs, ... }: # <-- N'oublie pas d'ajouter { config, pkgs, ... }: en haut !
-
+{
+  username,
+  hostname,
+  config,
+  pkgs,
+  ...
+}:
+# <-- N'oublie pas d'ajouter { config, pkgs, ... }: en haut !
 {
   home.username = username;
   home.homeDirectory = "/home/${username}";

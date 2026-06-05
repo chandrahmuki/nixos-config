@@ -1,23 +1,31 @@
-{ config, lib, pkgs, username, inputs, ... }:
-
 {
-  home-manager.users.${username} = { config, lib, pkgs, ... }:
-    let
-      colors = (import ../lib/colors.nix).tokyonight;
-    in
-    {
-      imports = [ inputs.zen-browser.homeModules.beta ];
+  config,
+  lib,
+  pkgs,
+  username,
+  inputs,
+  ...
+}: {
+  home-manager.users.${username} = {
+    config,
+    lib,
+    pkgs,
+    ...
+  }: let
+    colors = (import ../lib/colors.nix).tokyonight;
+  in {
+    imports = [inputs.zen-browser.homeModules.beta];
 
-      programs.zen-browser = {
-        enable = true;
-        setAsDefaultBrowser = false;
-        policies = {
-          DisableAppUpdate = true;
-          DisableTelemetry = true;
-          Preferences = {
-            "browser.shell.checkDefaultBrowser" = false;
-          };
+    programs.zen-browser = {
+      enable = true;
+      setAsDefaultBrowser = false;
+      policies = {
+        DisableAppUpdate = true;
+        DisableTelemetry = true;
+        Preferences = {
+          "browser.shell.checkDefaultBrowser" = false;
         };
       };
     };
+  };
 }

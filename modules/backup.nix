@@ -1,6 +1,9 @@
-{ config, lib, pkgs, ... }:
-
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
   # Configuration de btrbk pour les backups automatiques
   services.btrbk = {
     instances.local = {
@@ -45,9 +48,9 @@
   # Correction du comportement du service pour éviter les erreurs au boot
   systemd.services.btrbk-local = {
     # On force le service à attendre que le disque de backup soit monté
-    after = [ "mnt-backup.mount" "mnt-btrfs\\x2dsystem.mount" ];
-    requires = [ "mnt-backup.mount" "mnt-btrfs\\x2dsystem.mount" ];
-    
+    after = ["mnt-backup.mount" "mnt-btrfs\\x2dsystem.mount"];
+    requires = ["mnt-backup.mount" "mnt-btrfs\\x2dsystem.mount"];
+
     unitConfig = {
       # Si le disque n'est pas là, on ne considère pas ça comme une erreur critique du système
       ConditionPathIsMountPoint = "/mnt/backup";

@@ -1,37 +1,46 @@
-{ config, lib, pkgs, username, inputs, ... }:
-
 {
+  config,
+  lib,
+  pkgs,
+  username,
+  inputs,
+  ...
+}: {
   imports = [
     inputs.sops-nix.nixosModules.sops
   ];
 
-  home-manager.users.${username} = { config, lib, ... }: {
+  home-manager.users.${username} = {
+    config,
+    lib,
+    ...
+  }: {
     imports = [
-          inputs.sops-nix.homeManagerModules.sops
-        ];
+      inputs.sops-nix.homeManagerModules.sops
+    ];
 
-        sops = {
-          # Point vers le fichier de secrets chiffré dans ton dépôt
-          defaultSopsFile = ../secrets/secrets.yaml;
+    sops = {
+      # Point vers le fichier de secrets chiffré dans ton dépôt
+      defaultSopsFile = ../secrets/secrets.yaml;
 
-          # Utilise ta clé SSH pour déchiffrer
-          age.sshKeyPaths = [ "/home/${username}/.ssh/id_ed25519" ];
+      # Utilise ta clé SSH pour déchiffrer
+      age.sshKeyPaths = ["/home/${username}/.ssh/id_ed25519"];
 
-          secrets = {
-            # Le secret sera déchiffré dans ~/.config/sops/github_token
-            github_token = {
-              path = "/home/${username}/.config/sops/github_token";
-            };
-
-            # Clé API OpenCode pour Muggy
-            opencode_api_key = {
-              path = "/home/${username}/.config/sops/opencode_api_key";
-            };
-          };
+      secrets = {
+        # Le secret sera déchiffré dans ~/.config/sops/github_token
+        github_token = {
+          path = "/home/${username}/.config/sops/github_token";
         };
 
-        programs.fish.functions = {
-          sops = "SOPS_AGE_SSH_PRIVATE_KEY_FILE=~/.ssh/id_ed25519 nix run nixpkgs#sops -- $argv";
+        # Clé API OpenCode pour Muggy
+        opencode_api_key = {
+          path = "/home/${username}/.config/sops/opencode_api_key";
         };
+      };
+    };
+
+    programs.fish.functions = {
+      sops = "SOPS_AGE_SSH_PRIVATE_KEY_FILE=~/.ssh/id_ed25519 nix run nixpkgs#sops -- $argv";
+    };
   };
 }

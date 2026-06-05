@@ -1,7 +1,15 @@
-{ config, lib, pkgs, username, ... }:
-
 {
-  home-manager.users.${username} = { config, lib, ... }: {
+  config,
+  lib,
+  pkgs,
+  username,
+  ...
+}: {
+  home-manager.users.${username} = {
+    config,
+    lib,
+    ...
+  }: {
     home.packages = with pkgs; [
       vesktop
       discordo

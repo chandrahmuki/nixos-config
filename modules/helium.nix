@@ -1,8 +1,13 @@
-{ config, lib, pkgs, username, inputs, ... }:
-
 {
-  home-manager.users.${username} = { pkgs, ... }: {
-    imports = [ inputs.helium.homeModules.default ];
+  config,
+  lib,
+  pkgs,
+  username,
+  inputs,
+  ...
+}: {
+  home-manager.users.${username} = {pkgs, ...}: {
+    imports = [inputs.helium.homeModules.default];
 
     programs.helium = {
       enable = true;
@@ -13,11 +18,11 @@
     };
 
     xdg.mimeApps.defaultApplications = {
-      "text/html" = [ "helium.desktop" ];
-      "text/xml" = [ "helium.desktop" ];
-      "application/xhtml+xml" = [ "helium.desktop" ];
-      "x-scheme-handler/http" = [ "helium.desktop" ];
-      "x-scheme-handler/https" = [ "helium.desktop" ];
+      "text/html" = ["helium.desktop"];
+      "text/xml" = ["helium.desktop"];
+      "application/xhtml+xml" = ["helium.desktop"];
+      "x-scheme-handler/http" = ["helium.desktop"];
+      "x-scheme-handler/https" = ["helium.desktop"];
     };
   };
 }

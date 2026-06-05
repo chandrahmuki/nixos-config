@@ -5,9 +5,7 @@
   username,
   hostname,
   ...
-}:
-
-{
+}: {
   programs.nh = {
     enable = true;
 
@@ -23,7 +21,11 @@
     };
   };
 
-  home-manager.users.${username} = { config, lib, ... }: {
+  home-manager.users.${username} = {
+    config,
+    lib,
+    ...
+  }: {
     programs.fish.functions = {
       nos = "nh os switch /home/${username}/nixos-config --hostname ${hostname} --ask -L --diff always";
     };

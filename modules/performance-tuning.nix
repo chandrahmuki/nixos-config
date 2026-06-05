@@ -3,9 +3,7 @@
   lib,
   pkgs,
   ...
-}:
-
-{
+}: {
   # --- PERFORMANCE TUNING (performance-engineer skill) ---
 
   # 1. Memory Management (ZRAM + Optimized Swappiness)
@@ -35,7 +33,7 @@
 
   # 4. AMD GPU & Kernel Features
   # ntsync for Proton/Wine performance
-  boot.kernelModules = [ "ntsync" ];
+  boot.kernelModules = ["ntsync"];
 
   # Hardware acceleration (VA-API)
   hardware.graphics.extraPackages = with pkgs; [

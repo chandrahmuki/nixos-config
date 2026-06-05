@@ -1,7 +1,6 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-
 {
   config,
   lib,
@@ -10,9 +9,7 @@
   username,
   hostname,
   ...
-}:
-
-{
+}: {
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
@@ -31,14 +28,14 @@
   nix.gc.automatic = false;
 
   #AMD
-  boot.initrd.kernelModules = [ "amdgpu" ];
+  boot.initrd.kernelModules = ["amdgpu"];
 
   #Steam and games
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
   };
-  services.xserver.videoDrivers = [ "amdgpu" ];
+  services.xserver.videoDrivers = ["amdgpu"];
 
   #Activate KornFlakes
   nix.settings.experimental-features = [
@@ -48,7 +45,7 @@
 
   # Pin le registry + nixPath sur le flake lock → nix shell nixpkgs#foo instantané et cohérent
   nix.registry.nixpkgs.flake = inputs.nixpkgs;
-  nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
+  nix.nixPath = ["nixpkgs=${inputs.nixpkgs}"];
 
   # Use latest kernel via Chaotic Nyx definition below
   # boot.kernelPackages = pkgs.linuxPackages_latest; # Removed to favor CachyOS kernel
@@ -211,7 +208,7 @@
   ];
 
   # VIA / QMK Udev rules
-  services.udev.packages = [ pkgs.via ];
+  services.udev.packages = [pkgs.via];
 
   # --- BTRFS MAINTENANCE ---
   # Periodic scrub to check for data corruption (silent errors)
@@ -314,5 +311,4 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.11"; # Did you read the comment?
-
 }

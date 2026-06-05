@@ -1,6 +1,10 @@
-{ config, lib, pkgs, username, ... }:
-
 {
+  config,
+  lib,
+  pkgs,
+  username,
+  ...
+}: {
   # Enable greetd for a minimal and customized login experience
   services.greetd = {
     enable = true;
