@@ -6,10 +6,6 @@
   inputs,
   ...
 }: {
-  imports = [
-    inputs.noctalia.nixosModules.default
-  ];
-
   home-manager.users.${username} = {
     config,
     lib,
@@ -23,7 +19,7 @@
       defaultWallpaper = "/home/${username}/Pictures/wallpaper/wallpaper.png";
     };
 
-    programs.noctalia-shell = {
+    programs.noctalia = {
       enable = true;
       systemd.enable = false;
     };
