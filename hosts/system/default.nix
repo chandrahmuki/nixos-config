@@ -277,6 +277,13 @@
     BackgroundModeEnabled = false;
     ChromeCleanupEnabled = false;
     ChromeCleanupReportingEnabled = false;
+    CookiesAllowedForUrls = [
+      "[*.]microsoft.com"
+      "[*.]microsoftonline.com"
+      "[*.]live.com"
+      "[*.]teams.microsoft.com"
+      "[*.]skype.com"
+    ];
   };
 
   # 8. Advanced: Build in RAM (tmpfs) - 62GB RAM required
