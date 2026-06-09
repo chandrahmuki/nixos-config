@@ -147,3 +147,7 @@
 ## 2026-06-05
 
 - [chore-clean-and-modularize-nixos-configuration](sessions/2026-06-05_chore-clean-and-modularize-nixos-configuration/)
+
+## 2026-06-09
+
+- [fix-resolve-teams-pwa-logout-loop-and-duplicate-ic](sessions/2026-06-09_fix-resolve-teams-pwa-logout-loop-and-duplicate-ic/)
