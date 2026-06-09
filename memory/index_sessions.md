@@ -151,3 +151,4 @@
 ## 2026-06-09
 
 - [fix-resolve-teams-pwa-logout-loop-and-duplicate-ic](sessions/2026-06-09_fix-resolve-teams-pwa-logout-loop-and-duplicate-ic/)
+- [feat-update-antigravity-cli-to-1-0-6-and-switch-no](sessions/2026-06-09_feat-update-antigravity-cli-to-1-0-6-and-switch-no/)
