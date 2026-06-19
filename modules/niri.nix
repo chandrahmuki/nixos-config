@@ -101,7 +101,11 @@
 
       window-rules = [
         {
-          matches = [{app-id = "^steam.*$";}];
+          matches = [
+            {app-id = "^steam.*$";}
+            {app-id = "^gamescope$";}
+            {app-id = "\\.exe$";}
+          ];
           open-on-output = "DP-2";
           open-fullscreen = true;
         }
