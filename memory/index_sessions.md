@@ -157,3 +157,7 @@
 ## 2026-06-15
 
 - [feat-add-oculante-image-viewer](sessions/2026-06-15_feat-add-oculante-image-viewer/)
+
+## 2026-06-19
+
+- [fix-niri-route-gamescope-and-proton-games-to-gamin](sessions/2026-06-19_fix-niri-route-gamescope-and-proton-games-to-gamin/)
