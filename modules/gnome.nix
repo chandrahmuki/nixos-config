@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  username,
   ...
 }: {
   services.desktopManager.gnome.enable = true;
@@ -28,6 +29,25 @@
     gnomeExtensions.caffeine
     gnomeExtensions.clipboard-indicator
   ];
+
+  home-manager.users.${username} = {
+    config,
+    lib,
+    ...
+  }: {
+    dconf.settings = {
+      "org/gnome/shell" = {
+        enabled-extensions = with pkgs.gnomeExtensions; [
+          appindicator.extensionUuid
+          blur-my-shell.extensionUuid
+          dash-to-dock.extensionUuid
+          just-perfection.extensionUuid
+          caffeine.extensionUuid
+          clipboard-indicator.extensionUuid
+        ];
+      };
+    };
+  };
 }
 
 
