@@ -170,3 +170,4 @@
 
 - [feat-kde-enable-input-remapper-for-custom-mouse-sh](sessions/2026-06-21_feat-kde-enable-input-remapper-for-custom-mouse-sh/)
 - [feat-gnome-replace-kde-plasma-with-gnome-50-and-se](sessions/2026-06-21_feat-gnome-replace-kde-plasma-with-gnome-50-and-se/)
+- [feat-change-icon-pack-to-colloid-dark-and-enable-g](sessions/2026-06-21_feat-change-icon-pack-to-colloid-dark-and-enable-g/)

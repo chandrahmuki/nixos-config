@@ -6,7 +6,7 @@
   ...
 }: {
   environment.sessionVariables = {
-    GTK_THEME = "Tokyonight-Dark:dark";
+    GTK_THEME = "catppuccin-mocha-lavender-standard:dark";
   };
 
   home-manager.users.${username} = {
@@ -17,12 +17,18 @@
     gtk = {
       enable = true;
       theme = {
-        name = "Tokyonight-Dark";
-        package = pkgs.tokyonight-gtk-theme;
+        name = "catppuccin-mocha-lavender-standard";
+        package = pkgs.catppuccin-gtk.override {
+          accents = [ "lavender" ];
+          size = "standard";
+          variant = "mocha";
+        };
       };
       iconTheme = {
-        name = "Colloid-Dark";
-        package = pkgs.colloid-icon-theme;
+        name = "Colloid-Catppuccin-Dark";
+        package = pkgs.colloid-icon-theme.override {
+          schemeVariants = [ "catppuccin" ];
+        };
       };
       cursorTheme = {
         name = "Adwaita";
