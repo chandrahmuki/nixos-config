@@ -173,3 +173,4 @@
 - [feat-change-icon-pack-to-colloid-dark-and-enable-g](sessions/2026-06-21_feat-change-icon-pack-to-colloid-dark-and-enable-g/)
 - [feat-switch-to-catppuccin-gtk-theme-and-colloid-ca](sessions/2026-06-21_feat-switch-to-catppuccin-gtk-theme-and-colloid-ca/)
 - [chore-update-session-index-for-catppuccin-theme](sessions/2026-06-21_chore-update-session-index-for-catppuccin-theme/)
+- [feat-install-user-themes-gnome-extension-and-confi](sessions/2026-06-21_feat-install-user-themes-gnome-extension-and-confi/)
