@@ -28,6 +28,7 @@
     gnomeExtensions.just-perfection
     gnomeExtensions.caffeine
     gnomeExtensions.clipboard-indicator
+    gnomeExtensions.user-themes
   ];
 
   home-manager.users.${username} = {
@@ -44,6 +45,7 @@
           just-perfection.extensionUuid
           caffeine.extensionUuid
           clipboard-indicator.extensionUuid
+          user-themes.extensionUuid
         ];
       };
     };

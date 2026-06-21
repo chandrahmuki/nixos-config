@@ -49,10 +49,13 @@
     # Symlinks pour les icônes manquantes dans les thèmes standards
     home.file.".local/share/icons/hicolor/scalable/apps/io.github.ilya_zlobintsev.LACT.svg".source = "${pkgs.lact}/share/pixmaps/io.github.ilya_zlobintsev.LACT.svg";
 
-    # Force libadwaita to use dark theme
+    # Force libadwaita to use dark theme and configure shell theme
     dconf.settings = {
       "org/gnome/desktop/interface" = {
         color-scheme = "prefer-dark";
+      };
+      "org/gnome/shell/extensions/user-theme" = {
+        name = "catppuccin-mocha-lavender-standard";
       };
     };
 
