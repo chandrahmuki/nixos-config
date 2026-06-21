@@ -161,3 +161,7 @@
 ## 2026-06-19
 
 - [fix-niri-route-gamescope-and-proton-games-to-gamin](sessions/2026-06-19_fix-niri-route-gamescope-and-proton-games-to-gamin/)
+
+## 2026-06-20
+
+- [chore-remove-openldap-overlay-to-prevent-kde-compi](sessions/2026-06-20_chore-remove-openldap-overlay-to-prevent-kde-compi/)

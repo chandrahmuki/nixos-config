@@ -5,6 +5,7 @@
   ...
 }: {
   services.desktopManager.plasma6.enable = true;
+  services.input-remapper.enable = true;
 
   environment.plasma6.excludePackages = with pkgs.kdePackages; [
     elisa
@@ -16,4 +17,12 @@
     krdc
     plasma-welcome
   ];
+
+  environment.systemPackages = with pkgs; [
+    nordic
+    nordzy-icon-theme
+    nordzy-cursor-theme
+    utterly-nord-plasma
+  ];
 }
+
