@@ -165,3 +165,7 @@
 ## 2026-06-20
 
 - [chore-remove-openldap-overlay-to-prevent-kde-compi](sessions/2026-06-20_chore-remove-openldap-overlay-to-prevent-kde-compi/)
+
+## 2026-06-21
+
+- [feat-kde-enable-input-remapper-for-custom-mouse-sh](sessions/2026-06-21_feat-kde-enable-input-remapper-for-custom-mouse-sh/)
