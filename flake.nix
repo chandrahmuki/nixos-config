@@ -57,6 +57,12 @@
       url = "path:/home/david/projects/muggy";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    stylix = {
+      url = "github:danth/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
   };
 
   outputs = inputs:
@@ -104,6 +110,7 @@
             ./hosts/system/default.nix
             ./overlays.nix
 
+            inputs.stylix.nixosModules.stylix
             inputs.home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = true;
