@@ -16,7 +16,7 @@ in {
       enable = true;
       settings = {
         main = {
-          font = "JetBrainsMono Nerd Font:size=11";
+          font = lib.mkForce "JetBrainsMono Nerd Font:size=11";
           dpi-aware = "no";
           lines = 8;
           width = 35;
@@ -28,18 +28,6 @@ in {
           layer = "overlay";
           anchor = "center";
           icons-enabled = false;
-        };
-        colors = {
-          background = "#${colors.bg}f0";
-          text = "#${colors.fg}ff";
-          prompt = "#${colors.blue}ff";
-          placeholder = "#${colors.comment}80";
-          input = "#${colors.fg}ff";
-          match = "#${colors.orange}ff";
-          selection = "#${colors.accent}ff";
-          selection-text = "#${colors.fg}ff";
-          selection-match = "#${colors.orange}ff";
-          border = "#${colors.blue}cc";
         };
         border = {
           width = 2;

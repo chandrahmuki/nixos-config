@@ -34,13 +34,4 @@
 
     targets.gnome.enable = true;
   };
-
-  home-manager.users.${username} = {
-    stylix.targets.yazi.enable = false;
-    stylix.targets.foot.enable = false;
-    stylix.targets.btop.enable = false;
-    stylix.targets.fuzzel.enable = false;
-    stylix.targets.zathura.enable = false;
-    stylix.targets.vscode.enable = false;
-  };
 }

@@ -27,10 +27,7 @@
         ];
 
         userSettings = {
-          "editor.fontFamily" = "'Hack Nerd Font', 'monospace'";
-          "editor.fontSize" = 16;
-          "workbench.colorTheme" = "Dracula";
-          "terminal.integrated.fontFamily" = "Hack Nerd Font";
+          "editor.fontSize" = lib.mkForce 16;
           "window.titleBarStyle" = "custom";
 
           "path-intellisense.mappings" = {

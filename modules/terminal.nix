@@ -18,37 +18,12 @@ in
         enable = true;
         settings = {
           main = {
-            font = "JetBrainsMono Nerd Font:size=18";
+            font = lib.mkForce "JetBrainsMono Nerd Font:size=18";
             pad = "15x15";
           };
           key-bindings = {
             font-increase = "Control+plus";
             font-decrease = "Control+minus";
-          };
-          colors-dark = {
-            foreground = colors.fg;
-            background = colors.bg;
-
-            regular0 = colors.dark;
-            regular1 = colors.red;
-            regular2 = colors.green;
-            regular3 = colors.yellow;
-            regular4 = colors.blue;
-            regular5 = colors.magenta;
-            regular6 = colors.cyan;
-            regular7 = "a9b1d6";
-
-            bright0 = colors.selection;
-            bright1 = colors.red;
-            bright2 = colors.green;
-            bright3 = colors.yellow;
-            bright4 = colors.blue;
-            bright5 = colors.magenta;
-            bright6 = colors.cyan;
-            bright7 = colors.fg;
-
-            dim0 = colors.orange;
-            dim1 = "db4b4b";
           };
         };
       };
