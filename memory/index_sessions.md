@@ -174,3 +174,4 @@
 - [feat-switch-to-catppuccin-gtk-theme-and-colloid-ca](sessions/2026-06-21_feat-switch-to-catppuccin-gtk-theme-and-colloid-ca/)
 - [chore-update-session-index-for-catppuccin-theme](sessions/2026-06-21_chore-update-session-index-for-catppuccin-theme/)
 - [feat-install-user-themes-gnome-extension-and-confi](sessions/2026-06-21_feat-install-user-themes-gnome-extension-and-confi/)
+- [chore-update-session-index-for-user-themes](sessions/2026-06-21_chore-update-session-index-for-user-themes/)

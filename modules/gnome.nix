@@ -29,6 +29,7 @@
     gnomeExtensions.caffeine
     gnomeExtensions.clipboard-indicator
     gnomeExtensions.user-themes
+    gnomeExtensions.search-light
   ];
 
   home-manager.users.${username} = {
@@ -46,6 +47,7 @@
           caffeine.extensionUuid
           clipboard-indicator.extensionUuid
           user-themes.extensionUuid
+          search-light.extensionUuid
         ];
       };
     };
