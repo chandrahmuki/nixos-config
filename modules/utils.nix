@@ -44,7 +44,7 @@
     programs.bat = {
       enable = true;
       config = {
-        theme = "ansi";
+        theme = lib.mkDefault "ansi";
       };
     };
 

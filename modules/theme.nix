@@ -17,22 +17,22 @@
     gtk = {
       enable = true;
       theme = {
-        name = "catppuccin-mocha-lavender-standard";
-        package = pkgs.catppuccin-gtk.override {
+        name = lib.mkDefault "catppuccin-mocha-lavender-standard";
+        package = lib.mkDefault (pkgs.catppuccin-gtk.override {
           accents = [ "lavender" ];
           size = "standard";
           variant = "mocha";
-        };
+        });
       };
       iconTheme = {
-        name = "Colloid-Catppuccin-Dark";
-        package = pkgs.colloid-icon-theme.override {
+        name = lib.mkDefault "Colloid-Catppuccin-Dark";
+        package = lib.mkDefault (pkgs.colloid-icon-theme.override {
           schemeVariants = [ "catppuccin" ];
-        };
+        });
       };
       cursorTheme = {
-        name = "Adwaita";
-        package = pkgs.adwaita-icon-theme;
+        name = lib.mkDefault "Adwaita";
+        package = lib.mkDefault pkgs.adwaita-icon-theme;
       };
       gtk3.extraConfig = {
         gtk-application-prefer-dark-theme = 1;
@@ -52,20 +52,20 @@
     # Force libadwaita to use dark theme and configure shell theme
     dconf.settings = {
       "org/gnome/desktop/interface" = {
-        color-scheme = "prefer-dark";
+        color-scheme = lib.mkDefault "prefer-dark";
       };
       "org/gnome/shell/extensions/user-theme" = {
-        name = "catppuccin-mocha-lavender-standard";
+        name = lib.mkDefault "catppuccin-mocha-lavender-standard";
       };
     };
 
     # Cursor size and theme for X11/Wayland
     home.pointerCursor = {
-      name = "Adwaita";
-      package = pkgs.adwaita-icon-theme;
-      size = 24;
-      gtk.enable = true;
-      x11.enable = true;
+      name = lib.mkDefault "Adwaita";
+      package = lib.mkDefault pkgs.adwaita-icon-theme;
+      size = lib.mkDefault 24;
+      gtk.enable = lib.mkDefault true;
+      x11.enable = lib.mkDefault true;
     };
   };
 }
