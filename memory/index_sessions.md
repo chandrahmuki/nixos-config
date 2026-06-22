@@ -183,3 +183,4 @@
 - [fix-update-muggy-lock-for-new-non-sandboxed-bun-wr](sessions/2026-06-22_fix-update-muggy-lock-for-new-non-sandboxed-bun-wr/)
 - [fix-enable-xwayland-native-scaling-to-fix-window-s](sessions/2026-06-22_fix-enable-xwayland-native-scaling-to-fix-window-s/)
 - [fix-disable-mutter-direct-scanout-to-resolve-parse](sessions/2026-06-22_fix-disable-mutter-direct-scanout-to-resolve-parse/)
+- [feat-install-and-configure-stylix-theme-tokyo-nigh](sessions/2026-06-22_feat-install-and-configure-stylix-theme-tokyo-nigh/)

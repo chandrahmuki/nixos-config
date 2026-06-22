@@ -34,6 +34,7 @@
     gnomeExtensions.clipboard-indicator
     gnomeExtensions.user-themes
     gnomeExtensions.search-light
+    gnomeExtensions.gnome-wallpaper-engine
   ];
 
   home-manager.users.${username} = {
@@ -52,6 +53,7 @@
           clipboard-indicator.extensionUuid
           user-themes.extensionUuid
           search-light.extensionUuid
+          gnome-wallpaper-engine.extensionUuid
         ];
       };
       "org/gnome/mutter" = {
