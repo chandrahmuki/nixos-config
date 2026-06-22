@@ -27,7 +27,7 @@
     ...
   }: {
     programs.fish.functions = {
-      nos = "nh os switch /home/${username}/nixos-config --hostname ${hostname} --ask -L --diff always";
+      nos = "nh os switch /home/${username}/nixos-config --hostname ${hostname} --ask -L --diff always --update-input muggy";
     };
   };
 }
