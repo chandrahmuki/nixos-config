@@ -181,3 +181,4 @@
 - [feat-add-search-light-gnome-extension-for-centered](sessions/2026-06-22_feat-add-search-light-gnome-extension-for-centered/)
 - [feat-auto-update-muggy-flake-input-in-nos-command](sessions/2026-06-22_feat-auto-update-muggy-flake-input-in-nos-command/)
 - [fix-update-muggy-lock-for-new-non-sandboxed-bun-wr](sessions/2026-06-22_fix-update-muggy-lock-for-new-non-sandboxed-bun-wr/)
+- [fix-enable-xwayland-native-scaling-to-fix-window-s](sessions/2026-06-22_fix-enable-xwayland-native-scaling-to-fix-window-s/)

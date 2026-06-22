@@ -7,6 +7,10 @@
 }: {
   services.desktopManager.gnome.enable = true;
 
+  environment.sessionVariables = {
+    MUTTER_DEBUG_FORCE_DISABLE_DIRECT_SCANOUT = "1";
+  };
+
   environment.gnome.excludePackages = with pkgs; [
     gnome-photos
     gnome-tour
