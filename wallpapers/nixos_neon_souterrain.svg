@@ -13,8 +13,8 @@
   <!-- Circular cutout for the logo (matching background color, scaled x2) -->
   <circle cx="1280" cy="840" r="140" fill="#2b3a36" />
 
-  <!-- White Monochrome NixOS Logo (Scaled x2, Centered at Y = 840) -->
-  <g transform="translate(1146.29, 710.98) scale(0.5)">
+  <!-- White Monochrome NixOS Logo (Scaled x2, Centered geometrically at X = 1280, Y = 840) -->
+  <g transform="translate(1142.735, 718.79) scale(0.5)">
     <g transform="translate(-132.5822, 958.04022)">
       <!-- Branch 1 -->
       <path fill="#ffffff" d="m 309.40365,-710.2521 122.19683,211.6751 -56.15706,0.5268 -32.6236,-56.8692 -32.85645,56.5653 -27.90237,-0.011 -14.29086,-24.6896 46.81047,-80.4902 -33.22946,-57.8256 z" />
