@@ -7,7 +7,7 @@
 }: {
   stylix = {
     enable = true;
-    image = ../wallpapers/wallpaperGnome.png;
+    image = ../wallpapers/nixos_neon_souterrain.png;
     base16Scheme = {
       base00 = "2b3a36";
       base01 = "354742";
