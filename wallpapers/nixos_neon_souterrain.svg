@@ -2,19 +2,19 @@
   <!-- Background: base00 (deep teal-green) -->
   <rect width="2560" height="1440" fill="#2b3a36" />
 
-  <!-- Horizontal Stripe Band (Scaled x2, Centered vertically at Y = 840) -->
+  <!-- Horizontal Stripe Band (Scaled x2, Positioned at Y = 800, slightly above Y = 840) -->
   <!-- Stripe 1: base0B (neon turquoise) -->
-  <rect x="0" y="792" width="2560" height="32" fill="#00f5d4" />
+  <rect x="0" y="752" width="2560" height="32" fill="#00f5d4" />
   <!-- Stripe 2: base08 (soft pink) -->
-  <rect x="0" y="824" width="2560" height="32" fill="#ffc2d4" />
+  <rect x="0" y="784" width="2560" height="32" fill="#ffc2d4" />
   <!-- Stripe 3: base02 (dark prune) -->
-  <rect x="0" y="856" width="2560" height="32" fill="#5e3a4d" />
+  <rect x="0" y="816" width="2560" height="32" fill="#5e3a4d" />
 
   <!-- Circular cutout for the logo (matching background color, scaled x2) -->
-  <circle cx="1280" cy="840" r="140" fill="#2b3a36" />
+  <circle cx="1280" cy="800" r="140" fill="#2b3a36" />
 
-  <!-- White Monochrome NixOS Logo (Scaled x2, Centered geometrically at X = 1280, Y = 840) -->
-  <g transform="translate(1142.735, 718.79) scale(0.5)">
+  <!-- White Monochrome NixOS Logo (Scaled x2, Centered at Y = 800) -->
+  <g transform="translate(1142.735, 678.79) scale(0.5)">
     <g transform="translate(-132.5822, 958.04022)">
       <!-- Branch 1 -->
       <path fill="#ffffff" d="m 309.40365,-710.2521 122.19683,211.6751 -56.15706,0.5268 -32.6236,-56.8692 -32.85645,56.5653 -27.90237,-0.011 -14.29086,-24.6896 46.81047,-80.4902 -33.22946,-57.8256 z" />
