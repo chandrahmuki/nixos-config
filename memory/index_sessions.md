@@ -186,3 +186,4 @@
 - [feat-install-and-configure-stylix-theme-tokyo-nigh](sessions/2026-06-22_feat-install-and-configure-stylix-theme-tokyo-nigh/)
 - [feat-add-gnome-wallpaper-engine-extension-to-gnome](sessions/2026-06-22_feat-add-gnome-wallpaper-engine-extension-to-gnome/)
 - [fix-resolve-theme-and-target-conflicts-with-stylix](sessions/2026-06-22_fix-resolve-theme-and-target-conflicts-with-stylix/)
+- [feat-allow-stylix-to-globally-theme-all-apps-and-c](sessions/2026-06-22_feat-allow-stylix-to-globally-theme-all-apps-and-c/)
