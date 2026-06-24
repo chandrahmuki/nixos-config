@@ -33,7 +33,6 @@
     gnomeExtensions.caffeine
     gnomeExtensions.clipboard-indicator
     gnomeExtensions.user-themes
-    gnomeExtensions.search-light
     gnomeExtensions.gnome-wallpaper-engine
     gnomeExtensions.switch-workspaces-on-active-monitor
   ];
@@ -54,7 +53,6 @@
           caffeine.extensionUuid
           clipboard-indicator.extensionUuid
           user-themes.extensionUuid
-          search-light.extensionUuid
           gnome-wallpaper-engine.extensionUuid
           switch-workspaces-on-active-monitor.extensionUuid
         ];
@@ -62,6 +60,10 @@
       "org/gnome/mutter" = {
         experimental-features = [ "scale-monitor-framebuffer" "xwayland-native-scaling" ];
         workspaces-only-on-primary = false;
+        dynamic-workspaces = false;
+      };
+      "org/gnome/desktop/wm/preferences" = {
+        num-workspaces = 4;
       };
     };
   };

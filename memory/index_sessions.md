@@ -187,3 +187,7 @@
 - [feat-add-gnome-wallpaper-engine-extension-to-gnome](sessions/2026-06-22_feat-add-gnome-wallpaper-engine-extension-to-gnome/)
 - [fix-resolve-theme-and-target-conflicts-with-stylix](sessions/2026-06-22_fix-resolve-theme-and-target-conflicts-with-stylix/)
 - [feat-allow-stylix-to-globally-theme-all-apps-and-c](sessions/2026-06-22_feat-allow-stylix-to-globally-theme-all-apps-and-c/)
+
+## 2026-06-24
+
+- [feat-gnome-stylix-fix-extension-version-checks-and](sessions/2026-06-24_feat-gnome-stylix-fix-extension-version-checks-and/)
