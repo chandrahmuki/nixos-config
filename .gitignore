@@ -25,6 +25,9 @@ result-*
 *.png
 *.jpg
 *.jpeg
+!wallpapers/*.png
+!wallpapers/*.jpg
+!wallpapers/*.jpeg
 scripts/muggy/muggy
 /muggy
 generated/

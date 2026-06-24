@@ -7,7 +7,7 @@
 }: {
   stylix = {
     enable = true;
-    image = /. + "/home/${username}/Pictures/wallpaper/wallpaperGnome.png";
+    image = ../wallpapers/wallpaperGnome.png;
     base16Scheme = {
       base00 = "2b3a36";
       base01 = "354742";
