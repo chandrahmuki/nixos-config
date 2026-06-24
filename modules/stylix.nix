@@ -33,5 +33,10 @@
     };
 
     targets.gnome.enable = true;
+    targets.qt.platform = "qtct";
+  };
+
+  home-manager.users.${username} = {
+    stylix.targets.zen-browser.profileNames = [ "default" ];
   };
 }
