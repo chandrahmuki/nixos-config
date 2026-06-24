@@ -204,7 +204,7 @@
     nvtopPackages.amd
     via
     nvd # Differenz between builds (shows package changes)
-    inputs.omnigraph.packages.${pkgs.system}.default
+    inputs.omnigraph.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 
   # VIA / QMK Udev rules

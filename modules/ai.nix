@@ -7,7 +7,7 @@
   ...
 }: let
   pkgs-master = import inputs.nixpkgs-master {
-    inherit (pkgs) system;
+    system = pkgs.stdenv.hostPlatform.system;
     config = pkgs.config;
   };
 in {
@@ -21,7 +21,7 @@ in {
       pkgs.opencode-claude-auth
       pkgs.antigravity-cli
       pkgs-master.claude-code
-      inputs.muggy.packages.${pkgs.system}.default
+      inputs.muggy.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
 
     xdg.configHome = lib.mkDefault "${config.home.homeDirectory}/.config";

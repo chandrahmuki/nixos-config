@@ -191,3 +191,4 @@
 ## 2026-06-24
 
 - [feat-gnome-stylix-fix-extension-version-checks-and](sessions/2026-06-24_feat-gnome-stylix-fix-extension-version-checks-and/)
+- [fix-gnome-configure-static-workspaces-disable-sear](sessions/2026-06-24_fix-gnome-configure-static-workspaces-disable-sear/)
