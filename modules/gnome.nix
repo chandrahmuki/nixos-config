@@ -35,6 +35,7 @@
     gnomeExtensions.user-themes
     gnomeExtensions.search-light
     gnomeExtensions.gnome-wallpaper-engine
+    gnomeExtensions.switch-workspaces-on-active-monitor
   ];
 
   home-manager.users.${username} = {
@@ -44,6 +45,7 @@
   }: {
     dconf.settings = {
       "org/gnome/shell" = {
+        disable-extension-version-validation = true;
         enabled-extensions = with pkgs.gnomeExtensions; [
           appindicator.extensionUuid
           blur-my-shell.extensionUuid
@@ -54,10 +56,12 @@
           user-themes.extensionUuid
           search-light.extensionUuid
           gnome-wallpaper-engine.extensionUuid
+          switch-workspaces-on-active-monitor.extensionUuid
         ];
       };
       "org/gnome/mutter" = {
         experimental-features = [ "scale-monitor-framebuffer" "xwayland-native-scaling" ];
+        workspaces-only-on-primary = false;
       };
     };
   };

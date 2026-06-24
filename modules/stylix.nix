@@ -7,7 +7,7 @@
 }: {
   stylix = {
     enable = true;
-    image = pkgs.nixos-artwork.wallpapers.simple-dark-gray.src;
+    image = ../wallpapers/gnome_00_2560x1440.png;
     base16Scheme = "${pkgs.base16-schemes}/share/themes/tokyo-night-dark.yaml";
     polarity = "dark";
 
