@@ -33,7 +33,7 @@
     };
 
     targets.gnome.enable = true;
-    targets.qt.platform = "qtct";
+    targets.qt.platform = lib.mkForce "qtct";
   };
 
   home-manager.users.${username} = {
