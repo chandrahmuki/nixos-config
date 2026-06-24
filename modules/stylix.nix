@@ -19,12 +19,12 @@
       base07 = "f5f0ec";
       base08 = "ffc2d4";
       base09 = "ffb37e";
-      base0a = "e9d8a6";
-      base0b = "00f5d4";
-      base0c = "8efdf0";
-      base0d = "90e0ef";
-      base0e = "a8708d";
-      base0f = "d4a373";
+      base0A = "e9d8a6";
+      base0B = "00f5d4";
+      base0C = "8efdf0";
+      base0D = "90e0ef";
+      base0E = "a8708d";
+      base0F = "d4a373";
     };
     polarity = "dark";
 
