@@ -195,3 +195,4 @@
 - [fix-nix-resolve-obsolete-warnings-for-displaymanag](sessions/2026-06-24_fix-nix-resolve-obsolete-warnings-for-displaymanag/)
 - [fix-stylix-resolve-zen-browser-profile-and-qt-plat](sessions/2026-06-24_fix-stylix-resolve-zen-browser-profile-and-qt-plat/)
 - [fix-stylix-force-qtct-platform-and-configure-defau](sessions/2026-06-24_fix-stylix-force-qtct-platform-and-configure-defau/)
+- [fix-flake-remove-obsolete-home-manager-override-fo](sessions/2026-06-24_fix-flake-remove-obsolete-home-manager-override-fo/)

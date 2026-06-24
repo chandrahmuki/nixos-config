@@ -8,7 +8,24 @@
   stylix = {
     enable = true;
     image = ../wallpapers/gnome_00_2560x1440.png;
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/tokyo-night-dark.yaml";
+    base16Scheme = {
+      base00 = "2b3a36";
+      base01 = "354742";
+      base02 = "5e3a4d";
+      base03 = "6d877f";
+      base04 = "b3a79f";
+      base05 = "dfd5cd";
+      base06 = "eae2db";
+      base07 = "f5f0ec";
+      base08 = "ffc2d4";
+      base09 = "ffb37e";
+      base0a = "e9d8a6";
+      base0b = "00f5d4";
+      base0c = "8efdf0";
+      base0d = "90e0ef";
+      base0e = "a8708d";
+      base0f = "d4a373";
+    };
     polarity = "dark";
 
     fonts = {
