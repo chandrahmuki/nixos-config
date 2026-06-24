@@ -197,3 +197,4 @@
 - [fix-stylix-force-qtct-platform-and-configure-defau](sessions/2026-06-24_fix-stylix-force-qtct-platform-and-configure-defau/)
 - [fix-flake-remove-obsolete-home-manager-override-fo](sessions/2026-06-24_fix-flake-remove-obsolete-home-manager-override-fo/)
 - [feat-integrate-custom-color-palette-into-stylix](sessions/2026-06-24_feat-integrate-custom-color-palette-into-stylix/)
+- [fix-fix-base16-key-casing-in-stylix-config](sessions/2026-06-24_fix-fix-base16-key-casing-in-stylix-config/)
