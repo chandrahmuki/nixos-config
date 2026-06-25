@@ -58,7 +58,7 @@
         ];
       };
       "org/gnome/mutter" = {
-        experimental-features = [ "scale-monitor-framebuffer" "xwayland-native-scaling" ];
+        experimental-features = ["scale-monitor-framebuffer" "xwayland-native-scaling"];
         workspaces-only-on-primary = false;
         dynamic-workspaces = false;
       };
@@ -68,5 +68,3 @@
     };
   };
 }
-
-

@@ -280,6 +280,26 @@
         "type": "github"
       }
     },
+    "herdr": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1782332345,
+        "narHash": "sha256-DyokBzHExI7W/6BsReaFBG72/HbdnK+RkJtyhDLbduY=",
+        "owner": "ogulcancelik",
+        "repo": "herdr",
+        "rev": "58b9fecc21a71d253b71cf104b1df0da8e81aeba",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ogulcancelik",
+        "repo": "herdr",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -308,8 +328,8 @@
         ]
       },
       "locked": {
-        "lastModified": 1782134863,
-        "narHash": "sha256-oKINMI2dfl6Xdtg9FQUKvwkqCHxBNA+6fyrVB7bmBmQ=",
+        "lastModified": 1782398150,
+        "narHash": "sha256-OlrhInj+3otYjXcTmNQjowSUpDmeudEtDUiZlr4Hi8k=",
         "path": "/home/david/projects/muggy",
         "type": "path"
       },
@@ -565,6 +585,7 @@
       "inputs": {
         "flake-parts": "flake-parts",
         "helium": "helium",
+        "herdr": "herdr",
         "home-manager": "home-manager",
         "muggy": "muggy",
         "niri": "niri",

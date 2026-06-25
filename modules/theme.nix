@@ -15,8 +15,8 @@
       iconTheme = {
         name = lib.mkDefault "Colloid-Teal-Catppuccin-Dark";
         package = lib.mkDefault (pkgs.colloid-icon-theme.override {
-          schemeVariants = [ "catppuccin" ];
-          colorVariants = [ "teal" ];
+          schemeVariants = ["catppuccin"];
+          colorVariants = ["teal"];
         });
       };
       cursorTheme = {

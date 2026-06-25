@@ -54,6 +54,6 @@
   };
 
   home-manager.users.${username} = {
-    stylix.targets.zen-browser.profileNames = [ "default" ];
+    stylix.targets.zen-browser.profileNames = ["default"];
   };
 }
