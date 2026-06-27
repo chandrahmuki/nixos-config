@@ -1,23 +1,12 @@
 return {
   {
-    "folke/tokyonight.nvim",
-    priority = 1000,
-    config = function()
-      require("tokyonight").setup({
-        style = "moon", -- Vibrant moon style
-        transparent = false, -- Opaque as per last test preference
-      })
-      vim.cmd.colorscheme("tokyonight")
-    end,
-  },
-  {
     "nvim-lualine/lualine.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
       vim.opt.laststatus = 3
       require("lualine").setup({
         options = {
-          theme = "tokyonight",
+          theme = "auto",
           globalstatus = true,
           component_separators = { left = "", right = "" },
           section_separators = { left = "", right = "" },

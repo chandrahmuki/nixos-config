@@ -26,9 +26,57 @@
       gtk3.extraConfig = {
         gtk-application-prefer-dark-theme = 1;
       };
+      gtk3.extraCss = ''
+        @define-color headerbar_bg_color @window_bg_color;
+        @define-color headerbar_backdrop_color @window_bg_color;
+        @define-color sidebar_bg_color @window_bg_color;
+        @define-color sidebar_backdrop_color @window_bg_color;
+
+        headerbar, .sidebar, .navigation-sidebar, .placessidebar {
+            border: none;
+            box-shadow: none;
+        }
+
+        /* Masquer la barre latérale de Nautilus */
+        .nautilus-window .navigation-sidebar,
+        .nautilus-window placessidebar {
+            width: 0px !important;
+            min-width: 0px !important;
+            max-width: 0px !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+        }
+      '';
       gtk4.extraConfig = {
         gtk-application-prefer-dark-theme = 1;
       };
+      gtk4.extraCss = ''
+        @define-color headerbar_bg_color @window_bg_color;
+        @define-color headerbar_backdrop_color @window_bg_color;
+        @define-color sidebar_bg_color @window_bg_color;
+        @define-color sidebar_backdrop_color @window_bg_color;
+
+        headerbar, .sidebar, .navigation-sidebar, .placessidebar {
+            border: none;
+            box-shadow: none;
+        }
+
+        /* Masquer la barre latérale de Nautilus */
+        .nautilus-window .navigation-sidebar,
+        .nautilus-window placessidebar {
+            width: 0px !important;
+            min-width: 0px !important;
+            max-width: 0px !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+        }
+      '';
     };
 
     home.packages = with pkgs; [
