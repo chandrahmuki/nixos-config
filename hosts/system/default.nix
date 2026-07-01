@@ -250,6 +250,7 @@
   # 7. Advanced: CachyOS Latest Kernel via xddxdd
   nix.settings = {
     fallback = true;
+    warn-dirty = false;
     substituters = [
       "https://nix-community.cachix.org"
       "https://attic.xuyh0120.win/lantian"

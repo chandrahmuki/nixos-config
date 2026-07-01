@@ -328,14 +328,16 @@
         ]
       },
       "locked": {
-        "dirtyRev": "cbc90ced13d59c8a0fd364c905d619e19f95af28-dirty",
-        "dirtyShortRev": "cbc90ce-dirty",
-        "lastModified": 1782490425,
-        "narHash": "sha256-WoDNYIvhpFVT8rrinTEV4VO+KrSD+e7A7LlcfVaS3d4=",
+        "lastModified": 1782851509,
+        "narHash": "sha256-xKz/hePcV8YXdcK2/hJEi588MRK7FU4883/UJQmzefI=",
+        "ref": "main",
+        "rev": "c2041f4f00f3aeb1cba9fdc5d2df77ac9b43daee",
+        "revCount": 4207,
         "type": "git",
         "url": "file:///home/david/projects/muggy"
       },
       "original": {
+        "ref": "main",
         "type": "git",
         "url": "file:///home/david/projects/muggy"
       }

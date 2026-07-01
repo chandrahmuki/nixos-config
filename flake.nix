@@ -54,7 +54,7 @@
     };
 
     muggy = {
-      url = "git+file:///home/david/projects/muggy";
+      url = "git+file:///home/david/projects/muggy?ref=main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
