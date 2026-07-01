@@ -38,13 +38,13 @@
 
   # Hardware acceleration (VA-API)
   hardware.graphics = {
-    package = inputs.nixpkgs-mesa.legacyPackages.${pkgs.system}.mesa.drivers;
-    package32 = inputs.nixpkgs-mesa.legacyPackages.${pkgs.system}.pkgsi686Linux.mesa.drivers;
+    package = inputs.nixpkgs-mesa.legacyPackages.${pkgs.stdenv.hostPlatform.system}.mesa;
+    package32 = inputs.nixpkgs-mesa.legacyPackages.${pkgs.stdenv.hostPlatform.system}.pkgsi686Linux.mesa;
     extraPackages = with pkgs; [
       libva
       libva-vdpau-driver
       libvdpau-va-gl
-      inputs.nixpkgs-mesa.legacyPackages.${pkgs.system}.mesa
+      inputs.nixpkgs-mesa.legacyPackages.${pkgs.stdenv.hostPlatform.system}.mesa
       rocmPackages.clr.icd # OpenCL pour AMD
     ];
   };

@@ -216,3 +216,4 @@
 ## 2026-07-01
 
 - [fix-permit-insecure-pnpm-10-29-2-for-flake-update](sessions/2026-07-01_fix-permit-insecure-pnpm-10-29-2-for-flake-update/)
+- [feat-gpu-pin-mesa-26-1-2-drivers-and-configure-har](sessions/2026-07-01_feat-gpu-pin-mesa-26-1-2-drivers-and-configure-har/)
