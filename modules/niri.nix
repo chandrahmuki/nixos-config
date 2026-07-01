@@ -38,6 +38,7 @@
 
       spawn-at-startup = [
         {command = ["noctalia-shell"];}
+        {command = ["xwayland-satellite"];}
       ];
 
       debug = {
@@ -63,7 +64,6 @@
         {proportion = 1. / 2.;}
         {proportion = 2. / 3.;}
       ];
-
       outputs = {
         "DP-2" = {
           mode = {
@@ -77,6 +77,7 @@
             y = 0;
           };
         };
+
         "HDMI-A-1" = {
           mode = {
             width = 3840;

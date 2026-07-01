@@ -16,6 +16,8 @@
     ];
 
     xdg.configFile."herdr/config.toml".text = ''
+      onboarding = false
+
       [terminal]
       default_shell = "${pkgs.fish}/bin/fish"
 

@@ -13,7 +13,9 @@
       enable = true;
       flags = [
         "--ozone-platform-hint=auto"
-        "--enable-features=WaylandWindowDecorations,WebRTCPipeWireCapturer"
+        "--use-gl=egl"
+        "--ignore-gpu-blocklist"
+        "--enable-features=VaapiVideoDecoder,VaapiVideoEncoder,WaylandWindowDecorations,WebRTCPipeWireCapturer"
       ];
     };
 
