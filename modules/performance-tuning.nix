@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }: {
   # --- PERFORMANCE TUNING (performance-engineer skill) ---
@@ -36,13 +37,17 @@
   boot.kernelModules = ["ntsync"];
 
   # Hardware acceleration (VA-API)
-  hardware.graphics.extraPackages = with pkgs; [
-    libva
-    libva-vdpau-driver
-    libvdpau-va-gl
-    mesa
-    rocmPackages.clr.icd # OpenCL pour AMD
-  ];
+  hardware.graphics = {
+    package = inputs.nixpkgs-mesa.legacyPackages.${pkgs.system}.mesa.drivers;
+    package32 = inputs.nixpkgs-mesa.legacyPackages.${pkgs.system}.pkgsi686Linux.mesa.drivers;
+    extraPackages = with pkgs; [
+      libva
+      libva-vdpau-driver
+      libvdpau-va-gl
+      inputs.nixpkgs-mesa.legacyPackages.${pkgs.system}.mesa
+      rocmPackages.clr.icd # OpenCL pour AMD
+    ];
+  };
 
   # Forcer VA-API sur radeonsi pour AMD
   environment.sessionVariables = {
