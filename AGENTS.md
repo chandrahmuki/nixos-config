@@ -170,3 +170,4 @@ Golden path for a non-trivial change:
 - No emojis in code or messages
 - Prefer HM module patterns over standalone configs
 - Overlay packages rather than waiting for nixpkgs updates when needed
+- **Mesa Pinning**: Mesa system packages must remain pinned to version 26.1.2 (via `nixpkgs-mesa` input) to prevent multi-monitor Parsec XWayland decoding crashes. Check newer versions (e.g. 26.2+) during future upgrades.
