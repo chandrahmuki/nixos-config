@@ -221,3 +221,7 @@
 - [fix-nix-resolve-stylix-gtk-extracss-warnings-in-th](sessions/2026-07-01_fix-nix-resolve-stylix-gtk-extracss-warnings-in-th/)
 - [docs-memory-document-mesa-26-1-2-pinning-reason-fo](sessions/2026-07-01_docs-memory-document-mesa-26-1-2-pinning-reason-fo/)
 - [chore-update-flake-lock-and-finalize-session](sessions/2026-07-01_chore-update-flake-lock-and-finalize-session/)
+
+## 2026-07-13
+
+- [feat-add-teams-pwa-shortcut-to-helium-and-update-a](sessions/2026-07-13_feat-add-teams-pwa-shortcut-to-helium-and-update-a/)

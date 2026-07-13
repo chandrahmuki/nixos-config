@@ -10,60 +10,54 @@
   hostname,
   ...
 }: {
+  # Importation de la configuration matérielle et des modules système
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ../../modules
   ];
 
+  # Extension de sauvegarde automatique des fichiers conflictuels avec Home Manager
   home-manager.backupFileExtension = "backup";
 
-  # Bootloader.
+  # Configuration du chargeur de démarrage Systemd-boot
   boot.loader.systemd-boot.enable = true;
-  boot.loader.systemd-boot.configurationLimit = 5; # Keep only 5 generations in boot menu
+  boot.loader.systemd-boot.configurationLimit = 5; # Limiter à 5 générations conservées dans le menu boot
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Automatic garbage collection (weekly, keep 5 days of builds)
-  # Disabled to favor nh.clean (see modules/nh.nix)
+  # Nettoyage automatique des anciennes générations désactivé (géré par nh)
   nix.gc.automatic = false;
 
-  #AMD
+  # Pilotes et modules noyau chargés au démarrage pour le GPU AMD
   boot.initrd.kernelModules = ["amdgpu"];
 
-  #Steam and games
+  # Support de l'accélération graphique 3D (32 bits pour Steam et les jeux)
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
   };
   services.xserver.videoDrivers = ["amdgpu"];
 
-  #Activate KornFlakes
+  # Activation des fonctionnalités expérimentales de Nix (nix-command et flakes)
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
   ];
 
-  # Pin le registry + nixPath sur le flake lock → nix shell nixpkgs#foo instantané et cohérent
+  # Épinglage des canaux Nixpkgs pour la cohérence des commandes nix-shell système
   nix.registry.nixpkgs.flake = inputs.nixpkgs;
   nix.nixPath = ["nixpkgs=${inputs.nixpkgs}"];
 
-  # Use latest kernel via Chaotic Nyx definition below
-  # boot.kernelPackages = pkgs.linuxPackages_latest; # Removed to favor CachyOS kernel
+  # Configuration du nom d'hôte de la machine
+  networking.hostName = hostname;
 
-  networking.hostName = hostname; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Enable networking
+  # Configuration du réseau avec NetworkManager
   networking.networkmanager.enable = true;
 
-  # Set your time zone.
+  # Fuseau horaire du système
   time.timeZone = "Europe/Vienna";
 
-  # Select internationalisation properties.
+  # Paramètres de langue et localisation (Autriche/Allemand par défaut)
   i18n.defaultLocale = "en_US.UTF-8";
 
   i18n.extraLocaleSettings = {
@@ -78,19 +72,19 @@
     LC_TIME = "de_AT.UTF-8";
   };
 
-  # Enable the X11 windowing system.
+  # Support du protocole d'affichage X11
   services.xserver.enable = true;
 
-  # Configure keymap in X11
+  # Configuration de la disposition du clavier X11
   services.xserver.xkb = {
     layout = "us";
     variant = "";
   };
 
-  # Enable CUPS to print documents.
+  # Serveur d'impression CUPS
   services.printing.enable = true;
 
-  # Enable sound with pipewire.
+  # Configuration du son avec Pipewire (PulseAudio désactivé)
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -98,20 +92,12 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
   };
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
-
-  #default to fish !
+  # Activation du Shell Fish comme shell par défaut pour les utilisateurs
   programs.fish.enable = true;
-  # Indispensable pour les binaires
+
+  # Prise en charge de nix-ld pour exécuter des exécutables Linux pré-compilés
   programs.nix-ld = {
     enable = true;
     libraries = [
@@ -123,7 +109,6 @@
       pkgs.openssl
       pkgs.curl
       pkgs.expat
-      # Bibliothèques X11 explicites pour éviter les warnings de dépréciation
       pkgs.libx11
       pkgs.libxscrnsaver
       pkgs.libxcomposite
@@ -141,13 +126,13 @@
     ];
   };
 
-  # Empêche les jeux de "s'endormir" ou de tomber en FPS quand le workspace change
+  # Variables d'environnement système pour optimiser les performances graphiques (Mesa)
   environment.sessionVariables = {
     vk_xwayland_wait_ready = "false";
     MESA_SHADER_CACHE_MAX_SIZE = "16G";
   };
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  # Définition du compte utilisateur principal
   users.users.${username} = {
     isNormalUser = true;
     description = username;
@@ -165,11 +150,10 @@
     ];
   };
 
-  # Enable I2C support for DDC/CI protocol (brightness control for external monitors)
+  # Support du protocole DDC/CI pour contrôler la luminosité des écrans externes
   hardware.i2c.enable = true;
 
-  # XDG Desktop Portal is handled by Sodiboo's Niri module
-  # We specify the default configuration to use gnome and gtk portals for Niri session
+  # Configuration des portails graphiques XDG (portails GNOME/GTK pour Niri)
   xdg.portal = {
     enable = true;
     config.niri = {
@@ -185,22 +169,19 @@
     ];
   };
 
-  # Polkit for niri using the gnome one.
+  # Polkit pour la gestion des permissions graphiques (GNOME agent)
   security.polkit.enable = true;
 
-  # Allow unfree packages
+  # Autorisation des paquets non-libres (unfree)
   nixpkgs.config.allowUnfree = true;
 
-  # Allow insecure packages
+  # Autorisation temporaire de paquets marqués non-sécurisés
   nixpkgs.config.permittedInsecurePackages = [
     "pnpm-10.29.2"
   ];
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
+  # Liste des paquets système indispensables
   environment.systemPackages = with pkgs; [
-    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    #  wget
     xwayland-satellite-unstable
     ffmpeg
     mpvpaper
@@ -208,15 +189,14 @@
     libva-utils
     nvtopPackages.amd
     via
-    nvd # Differenz between builds (shows package changes)
+    nvd # Outil de diff des builds de système NixOS
     inputs.omnigraph.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 
-  # VIA / QMK Udev rules
+  # Règles udev pour le clavier VIA / QMK
   services.udev.packages = [pkgs.via];
 
-  # --- BTRFS MAINTENANCE ---
-  # Periodic scrub to check for data corruption (silent errors)
+  # Scrub périodique de maintenance automatisée des disques Btrfs
   services.btrfs.autoScrub = {
     enable = true;
     interval = "weekly";
@@ -228,31 +208,28 @@
     ];
   };
 
-  # --- DATA DIRECTORIES PERMISSIONS ---
-  # Ensures that david owns the mount points on the second disk at each boot
+  # Configuration des permissions utilisateur pour les points de montage secondaires
   systemd.tmpfiles.rules = [
     "d /mnt/games 0755 ${username} users -"
     "d /mnt/storage 0755 ${username} users -"
   ];
 
-  # --- OPTIMIZATIONS ---
-
-  # 1. Memory Management (ZRAM)
+  # Mémoire virtuelle ZRAM (Swap compressé en RAM)
   zramSwap.enable = true;
 
-  # 2. SSD Maintenance (Trim)
+  # Service de Trim périodique pour prolonger la durée de vie des disques SSD
   services.fstrim.enable = true;
 
-  # 3. Store Optimization (Deduplication) — async, non-bloquant pendant les builds
+  # Déduplication et optimisation automatique asynchrone du Nix Store
   nix.optimise.automatic = true;
 
-  # 4. Kernel Scheduler (SCX - CachyOS-like)
+  # Planificateur CachyOS (sched-ext) avec l'ordonnanceur LAVD (focus graphique)
   services.scx = {
     enable = true;
     scheduler = "scx_lavd"; # Retour vers LAVD, plus stable pour les transitions de focus
   };
 
-  # 7. Advanced: CachyOS Latest Kernel via xddxdd
+  # Configuration des caches binaires tiers (Cachix et dépôts de compilation)
   nix.settings = {
     fallback = true;
     warn-dirty = false;
@@ -270,9 +247,10 @@
     ];
   };
 
+  # Noyau Linux optimisé CachyOS (sched-ext BORE)
   boot.kernelPackages = pkgs.linuxPackagesFor inputs.nix-cachyos.packages.x86_64-linux.linux-cachyos-bore;
 
-  # Helium policies (écrites dans /etc/chromium/policies/managed/ pour fiabilité)
+  # Politiques Chromium/Helium pour autoriser les cookies MS et forcer l'installation de Teams
   environment.etc."chromium/policies/managed/helium.json".text = builtins.toJSON {
     BrowserSignin = 0;
     PasswordManagerEnabled = false;
@@ -301,36 +279,10 @@
     ];
   };
 
-  # 8. Advanced: Build in RAM (tmpfs) - 62GB RAM required
+  # Compilation en RAM (tmpfs) pour accélérer le temps de compilation (75% RAM max)
   boot.tmp.useTmpfs = true;
-  boot.tmp.tmpfsSize = "75%"; # Use up to 75% of RAM for build
+  boot.tmp.tmpfsSize = "75%";
 
-  # (Settings for Cubic, amgdpu gttsize, and ntsync moved to modules/performance-tuning.nix)
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
+  # Version initiale de l'état système NixOS (ne pas modifier)
   system.stateVersion = "25.11"; # Did you read the comment?
 }
