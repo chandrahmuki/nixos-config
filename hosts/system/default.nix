@@ -289,6 +289,15 @@
       "[*.]live.com"
       "[*.]teams.microsoft.com"
       "[*.]skype.com"
+      "[*.]cloud.microsoft"
+      "[*.]teams.cloud.microsoft"
+    ];
+    WebAppInstallForceList = [
+      {
+        url = "https://teams.cloud.microsoft/";
+        default_launch_container = "window";
+        create_desktop_shortcut = true;
+      }
     ];
   };
 

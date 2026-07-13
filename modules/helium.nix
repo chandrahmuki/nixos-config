@@ -26,5 +26,16 @@
       "x-scheme-handler/http" = ["helium.desktop"];
       "x-scheme-handler/https" = ["helium.desktop"];
     };
+
+    xdg.desktopEntries.teams = {
+      name = "Microsoft Teams";
+      exec = "helium --app=https://teams.cloud.microsoft/";
+      icon = "chrome-ompifgpmddkgmclendfeacglnodjjndh-Default";
+      terminal = false;
+      categories = ["Network" "InstantMessaging" "Chat"];
+      settings = {
+        StartupWMClass = "crx_ompifgpmddkgmclendfeacglnodjjndh";
+      };
+    };
   };
 }

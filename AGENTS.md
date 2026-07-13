@@ -160,6 +160,7 @@ Golden path for a non-trivial change:
 - Every 15 messages: remind user to run `/compact` now to save tokens
 - **Never touch omnigraph source code** — it's maintained by another agent. Only use the CLI commands.
 - Never run `nos` yourself; always ask the user to run it instead.
+- Toujours tester et valider le fonctionnement réel des configurations en arrière-plan (statut de service, logs, existence des fichiers, processus) avant de confirmer à l'utilisateur que tout est fonctionnel.
 
 ---
 
