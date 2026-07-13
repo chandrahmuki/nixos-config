@@ -127,7 +127,7 @@
 
       # --- RACCOURCIS CLAVIER ---
       binds = with config.lib.niri.actions; {
-        "Mod+D".action = spawn "fuzzel";
+        "Mod+D".action = spawn "walker";
         "Mod+M".action = spawn ["music-menu"];
         "Mod+Y".action = spawn ["yt-search"];
         "Mod+Shift+Y".action = spawn [

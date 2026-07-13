@@ -9,6 +9,7 @@
     protonup-qt
     lutris
     lact
+    eden
   ];
 
   programs.steam = {

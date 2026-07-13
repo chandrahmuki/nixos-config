@@ -44,6 +44,7 @@
   }: {
     dconf.settings = {
       "org/gnome/shell" = {
+        disable-user-extensions = false;
         disable-extension-version-validation = true;
         enabled-extensions = with pkgs.gnomeExtensions; [
           appindicator.extensionUuid
@@ -60,10 +61,41 @@
       "org/gnome/mutter" = {
         experimental-features = ["scale-monitor-framebuffer" "xwayland-native-scaling"];
         workspaces-only-on-primary = false;
-        dynamic-workspaces = false;
+        dynamic-workspaces = true;
       };
       "org/gnome/desktop/wm/preferences" = {
         num-workspaces = 4;
+      };
+      "org/gnome/desktop/wm/keybindings" = {
+        show-desktop = []; # Libère Super+D qui masque le bureau par défaut
+      };
+      "org/gnome/settings-daemon/plugins/media-keys" = {
+        custom-keybindings = [
+          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
+          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
+          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/"
+          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/"
+        ];
+      };
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
+        binding = "<Super>d";
+        command = "walker";
+        name = "Walker Launcher";
+      };
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
+        binding = "<Super>t";
+        command = "foot";
+        name = "Terminal";
+      };
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2" = {
+        binding = "<Super>b";
+        command = "nautilus";
+        name = "File Manager";
+      };
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3" = {
+        binding = "<Super>h";
+        command = "helium";
+        name = "Helium Browser";
       };
     };
   };

@@ -39,6 +39,7 @@
       filezilla
       gh
       lazygit
+      remmina
     ];
 
     programs.bat = {
