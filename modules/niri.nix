@@ -36,9 +36,10 @@
 
       prefer-no-csd = true;
 
+      # Lancement des processus d'arrière-plan au démarrage de la session graphique
       spawn-at-startup = [
-        {command = ["noctalia-shell"];}
-        {command = ["xwayland-satellite"];}
+        {command = ["noctalia-shell"];} # Barre d'état et composants de l'environnement graphique
+        {command = ["xwayland-satellite"];} # Serveur XWayland indépendant pour exécuter les applications X11 sous Niri
       ];
 
       debug = {
@@ -46,6 +47,7 @@
         deactivate-unfocused-windows = true;
       };
 
+      # Variable d'environnement pour forcer l'usage natif de Wayland dans les applications Electron et Chromium
       environment."NIXOS_OZONE_WL" = "1";
 
       layout.default-column-width = {
@@ -100,7 +102,9 @@
         focus-ring.inactive.color = "rgba(100,100,100,0.3)";
       };
 
+      # --- RÈGLES DE FENÊTRES (WINDOW RULES) ---
       window-rules = [
+        # Forcer les jeux et Steam en plein écran sur l'écran principal DP-2 (évite les bugs de curseur)
         {
           matches = [
             {app-id = "^steam.*$";}
@@ -110,10 +114,12 @@
           open-on-output = "DP-2";
           open-fullscreen = true;
         }
+        # S'assurer que Zen Browser prend le focus immédiatement à l'ouverture
         {
           matches = [{app-id = "zen-browser";}];
           open-focused = true;
         }
+        # Appliquer des bords arrondis esthétiques de 12px sur toutes les fenêtres
         {
           geometry-corner-radius = {
             bottom-left = 12.0;

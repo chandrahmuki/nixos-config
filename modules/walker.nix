@@ -29,12 +29,14 @@
   # Service de fond pour démarrer Walker en mode démon et le rendre instantané
   systemd.user.services.walker = {
     description = "Walker Application Runner Daemon";
+    # Chemins d'accès indispensables pour trouver l'exécutable elephant et les applications système
     path = [
       "/run/current-system/sw"
       "/etc/profiles/per-user/${username}"
       "/home/${username}/.nix-profile"
     ];
     serviceConfig = {
+      # Démarrage de Walker en mode démon (GApplication-service) pour éviter les délais au chargement
       ExecStart = "${pkgs.walker}/bin/walker --gapplication-service";
       Restart = "on-failure";
     };

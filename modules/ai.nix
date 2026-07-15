@@ -10,6 +10,22 @@
     system = pkgs.stdenv.hostPlatform.system;
     config = pkgs.config;
   };
+
+  openai-codex-cli = pkgs.stdenvNoCC.mkDerivation {
+    pname = "openai-codex-cli";
+    version = "0.144.4";
+
+    src = pkgs.fetchurl {
+      url = "https://github.com/openai/codex/releases/download/rust-v0.144.4/codex-x86_64-unknown-linux-musl.tar.gz";
+      sha256 = "1l8mfn0fr3zh459bkqhasc9c5shk2965k81s7gsc9s49knz8bj9p";
+    };
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      install -m755 -D codex-x86_64-unknown-linux-musl $out/bin/codex
+    '';
+  };
 in {
   home-manager.users.${username} = {
     config,
@@ -21,6 +37,7 @@ in {
       pkgs.opencode-claude-auth
       pkgs.antigravity-cli
       pkgs-master.claude-code
+      openai-codex-cli
       inputs.muggy.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
 
