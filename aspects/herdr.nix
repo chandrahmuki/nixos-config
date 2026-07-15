@@ -1,20 +1,12 @@
 {
-  config,
-  lib,
-  pkgs,
-  username,
+  den,
   inputs,
   ...
 }: {
-  home-manager.users.${username} = {
-    config,
-    lib,
-    ...
-  }: {
+  den.aspects.herdr.homeManager = {pkgs, ...}: {
     home.packages = [
       inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
-
     xdg.configFile."herdr/config.toml".text = ''
       onboarding = false
 
@@ -28,4 +20,6 @@
       pane_history = true
     '';
   };
+
+  den.aspects.david.includes = [den.aspects.herdr];
 }

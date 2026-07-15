@@ -14,7 +14,6 @@
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
-    ../../modules
   ];
 
   # Extension de sauvegarde automatique des fichiers conflictuels avec Home Manager

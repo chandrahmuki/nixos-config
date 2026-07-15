@@ -8,32 +8,40 @@ host=muggy-nixos  user=david  arch=x86_64-linux
 ## Entry Points
 ```
 flake.nix                     # Root + inputs
-home.nix                      # HM entry → modules/default.nix
-hosts/system/default.nix      # Boot, AMD GPU, greetd+niri
+home.nix                      # HM user entry
+aspects/den.nix               # Den schema, host, user
+aspects/compatibility.nix     # Remaining legacy modules routed through Den
+hosts/system/default.nix      # Boot, AMD GPU, base system
 hosts/system/hardware-configuration.nix  # AUTO-GEN, never edit
 overlays.nix                  # niri, opencode, deno, openldap
-modules/default.nix           # Auto-imports all modules/*.nix
 lib/colors.nix                # Tokyonight palette
 ```
 
 ## Inputs
 ```
 nixpkgs(unstable) nixpkgs-master home-manager niri noctalia
-nix-cachyos walker elephant sops-nix opencode zen-browser
+nix-cachyos sops-nix opencode zen-browser den import-tree
 ```
 
-## Modules [tag]
+## Native Den Aspects [tag]
 ```
-ai[hm] backup[nixos] bluetooth[nixos] btop[hm] direnv[hm]
-discord[hm] font[nixos] gaming[nixos] git[hm] media[hm]
-microfetch[hm] nautilus[hm] neovim[hm] nh[both] niri[both]
-noctalia[hm] notifications[hm] obsidian[hm] parsec[hm] pdf[hm]
-performance-tuning[nixos] secrets[nixos] tealdeer[hm] terminal[hm]
-theme[hm] utils[hm] vscode[hm] walker[hm] xdg[hm] yazi[hm]
-zellij[hm] zen-browser[both]
+bluetooth[nixos] btop[hm] direnv[hm] discord[hm] font[nixos]
+gaming[nixos] git[hm] greetd[nixos] helium[hm] herdr[hm]
+microfetch[hm] nautilus[nixos] nh[both] noctalia[hm]
+notifications[hm] obsidian[hm] oculante[hm] openvpn[nixos]
+parsec[hm] pdf[hm] tealdeer[hm] xdg[hm] yazi[hm]
+zen-browser[hm]
+```
+
+## Compatibility Modules via Den
+```
+ai backup cliamp fuzzel gnome helix irc media neovim niri
+performance-tuning secrets stylix terminal theme utils vscode
+walker zellij
 ```
 
 ## Design
-- HM wired as NixOS module | specialArgs: `{inputs,username,hostname}`
+- Den host/user aspects with incremental compatibility imports
+- Legacy modules retain `{inputs,username,hostname}` specialArgs
 - Colors centralized `lib/colors.nix`
 - Build:`nos` | Rollback:`nos --rollback`

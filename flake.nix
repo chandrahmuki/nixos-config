@@ -6,7 +6,7 @@
     # Dépôts Nixpkgs principaux et de développement
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-master.url = "github:nixos/nixpkgs/master";
-    
+
     # Version figée de Nixpkgs pour Mesa 26.1.2 afin d'éviter les crashs multi-écrans Parsec
     nixpkgs-mesa.url = "github:nixos/nixpkgs/567a49d1913ce81ac6e9582e3553dd90a955875f";
 
@@ -27,6 +27,9 @@
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
+
+    import-tree.url = "github:denful/import-tree";
+    den.url = "github:denful/den";
 
     # Composants du shell utilisateur Noctalia
     noctalia = {
@@ -88,7 +91,17 @@
   };
 
   # Définition des sorties (Outputs) du flake
-  outputs = inputs:
+  outputs = inputs: let
+    denConfig =
+      (inputs.nixpkgs.lib.evalModules {
+        modules = [
+          (inputs.import-tree ./aspects)
+          inputs.den.flakeOutputs.flake
+        ];
+        specialArgs.inputs = inputs;
+      }).config;
+    denHost = denConfig.den.hosts.x86_64-linux.muggy-nixos;
+  in
     inputs.flake-parts.lib.mkFlake {inherit inputs;} {
       systems = ["x86_64-linux"];
 
@@ -139,6 +152,7 @@
           modules = [
             ./hosts/system/default.nix
             ./overlays.nix
+            denHost.mainModule
 
             inputs.stylix.nixosModules.stylix
             inputs.home-manager.nixosModules.home-manager

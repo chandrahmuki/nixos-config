@@ -1,18 +1,6 @@
-{
-  config,
-  lib,
-  pkgs,
-  username,
-  ...
-}: {
-  home-manager.users.${username} = {
-    lib,
-    pkgs,
-    ...
-  }: {
-    home.sessionVariables = {
-      ELECTRON_ENABLE_WAYLAND = "0";
-    };
+{den, ...}: {
+  den.aspects.parsec.homeManager = {pkgs, ...}: {
+    home.sessionVariables.ELECTRON_ENABLE_WAYLAND = "0";
     home.packages = [
       (pkgs.symlinkJoin {
         name = "parsec-wrapped";
@@ -26,4 +14,6 @@
       })
     ];
   };
+
+  den.aspects.david.includes = [den.aspects.parsec];
 }

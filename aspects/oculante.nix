@@ -1,17 +1,6 @@
-{
-  config,
-  lib,
-  pkgs,
-  username,
-  ...
-}: {
-  home-manager.users.${username} = {
-    config,
-    lib,
-    ...
-  }: {
+{den, ...}: {
+  den.aspects.oculante.homeManager = {pkgs, ...}: {
     home.packages = [pkgs.oculante];
-
     xdg.mimeApps.defaultApplications = {
       "image/png" = ["oculante.desktop"];
       "image/jpeg" = ["oculante.desktop"];
@@ -22,4 +11,6 @@
       "image/svg+xml" = ["oculante.desktop"];
     };
   };
+
+  den.aspects.david.includes = [den.aspects.oculante];
 }
