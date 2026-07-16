@@ -1,55 +1,55 @@
-{
-  config,
-  lib,
-  pkgs,
-  username,
-  ...
-}:
+{den, ...}: {
+  den.aspects.walker.nixos = {
+    config,
+    lib,
+    pkgs,
+    username,
+    ...
+  }: {
+    # Activer le service système pour le backend d'applications Elephant
+    services.elephant.enable = true;
 
-{
-  # Activer le service système pour le backend d'applications Elephant
-  services.elephant.enable = true;
-
-  # Configurer le service systemd utilisateur d'Elephant
-  systemd.user.services.elephant = {
-    path = [
-      pkgs.bash
-      pkgs.coreutils
-      pkgs.xdg-utils
-      "/run/current-system/sw"
-      "/etc/profiles/per-user/${username}"
-      "/home/${username}/.nix-profile"
-    ];
-    # Retarder le démarrage pour qu'il attende que la session graphique soit active
-    # et que les variables (WAYLAND_DISPLAY, DISPLAY) soient disponibles.
-    wantedBy = lib.mkForce [ "graphical-session.target" ];
-    partOf = [ "graphical-session.target" ];
-  };
-
-  # Service de fond pour démarrer Walker en mode démon et le rendre instantané
-  systemd.user.services.walker = {
-    description = "Walker Application Runner Daemon";
-    # Chemins d'accès indispensables pour trouver l'exécutable elephant et les applications système
-    path = [
-      "/run/current-system/sw"
-      "/etc/profiles/per-user/${username}"
-      "/home/${username}/.nix-profile"
-    ];
-    serviceConfig = {
-      # Démarrage de Walker en mode démon (GApplication-service) pour éviter les délais au chargement
-      ExecStart = "${pkgs.walker}/bin/walker --gapplication-service";
-      Restart = "on-failure";
+    # Configurer le service systemd utilisateur d'Elephant
+    systemd.user.services.elephant = {
+      path = [
+        pkgs.bash
+        pkgs.coreutils
+        pkgs.xdg-utils
+        "/run/current-system/sw"
+        "/etc/profiles/per-user/${username}"
+        "/home/${username}/.nix-profile"
+      ];
+      # Retarder le démarrage pour qu'il attende que la session graphique soit active
+      # et que les variables (WAYLAND_DISPLAY, DISPLAY) soient disponibles.
+      wantedBy = lib.mkForce ["graphical-session.target"];
+      partOf = ["graphical-session.target"];
     };
-    wantedBy = [ "graphical-session.target" ];
-    partOf = [ "graphical-session.target" ];
-  };
 
-  home-manager.users.${username} =
-    { config, lib, ... }:
-    let
+    # Service de fond pour démarrer Walker en mode démon et le rendre instantané
+    systemd.user.services.walker = {
+      description = "Walker Application Runner Daemon";
+      # Chemins d'accès indispensables pour trouver l'exécutable elephant et les applications système
+      path = [
+        "/run/current-system/sw"
+        "/etc/profiles/per-user/${username}"
+        "/home/${username}/.nix-profile"
+      ];
+      serviceConfig = {
+        # Démarrage de Walker en mode démon (GApplication-service) pour éviter les délais au chargement
+        ExecStart = "${pkgs.walker}/bin/walker --gapplication-service";
+        Restart = "on-failure";
+      };
+      wantedBy = ["graphical-session.target"];
+      partOf = ["graphical-session.target"];
+    };
+
+    home-manager.users.${username} = {
+      config,
+      lib,
+      ...
+    }: let
       stylixColors = config.lib.stylix.colors;
-    in
-    {
+    in {
       home.packages = [
         pkgs.walker
       ];
@@ -254,4 +254,7 @@
         }
       '';
     };
+  };
+
+  den.aspects.muggy-nixos.includes = [den.aspects.walker];
 }

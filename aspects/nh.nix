@@ -12,7 +12,7 @@
         extraArgs = "--keep-since 7d --keep 5";
       };
     };
-    homeManager.programs.fish.functions.nos = "nh os switch /home/${user.userName}/nixos-config --hostname ${host.hostName} --ask -L --diff always --update-input muggy";
+    homeManager.programs.fish.functions.nos = "nh os switch /home/${user.userName}/nixos-config --hostname ${host.hostName} --ask -L --diff always";
   };
 
   den.aspects.david.includes = [den.aspects.nh];

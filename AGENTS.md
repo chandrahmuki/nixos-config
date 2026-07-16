@@ -156,6 +156,7 @@ Golden path for a non-trivial change:
 ## Rules
 
 - Always ask before delete/modify/commit
+- For structural or high-risk work (migrations, multi-file refactors, major upgrades), use a dedicated Git worktree and validate there before applying changes to the main worktree.
 - `git add` new files immediately (flake needs it)
 - After `.nix` changes: run `nix eval` to verify
 - Secrets: `modules/secrets.nix` uses SOPS-Nix — never commit plaintext secrets

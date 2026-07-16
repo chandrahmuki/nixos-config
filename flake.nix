@@ -150,7 +150,7 @@
           };
           # Liste des modules à charger
           modules = [
-            ./hosts/system/default.nix
+            ./hosts/system/hardware-configuration.nix
             ./overlays.nix
             denHost.mainModule
 
