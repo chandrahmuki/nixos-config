@@ -31,5 +31,33 @@
     };
   };
 
+  den.aspects.muggy-nixos.nixos.environment.etc."chromium/policies/managed/helium.json".text = builtins.toJSON {
+    BrowserSignin = 0;
+    PasswordManagerEnabled = false;
+    CredentialsEnableService = false;
+    SyncDisabled = true;
+    DefaultBrowserSettingEnabled = false;
+    MetricsReportingEnabled = false;
+    BackgroundModeEnabled = false;
+    ChromeCleanupEnabled = false;
+    ChromeCleanupReportingEnabled = false;
+    CookiesAllowedForUrls = [
+      "[*.]microsoft.com"
+      "[*.]microsoftonline.com"
+      "[*.]live.com"
+      "[*.]teams.microsoft.com"
+      "[*.]skype.com"
+      "[*.]cloud.microsoft"
+      "[*.]teams.cloud.microsoft"
+    ];
+    WebAppInstallForceList = [
+      {
+        url = "https://teams.cloud.microsoft/";
+        default_launch_container = "window";
+        create_desktop_shortcut = true;
+      }
+    ];
+  };
+
   den.aspects.david.includes = [den.aspects.helium];
 }

@@ -1,6 +1,5 @@
 {den, ...}: {
   den.aspects.muggy-nixos.nixos = {
-    config,
     pkgs,
     inputs,
     username,
@@ -74,7 +73,6 @@
           "flakes"
         ];
         fallback = true;
-        warn-dirty = false;
         substituters = [
           "https://nix-community.cachix.org"
           "https://attic.xuyh0120.win/lantian"
@@ -161,33 +159,6 @@
         nvd
         inputs.omnigraph.packages.${pkgs.stdenv.hostPlatform.system}.default
       ];
-      etc."chromium/policies/managed/helium.json".text = builtins.toJSON {
-        BrowserSignin = 0;
-        PasswordManagerEnabled = false;
-        CredentialsEnableService = false;
-        SyncDisabled = true;
-        DefaultBrowserSettingEnabled = false;
-        MetricsReportingEnabled = false;
-        BackgroundModeEnabled = false;
-        ChromeCleanupEnabled = false;
-        ChromeCleanupReportingEnabled = false;
-        CookiesAllowedForUrls = [
-          "[*.]microsoft.com"
-          "[*.]microsoftonline.com"
-          "[*.]live.com"
-          "[*.]teams.microsoft.com"
-          "[*.]skype.com"
-          "[*.]cloud.microsoft"
-          "[*.]teams.cloud.microsoft"
-        ];
-        WebAppInstallForceList = [
-          {
-            url = "https://teams.cloud.microsoft/";
-            default_launch_container = "window";
-            create_desktop_shortcut = true;
-          }
-        ];
-      };
     };
 
     users.users.${username} = {
