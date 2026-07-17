@@ -64,9 +64,6 @@
           workspaces-only-on-primary = false;
           dynamic-workspaces = true;
         };
-        "org/gnome/desktop/wm/preferences" = {
-          num-workspaces = 4;
-        };
         "org/gnome/desktop/wm/keybindings" = {
           show-desktop = []; # Libère Super+D qui masque le bureau par défaut
         };
