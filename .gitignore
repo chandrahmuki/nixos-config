@@ -1,0 +1,42 @@
+# --- SECRETS & SENSITIVE ---
+.env
+.envrc
+secrets/secrets.yaml
+modules/mcp_config.json
+
+# --- LOCAL METADATA ---
+.worktrees/
+.gemini/
+.agent/
+.planning/
+.direnv/
+repomix-*.md
+*.tmp
+.tmp/
+memory/
+AGENTS.md
+CLAUDE.md
+.antigravitycli/
+.sops.yaml
+secrets/secrets.yaml
+
+# --- NIX & BUILD ---
+result
+result-*
+.ruff_cache/
+
+# --- APP SPECIFIC ---
+*.png
+*.jpg
+*.jpeg
+*.webp
+!wallpapers/*.png
+!wallpapers/*.jpg
+!wallpapers/*.jpeg
+!assets/*.png
+scripts/muggy/muggy
+/muggy
+generated/
+GEMINI.md
+.opencode/
+.omnigraph/
