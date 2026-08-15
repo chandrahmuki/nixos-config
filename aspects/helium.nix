@@ -41,7 +41,7 @@
       [Desktop Entry]
       Type=Application
       Name=Microsoft Teams
-      Exec=helium --class=chrome-teams.cloud.microsoft_.Default --app=https://teams.cloud.microsoft/
+      Exec=helium --user-data-dir=${config.xdg.dataHome}/helium-teams --class=chrome-teams.cloud.microsoft_.Default --app=https://teams.cloud.microsoft/
       Icon=${teamsIcon}
       Terminal=false
       Categories=Network;InstantMessaging;Chat;
