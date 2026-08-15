@@ -37,14 +37,16 @@
       "x-scheme-handler/http" = ["helium.desktop"];
       "x-scheme-handler/https" = ["helium.desktop"];
     };
-    xdg.desktopEntries."chrome-teams.cloud.microsoft__-Default" = {
-      name = "Microsoft Teams";
-      exec = "helium --class=chrome-teams.cloud.microsoft_.Default --app=https://teams.cloud.microsoft/";
-      icon = "${teamsIcon}";
-      terminal = false;
-      categories = ["Network" "InstantMessaging" "Chat"];
-      settings.StartupWMClass = "chrome-teams.cloud.microsoft__-Default";
-    };
+    xdg.dataFile."applications/chrome-teams.cloud.microsoft__-Default.desktop".text = ''
+      [Desktop Entry]
+      Type=Application
+      Name=Microsoft Teams
+      Exec=helium --class=chrome-teams.cloud.microsoft_.Default --app=https://teams.cloud.microsoft/
+      Icon=${teamsIcon}
+      Terminal=false
+      Categories=Network;InstantMessaging;Chat;
+      StartupWMClass=chrome-teams.cloud.microsoft__-Default
+    '';
     xdg.dataFile."icons/hicolor/256x256/apps/chrome-teams.cloud.microsoft_.Default.png".source = teamsIcon;
     home.activation.removeLegacyTeamsLauncher = lib.hm.dag.entryAfter ["writeBoundary"] ''
       rm -f ${config.xdg.dataHome}/applications/teams.desktop
@@ -70,13 +72,6 @@
       "[*.]skype.com"
       "[*.]cloud.microsoft"
       "[*.]teams.cloud.microsoft"
-    ];
-    WebAppInstallForceList = [
-      {
-        url = "https://teams.cloud.microsoft/";
-        default_launch_container = "window";
-        create_desktop_shortcut = true;
-      }
     ];
   };
 
