@@ -51,6 +51,7 @@
     home.activation.removeLegacyTeamsLauncher = lib.hm.dag.entryAfter ["writeBoundary"] ''
       rm -f ${config.xdg.dataHome}/applications/teams.desktop
       rm -f ${config.xdg.dataHome}/applications/chrome-ompifgpmddkgmclendfeacglnodjjndh-Default.desktop
+      rm -f ${config.xdg.dataHome}/applications/chrome-teams.cloud.microsoft_.Default.desktop
     '';
   };
 
