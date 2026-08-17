@@ -1,54 +1,111 @@
 # NixOS Configuration
 
-NixOS flake for a single x86_64 GNOME desktop, built with Home Manager, Den aspects and optional SOPS-Nix secrets.
+NixOS flake for a modern, high-performance GNOME desktop, built with Home Manager, [Den](https://github.com/denful/den) aspects, Stylix theming, and SOPS-Nix secret management.
 
 ![GNOME desktop](assets/gnome-desktop.png)
 
-It is a reusable personal configuration, not a hardware image: adapt `settings.nix` and generate a hardware module before building.
+---
 
-## Install
+## 🌟 Highlights
+
+- **Modular Architecture**: Composable system & user aspects managed with `den` and `import-tree`.
+- **Dual-Profile Structure**:
+  - **`muggy-nixos`**: Primary personalized desktop configuration (Gaming, AI tooling, Media, SOPS).
+  - **`generic` / `default`**: Portable, out-of-the-box profile for any machine without hardware lock-in.
+- **Developer & AI Tooling**: Native integration for Antigravity CLI, OpenCode, Claude Desktop / Code, Codex, Herdr, and OmniGraph.
+- **Fast Deployments**: Optimized deployment workflow using `nh` (`nos` command) with visual diffs.
+- **Security & Privacy**: Secrets encrypted via Age/SOPS-Nix; AI workspace memories and sessions kept 100% local via `.gitignore`.
+
+---
+
+## 🚀 Quickstart & Installation
+
+### Option 1: Install the Generic Template (New Machine / Other Users)
 
 ```sh
-git clone https://github.com/chandrahmuki/nixos-config.git
-cd nixos-config
+# 1. Clone the repository
+git clone https://github.com/chandrahmuki/nixos-config.git ~/nixos-config
+cd ~/nixos-config
+
+# 2. Generate your machine's hardware configuration
 sudo nixos-generate-config --show-hardware-config > hosts/system/hardware-configuration.nix
-git update-index --skip-worktree hosts/system/hardware-configuration.nix
+
+# 3. Check flake evaluation
 nix flake check --no-build
-sudo nixos-rebuild build --flake .#<hostname>
+
+# 4. Build and activate the generic configuration
+sudo nixos-rebuild switch --flake .#generic
 ```
 
-Replace `<hostname>` with the `hostname` set in `settings.nix`. Review the build, then activate it with your normal NixOS deployment command.
+### Option 2: Daily Workflow (`muggy-nixos`)
 
-## Customize `settings.nix`
+Once installed, managing your system is fast and simple:
 
-All identity and locale values live in one place:
+```sh
+# Apply configuration changes
+nos
 
-- `username`, `hostname` and `system`
-- `configDirectory`, used by Helix and Neovim's Nix language server
-- `timeZone` and `locale`
-- profile aspect lists
+# Update flake dependencies
+nfu
+```
 
-The `desktop` and `user` lists are the GNOME base. `personalDesktop` and `personalUser` are empty by default; add aspect names for optional applications such as AI tools, browsers, gaming, media, Teams or VPN support.
+---
 
-`machineDesktop` is empty by default. Add `machine-storage` to create matching XDG links and schedule Btrfs scrubbing for configured Btrfs filesystems. Add `backup` only for this repository's `/mnt/btrfs-system` to `/mnt/backup` btrbk layout.
+## ⚙️ Customization (`settings.nix`)
 
-## Secrets and hardware
+Identity, locale, timezone, and active aspect profiles are defined centrally:
 
-Keep SOPS material outside the repository, in `~/.config/nixos-secrets/`, if you use it. The committed hardware module is only a generic template; replace it with the output from `nixos-generate-config` and keep it marked `skip-worktree` so real disk identifiers cannot be committed accidentally.
+```nix
+{
+  username = "user";
+  hostname = "nixos";
+  system = "x86_64-linux";
+  configDirectory = "/home/user/nixos-config";
+  timeZone = "UTC";
+  locale = "en_US.UTF-8";
 
-## Layout
+  profiles = {
+    desktop = [ "gnome" "neovim" "terminal" "theme" "utils" ... ];
+    user = [ "git" "xdg" "yazi" ... ];
+    personalDesktop = [ "ai" "gaming" "media" ... ];
+    personalUser = [ "discord" "herdr" "zen-browser" ... ];
+  };
+}
+```
+
+---
+
+## 📁 Repository Layout
 
 ```text
-settings.nix              Identity, locale and selected profiles
-flake.nix                 Flake inputs and host definition
-hosts/system/             Generic hardware template; replace before building
-aspects/                  NixOS and Home Manager aspects
-overlays.nix              Package overlays
-wallpapers/               Local visual assets
+nixos-config/
+├── aspects/                  # Modular NixOS and Home Manager aspects
+│   ├── ai.nix                # AI tools (Antigravity, Claude, OpenCode, OmniGraph)
+│   ├── gnome.nix             # Desktop environment and extensions
+│   ├── herdr.nix             # Herdr workspace manager
+│   ├── media.nix             # MPV, YT-DLP, Cliamp & playlists
+│   ├── nh.nix                # Nix Helper (nos command)
+│   ├── sops.nix              # SOPS-Nix encrypted secret management
+│   ├── terminal.nix          # Fish, Foot, Starship, Zoxide
+│   └── ...
+├── assets/                   # Wallpapers, themes, and radio configurations
+├── hosts/
+│   ├── muggy-nixos/          # Personal workstation hardware & settings
+│   └── system/               # Generic hardware template
+├── secrets/                  # Encrypted SOPS secrets (secrets.yaml)
+├── flake.nix                 # Flake inputs, outputs, and system definitions
+├── home.nix                  # Home Manager base
+└── settings.nix              # Base template settings
 ```
 
-Mesa is pinned in `flake.nix` for a known multi-monitor Parsec/XWayland issue. Review this pin before changing graphics packages.
+---
 
-## License
+## 🔒 Secrets Management
+
+Secrets are encrypted using [sops-nix](https://github.com/Mic92/sops-nix) with Age keys (`~/.ssh/id_ed25519`). Plaintext secrets never touch Git; only the encrypted `secrets.yaml` is tracked.
+
+---
+
+## 📄 License
 
 [MIT License](LICENSE)
