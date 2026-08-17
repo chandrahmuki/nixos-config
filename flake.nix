@@ -64,6 +64,21 @@
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    herdr = {
+      url = "github:ogulcancelik/herdr";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    muggy = {
+      url = "git+ssh://git@github.com/chandrahmuki/muggy.git?ref=main";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    omnigraph = {
+      url = "github:chandrahmuki/OmniGraph";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   # Définition des sorties (Outputs) du flake
@@ -129,9 +144,24 @@
       # Configuration système globale
       flake = {
         lib.mkNixosConfiguration = mkNixosConfiguration;
-        nixosConfigurations.${publicSettings.hostname} = mkNixosConfiguration {
-          settings = publicSettings;
-          hardwareModule = ./hosts/system/hardware-configuration.nix;
+
+        nixosConfigurations = {
+          # Votre machine personnelle
+          muggy-nixos = mkNixosConfiguration {
+            settings = import ./hosts/muggy-nixos/settings.nix;
+            hardwareModule = ./hosts/muggy-nixos/hardware-configuration.nix;
+          };
+
+          # Configuration générique / template pour tout utilisateur
+          generic = mkNixosConfiguration {
+            settings = publicSettings;
+            hardwareModule = ./hosts/system/hardware-configuration.nix;
+          };
+
+          default = mkNixosConfiguration {
+            settings = publicSettings;
+            hardwareModule = ./hosts/system/hardware-configuration.nix;
+          };
         };
       };
     };

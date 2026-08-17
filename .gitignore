@@ -1,8 +1,9 @@
 # --- SECRETS & SENSITIVE ---
 .env
 .envrc
-secrets/secrets.yaml
 modules/mcp_config.json
+*.key
+*.age
 
 # --- LOCAL METADATA ---
 .worktrees/
@@ -18,7 +19,6 @@ AGENTS.md
 CLAUDE.md
 .antigravitycli/
 .sops.yaml
-secrets/secrets.yaml
 
 # --- NIX & BUILD ---
 result

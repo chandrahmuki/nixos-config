@@ -1,11 +1,11 @@
 {den, ...}: {
-  den.aspects.git = {user, ...}: {
+  den.aspects.git = {user, settings ? {}, ...}: {
     homeManager.programs.git = {
       enable = true;
       settings = {
         user = {
           name = user.userName;
-        };
+        } // (if settings ? userEmail then { email = settings.userEmail; } else {});
         alias = {
           s = "status";
           a = "add";
