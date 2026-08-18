@@ -31,6 +31,7 @@
           restrict-filenames = true;
           windows-filenames = true;
           output = "%(title)s.%(ext)s";
+          extractor-args = "youtube:player_client=web_embedded,web";
         };
       };
 
