@@ -32,6 +32,7 @@
           windows-filenames = true;
           output = "%(title)s.%(ext)s";
           extractor-args = "youtube:player_client=web_embedded,web";
+          cookies-from-browser = "chromium:${config.home.homeDirectory}/.config/net.imput.helium/Default";
         };
       };
 
