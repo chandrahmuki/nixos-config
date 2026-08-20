@@ -1,8 +1,5 @@
-let
-  colors = (import ../lib/colors.nix).tokyonight;
-in
-  {den, ...}: {
-    den.aspects.terminal.nixos = {
+{den, ...}: {
+  den.aspects.terminal.nixos = {
       config,
       lib,
       pkgs,

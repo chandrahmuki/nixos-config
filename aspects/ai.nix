@@ -7,10 +7,6 @@
     username,
     ...
   }: let
-    pkgs-master = import inputs.nixpkgs-master {
-      system = pkgs.stdenv.hostPlatform.system;
-      config = pkgs.config;
-    };
     antigravity-cli = pkgs.stdenvNoCC.mkDerivation {
       pname = "antigravity-cli";
       version = "1.1.13";
@@ -39,9 +35,9 @@
         antigravity-cli
         pkgs.opencode
         pkgs.opencode-claude-auth
-        pkgs-master.claude-code
+        pkgs.pkgs-master.claude-code
         pkgs.claude-desktop
-        pkgs-master.codex
+        pkgs.pkgs-master.codex
         inputs.omnigraph.packages.${pkgs.stdenv.hostPlatform.system}.default
         inputs.muggy.packages.${pkgs.stdenv.hostPlatform.system}.default
       ];

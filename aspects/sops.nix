@@ -45,7 +45,7 @@
         };
       };
 
-      programs.fish.functions.sops = "SOPS_CONFIG=~/.config/nixos-secrets/.sops.yaml SOPS_AGE_SSH_PRIVATE_KEY_FILE=~/.ssh/id_ed25519 nix run nixpkgs#sops -- $argv";
+      programs.fish.functions.sops = "env SOPS_CONFIG=~/.config/nixos-secrets/.sops.yaml SOPS_AGE_SSH_PRIVATE_KEY_FILE=~/.ssh/id_ed25519 nix run nixpkgs#sops -- $argv";
     };
   };
 }

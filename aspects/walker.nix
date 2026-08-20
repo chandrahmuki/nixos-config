@@ -12,12 +12,13 @@
     # Configurer le service systemd utilisateur d'Elephant
     systemd.user.services.elephant = {
       path = [
+        "/run/wrappers/bin"
+        "/run/current-system/sw/bin"
+        "/etc/profiles/per-user/${username}/bin"
+        "/home/${username}/.nix-profile/bin"
         pkgs.bash
         pkgs.coreutils
         pkgs.xdg-utils
-        "/run/current-system/sw"
-        "/etc/profiles/per-user/${username}"
-        "/home/${username}/.nix-profile"
       ];
       # Retarder le démarrage pour qu'il attende que la session graphique soit active
       # et que les variables (WAYLAND_DISPLAY, DISPLAY) soient disponibles.
@@ -30,9 +31,10 @@
       description = "Walker Application Runner Daemon";
       # Chemins d'accès indispensables pour trouver l'exécutable elephant et les applications système
       path = [
-        "/run/current-system/sw"
-        "/etc/profiles/per-user/${username}"
-        "/home/${username}/.nix-profile"
+        "/run/wrappers/bin"
+        "/run/current-system/sw/bin"
+        "/etc/profiles/per-user/${username}/bin"
+        "/home/${username}/.nix-profile/bin"
       ];
       serviceConfig = {
         # Démarrage de Walker en mode démon (GApplication-service) pour éviter les délais au chargement

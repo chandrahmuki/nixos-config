@@ -10,7 +10,37 @@
       config,
       lib,
       ...
-    }: {
+    }: let
+      syncCliampPlaylists = pkgs.writeShellScriptBin "sync-cliamp-playlists" ''
+        playlists_dir="$HOME/.config/cliamp/playlists"
+        mkdir -p "$playlists_dir"
+
+        if [ -d "$HOME/Music/Likes" ]; then
+          find "$HOME/Music/Likes" -type f -name "*.m3u" | while read -r m3u_file; do
+            playlist_name=$(basename "$m3u_file" .m3u | tr '[:upper:]' '[:lower:]' | tr ' ' '_')
+            toml_file="$playlists_dir/$playlist_name.toml"
+            : > "$toml_file"
+            m3u_dir=$(dirname "$m3u_file")
+
+            while IFS= read -r line || [ -n "$line" ]; do
+              [[ "$line" =~ ^[[:space:]]*$ || "$line" =~ ^# ]] && continue
+              if [[ "$line" = /* ]]; then audio_path="$line"; else audio_path="$m3u_dir/$line"; fi
+              if [ -f "$audio_path" ]; then
+                filename=$(basename "$audio_path")
+                title="''${filename%.*}"
+                title="''${title//_/ }"
+                cat >> "$toml_file" <<EOF
+[[track]]
+path = "$audio_path"
+title = "$title"
+
+EOF
+              fi
+            done < "$m3u_file"
+          done
+        fi
+      '';
+    in {
       programs.mpv = {
         enable = true;
         scripts = with pkgs.mpvScripts; [
@@ -105,43 +135,14 @@
         '')
 
         pkgs.cliamp
-
-        (pkgs.writeShellScriptBin "sync-cliamp-playlists" ''
-          playlists_dir="$HOME/.config/cliamp/playlists"
-          mkdir -p "$playlists_dir"
-
-          if [ -d "$HOME/Music/Likes" ]; then
-            find "$HOME/Music/Likes" -type f -name "*.m3u" | while read -r m3u_file; do
-              playlist_name=$(basename "$m3u_file" .m3u | tr '[:upper:]' '[:lower:]' | tr ' ' '_')
-              toml_file="$playlists_dir/$playlist_name.toml"
-              : > "$toml_file"
-              m3u_dir=$(dirname "$m3u_file")
-
-              while IFS= read -r line || [ -n "$line" ]; do
-                [[ "$line" =~ ^[[:space:]]*$ || "$line" =~ ^# ]] && continue
-                if [[ "$line" = /* ]]; then audio_path="$line"; else audio_path="$m3u_dir/$line"; fi
-                if [ -f "$audio_path" ]; then
-                  filename=$(basename "$audio_path")
-                  title="''${filename%.*}"
-                  title="''${title//_/ }"
-                  cat >> "$toml_file" <<EOF
-[[track]]
-path = "$audio_path"
-title = "$title"
-
-EOF
-                fi
-              done < "$m3u_file"
-            done
-          fi
-        '')
+        syncCliampPlaylists
       ];
 
       xdg.configFile."cliamp/radios.toml".source = ../assets/cliamp-radios.toml;
 
       home.activation.createCliampPlaylistsDir = config.lib.dag.entryAfter ["writeBoundary"] ''
         $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.config/cliamp/playlists
-        $DRY_RUN_CMD ${pkgs.writeShellScriptBin "sync-cliamp-playlists" ""}/bin/sync-cliamp-playlists 2>/dev/null || true
+        $DRY_RUN_CMD ${syncCliampPlaylists}/bin/sync-cliamp-playlists 2>/dev/null || true
       '';
 
       programs.fish.functions = {

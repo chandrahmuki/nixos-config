@@ -20,7 +20,7 @@
       "vm.dirty_background_bytes" = 67108864;
       # Network Optimizations
       "net.core.default_qdisc" = "fq_codel";
-      "net.ipv4.tcp_congestion_control" = "cubic";
+      "net.ipv4.tcp_congestion_control" = "bbr";
       "net.ipv4.tcp_fastopen" = 3;
       "net.ipv4.tcp_slow_start_after_idle" = 0;
     };
@@ -45,7 +45,6 @@
         libva
         libva-vdpau-driver
         libvdpau-va-gl
-        inputs.nixpkgs-mesa.legacyPackages.${pkgs.stdenv.hostPlatform.system}.mesa
         rocmPackages.clr.icd # OpenCL pour AMD
       ];
     };

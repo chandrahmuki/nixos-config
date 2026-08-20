@@ -12,7 +12,7 @@
       ...
     }: {
       home.packages = with pkgs; [
-        nixfmt
+        alejandra
         nil
       ];
 
@@ -45,7 +45,7 @@
             "nix.serverSettings" = {
               "nil" = {
                 "formatting" = {
-                  "command" = ["${pkgs.nixfmt}/bin/nixfmt"];
+                  "command" = ["${pkgs.alejandra}/bin/alejandra"];
                 };
                 "diagnostics" = {
                   "ignored" = [];
