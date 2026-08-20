@@ -12,13 +12,15 @@
     # Configurer le service systemd utilisateur d'Elephant
     systemd.user.services.elephant = {
       path = [
+        pkgs.elephant
+        pkgs.walker
+        pkgs.bash
+        pkgs.coreutils
+        pkgs.xdg-utils
         "/run/wrappers/bin"
         "/run/current-system/sw/bin"
         "/etc/profiles/per-user/${username}/bin"
         "/home/${username}/.nix-profile/bin"
-        pkgs.bash
-        pkgs.coreutils
-        pkgs.xdg-utils
       ];
       # Retarder le démarrage pour qu'il attende que la session graphique soit active
       # et que les variables (WAYLAND_DISPLAY, DISPLAY) soient disponibles.
@@ -31,6 +33,11 @@
       description = "Walker Application Runner Daemon";
       # Chemins d'accès indispensables pour trouver l'exécutable elephant et les applications système
       path = [
+        pkgs.elephant
+        pkgs.walker
+        pkgs.bash
+        pkgs.coreutils
+        pkgs.xdg-utils
         "/run/wrappers/bin"
         "/run/current-system/sw/bin"
         "/etc/profiles/per-user/${username}/bin"
@@ -119,9 +126,7 @@
           box-shadow:
             0 24px 48px -12px rgba(0, 0, 0, 0.6),
             0 0 1px 1px alpha(@match_color, 0.25);
-          background: alpha(@window_bg_color, 0.92);
-          backdrop-filter: blur(24px);
-          -gtk-backdrop-filter: blur(24px);
+          background: alpha(@window_bg_color, 0.94);
           padding: 18px 20px;
           border-radius: 16px;
           border: 1px solid alpha(@match_color, 0.35);

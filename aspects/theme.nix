@@ -46,14 +46,12 @@
         /* Masquer la barre latérale de Nautilus */
         .nautilus-window .navigation-sidebar,
         .nautilus-window placessidebar {
-            width: 0px !important;
-            min-width: 0px !important;
-            max-width: 0px !important;
-            opacity: 0 !important;
-            visibility: hidden !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            border: none !important;
+            width: 0px;
+            min-width: 0px;
+            opacity: 0;
+            margin: 0;
+            padding: 0;
+            border: none;
         }
       '';
 
