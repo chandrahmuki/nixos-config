@@ -56,14 +56,14 @@
         pkgs.walker
       ];
 
-      # Configuration propre de Walker sans l'option 'force = true'
+      # Configuration de Walker style Omarchy (sans 'force = true')
       xdg.configFile."walker/config.toml".text = ''
         theme = "tokyonight"
         app_launch_prefix = ""
-        selection_prefix = "❯"
+        selection_prefix = ""
 
         [search]
-        placeholder = "Search Applications..."
+        placeholder = "Search Applications, Commands, Calculations..."
 
         [providers]
         default = [
@@ -72,7 +72,13 @@
           "websearch"
         ]
         empty = ["desktopapplications"]
-        max_results = 50
+        max_results = 40
+
+        [providers.calc]
+        prefix = "="
+
+        [providers.websearch]
+        prefix = "?"
       '';
 
       xdg.configFile."walker/themes/tokyonight/style.css".text = ''
@@ -85,35 +91,40 @@
 
         * {
           all: unset;
+          font-family: "JetBrainsMono Nerd Font", monospace;
         }
 
         popover {
-          background: lighter(@window_bg_color);
-          border: 1px solid darker(@accent_bg_color);
-          border-radius: 18px;
-          padding: 10px;
+          background: alpha(@window_bg_color, 0.95);
+          border: 1px solid alpha(@match_color, 0.3);
+          border-radius: 16px;
+          padding: 12px;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
 
         .normal-icons {
-          -gtk-icon-size: 16px;
+          -gtk-icon-size: 24px;
         }
 
         .large-icons {
-          -gtk-icon-size: 32px;
+          -gtk-icon-size: 36px;
         }
 
         scrollbar {
           opacity: 0;
         }
 
+        /* Conteneur principal (Fenêtre style Omarchy Glassmorphism) */
         .box-wrapper {
           box-shadow:
-            0 19px 38px rgba(0, 0, 0, 0.3),
-            0 15px 12px rgba(0, 0, 0, 0.22);
-          background: @window_bg_color;
-          padding: 20px;
-          border-radius: 10px;
-          border: 2px solid #${stylixColors.base0D};
+            0 24px 48px -12px rgba(0, 0, 0, 0.6),
+            0 0 1px 1px alpha(@match_color, 0.25);
+          background: alpha(@window_bg_color, 0.92);
+          backdrop-filter: blur(24px);
+          -gtk-backdrop-filter: blur(24px);
+          padding: 18px 20px;
+          border-radius: 16px;
+          border: 1px solid alpha(@match_color, 0.35);
         }
 
         .preview-box,
@@ -122,52 +133,75 @@
           color: @theme_fg_color;
         }
 
+        /* Barre de recherche style capsule */
         .search-container {
-          border-radius: 10px;
+          background: alpha(@accent_bg_color, 0.45);
+          border: 1px solid alpha(@theme_fg_color, 0.1);
+          border-radius: 12px;
+          margin-bottom: 12px;
+          padding: 2px 6px;
         }
 
         .input placeholder {
-          opacity: 0.5;
+          color: alpha(@theme_fg_color, 0.45);
+          font-style: normal;
         }
 
         .input selection {
-          background: @accent_bg_color;
+          background: alpha(@accent_bg_color, 0.8);
         }
 
         .input {
-          caret-color: @theme_fg_color;
-          background: @window_bg_color;
-          padding: 10px;
+          caret-color: @match_color;
+          padding: 12px 14px;
           color: @theme_fg_color;
+          font-size: 15px;
+          font-weight: 500;
         }
 
+        /* Liste des résultats */
         .list {
           color: @theme_fg_color;
         }
 
         .item-box {
           border-radius: 10px;
-          padding: 10px;
+          padding: 10px 14px;
+          margin: 3px 0px;
         }
 
         .item-quick-activation {
-          background: alpha(@accent_bg_color, 0.5);
-          border-radius: 5px;
-          padding: 10px;
+          background: alpha(@window_bg_color, 0.8);
+          border: 1px solid alpha(@theme_fg_color, 0.15);
+          border-radius: 6px;
+          padding: 4px 8px;
+          font-size: 11px;
+          font-weight: bold;
+          color: @match_color;
         }
 
+        /* Élément sélectionné (effet pilule Omarchy) */
         child:selected .item-box,
         row:selected .item-box {
-          background: @accent_bg_color;
+          background: alpha(@accent_bg_color, 0.7);
+          border: 1px solid alpha(@match_color, 0.4);
+        }
+
+        .item-text {
+          font-size: 14px;
+          font-weight: 600;
+          color: @theme_fg_color;
         }
 
         .item-subtext {
           font-size: 12px;
-          opacity: 0.5;
+          opacity: 0.6;
+          color: @theme_fg_color;
+          margin-top: 2px;
         }
 
         .providerlist .item-subtext {
-          font-size: unset;
+          font-size: 12px;
           opacity: 0.75;
         }
 
@@ -176,13 +210,17 @@
         }
 
         .preview {
-          border: 1px solid alpha(@accent_bg_color, 0.25);
-          border-radius: 10px;
+          border: 1px solid alpha(@match_color, 0.2);
+          background: alpha(@accent_bg_color, 0.25);
+          border-radius: 12px;
+          padding: 14px;
           color: @theme_fg_color;
         }
 
         .calc .item-text {
-          font-size: 24px;
+          font-size: 22px;
+          font-weight: 600;
+          color: @match_color;
         }
 
         .symbols .item-image {
@@ -190,11 +228,12 @@
         }
 
         .todo.done .item-text-box {
-          opacity: 0.25;
+          opacity: 0.3;
         }
 
         .todo.urgent {
-          font-size: 24px;
+          font-size: 20px;
+          color: @error_bg_color;
         }
 
         .todo.active {
@@ -209,36 +248,44 @@
           -gtk-icon-size: 64px;
         }
 
+        /* Pied de page & Raccourcis */
         .keybinds {
-          padding-top: 10px;
-          border-top: 1px solid lighter(@window_bg_color);
+          padding-top: 12px;
+          margin-top: 10px;
+          border-top: 1px solid alpha(@theme_fg_color, 0.08);
           font-size: 12px;
-          color: @theme_fg_color;
+          color: alpha(@theme_fg_color, 0.6);
         }
 
         .keybind-button {
-          opacity: 0.5;
+          opacity: 0.7;
         }
 
         .keybind-button:hover {
-          opacity: 0.75;
+          opacity: 1;
         }
 
         .keybind-bind {
-          text-transform: lowercase;
-          opacity: 0.35;
+          text-transform: uppercase;
+          font-size: 10px;
+          opacity: 0.5;
         }
 
         .keybind-label {
-          padding: 2px 4px;
-          border-radius: 4px;
-          border: 1px solid @theme_fg_color;
+          padding: 3px 6px;
+          border-radius: 5px;
+          background: alpha(@accent_bg_color, 0.5);
+          border: 1px solid alpha(@theme_fg_color, 0.12);
+          color: @theme_fg_color;
+          font-weight: 600;
+          font-size: 11px;
         }
 
         .color-errors {
           padding: 10px;
           background: @error_bg_color;
           color: @error_fg_color;
+          border-radius: 8px;
         }
 
         :not(.calc).current {
