@@ -12,7 +12,7 @@
         extraArgs = "--keep-since 7d --keep 5";
       };
     };
-    home-manager.users.${username}.programs.fish.functions.nos = "nh os switch ${settings.configDirectory} --hostname ${settings.hostname} --ask -L --diff always";
+    home-manager.users.${username}.programs.fish.functions.nos = "env PATH=/run/wrappers/bin:$PATH nh os switch ${settings.configDirectory} --hostname ${settings.hostname} --ask -L --diff always";
   };
 
 }

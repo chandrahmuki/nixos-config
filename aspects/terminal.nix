@@ -61,6 +61,7 @@
           fish = {
             enable = true;
             interactiveShellInit = ''
+              fish_add_path --prepend /run/wrappers/bin
               set -g fish_greeting ""
 
               function tx
