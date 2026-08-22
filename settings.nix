@@ -11,6 +11,7 @@
       "bluetooth"
       "font"
       "gnome"
+      "hyprland"
       "greetd"
       "helix"
       "nautilus"

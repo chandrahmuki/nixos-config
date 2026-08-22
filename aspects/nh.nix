@@ -12,7 +12,9 @@
         extraArgs = "--keep-since 7d --keep 5";
       };
     };
-    home-manager.users.${username}.programs.fish.functions.nos = "env PATH=/run/wrappers/bin:$PATH nh os switch ${settings.configDirectory} --hostname ${settings.hostname} --ask -L --diff always";
+    # PATH (dont /run/wrappers/bin pour sudo) est déjà garanti par
+    # fish_add_path dans aspects/terminal.nix, pas besoin de le refaire ici.
+    home-manager.users.${username}.programs.fish.functions.nos = "nh os switch ${settings.configDirectory} --hostname ${settings.hostname} --ask -L --diff always";
   };
 
 }

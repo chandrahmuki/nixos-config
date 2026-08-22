@@ -17,10 +17,10 @@
         pkgs.bash
         pkgs.coreutils
         pkgs.xdg-utils
-        "/run/wrappers/bin"
-        "/run/current-system/sw/bin"
-        "/etc/profiles/per-user/${username}/bin"
-        "/home/${username}/.nix-profile/bin"
+        "/run/wrappers"
+        "/run/current-system/sw"
+        "/etc/profiles/per-user/${username}"
+        "/home/${username}/.nix-profile"
       ];
       # Retarder le démarrage pour qu'il attende que la session graphique soit active
       # et que les variables (WAYLAND_DISPLAY, DISPLAY) soient disponibles.
@@ -38,10 +38,10 @@
         pkgs.bash
         pkgs.coreutils
         pkgs.xdg-utils
-        "/run/wrappers/bin"
-        "/run/current-system/sw/bin"
-        "/etc/profiles/per-user/${username}/bin"
-        "/home/${username}/.nix-profile/bin"
+        "/run/wrappers"
+        "/run/current-system/sw"
+        "/etc/profiles/per-user/${username}"
+        "/home/${username}/.nix-profile"
       ];
       serviceConfig = {
         # Démarrage de Walker en mode démon (GApplication-service) pour éviter les délais au chargement
@@ -63,11 +63,173 @@
         pkgs.walker
       ];
 
+      # Copie du layout.xml par défaut de Walker (package version 2.17.0,
+      # resources/themes/default/layout.xml) avec juste width-request et
+      # max/min-content-width réduits (600→480, 500→400). Reste de la
+      # structure identique à l'original pour éviter de réintroduire le bug
+      # d'ellipse Pango rencontré avec une largeur trop étroite (300px).
+      xdg.configFile."walker/themes/tokyonight/layout.xml".text = ''
+        <?xml version="1.0" encoding="UTF-8"?>
+        <interface>
+          <requires lib="gtk" version="4.0"></requires>
+          <object class="GtkWindow" id="Window">
+            <style>
+              <class name="window"></class>
+            </style>
+            <property name="resizable">true</property>
+            <property name="title">Walker</property>
+            <child>
+              <object class="GtkBox" id="BoxWrapper">
+                <style>
+                  <class name="box-wrapper"></class>
+                </style>
+                <property name="overflow">hidden</property>
+                <property name="orientation">horizontal</property>
+                <property name="valign">center</property>
+                <property name="halign">center</property>
+                <property name="width-request">480</property>
+                <property name="height-request">570</property>
+                <child>
+                  <object class="GtkBox" id="Box">
+                    <style>
+                      <class name="box"></class>
+                    </style>
+                    <property name="orientation">vertical</property>
+                    <property name="hexpand-set">true</property>
+                    <property name="hexpand">true</property>
+                    <property name="spacing">10</property>
+                    <child>
+                      <object class="GtkBox" id="SearchContainer">
+                        <style>
+                          <class name="search-container"></class>
+                        </style>
+                        <property name="overflow">hidden</property>
+                        <property name="orientation">horizontal</property>
+                        <property name="halign">fill</property>
+                        <property name="hexpand-set">true</property>
+                        <property name="hexpand">true</property>
+                        <child>
+                          <object class="GtkEntry" id="Input">
+                            <style>
+                              <class name="input"></class>
+                            </style>
+                            <property name="halign">fill</property>
+                            <property name="hexpand-set">true</property>
+                            <property name="hexpand">true</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox" id="ContentContainer">
+                        <style>
+                          <class name="content-container"></class>
+                        </style>
+                        <property name="orientation">horizontal</property>
+                        <property name="spacing">10</property>
+                        <child>
+                          <object class="GtkLabel" id="ElephantHint">
+                            <style>
+                              <class name="elephant-hint"></class>
+                            </style>
+                            <property name="label">Waiting for elephant...</property>
+                            <property name="hexpand">true</property>
+                            <property name="vexpand">true</property>
+                            <property name="visible">false</property>
+                            <property name="valign">0.5</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="Placeholder">
+                            <style>
+                              <class name="placeholder"></class>
+                            </style>
+                            <property name="label">No Results</property>
+                            <property name="hexpand">true</property>
+                            <property name="vexpand">true</property>
+                            <property name="valign">0.5</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkScrolledWindow" id="Scroll">
+                            <style>
+                              <class name="scroll"></class>
+                            </style>
+                            <property name="can_focus">false</property>
+                            <property name="overlay-scrolling">true</property>
+                            <property name="hexpand">true</property>
+                            <property name="vexpand">true</property>
+                            <property name="max-content-width">400</property>
+                            <property name="min-content-width">400</property>
+                            <property name="max-content-height">400</property>
+                            <property name="propagate-natural-height">true</property>
+                            <property name="propagate-natural-width">true</property>
+                            <property name="hscrollbar-policy">automatic</property>
+                            <property name="vscrollbar-policy">automatic</property>
+                            <child>
+                              <object class="GtkGridView" id="List">
+                                <style>
+                                  <class name="list"></class>
+                                </style>
+                                <property name="max_columns">1</property>
+                                <property name="min_columns">1</property>
+                                <property name="can_focus">false</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkBox" id="Preview">
+                            <style>
+                              <class name="preview"></class>
+                            </style>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox" id="Keybinds">
+                        <property name="visible">false</property>
+                        <child>
+                          <object class="GtkBox" id="GlobalKeybinds" />
+                        </child>
+                        <child>
+                          <object class="GtkBox" id="ItemKeybinds" />
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="Error">
+                        <style>
+                          <class name="error"></class>
+                        </style>
+                        <property name="xalign">0</property>
+                        <property name="visible">false</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </interface>
+      '';
+
+      # Walker tourne en démon (--gapplication-service) et ne relit jamais son
+      # thème/layout après démarrage : sans ce hook, tout changement de CSS/
+      # config.toml reste invisible tant qu'on ne relance pas le service à la
+      # main. On le redémarre donc à chaque switch pour que "nos" suffise.
+      home.activation.restartWalker = lib.hm.dag.entryAfter ["reloadSystemd"] ''
+        $DRY_RUN_CMD ${pkgs.systemd}/bin/systemctl --user restart walker.service elephant.service 2>/dev/null || true
+      '';
+
       # Configuration de Walker style Omarchy (sans 'force = true')
       xdg.configFile."walker/config.toml".text = ''
         theme = "tokyonight"
         app_launch_prefix = ""
         selection_prefix = ""
+        hide_quick_activation = true
+        hide_action_hints = true
 
         [search]
         placeholder = "Search Applications, Commands, Calculations..."
@@ -138,11 +300,10 @@
           color: @theme_fg_color;
         }
 
-        /* Barre de recherche style capsule */
+        /* Barre de recherche : simple, pas de capsule */
         .search-container {
-          background: alpha(@accent_bg_color, 0.45);
-          border: 1px solid alpha(@theme_fg_color, 0.1);
-          border-radius: 12px;
+          background: transparent;
+          border: none;
           margin-bottom: 12px;
           padding: 2px 6px;
         }
@@ -175,21 +336,25 @@
           margin: 3px 0px;
         }
 
+        /* hide_quick_activation=true dans config.toml devrait déjà les
+           retirer, on les écrase aussi en CSS au cas où (F1/F2/F3...). */
         .item-quick-activation {
-          background: alpha(@window_bg_color, 0.8);
-          border: 1px solid alpha(@theme_fg_color, 0.15);
-          border-radius: 6px;
-          padding: 4px 8px;
-          font-size: 11px;
-          font-weight: bold;
-          color: @match_color;
+          font-size: 0px;
+          min-width: 0px;
+          opacity: 0;
+          margin: 0;
+          padding: 0;
         }
 
-        /* Élément sélectionné (effet pilule Omarchy) */
+        /* Élément sélectionné : highlight léger, juste le texte qui change de couleur */
         child:selected .item-box,
         row:selected .item-box {
-          background: alpha(@accent_bg_color, 0.7);
-          border: 1px solid alpha(@match_color, 0.4);
+          background: alpha(@accent_bg_color, 0.25);
+        }
+
+        child:selected .item-text,
+        row:selected .item-text {
+          color: @match_color;
         }
 
         .item-text {

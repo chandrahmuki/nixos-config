@@ -46,7 +46,6 @@
         /* Masquer la barre latérale de Nautilus */
         .nautilus-window .navigation-sidebar,
         .nautilus-window placessidebar {
-            width: 0px;
             min-width: 0px;
             opacity: 0;
             margin: 0;
