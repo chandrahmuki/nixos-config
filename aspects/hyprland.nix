@@ -26,7 +26,31 @@
       ...
     }: let
       wallpaper = ../wallpapers/nixos_neon_souterrain.png;
+      restartQuickshell = pkgs.writeShellApplication {
+        name = "restart-quickshell";
+        runtimeInputs = [pkgs.quickshell pkgs.gnugrep pkgs.coreutils];
+        text = ''
+          qs --config muggy kill --any-display || true
+
+          for _ in $(seq 1 50); do
+            if ! qs --config muggy list --json --any-display 2>/dev/null | grep -q '"id"'; then
+              qs --daemonize --no-duplicate --config muggy
+              exit 0
+            fi
+            sleep 0.1
+          done
+
+          echo "Quickshell did not stop within 5 seconds." >&2
+          exit 1
+        '';
+      };
     in {
+      home.packages = [
+        restartQuickshell
+        pkgs.grim
+        pkgs.slurp
+      ];
+
       wayland.windowManager.hyprland = {
         enable = true;
         # The actual Lua file is managed below through xdg.configFile.
@@ -41,10 +65,15 @@
       programs.quickshell = {
         enable = true;
         activeConfig = "muggy";
-        configs.muggy = ../quickshell;
         # Hyprland starts the shell below, only in its own session.
         systemd.enable = false;
       };
+
+      # Development configuration: keep the active QML as a direct link to
+      # this checkout so Quickshell can observe edits and hot-reload them.
+      # The link itself remains declared by Home Manager.
+      xdg.configFile."quickshell/muggy".source = config.lib.file.mkOutOfStoreSymlink
+        "${config.home.homeDirectory}/nixos-config/quickshell";
 
       programs.hyprlock.enable = true;
 
@@ -158,6 +187,7 @@
         hl.bind(mod .. " + SPACE", hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }))
         hl.bind(mod .. " + L", hl.dsp.exec_cmd("loginctl lock-session"))
         hl.bind(mod .. " + Q", hl.dsp.window.close())
+        hl.bind(mod .. " + SHIFT + S", hl.dsp.exec_cmd("sh -c 'selection=$(slurp); [ -n \"$selection\" ] && mkdir -p ${config.home.homeDirectory}/Pictures/Screenshots && grim -g \"$selection\" ${config.home.homeDirectory}/Pictures/Screenshots/screenshot-$(date +%Y%m%d-%H%M%S).png'"))
         hl.bind(mod .. " + left", hl.dsp.focus({ direction = "left" }))
         hl.bind(mod .. " + right", hl.dsp.focus({ direction = "right" }))
         hl.bind(mod .. " + up", hl.dsp.focus({ direction = "up" }))

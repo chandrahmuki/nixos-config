@@ -3,6 +3,7 @@
     fonts.packages = with pkgs; [
       nerd-fonts.jetbrains-mono
       nerd-fonts.hack
+      cozette
       noto-fonts
       dejavu_fonts
       noto-fonts-color-emoji

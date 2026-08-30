@@ -13,7 +13,6 @@
     };
 
     environment.gnome.excludePackages = with pkgs; [
-      gnome-photos
       gnome-tour
       epiphany # Web browser
       geary # Email client
