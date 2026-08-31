@@ -44,9 +44,69 @@
           exit 1
         '';
       };
+      localWorkspace = pkgs.writeShellApplication {
+        name = "local-workspace";
+        runtimeInputs = [pkgs.hyprland pkgs.jq];
+        text = ''
+          action="$1"
+
+          local_offset() {
+            focused_output="$(hyprctl monitors -j | jq -r '.[] | select(.focused).name')"
+            case "$focused_output" in
+              DP-2) echo 0 ;;
+              HDMI-A-1) echo 5 ;;
+              *)
+                echo "Unsupported focused monitor: $focused_output" >&2
+                exit 1
+                ;;
+            esac
+          }
+
+          case "$action" in
+            focus|move)
+              slot="$2"
+              case "$slot" in
+                1|2|3|4|5) ;;
+                *)
+                  echo "Workspace slot must be between 1 and 5." >&2
+                  exit 1
+                  ;;
+              esac
+
+              target=$(( $(local_offset) + slot ))
+              if [ "$action" = focus ]; then
+                hyprctl dispatch "hl.dsp.focus({ workspace = $target })"
+              else
+                hyprctl dispatch "hl.dsp.window.move({ workspace = $target })"
+              fi
+              ;;
+            migrate-legacy-right)
+              # One-time migration: preserve the windows that were created on
+              # the right display before it received its own local 1–5 range.
+              for mapping in "3 8" "4 9" "5 10"; do
+                read -r source target <<< "$mapping"
+                hyprctl clients -j | jq -r --argjson workspace "$source" \
+                  '.[] | select(.workspace.id == $workspace) | .address' \
+                  | while IFS= read -r address; do
+                    [ -n "$address" ] || continue
+                    hyprctl dispatch "hl.dsp.focus({ window = \"address:$address\" })"
+                    hyprctl dispatch "hl.dsp.window.move({ workspace = $target })"
+                  done
+              done
+              hyprctl dispatch 'hl.dsp.focus({ workspace = 8 })'
+              ;;
+            *)
+              echo "Usage: local-workspace {focus|move} {1..5}" >&2
+              echo "       local-workspace migrate-legacy-right" >&2
+              exit 1
+              ;;
+          esac
+        '';
+      };
     in {
       home.packages = [
         restartQuickshell
+        localWorkspace
         pkgs.grim
         pkgs.slurp
       ];
@@ -72,7 +132,8 @@
       # Development configuration: keep the active QML as a direct link to
       # this checkout so Quickshell can observe edits and hot-reload them.
       # The link itself remains declared by Home Manager.
-      xdg.configFile."quickshell/muggy".source = config.lib.file.mkOutOfStoreSymlink
+      xdg.configFile."quickshell/muggy".source =
+        config.lib.file.mkOutOfStoreSymlink
         "${config.home.homeDirectory}/nixos-config/quickshell";
 
       programs.hyprlock.enable = true;
@@ -137,10 +198,11 @@
           misc = {
             force_default_wallpaper = -1,
             disable_hyprland_logo = true,
+            mouse_move_focuses_monitor = false,
           },
           input = {
             kb_layout = "us",
-            follow_mouse = 1,
+            follow_mouse = 0,
           },
           binds = {
             pass_mouse_when_bound = false,
@@ -155,6 +217,14 @@
         hl.animation({ leaf = "fade", enabled = true, speed = 2, bezier = "default" })
         hl.animation({ leaf = "layers", enabled = true, speed = 2, bezier = "default" })
         hl.animation({ leaf = "workspaces", enabled = true, speed = 2, bezier = "default" })
+
+        -- Each physical display owns five local workspace slots. Hyprland
+        -- workspace IDs remain global, so the right display uses 6–10 while
+        -- Quickshell presents them as 1–5.
+        for i = 1, 5 do
+          hl.workspace_rule({ workspace = tostring(i), monitor = "DP-2" })
+          hl.workspace_rule({ workspace = tostring(i + 5), monitor = "HDMI-A-1" })
+        end
 
         local mod = "SUPER"
         local scrollThrottled = false
@@ -197,10 +267,9 @@
         hl.bind(mod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
         hl.bind(mod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
-        for i = 1, 10 do
-          local key = i % 10
-          hl.bind(mod .. " + " .. key, hl.dsp.focus({ workspace = i }))
-          hl.bind(mod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
+        for i = 1, 5 do
+          hl.bind(mod .. " + " .. i, hl.dsp.exec_cmd("local-workspace focus " .. i))
+          hl.bind(mod .. " + SHIFT + " .. i, hl.dsp.exec_cmd("local-workspace move " .. i))
         end
       '';
     };

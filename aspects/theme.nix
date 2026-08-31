@@ -10,15 +10,27 @@
       config,
       lib,
       ...
-    }: {
+    }: let
+      monochromeIcons = pkgs.stdenvNoCC.mkDerivation {
+        pname = "catppuccin-mono-light-icons";
+        version = "1.0";
+        src = pkgs.fetchzip {
+          url = "https://github.com/nirabyte/full-icon-themes/releases/download/v1.0/catppuccin.tar.xz";
+          hash = "sha256-3HUnHW/kJL7/4z9+Dy4M0J3XFBCy3qJ8AU9TRcowsvw=";
+          stripRoot = false;
+        };
+        dontUnpack = true;
+        installPhase = ''
+          mkdir -p "$out/share/icons"
+          cp -r "$src/catppuccin-mono-light" "$out/share/icons/"
+        '';
+      };
+    in {
       gtk = {
         enable = true;
         iconTheme = {
-          name = lib.mkDefault "Colloid-Teal-Catppuccin-Dark";
-          package = lib.mkDefault (pkgs.colloid-icon-theme.override {
-            schemeVariants = ["catppuccin"];
-            colorVariants = ["teal"];
-          });
+          name = lib.mkDefault "catppuccin-mono-light";
+          package = lib.mkDefault monochromeIcons;
         };
         cursorTheme = {
           name = lib.mkDefault "Adwaita";
@@ -59,6 +71,8 @@
       ];
 
       # Symlinks pour les icônes manquantes dans les thèmes standards
+      home.file.".local/share/icons/catppuccin-mono-light".source =
+        "${monochromeIcons}/share/icons/catppuccin-mono-light";
       home.file.".local/share/icons/hicolor/scalable/apps/io.github.ilya_zlobintsev.LACT.svg".source = "${pkgs.lact}/share/pixmaps/io.github.ilya_zlobintsev.LACT.svg";
 
       # Force libadwaita to use dark theme

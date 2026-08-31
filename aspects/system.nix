@@ -144,6 +144,7 @@
       };
       systemPackages = with pkgs; [
         bubblewrap
+        curl
         ffmpeg
         socat
         libva-utils
