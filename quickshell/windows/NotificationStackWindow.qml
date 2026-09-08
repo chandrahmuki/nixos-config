@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
+import Quickshell.Wayland
 import Quickshell.Services.Notifications
 
 Variants {
@@ -20,6 +21,7 @@ Variants {
         margins { top: 66; right: 18 }
         exclusionMode: ExclusionMode.Ignore
         aboveWindows: true
+        WlrLayershell.layer: WlrLayer.Overlay
         focusable: false
         color: "transparent"
         visible: notificationWindow.hyprMonitor
@@ -46,8 +48,9 @@ Variants {
                 required property var modelData
                 readonly property var notification: modelData
                 readonly property string link: notificationStack.shell.linkForNotification(notification)
+                // D-Bus expiration timeouts are already expressed in ms.
                 readonly property int timeout: notification.expireTimeout > 0
-                    ? notification.expireTimeout * 1000 : 7000
+                    ? notification.expireTimeout : 7000
                 width: notificationList.width
                 height: notificationContent.implicitHeight + 28
                 radius: 14

@@ -223,7 +223,11 @@
             rounding = 8,
             active_opacity = 1.0,
             inactive_opacity = 1.0,
-            blur = { enabled = false },
+            blur = {
+              enabled = true,
+              size = 18,
+              passes = 3,
+            },
           },
           scrolling = {
             fullscreen_on_one_column = true,
@@ -259,8 +263,39 @@
           hl.workspace_rule({ workspace = tostring(i + 5), monitor = "HDMI-A-1" })
         end
 
+        -- The power menu is the only full-screen shell surface that blurs
+        -- the desktop. Its namespace keeps the pill and hover widgets crisp.
+        hl.layer_rule({
+          match = { namespace = "muggynix-power-menu" },
+          blur = true,
+          ignore_alpha = 0.1,
+        })
+
         local mod = "SUPER"
         local scrollThrottled = false
+
+        -- Super+F alternates between true fullscreen and maximized instead
+        -- of dropping a fullscreen window back into the scrolling layout.
+        local function toggle_true_fullscreen()
+          local active = hl.get_active_window()
+          if active and active.fullscreen == 2 then
+            hl.dispatch(hl.dsp.window.fullscreen({ mode = "maximized", action = "set", layout_aware = true }))
+          else
+            hl.dispatch(hl.dsp.window.fullscreen({ mode = "fullscreen", action = "set", layout_aware = true }))
+          end
+        end
+
+        -- Super+Space owns the maximized state. In particular it must turn a
+        -- true fullscreen window (state 2) into maximized (state 1), rather
+        -- than asking Hyprland to toggle a different fullscreen mode.
+        local function toggle_maximized()
+          local active = hl.get_active_window()
+          if active and active.fullscreen == 1 then
+            hl.dispatch(hl.dsp.window.fullscreen_state({ internal = 0, client = 0, action = "set", layout_aware = true }))
+          else
+            hl.dispatch(hl.dsp.window.fullscreen({ mode = "maximized", action = "set", layout_aware = true }))
+          end
+        end
 
         local function throttled_dsp(dsp)
           return function()
@@ -281,13 +316,18 @@
           -- The start event may be replayed after a Hyprland config reload.
           -- Do not create a second panel for the same Quickshell config.
           hl.exec_cmd("qs --no-duplicate -c muggy")
+          hl.exec_cmd("handy --start-hidden")
         end)
 
         hl.bind(mod .. " + D", hl.dsp.exec_cmd("qs -c muggy ipc call shell toggleLauncher"))
         hl.bind(mod .. " + O", hl.dsp.exec_cmd("qs -c muggy ipc call shell toggleOverview"))
+        hl.bind(mod .. " + BACKSPACE", hl.dsp.exec_cmd("qs -c muggy ipc call shell togglePowerMenu"))
+        hl.bind("F1", hl.dsp.exec_cmd("handy --toggle-transcription"))
+        hl.bind("F1", hl.dsp.exec_cmd("handy --toggle-transcription"), { release = true })
         hl.bind(mod .. " + T", hl.dsp.exec_cmd("foot"))
-        hl.bind(mod .. " + F", hl.dsp.window.fullscreen({ action = "toggle", layout_aware = true }))
-        hl.bind(mod .. " + SPACE", hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }))
+        hl.bind(mod .. " + B", hl.dsp.exec_cmd("thunar"))
+        hl.bind(mod .. " + F", toggle_true_fullscreen)
+        hl.bind(mod .. " + SPACE", toggle_maximized)
         hl.bind(mod .. " + L", hl.dsp.exec_cmd("loginctl lock-session"))
         hl.bind(mod .. " + Q", hl.dsp.window.close())
         hl.bind(mod .. " + SHIFT + S", hl.dsp.exec_cmd("sh -c 'selection=$(slurp); [ -n \"$selection\" ] && mkdir -p ${config.home.homeDirectory}/Pictures/Screenshots && grim -g \"$selection\" ${config.home.homeDirectory}/Pictures/Screenshots/screenshot-$(date +%Y%m%d-%H%M%S).png'"))

@@ -1,84 +1,112 @@
 import QtQuick
 
 Rectangle {
-    id: musicIsland
+    id: musicPanel
     required property var shell
-    readonly property bool expanded: musicHoverArea.containsMouse
-    visible: !!musicIsland.shell.activePlayer
-    width: expanded ? musicIsland.shell.musicExpandedWidth : 38
-    height: 26
-    radius: height / 2
-    color: "transparent"
-    border.width: 0
+    property bool expanded: false
+    // Fixed-size card that fades + pops in in place (opacity/scale off the
+    // "expanded" flip), same technique as ChillPill-Shell's MediaPopup —
+    // no geometry morph, so there's nothing for content to drift with and
+    // nothing to steal the hover out from under the cursor mid-animation.
+    visible: opacity > 0
+    // Nested inside islandShape now (PillWindow) — that parent already sits
+    // at the pill's y (or off-screen in strict fullscreen), so this is 0,
+    // not a repeat of that offset.
+    y: 0
+    opacity: expanded ? 1 : 0
+    scale: expanded ? 1 : 0.96
+    transformOrigin: Item.Center
+    radius: 14
     clip: true
+    color: shell.pillBackground
 
-    Behavior on width {
-        NumberAnimation { duration: 190; easing.type: Easing.OutCubic }
+    Behavior on opacity { NumberAnimation { duration: 180 } }
+    Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+
+    function openPanel(): void {
+        closeTimer.stop();
+        expanded = true;
     }
 
-    MouseArea {
-        id: musicHoverArea
-        anchors.fill: parent
-        hoverEnabled: true
-        acceptedButtons: Qt.NoButton
+    function scheduleClose(): void {
+        closeTimer.restart();
     }
 
-    Row {
-        visible: !musicIsland.expanded
-        anchors.left: parent.left
-        anchors.leftMargin: 10
-        anchors.verticalCenter: parent.verticalCenter
-        spacing: 3
+    Timer {
+        id: closeTimer
+        interval: 300
+        repeat: false
+        onTriggered: {
+            if (!panelHover.hovered)
+                musicPanel.expanded = false;
+        }
+    }
 
-        Repeater {
-            model: 4
-            delegate: Rectangle {
-                required property int index
-                width: 3
-                height: musicIsland.shell.activePlayer && musicIsland.shell.activePlayer.isPlaying
-                    ? 3 + musicIsland.shell.cavaLevels[index] * 0.14 : 3
-                radius: 1.5
-                color: musicIsland.shell.pillForeground
-                Behavior on height {
-                    NumberAnimation { duration: 45; easing.type: Easing.OutQuad }
+    HoverHandler {
+        id: panelHover
+        enabled: musicPanel.expanded
+        onHoveredChanged: {
+            if (hovered)
+                closeTimer.stop();
+            else
+                musicPanel.scheduleClose();
+        }
+    }
+
+    Item {
+        id: cavaSlot
+        anchors.top: parent.top
+        anchors.topMargin: 15
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: 82
+        height: 30
+
+        Row {
+            anchors.centerIn: parent
+            spacing: 7
+
+            Repeater {
+                model: 4
+                delegate: Rectangle {
+                    required property int index
+                    width: 6
+                    height: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.isPlaying
+                        ? 6 + musicPanel.shell.cavaLevels[index] * 0.19 : 6
+                    anchors.verticalCenter: parent.verticalCenter
+                    radius: 3
+                    color: musicPanel.shell.active
+                    Behavior on height { NumberAnimation { duration: 45; easing.type: Easing.OutQuad } }
                 }
             }
         }
     }
 
     Item {
-        id: musicTitleViewport
-        visible: musicIsland.expanded
-        anchors.left: parent.left
-        anchors.leftMargin: 14
-        anchors.right: parent.right
-        anchors.rightMargin: 170
-        anchors.verticalCenter: parent.verticalCenter
-        height: parent.height
+        id: titleViewport
+        anchors.top: cavaSlot.bottom
+        anchors.topMargin: 10
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: Math.min(parent.width - 80, 400)
+        height: 23
         clip: true
 
         Text {
-            id: musicTitle
+            id: titleText
             anchors.verticalCenter: parent.verticalCenter
-            text: musicIsland.shell.activePlayer
-                ? musicIsland.shell.activePlayer.trackTitle
-                    + (musicIsland.shell.activePlayer.trackArtist
-                        ? " — " + musicIsland.shell.activePlayer.trackArtist : "")
-                : ""
-            color: musicIsland.shell.pillForeground
-            font.pixelSize: 12
-            font.family: musicIsland.shell.pillFont
+            text: musicPanel.shell.activePlayer ? musicPanel.shell.activePlayer.trackTitle : ""
+            color: musicPanel.shell.pillForeground
+            font.pixelSize: 17
+            font.bold: true
+            font.family: musicPanel.shell.pillFont
             x: 0
 
             SequentialAnimation on x {
-                running: musicIsland.expanded
-                    && musicTitle.contentWidth > musicTitleViewport.width
+                running: musicPanel.expanded && titleText.contentWidth > titleViewport.width
                 loops: Animation.Infinite
                 PauseAnimation { duration: 900 }
                 NumberAnimation {
-                    to: -(musicTitle.contentWidth - musicTitleViewport.width)
-                    duration: Math.max(1800,
-                        (musicTitle.contentWidth - musicTitleViewport.width) * 24)
+                    to: -(titleText.contentWidth - titleViewport.width)
+                    duration: Math.max(1800, (titleText.contentWidth - titleViewport.width) * 24)
                 }
                 PauseAnimation { duration: 900 }
                 NumberAnimation { to: 0; duration: 260 }
@@ -86,107 +114,97 @@ Rectangle {
         }
     }
 
+    Text {
+        anchors.top: titleViewport.bottom
+        anchors.topMargin: 2
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: Math.min(parent.width - 80, 400)
+        text: musicPanel.shell.activePlayer ? musicPanel.shell.activePlayer.trackArtist : ""
+        horizontalAlignment: Text.AlignHCenter
+        elide: Text.ElideRight
+        color: "#a7b6b1"
+        font.pixelSize: 13
+        font.family: musicPanel.shell.pillFont
+    }
+
     Row {
-        id: musicControls
-        visible: musicIsland.expanded
-        anchors.right: parent.right
-        anchors.rightMargin: 12
-        anchors.verticalCenter: parent.verticalCenter
-        spacing: 5
+        anchors.top: parent.top
+        anchors.topMargin: 92
+        anchors.horizontalCenter: parent.horizontalCenter
+        spacing: 14
 
         Rectangle {
-            width: 22
-            height: 22
-            radius: 11
-            color: musicPrevious.pressed ? "#383838" : "transparent"
-            opacity: musicIsland.shell.activePlayer && musicIsland.shell.activePlayer.canGoPrevious ? 1 : 0.35
-            Text {
-                anchors.centerIn: parent
-                text: "‹"
-                color: musicIsland.shell.pillForeground
-                font.pixelSize: 18
-            }
+            width: 32; height: 32; radius: 16
+            color: previous.pressed ? "#42524e" : "#26312f"
+            opacity: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canGoPrevious ? 1 : 0.35
+            Text { anchors.centerIn: parent; text: "‹"; color: musicPanel.shell.pillForeground; font.pixelSize: 25 }
             MouseArea {
-                id: musicPrevious
+                id: previous
                 anchors.fill: parent
-                enabled: musicIsland.shell.activePlayer && musicIsland.shell.activePlayer.canGoPrevious
-                onClicked: musicIsland.shell.activePlayer.previous()
+                enabled: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canGoPrevious
+                onClicked: musicPanel.shell.activePlayer.previous()
             }
         }
 
         Rectangle {
-            width: 24
-            height: 24
-            radius: 12
-            color: musicToggle.pressed ? "#404040" : "#2a2a2a"
-            opacity: musicIsland.shell.activePlayer && musicIsland.shell.activePlayer.canTogglePlaying ? 1 : 0.35
+            width: 40; height: 40; radius: 20
+            color: playPause.pressed ? "#00d7bf" : musicPanel.shell.active
+            opacity: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canTogglePlaying ? 1 : 0.35
             Text {
                 anchors.centerIn: parent
-                text: musicIsland.shell.activePlayer && musicIsland.shell.activePlayer.isPlaying ? "Ⅱ" : "▶"
-                color: musicIsland.shell.pillForeground
-                font.pixelSize: 11
+                text: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.isPlaying ? "Ⅱ" : "▶"
+                color: "#10201d"
+                font.bold: true
+                font.pixelSize: 14
             }
             MouseArea {
-                id: musicToggle
+                id: playPause
                 anchors.fill: parent
-                enabled: musicIsland.shell.activePlayer && musicIsland.shell.activePlayer.canTogglePlaying
-                onClicked: musicIsland.shell.activePlayer.togglePlaying()
+                enabled: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canTogglePlaying
+                onClicked: musicPanel.shell.activePlayer.togglePlaying()
             }
         }
 
         Rectangle {
-            width: 22
-            height: 22
-            radius: 11
-            color: musicNext.pressed ? "#383838" : "transparent"
-            opacity: musicIsland.shell.activePlayer && musicIsland.shell.activePlayer.canGoNext ? 1 : 0.35
-            Text {
-                anchors.centerIn: parent
-                text: "›"
-                color: musicIsland.shell.pillForeground
-                font.pixelSize: 18
-            }
+            width: 32; height: 32; radius: 16
+            color: next.pressed ? "#42524e" : "#26312f"
+            opacity: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canGoNext ? 1 : 0.35
+            Text { anchors.centerIn: parent; text: "›"; color: musicPanel.shell.pillForeground; font.pixelSize: 25 }
             MouseArea {
-                id: musicNext
+                id: next
                 anchors.fill: parent
-                enabled: musicIsland.shell.activePlayer && musicIsland.shell.activePlayer.canGoNext
-                onClicked: musicIsland.shell.activePlayer.next()
+                enabled: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canGoNext
+                onClicked: musicPanel.shell.activePlayer.next()
             }
         }
+    }
 
-        Item {
-            visible: musicIsland.shell.activePlayer && musicIsland.shell.activePlayer.volumeSupported
-            width: visible ? 64 : 0
-            height: 22
+    Item {
+        visible: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.volumeSupported
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 14
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: 190
+        height: 8
 
-            Rectangle {
-                anchors.verticalCenter: parent.verticalCenter
-                width: parent.width
-                height: 4
-                radius: 2
-                color: "#3c3c3c"
-            }
-            Rectangle {
-                anchors.verticalCenter: parent.verticalCenter
-                width: parent.width * Math.max(0, Math.min(1,
-                    musicIsland.shell.activePlayerVolume))
-                height: 4
-                radius: 2
-                color: musicIsland.shell.pillForeground
-            }
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onPressed: function(mouse) {
-                    musicIsland.shell.setActivePlayerVolume(mouse.x / width);
-                }
-                onPositionChanged: function(mouse) {
-                    if (pressed)
-                        musicIsland.shell.setActivePlayerVolume(mouse.x / width);
-                }
-                onClicked: function(mouse) {
-                    musicIsland.shell.setActivePlayerVolume(mouse.x / width);
-                }
+        Rectangle {
+            anchors.verticalCenter: parent.verticalCenter
+            width: parent.width; height: 4; radius: 2
+            color: "#42524e"
+        }
+        Rectangle {
+            anchors.verticalCenter: parent.verticalCenter
+            width: parent.width * Math.max(0, Math.min(1, musicPanel.shell.activePlayerVolume))
+            height: 4; radius: 2
+            color: musicPanel.shell.pillForeground
+        }
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+            onPressed: function(mouse) { musicPanel.shell.setActivePlayerVolume(mouse.x / width); }
+            onPositionChanged: function(mouse) {
+                if (pressed)
+                    musicPanel.shell.setActivePlayerVolume(mouse.x / width);
             }
         }
     }

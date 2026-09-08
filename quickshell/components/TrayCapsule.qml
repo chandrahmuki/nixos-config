@@ -123,7 +123,7 @@ Rectangle {
                 Rectangle {
                     anchors.fill: parent
                     radius: 12
-                    color: "#111111"
+                    color: trayCapsule.shell.pillBackground
                     border.width: 1
                     border.color: "#d8d8d8"
 

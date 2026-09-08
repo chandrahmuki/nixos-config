@@ -86,7 +86,7 @@
         };
         "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2" = {
           binding = "<Super>b";
-          command = "nautilus";
+          command = "thunar";
           name = "File Manager";
         };
         "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3" = {

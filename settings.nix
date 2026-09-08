@@ -14,7 +14,7 @@
       "hyprland"
       "greetd"
       "helix"
-      "nautilus"
+      "thunar"
       "neovim"
       "nh"
       "stylix"

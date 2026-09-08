@@ -1,13 +1,8 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
-import Quickshell.Io
 import Quickshell.Wayland
-import Quickshell.Services.Mpris
-import Quickshell.Services.SystemTray
-import Quickshell.Bluetooth
 import "../components"
 
 Variants {
@@ -15,96 +10,154 @@ Variants {
     required property var shell
     model: Quickshell.screens
 
-        PanelWindow {
-            id: pillWindow
-            required property var modelData
-            readonly property var hyprMonitor: Hyprland.monitorFor(modelData)
-            readonly property var monitorWorkspaces: pillRoot.shell.overviewWorkspaces.filter(function(workspace) {
-                return workspace.monitor === pillWindow.hyprMonitor;
-            })
-            screen: modelData
-            anchors { top: true; left: true; right: true }
-            implicitHeight: 54
-            // Keep the active window below the pill instead of drawing over it.
-            exclusionMode: ExclusionMode.Normal
-            exclusiveZone: 54
-            color: "transparent"
+    PanelWindow {
+        id: pillWindow
+        required property var modelData
+        readonly property var hyprMonitor: Hyprland.monitorFor(modelData)
+        readonly property int hyprMonitorId: hyprMonitor ? hyprMonitor.id : -1
+        readonly property int fullscreenRevision: pillRoot.shell.fullscreenStateRevision
+        readonly property bool strictFullscreen: fullscreenRevision >= 0
+            && pillRoot.shell.strictFullscreenFor(hyprMonitor)
+        readonly property bool revealTarget: hyprMonitorId >= 0
+            && pillRoot.shell.isFullscreenPillRevealedFor(hyprMonitorId)
+        screen: modelData
+        anchors { top: true; left: true; right: true }
+        // Fixed at the tall size, always. This is a real layer-shell surface:
+        // Hyprland's own "layers" animation (bezier "default", which has a
+        // slight overshoot) animates any resize of it, producing a visible
+        // bounce we don't control from QML. Keeping it constant means only
+        // the QML content underneath (islandShape / musicPanel) ever changes
+        // size — cheap, and never touches the compositor's own animation.
+        // exclusiveZone (not this) is what actually reserves bar space, so
+        // this doesn't push other windows down.
+        implicitHeight: 182
+        exclusionMode: ExclusionMode.Normal
+        exclusiveZone: 54
+        WlrLayershell.layer: revealTarget
+            || (pillRoot.shell.fullscreenPillOverlayActive
+                && pillRoot.shell.fullscreenPillMonitorId === hyprMonitorId)
+            ? WlrLayer.Overlay : WlrLayer.Top
+        color: "transparent"
+        mask: Region {
+            item: islandShape
+        }
 
-            Timer {
-                interval: 1000
-                running: true
-                repeat: true
-                onTriggered: pillRoot.shell.now = new Date()
+        Timer {
+            interval: 1000
+            running: true
+            repeat: true
+            onTriggered: pillRoot.shell.now = new Date()
+        }
+
+        Rectangle {
+            id: islandShape
+            // The actual pill background — this is the shape that morphs,
+            // like ChillPill-Shell's "box". Target sizes are plain ternaries;
+            // Behavior does the smoothing, same technique they use.
+            readonly property real compactWidth: Math.min(baseRow.implicitWidth + 32, parent.width - 32)
+            readonly property real expandedWidth: Math.min(pillRoot.shell.musicPanelWidth, parent.width - 32)
+            width: musicPanel.expanded ? expandedWidth : compactWidth
+            height: musicPanel.expanded ? 164 : 40
+            radius: musicPanel.expanded ? 14 : 20
+            x: (parent.width - width) / 2
+            y: pillWindow.strictFullscreen
+                && !pillWindow.revealTarget ? -height : 7
+            visible: !pillWindow.strictFullscreen || pillWindow.revealTarget
+            clip: true
+            color: pillRoot.shell.pillBackground
+            Behavior on width { NumberAnimation { duration: 260; easing.type: Easing.OutExpo } }
+            Behavior on height { NumberAnimation { duration: 260; easing.type: Easing.OutExpo } }
+            Behavior on radius { NumberAnimation { duration: 260; easing.type: Easing.OutExpo } }
+            Behavior on y {
+                NumberAnimation {
+                    duration: 190
+                    easing.type: Easing.OutCubic
+                }
             }
 
-            Rectangle {
-                id: pill
-                width: Math.min(baseRow.implicitWidth + 32, parent.width - 32)
-                height: 40
-                anchors.top: parent.top
-                anchors.topMargin: 7
-                // Keep the tray and clock stable while the media area grows left.
-                x: (parent.width + width - (musicIsland.expanded
-                    ? pillRoot.shell.musicExpandedWidth - 38 : 0)) / 2 - width
-                radius: height / 2
-                color: pillRoot.shell.pillBackground
-                border.width: 1
-                border.color: "#303030"
+            HoverHandler {
+                onHoveredChanged: {
+                    if (hovered)
+                        pillRoot.shell.keepFullscreenPillVisible();
+                    else
+                        pillRoot.shell.scheduleFullscreenPillHide();
+                }
+            }
 
-                RowLayout {
-                    id: baseRow
-                    anchors.centerIn: parent
-                    spacing: 10
-                    WorkspaceRail {
-                        id: workspaceRail
-                        shell: pillRoot.shell
-                        monitor: pillWindow.hyprMonitor
-                    }
+            RowLayout {
+                id: baseRow
+                // Pinned to the compact pill's own fixed center (top + 20),
+                // not centerIn islandShape: islandShape grows downward from a
+                // fixed top edge, so centering on its moving middle would
+                // drag this content (and its hover target) down mid-morph.
+                anchors.horizontalCenter: parent.horizontalCenter
+                y: 20 - height / 2
+                spacing: 10
+                opacity: musicPanel.expanded ? 0 : 1
+                Behavior on opacity { NumberAnimation { duration: 100 } }
 
-                    Item {
-                        id: musicSlot
-                        Layout.preferredWidth: pillRoot.shell.activePlayer
-                            ? (musicIsland.expanded ? pillRoot.shell.musicExpandedWidth : 38) : 0
-                        Layout.preferredHeight: 26
-                    }
+                WorkspaceRail {
+                    shell: pillRoot.shell
+                    monitor: pillWindow.hyprMonitor
+                }
+
+                Item {
+                    Layout.preferredWidth: pillRoot.shell.activePlayer ? 38 : 0
+                    Layout.preferredHeight: 26
+                    visible: pillRoot.shell.activePlayer
 
                     Row {
-                        spacing: 2
-
-                        SystemVolumeControl {
-                            shell: pillRoot.shell
-                        }
-
-                        NetworkIndicator {
-                            shell: pillRoot.shell
-                            monitor: pillWindow.hyprMonitor
-                        }
-
-                        BluetoothHeadset {
-                            shell: pillRoot.shell
-                            device: pillRoot.shell.connectedHeadset
+                        anchors.centerIn: parent
+                        spacing: 3
+                        Repeater {
+                            model: 4
+                            delegate: Rectangle {
+                                required property int index
+                                width: 3
+                                height: pillRoot.shell.activePlayer && pillRoot.shell.activePlayer.isPlaying
+                                    ? 3 + pillRoot.shell.cavaLevels[index] * 0.14 : 3
+                                radius: 1.5
+                                color: pillRoot.shell.pillForeground
+                                Behavior on height { NumberAnimation { duration: 45; easing.type: Easing.OutQuad } }
+                            }
                         }
                     }
 
-                    TrayCapsule {
-                        shell: pillRoot.shell
-                    }
-
-                    WeatherWidget {
-                        shell: pillRoot.shell
-                    }
-
-                    ClockWidget {
-                        shell: pillRoot.shell
+                    HoverHandler {
+                        onHoveredChanged: {
+                            if (hovered)
+                                musicPanel.openPanel();
+                            else
+                                musicPanel.scheduleClose();
+                        }
                     }
                 }
 
-                MusicIsland {
-                    id: musicIsland
-                    shell: pillRoot.shell
-                    x: baseRow.x + musicSlot.x + musicSlot.width - width
-                    y: baseRow.y + musicSlot.y
+                Row {
+                    spacing: 2
+                    SystemVolumeControl { shell: pillRoot.shell }
+                    NetworkIndicator { shell: pillRoot.shell; monitor: pillWindow.hyprMonitor }
+                    BluetoothHeadset { shell: pillRoot.shell; device: pillRoot.shell.connectedHeadset }
                 }
+
+                TrayCapsule { shell: pillRoot.shell }
+                WeatherWidget { shell: pillRoot.shell }
+                ClockWidget { shell: pillRoot.shell }
+            }
+
+            // Nested inside islandShape (not a sibling): inherits its clip,
+            // so the fixed-size card can never visually bleed past whatever
+            // (possibly still-growing) bounds are actually clickable, and it
+            // inherits islandShape's visible/position, so it can't stay
+            // floating on screen if strict fullscreen hides the pill while
+            // the panel happens to be open.
+            MusicIsland {
+                id: musicPanel
+                shell: pillRoot.shell
+                width: islandShape.expandedWidth
+                height: 164
+                anchors.horizontalCenter: parent.horizontalCenter
             }
         }
     }
+}

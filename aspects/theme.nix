@@ -55,15 +55,6 @@
             box-shadow: none;
         }
 
-        /* Masquer la barre latérale de Nautilus */
-        .nautilus-window .navigation-sidebar,
-        .nautilus-window placessidebar {
-            min-width: 0px;
-            opacity: 0;
-            margin: 0;
-            padding: 0;
-            border: none;
-        }
       '';
 
       home.packages = with pkgs; [
@@ -71,8 +62,7 @@
       ];
 
       # Symlinks pour les icônes manquantes dans les thèmes standards
-      home.file.".local/share/icons/catppuccin-mono-light".source =
-        "${monochromeIcons}/share/icons/catppuccin-mono-light";
+      home.file.".local/share/icons/catppuccin-mono-light".source = "${monochromeIcons}/share/icons/catppuccin-mono-light";
       home.file.".local/share/icons/hicolor/scalable/apps/io.github.ilya_zlobintsev.LACT.svg".source = "${pkgs.lact}/share/pixmaps/io.github.ilya_zlobintsev.LACT.svg";
 
       # Force libadwaita to use dark theme
@@ -93,5 +83,4 @@
       };
     };
   };
-
 }

@@ -94,7 +94,7 @@ Item {
         Rectangle {
             anchors.fill: parent
             radius: 12
-            color: "#111111"
+            color: weatherControl.shell.pillBackground
             border.width: 1
             border.color: "#d8d8d8"
 

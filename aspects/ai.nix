@@ -7,6 +7,33 @@
     username,
     ...
   }: let
+    codexVersion = "0.153.4";
+    codex = pkgs.stdenvNoCC.mkDerivation {
+      pname = "codex";
+      version = codexVersion;
+
+      src = pkgs.fetchurl {
+        url = "https://github.com/openai/codex/releases/download/rust-v${codexVersion}/codex-package-x86_64-unknown-linux-musl.tar.gz";
+        hash = "sha256-qCIYfhokIMYcWSZyG/vYeHAe2VVHybsNTeRJiha6GCE=";
+      };
+
+      sourceRoot = ".";
+      unpackPhase = "tar -xzf $src";
+      installPhase = ''
+        runHook preInstall
+        mkdir -p $out
+        cp -r bin codex-path codex-resources codex-package.json $out/
+        runHook postInstall
+      '';
+
+      meta = {
+        description = "Lightweight coding agent that runs in your terminal";
+        homepage = "https://github.com/openai/codex";
+        mainProgram = "codex";
+        platforms = ["x86_64-linux"];
+      };
+    };
+
     antigravity-cli = pkgs.stdenvNoCC.mkDerivation {
       pname = "antigravity-cli";
       version = "1.1.13";
@@ -37,7 +64,7 @@
         pkgs.opencode-claude-auth
         pkgs.pkgs-master.claude-code
         pkgs.claude-desktop
-        pkgs.pkgs-master.codex
+        codex
         inputs.omnigraph.packages.${pkgs.stdenv.hostPlatform.system}.default
         inputs.muggy.packages.${pkgs.stdenv.hostPlatform.system}.default
       ];

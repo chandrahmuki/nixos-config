@@ -7,9 +7,6 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-master.url = "github:nixos/nixpkgs/master";
 
-    # Version figée de Nixpkgs pour Mesa 26.1.2 afin d'éviter les crashs multi-écrans Parsec
-    nixpkgs-mesa.url = "github:nixos/nixpkgs/567a49d1913ce81ac6e9582e3553dd90a955875f";
-
     # Outils et gestionnaires de configuration utilisateur
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -79,6 +76,7 @@
       url = "github:chandrahmuki/OmniGraph";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
   };
 
   # Définition des sorties (Outputs) du flake
@@ -150,6 +148,14 @@
           muggy-nixos = mkNixosConfiguration {
             settings = import ./hosts/muggy-nixos/settings.nix;
             hardwareModule = ./hosts/muggy-nixos/hardware-configuration.nix;
+            extraModules = [
+              ({config, pkgs, settings, ...}: {
+                environment.systemPackages = [
+                  pkgs.handy
+                  pkgs.wtype
+                ];
+              })
+            ];
           };
 
           # Configuration générique / template pour tout utilisateur

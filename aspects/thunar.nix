@@ -1,12 +1,12 @@
 {den, ...}: {
-  den.aspects.nautilus.nixos = {pkgs, ...}: {
+  den.aspects.thunar.nixos = {pkgs, ...}: {
     services = {
       gvfs.enable = true;
       tumbler.enable = true;
-      gnome.sushi.enable = true;
     };
     environment.systemPackages = with pkgs; [
-      nautilus
+      thunar
+      thunar-archive-plugin
       file-roller
       p7zip
       unrar

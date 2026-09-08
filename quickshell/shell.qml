@@ -24,6 +24,13 @@ ShellRoot {
     property bool splashVisible: true
     property bool splashActive: true
     property bool overviewOpen: false
+    property bool powerMenuOpen: false
+    property bool fullscreenPillReveal: false
+    property bool fullscreenPillOverlayActive: false
+    property int fullscreenPillMonitorId: -1
+    property int fullscreenStateRevision: 0
+    property int powerMenuIndex: 0
+    property bool powerMenuConfirming: false
     property string searchText: ""
     property int selectedIndex: 0
     property int overviewIndex: 0
@@ -58,8 +65,8 @@ ShellRoot {
     property string weatherUpdated: "—"
     property var weatherForecast: []
     property bool weatherOnline: false
-    readonly property int launcherWidth: 620
-    readonly property int launcherHeight: 460
+    readonly property int launcherWidth: 350
+    readonly property int launcherHeight: 430
     readonly property color background: "#2b3a36" // Stylix base00
     readonly property color surface: "#354742"    // Stylix base01
     readonly property color selection: "#5e3a4d"  // Stylix base02
@@ -67,7 +74,7 @@ ShellRoot {
     readonly property color foreground: "#dfd5cd" // Stylix base05
     readonly property color accent: "#90e0ef"     // Stylix base0D
     readonly property color active: "#00f5d4"     // Stylix base0B
-    readonly property color pillBackground: "#111111"
+    readonly property color pillBackground: "#161616"
     readonly property color pillForeground: "#f2f2f2"
     readonly property color pillMuted: "#4b4b4b"
     readonly property color pillActive: "#ffffff"
@@ -97,12 +104,114 @@ ShellRoot {
     readonly property real activePlayerVolume: activePlayerUsesPipeWireVolume
         ? pipewireBrowserVolume
         : activePlayer && activePlayer.volumeSupported ? activePlayer.volume : 0
+    readonly property int musicPanelWidth: 470
     property var cavaLevels: [0, 0, 0, 0]
-    readonly property int musicExpandedWidth: 330
     readonly property var overviewToplevels: selectedOverviewWorkspace
         ? Hyprland.toplevels.values.filter(function(toplevel) {
             return toplevel.workspace === selectedOverviewWorkspace;
         }) : []
+    // Quickshell 0.3 does not always update an existing toplevel's IPC
+    // snapshot after fullscreen changes. Refresh once per Hyprland event;
+    // polling created overlapping requests where an old response could win.
+    Timer {
+        id: fullscreenStateRefreshTimer
+        interval: 40
+        repeat: false
+        onTriggered: {
+            Hyprland.refreshMonitors();
+            Hyprland.refreshWorkspaces();
+            Hyprland.refreshToplevels();
+            root.fullscreenStateRevision++;
+        }
+    }
+
+    Connections {
+        target: Hyprland
+        function onRawEvent(event) {
+            if (event.name === "fullscreen" || event.name === "workspacev2"
+                    || event.name === "focusedmon" || event.name === "openwindow"
+                    || event.name === "closewindow")
+                fullscreenStateRefreshTimer.restart();
+        }
+    }
+
+    Component.onCompleted: fullscreenStateRefreshTimer.restart()
+
+    Timer {
+        id: fullscreenPillHideTimer
+        interval: 850
+        repeat: false
+        onTriggered: {
+            root.fullscreenPillReveal = false;
+            fullscreenPillOverlayDropTimer.restart();
+        }
+    }
+
+    // Keep the window in Overlay while its upward exit animation is visible.
+    Timer {
+        id: fullscreenPillOverlayDropTimer
+        interval: 190
+        repeat: false
+        onTriggered: {
+            root.fullscreenPillOverlayActive = false;
+            root.fullscreenPillMonitorId = -1;
+        }
+    }
+
+    function revealFullscreenPill(monitorId: int): void {
+        if (monitorId < 0)
+            return;
+        fullscreenPillOverlayDropTimer.stop();
+        fullscreenPillMonitorId = monitorId;
+        fullscreenPillOverlayActive = true;
+        fullscreenPillReveal = true;
+        fullscreenPillHideTimer.restart();
+    }
+
+    function strictFullscreenFor(monitor): bool {
+        // Accessing the revision makes this binding refresh when Hyprland
+        // updates fullscreen state inside an existing IPC object.
+        const revision = fullscreenStateRevision;
+        if (!monitor || !monitor.activeWorkspace)
+            return false;
+
+        return Hyprland.toplevels.values.some(function(toplevel) {
+            return toplevel.monitor && toplevel.workspace
+                && toplevel.monitor.id === monitor.id
+                && toplevel.workspace.id === monitor.activeWorkspace.id
+                && toplevel.lastIpcObject
+                && toplevel.lastIpcObject.visible === true
+                && Number(toplevel.lastIpcObject.fullscreen) === 2;
+        });
+    }
+
+    function hasFullscreenFor(monitor): bool {
+        const revision = fullscreenStateRevision;
+        if (!monitor || !monitor.activeWorkspace)
+            return false;
+
+        return Hyprland.toplevels.values.some(function(toplevel) {
+            return toplevel.monitor && toplevel.workspace
+                && toplevel.monitor.id === monitor.id
+                && toplevel.workspace.id === monitor.activeWorkspace.id
+                && toplevel.lastIpcObject
+                && toplevel.lastIpcObject.visible === true
+                && Number(toplevel.lastIpcObject.fullscreen) > 0;
+        });
+    }
+
+    function isFullscreenPillRevealedFor(monitorId: int): bool {
+        return fullscreenPillReveal && fullscreenPillMonitorId === monitorId;
+    }
+
+    function keepFullscreenPillVisible(): void {
+        fullscreenPillHideTimer.stop();
+    }
+
+    function scheduleFullscreenPillHide(): void {
+        if (fullscreenPillReveal)
+            fullscreenPillHideTimer.restart();
+    }
 
     Timer {
         // The GIF's own animation is ~1.4s; hold a moment on the settled
@@ -599,6 +708,57 @@ ShellRoot {
         }
     }
 
+    function togglePowerMenu(): void {
+        powerMenuOpen = !powerMenuOpen;
+        powerMenuIndex = 0;
+        powerMenuConfirming = false;
+    }
+
+    function closePowerMenu(): void {
+        powerMenuOpen = false;
+        powerMenuConfirming = false;
+    }
+
+    function movePowerMenuSelection(offset: int): void {
+        powerMenuIndex = (powerMenuIndex + offset + 4) % 4;
+        powerMenuConfirming = false;
+    }
+
+    function activatePowerMenuSelection(): void {
+        if (!powerMenuConfirming) {
+            powerMenuConfirming = true;
+            return;
+        }
+
+        executePowerMenuAction(powerMenuIndex);
+    }
+
+    function executePowerMenuAction(index: int): void {
+        const commands = [
+            ["systemctl", "suspend"],
+            ["systemctl", "reboot"],
+            ["hyprctl", "dispatch", "exit"],
+            ["systemctl", "poweroff"]
+        ];
+        console.log("Power menu action:", commands[index].join(" "));
+        powerActionProcess.command = commands[index];
+        powerActionProcess.running = true;
+        closePowerMenu();
+    }
+
+    Process {
+        id: powerActionProcess
+        command: []
+        running: false
+        onExited: function(exitCode) {
+            if (exitCode !== 0)
+                console.warn("Power menu action failed with exit code", exitCode);
+        }
+        stderr: SplitParser {
+            onRead: data => console.warn("Power menu action:", data.trim())
+        }
+    }
+
     function moveOverviewSelection(offset: int): void {
         if (overviewToplevels.length === 0)
             return;
@@ -676,6 +836,11 @@ ShellRoot {
         function toggleLauncher(): void { root.toggleLauncher(); }
         function toggleOverview(): void { root.toggleOverview(); }
         function toggleNetworkApp(): void { root.toggleNetworkApp(); }
+        function togglePowerMenu(): void { root.togglePowerMenu(); }
+    }
+
+    FullscreenPillRevealWindow {
+        shell: root
     }
 
     PillWindow {
@@ -697,6 +862,11 @@ ShellRoot {
     }
 
     OverviewWindow {
+        shell: root
+    }
+
+    // Kept as a window component so the menu can own its overlay focus grab.
+    PowerMenuWindow {
         shell: root
     }
 

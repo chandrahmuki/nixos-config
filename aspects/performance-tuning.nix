@@ -3,7 +3,6 @@
     config,
     lib,
     pkgs,
-    inputs,
     ...
   }: {
     # --- PERFORMANCE TUNING (performance-engineer skill) ---
@@ -39,8 +38,8 @@
 
     # Hardware acceleration (VA-API)
     hardware.graphics = {
-      package = inputs.nixpkgs-mesa.legacyPackages.${pkgs.stdenv.hostPlatform.system}.mesa;
-      package32 = inputs.nixpkgs-mesa.legacyPackages.${pkgs.stdenv.hostPlatform.system}.pkgsi686Linux.mesa;
+      package = pkgs.mesa;
+      package32 = pkgs.pkgsi686Linux.mesa;
       extraPackages = with pkgs; [
         libva
         libva-vdpau-driver
@@ -55,5 +54,4 @@
       VDPAU_DRIVER = "radeonsi";
     };
   };
-
 }

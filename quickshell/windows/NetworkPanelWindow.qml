@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
+import Quickshell.Wayland
 
 Variants {
     id: networkPanel
@@ -22,6 +23,7 @@ Variants {
             }
             exclusionMode: ExclusionMode.Ignore
             aboveWindows: true
+            WlrLayershell.layer: WlrLayer.Overlay
             focusable: false
             color: "transparent"
             visible: networkPanel.shell.networkAppOpen && networkAppWindow.hyprMonitor
