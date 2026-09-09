@@ -226,36 +226,56 @@ Rectangle {
             }
         }
 
-        Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: musicPanel.shell.panelLine }
-
-        RowLayout {
+        // The lower edge is part of the cassette machine, not a loose button
+        // row. Its transport cluster is aligned under the cassette bay.
+        Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 30
-            spacing: 6
-            Rectangle {
-                Layout.preferredWidth: 33; Layout.preferredHeight: 28; radius: 3
-                color: previous.pressed ? "#42524e" : musicPanel.shell.panelSurface
-                border.width: 1; border.color: musicPanel.shell.panelLine
-                opacity: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canGoPrevious ? 1 : 0.35
-                Text { anchors.centerIn: parent; text: "‹‹"; color: musicPanel.shell.pillForeground; font.pixelSize: 13; font.bold: true }
-                MouseArea { id: previous; anchors.fill: parent; enabled: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canGoPrevious; onClicked: musicPanel.shell.activePlayer.previous() }
+            Layout.preferredHeight: 31
+            radius: 3
+            color: "#111716"
+            border.width: 1
+            border.color: musicPanel.shell.panelLine
+
+            Rectangle { anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter; width: 34; height: 2; radius: 1; color: "#354640" }
+            Rectangle { anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter; width: 34; height: 2; radius: 1; color: "#354640" }
+            Rectangle { anchors.left: parent.left; anchors.leftMargin: 4; anchors.top: parent.top; anchors.topMargin: 4; width: 3; height: 3; radius: 2; color: "#61716a" }
+            Rectangle { anchors.right: parent.right; anchors.rightMargin: 4; anchors.bottom: parent.bottom; anchors.bottomMargin: 4; width: 3; height: 3; radius: 2; color: "#61716a" }
+
+            Item {
+                // Main row: signal (38) + two gaps/divider (19) precedes the
+                // 188px cassette bay, so this puts the transport at its center.
+                x: 57
+                width: 188
+                height: parent.height
+
+                Row {
+                    anchors.centerIn: parent
+                    spacing: 6
+                    Rectangle {
+                        width: 33; height: 25; radius: 3
+                        color: previous.pressed ? "#42524e" : musicPanel.shell.panelSurface
+                        border.width: 1; border.color: musicPanel.shell.panelLine
+                        opacity: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canGoPrevious ? 1 : 0.35
+                        Text { anchors.centerIn: parent; text: "‹‹"; color: musicPanel.shell.pillForeground; font.pixelSize: 13; font.bold: true }
+                        MouseArea { id: previous; anchors.fill: parent; enabled: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canGoPrevious; onClicked: musicPanel.shell.activePlayer.previous() }
+                    }
+                    Rectangle {
+                        width: 92; height: 25; radius: 3
+                        color: playPause.pressed ? "#d99d49" : musicPanel.shell.retroAmber
+                        opacity: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canTogglePlaying ? 1 : 0.35
+                        Text { anchors.centerIn: parent; text: musicPanel.playing ? "Ⅱ  PAUSE" : "▶  PLAY"; color: "#10201d"; font.family: musicPanel.shell.pillFont; font.pixelSize: 10; font.bold: true }
+                        MouseArea { id: playPause; anchors.fill: parent; enabled: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canTogglePlaying; onClicked: musicPanel.shell.activePlayer.togglePlaying() }
+                    }
+                    Rectangle {
+                        width: 33; height: 25; radius: 3
+                        color: next.pressed ? "#42524e" : musicPanel.shell.panelSurface
+                        border.width: 1; border.color: musicPanel.shell.panelLine
+                        opacity: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canGoNext ? 1 : 0.35
+                        Text { anchors.centerIn: parent; text: "››"; color: musicPanel.shell.pillForeground; font.pixelSize: 13; font.bold: true }
+                        MouseArea { id: next; anchors.fill: parent; enabled: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canGoNext; onClicked: musicPanel.shell.activePlayer.next() }
+                    }
+                }
             }
-            Rectangle {
-                Layout.preferredWidth: 92; Layout.preferredHeight: 28; radius: 3
-                color: playPause.pressed ? "#d99d49" : musicPanel.shell.retroAmber
-                opacity: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canTogglePlaying ? 1 : 0.35
-                Text { anchors.centerIn: parent; text: musicPanel.playing ? "Ⅱ  PAUSE" : "▶  PLAY"; color: "#10201d"; font.family: musicPanel.shell.pillFont; font.pixelSize: 10; font.bold: true }
-                MouseArea { id: playPause; anchors.fill: parent; enabled: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canTogglePlaying; onClicked: musicPanel.shell.activePlayer.togglePlaying() }
-            }
-            Rectangle {
-                Layout.preferredWidth: 33; Layout.preferredHeight: 28; radius: 3
-                color: next.pressed ? "#42524e" : musicPanel.shell.panelSurface
-                border.width: 1; border.color: musicPanel.shell.panelLine
-                opacity: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canGoNext ? 1 : 0.35
-                Text { anchors.centerIn: parent; text: "››"; color: musicPanel.shell.pillForeground; font.pixelSize: 13; font.bold: true }
-                MouseArea { id: next; anchors.fill: parent; enabled: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canGoNext; onClicked: musicPanel.shell.activePlayer.next() }
-            }
-            Item { Layout.fillWidth: true }
         }
     }
 }
