@@ -2,26 +2,25 @@ import QtQuick
 import Quickshell
 import Quickshell.Services.SystemTray
 
-Rectangle {
+Item {
     id: trayCapsule
     required property var shell
-    implicitWidth: trayRow.implicitWidth + 10
-    implicitHeight: 28
-    radius: height / 2
-    color: "#171717"
-    border.width: 1
-    border.color: "#d8d8d8"
+    implicitWidth: trayRow.implicitWidth
+    implicitHeight: 24
+    width: implicitWidth
+    height: implicitHeight
 
     Row {
         id: trayRow
-        anchors.centerIn: parent
-        spacing: 4
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+        spacing: 3
     Repeater {
         model: SystemTray.items
         delegate: Item {
             id: trayItem
             required property var modelData
-            width: 24
+            width: visible ? 20 : 0
             height: 24
             visible: modelData.status !== Status.Passive
             property bool menuOpen: false
@@ -63,8 +62,8 @@ Rectangle {
 
             Image {
                 anchors.centerIn: parent
-                width: 20
-                height: 20
+                width: 17
+                height: 17
                 source: modelData.id === "remmina-icon"
                     ? "file:///home/david/.local/share/icons/catppuccin-mono-light/status/scalable/remmina-status.svg"
                     : modelData.id === "blueman"

@@ -3,69 +3,56 @@ import QtQuick
 Item {
     id: volumeControl
     required property var shell
-    width: volumeHover.hovered ? 92 : 24
+    // A meter belongs in the compact pill more naturally than a speaker
+    // glyph. Keep its footprint fixed so changing the volume never makes the
+    // whole bar jump sideways.
+    width: 30
     height: 24
 
-    Behavior on width {
-        NumberAnimation { duration: 160; easing.type: Easing.OutCubic }
-    }
+    readonly property real level: shell.systemMuted ? 0 : shell.systemVolume
+    property bool volumeHovered: false
 
-    HoverHandler { id: volumeHover }
+    Row {
+        anchors.centerIn: parent
+        spacing: 2
 
-    Rectangle {
-        anchors.fill: parent
-        radius: height / 2
-        color: volumeHover.hovered ? "#202020" : "transparent"
-    }
+        Repeater {
+            model: 5
+            delegate: Rectangle {
+                required property int index
+                readonly property real threshold: (index + 1) / 5
+                width: 4
+                height: 6 + index * 3
+                anchors.verticalCenter: parent.verticalCenter
+                radius: 1
+                color: volumeControl.level >= threshold
+                    ? volumeControl.shell.retroAmber : volumeControl.shell.pillMuted
+                opacity: volumeControl.volumeHovered || volumeControl.level >= threshold
+                    ? 1 : 0.65
 
-    Text {
-        anchors.left: parent.left
-        anchors.leftMargin: 4
-        anchors.verticalCenter: parent.verticalCenter
-        text: volumeControl.shell.systemMuted || volumeControl.shell.systemVolume === 0 ? "" : ""
-        color: volumeControl.shell.pillForeground
-        font.family: "JetBrainsMono Nerd Font"
-        font.pixelSize: 19
+                Behavior on color { ColorAnimation { duration: 100 } }
+            }
+        }
     }
 
     MouseArea {
-        visible: volumeHover.hovered
-        anchors.left: parent.left
-        anchors.leftMargin: 27
-        anchors.right: parent.right
-        anchors.rightMargin: 8
-        anchors.verticalCenter: parent.verticalCenter
-        height: parent.height
+        id: volumeMouse
+        anchors.fill: parent
+        hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
+
+        onContainsMouseChanged: volumeControl.volumeHovered = containsMouse
+
+        function setVolumeAt(x: real): void {
+            volumeControl.shell.setSystemVolume(Math.max(0, Math.min(1, x / width)));
+        }
+
         onClicked: function(mouse) {
-            volumeControl.shell.setSystemVolume(mouse.x / width);
+            setVolumeAt(mouse.x);
         }
         onPositionChanged: function(mouse) {
             if (pressed)
-                volumeControl.shell.setSystemVolume(mouse.x / width);
+                setVolumeAt(mouse.x);
         }
-    }
-
-    Rectangle {
-        visible: volumeHover.hovered
-        anchors.left: parent.left
-        anchors.leftMargin: 31
-        anchors.right: parent.right
-        anchors.rightMargin: 10
-        anchors.verticalCenter: parent.verticalCenter
-        height: 4
-        radius: 2
-        color: "#555555"
-    }
-
-    Rectangle {
-        visible: volumeHover.hovered
-        anchors.left: parent.left
-        anchors.leftMargin: 31
-        anchors.verticalCenter: parent.verticalCenter
-        width: Math.max(0, (parent.width - 41) * volumeControl.shell.systemVolume)
-        height: 4
-        radius: 2
-        color: volumeControl.shell.pillForeground
     }
 }

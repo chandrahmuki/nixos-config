@@ -9,7 +9,7 @@ Item {
     property bool panelOpen: false
 
     visible: device && device.connected
-    width: visible ? 24 : 0
+    width: visible ? 22 : 0
     height: 24
     readonly property bool musicPlaying: shell.activePlayer && shell.activePlayer.isPlaying
 
@@ -53,81 +53,37 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        radius: height / 2
-        color: headsetHover.hovered ? "#202020" : "transparent"
+        radius: 4
+        color: headsetHover.hovered ? "#242424" : "transparent"
 
         Item {
             anchors.centerIn: parent
-            width: 24
+            width: 22
             height: 24
 
-            Rectangle {
-                id: headsetRing
-                anchors.centerIn: parent
-                width: 20
-                height: 20
-                radius: 10
-                color: "transparent"
-                border.width: 1
-                border.color: headset.shell.pillForeground
-                opacity: headset.musicPlaying ? 0.85 : 0.5
-
-                SequentialAnimation on scale {
-                    running: headset.musicPlaying
-                    loops: Animation.Infinite
-                    NumberAnimation { to: 1.12; duration: 650; easing.type: Easing.OutQuad }
-                    NumberAnimation { to: 1; duration: 650; easing.type: Easing.InQuad }
-                }
-            }
-
             Text {
-                anchors.centerIn: parent
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
                 text: "󰋋"
-                color: headset.shell.pillForeground
+                color: headset.shell.retroCyan
                 font.family: "JetBrainsMono Nerd Font"
-                font.pixelSize: 15
+                font.pixelSize: 16
             }
 
-            Text {
-                id: noteOne
+            Rectangle {
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                width: 4
+                height: 4
+                radius: 2
+                color: headset.shell.retroAmber
                 visible: headset.musicPlaying
-                text: "♪"
-                x: 16
-                y: 0
-                color: headset.shell.pillForeground
-                font.family: headset.shell.pillFont
-                font.pixelSize: 10
-
-                SequentialAnimation on y {
-                    running: headset.musicPlaying
-                    loops: Animation.Infinite
-                    NumberAnimation { to: -5; duration: 600; easing.type: Easing.OutQuad }
-                    NumberAnimation { to: 0; duration: 600; easing.type: Easing.InQuad }
-                }
-                SequentialAnimation on opacity {
-                    running: headset.musicPlaying
-                    loops: Animation.Infinite
-                    NumberAnimation { to: 0.25; duration: 600 }
-                    NumberAnimation { to: 1; duration: 600 }
-                }
-            }
-
-            Text {
-                id: noteTwo
-                visible: headset.musicPlaying
-                text: "·"
-                x: 4
-                y: 17
-                color: "#bdbdbd"
-                font.family: headset.shell.pillFont
-                font.pixelSize: 12
 
                 SequentialAnimation on opacity {
                     running: headset.musicPlaying
                     loops: Animation.Infinite
-                    PauseAnimation { duration: 380 }
-                    NumberAnimation { to: 0.2; duration: 480 }
-                    NumberAnimation { to: 0.9; duration: 480 }
+                    NumberAnimation { to: 0.25; duration: 550 }
+                    NumberAnimation { to: 1; duration: 550 }
                 }
             }
         }

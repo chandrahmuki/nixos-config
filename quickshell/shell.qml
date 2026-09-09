@@ -40,8 +40,11 @@ ShellRoot {
     property string defaultBrowserDesktopId: ""
     property real systemVolume: 0
     property bool systemMuted: false
-    property bool networkAppOpen: false
     property string networkPanelMonitorName: ""
+    // IPC can request the network detail panel without owning a separate
+    // layer-shell window. The matching PillWindow consumes this revision.
+    property bool networkPanelIpcOpen: false
+    property int networkPanelToggleRevision: 0
     property string networkType: ""
     property string networkConnectionName: ""
     property string networkDevice: ""
@@ -78,6 +81,13 @@ ShellRoot {
     readonly property color pillForeground: "#f2f2f2"
     readonly property color pillMuted: "#4b4b4b"
     readonly property color pillActive: "#ffffff"
+    // Shared micro-console language for expandable pill panels.  Keep the
+    // accents deliberately sparse so future panels read as one system.
+    readonly property color panelSurface: "#1d2321"
+    readonly property color panelLine: "#43514c"
+    readonly property color retroAmber: "#f3b562"
+    readonly property color retroCyan: "#7ec8c2"
+    readonly property color retroCoral: "#e78a94"
     readonly property string pillFont: "Cozette"
     readonly property var matchingApplications: DesktopEntries.applications.values.filter(function(application) {
         const query = root.searchText.trim().toLowerCase();
@@ -317,41 +327,15 @@ ShellRoot {
         onTriggered: root.focusDefaultBrowser()
     }
 
-    Timer {
-        id: networkCloseTimer
-        interval: 220
-        repeat: false
-        onTriggered: root.networkAppOpen = false
-    }
-
-    Timer {
-        id: networkOpenTimer
-        interval: 180
-        repeat: false
-        onTriggered: root.networkAppOpen = true
-    }
-
-    function keepNetworkAppOpen(): void {
-        networkCloseTimer.stop();
-        networkOpenTimer.stop();
-        networkAppOpen = true;
-    }
-
     function toggleNetworkApp(): void {
-        networkAppOpen = !networkAppOpen;
-        if (networkAppOpen && Hyprland.focusedMonitor)
-            networkPanelMonitorName = Hyprland.focusedMonitor.name;
-    }
-
-    function scheduleNetworkAppOpen(monitorName: string): void {
-        networkCloseTimer.stop();
-        networkPanelMonitorName = monitorName;
-        networkOpenTimer.restart();
-    }
-
-    function scheduleNetworkAppClose(): void {
-        networkOpenTimer.stop();
-        networkCloseTimer.restart();
+        if (!Hyprland.focusedMonitor)
+            return;
+        const monitorChanged = networkPanelMonitorName !== Hyprland.focusedMonitor.name;
+        networkPanelMonitorName = Hyprland.focusedMonitor.name;
+        networkPanelIpcOpen = monitorChanged ? true : !networkPanelIpcOpen;
+        if (networkPanelIpcOpen)
+            revealFullscreenPill(Hyprland.focusedMonitor.id);
+        networkPanelToggleRevision++;
     }
 
     Process {
@@ -633,7 +617,7 @@ ShellRoot {
                     root.weatherTemperature = current.temp_C + "°";
                     root.weatherFeelsLike = current.FeelsLikeC + "°";
                     root.weatherHumidity = current.humidity + "%";
-                    root.weatherWind = current.winddir16Point + " " + current.windsKmph + " KM/H";
+                    root.weatherWind = current.winddir16Point + " " + current.windspeedKmph + " KM/H";
                     root.weatherRain = current.precipMM + " MM";
                     root.weatherCode = Number(current.weatherCode);
                     root.weatherUpdated = Qt.formatTime(new Date(), "HH:mm");
@@ -844,10 +828,6 @@ ShellRoot {
     }
 
     PillWindow {
-        shell: root
-    }
-
-    NetworkPanelWindow {
         shell: root
     }
 

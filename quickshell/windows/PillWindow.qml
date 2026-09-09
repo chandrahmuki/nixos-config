@@ -56,9 +56,11 @@ Variants {
             // Behavior does the smoothing, same technique they use.
             readonly property real compactWidth: Math.min(baseRow.implicitWidth + 32, parent.width - 32)
             readonly property real expandedWidth: Math.min(pillRoot.shell.musicPanelWidth, parent.width - 32)
-            width: musicPanel.expanded ? expandedWidth : compactWidth
-            height: musicPanel.expanded ? 164 : 40
-            radius: musicPanel.expanded ? 14 : 20
+            readonly property bool detailPanelExpanded: musicPanel.expanded || weatherPanel.expanded
+                || clockPanel.expanded || networkPanel.expanded
+            width: detailPanelExpanded ? expandedWidth : compactWidth
+            height: detailPanelExpanded ? 164 : 40
+            radius: detailPanelExpanded ? 14 : 20
             x: (parent.width - width) / 2
             y: pillWindow.strictFullscreen
                 && !pillWindow.revealTarget ? -height : 7
@@ -84,6 +86,17 @@ Variants {
                 }
             }
 
+            function closeDetailPanels(exceptPanel): void {
+                if (exceptPanel !== musicPanel)
+                    musicPanel.closePanel();
+                if (exceptPanel !== weatherPanel)
+                    weatherPanel.closePanel();
+                if (exceptPanel !== clockPanel)
+                    clockPanel.closePanel();
+                if (exceptPanel !== networkPanel)
+                    networkPanel.closePanel();
+            }
+
             RowLayout {
                 id: baseRow
                 // Pinned to the compact pill's own fixed center (top + 20),
@@ -92,8 +105,8 @@ Variants {
                 // drag this content (and its hover target) down mid-morph.
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 20 - height / 2
-                spacing: 10
-                opacity: musicPanel.expanded ? 0 : 1
+                spacing: 8
+                opacity: islandShape.detailPanelExpanded ? 0 : 1
                 Behavior on opacity { NumberAnimation { duration: 100 } }
 
                 WorkspaceRail {
@@ -101,48 +114,97 @@ Variants {
                     monitor: pillWindow.hyprMonitor
                 }
 
-                Item {
-                    Layout.preferredWidth: pillRoot.shell.activePlayer ? 38 : 0
-                    Layout.preferredHeight: 26
-                    visible: pillRoot.shell.activePlayer
+                Rectangle {
+                    Layout.preferredWidth: 1
+                    Layout.preferredHeight: 18
+                    color: pillRoot.shell.panelLine
+                    opacity: 0.7
+                }
 
-                    Row {
-                        anchors.centerIn: parent
-                        spacing: 3
-                        Repeater {
-                            model: 4
-                            delegate: Rectangle {
-                                required property int index
-                                width: 3
-                                height: pillRoot.shell.activePlayer && pillRoot.shell.activePlayer.isPlaying
-                                    ? 3 + pillRoot.shell.cavaLevels[index] * 0.14 : 3
-                                radius: 1.5
-                                color: pillRoot.shell.pillForeground
-                                Behavior on height { NumberAnimation { duration: 45; easing.type: Easing.OutQuad } }
+                Row {
+                    id: mediaSystemGroup
+                    spacing: 3
+
+                    Item {
+                        width: pillRoot.shell.activePlayer ? 32 : 0
+                        height: 26
+                        visible: pillRoot.shell.activePlayer
+
+                        Row {
+                            anchors.centerIn: parent
+                            spacing: 3
+                            Repeater {
+                                model: 4
+                                delegate: Rectangle {
+                                    required property int index
+                                    width: 3
+                                    height: pillRoot.shell.activePlayer && pillRoot.shell.activePlayer.isPlaying
+                                        ? 3 + pillRoot.shell.cavaLevels[index] * 0.14 : 3
+                                    radius: 1.5
+                                    color: pillRoot.shell.retroCyan
+                                    Behavior on height { NumberAnimation { duration: 45; easing.type: Easing.OutQuad } }
+                                }
+                            }
+                        }
+
+                        HoverHandler {
+                            onHoveredChanged: {
+                                if (hovered) {
+                                    islandShape.closeDetailPanels(musicPanel);
+                                    musicPanel.openPanel();
+                                } else {
+                                    musicPanel.scheduleClose();
+                                }
                             }
                         }
                     }
 
-                    HoverHandler {
-                        onHoveredChanged: {
-                            if (hovered)
-                                musicPanel.openPanel();
-                            else
-                                musicPanel.scheduleClose();
-                        }
-                    }
-                }
-
-                Row {
-                    spacing: 2
                     SystemVolumeControl { shell: pillRoot.shell }
-                    NetworkIndicator { shell: pillRoot.shell; monitor: pillWindow.hyprMonitor }
+                    NetworkIndicator {
+                        shell: pillRoot.shell
+                        monitor: pillWindow.hyprMonitor
+                        onOpenRequested: {
+                            islandShape.closeDetailPanels(networkPanel);
+                            networkPanel.openPanel();
+                        }
+                        onCloseRequested: networkPanel.scheduleClose()
+                    }
                     BluetoothHeadset { shell: pillRoot.shell; device: pillRoot.shell.connectedHeadset }
                 }
 
-                TrayCapsule { shell: pillRoot.shell }
-                WeatherWidget { shell: pillRoot.shell }
-                ClockWidget { shell: pillRoot.shell }
+                Rectangle {
+                    Layout.preferredWidth: 1
+                    Layout.preferredHeight: 18
+                    color: pillRoot.shell.panelLine
+                    opacity: 0.7
+                }
+
+                Row {
+                    id: contextGroup
+                    spacing: 2
+                    WeatherWidget {
+                        id: weatherWidget
+                        shell: pillRoot.shell
+                        onOpenRequested: {
+                            islandShape.closeDetailPanels(weatherPanel);
+                            weatherPanel.openPanel();
+                        }
+                        onCloseRequested: {
+                            weatherPanel.scheduleClose();
+                        }
+                    }
+                    ClockWidget {
+                        shell: pillRoot.shell
+                        onOpenRequested: {
+                            islandShape.closeDetailPanels(clockPanel);
+                            clockPanel.openPanel();
+                        }
+                        onCloseRequested: clockPanel.scheduleClose()
+                    }
+                    // Status icons finish the pill instead of interrupting the
+                    // weather/time readout.
+                    TrayCapsule { shell: pillRoot.shell }
+                }
             }
 
             // Nested inside islandShape (not a sibling): inherits its clip,
@@ -157,6 +219,47 @@ Variants {
                 width: islandShape.expandedWidth
                 height: 164
                 anchors.horizontalCenter: parent.horizontalCenter
+            }
+
+            WeatherIsland {
+                id: weatherPanel
+                shell: pillRoot.shell
+                width: islandShape.expandedWidth
+                height: 164
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+
+            ClockIsland {
+                id: clockPanel
+                shell: pillRoot.shell
+                width: islandShape.expandedWidth
+                height: 164
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+
+            NetworkIsland {
+                id: networkPanel
+                shell: pillRoot.shell
+                width: islandShape.expandedWidth
+                height: 164
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+
+            Connections {
+                target: pillRoot.shell
+                function onNetworkPanelToggleRevisionChanged(): void {
+                    if (!pillWindow.hyprMonitor
+                            || pillRoot.shell.networkPanelMonitorName !== pillWindow.hyprMonitor.name)
+                        return;
+                    if (pillRoot.shell.networkPanelIpcOpen) {
+                        islandShape.closeDetailPanels(networkPanel);
+                        networkPanel.openPanel();
+                        pillRoot.shell.keepFullscreenPillVisible();
+                    } else {
+                        networkPanel.closePanel();
+                        pillRoot.shell.scheduleFullscreenPillHide();
+                    }
+                }
             }
         }
     }

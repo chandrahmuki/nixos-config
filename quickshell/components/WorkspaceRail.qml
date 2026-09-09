@@ -5,32 +5,24 @@ Item {
     id: workspaceRail
     required property var shell
     required property var monitor
-    readonly property int cellWidth: 30
+    readonly property int cellWidth: 22
     readonly property var slots: [1, 2, 3, 4, 5]
     readonly property int activeWorkspaceIndex: {
         return workspaceRail.monitor && workspaceRail.monitor.activeWorkspace
             ? workspaceRail.shell.localWorkspaceLabel(workspaceRail.monitor.activeWorkspace.id) - 1 : -1;
     }
-    implicitWidth: workspaceCells.implicitWidth + 8
+    implicitWidth: workspaceCells.implicitWidth
     implicitHeight: 26
-
-    Rectangle {
-        anchors.fill: parent
-        radius: height / 2
-        color: "#151515"
-        border.width: 1
-        border.color: "#303030"
-    }
 
     Rectangle {
         id: activeWorkspaceSegment
         visible: workspaceRail.activeWorkspaceIndex >= 0
-        x: 2 + workspaceRail.activeWorkspaceIndex * workspaceRail.cellWidth
-        y: 3
-        width: workspaceRail.cellWidth + 4
-        height: parent.height - 6
-        radius: height / 2
-        color: workspaceRail.shell.pillActive
+        x: 1 + workspaceRail.activeWorkspaceIndex * workspaceRail.cellWidth
+        y: 4
+        width: workspaceRail.cellWidth - 2
+        height: parent.height - 8
+        radius: 3
+        color: workspaceRail.shell.retroAmber
 
         Behavior on x {
             NumberAnimation {
@@ -63,9 +55,9 @@ Item {
                     anchors.centerIn: parent
                     text: modelData
                     color: active ? workspaceRail.shell.pillBackground
-                        : occupied ? workspaceRail.shell.pillForeground : "#6d6d6d"
+                        : occupied ? workspaceRail.shell.retroCyan : workspaceRail.shell.pillMuted
                     font.family: workspaceRail.shell.pillFont
-                    font.pixelSize: active || occupied ? 15 : 11
+                    font.pixelSize: active || occupied ? 14 : 11
                     font.bold: occupied
                     style: active ? Text.Outline : Text.Normal
                     styleColor: color
