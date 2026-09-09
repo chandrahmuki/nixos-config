@@ -57,7 +57,7 @@ Variants {
             readonly property real compactWidth: Math.min(baseRow.implicitWidth + 32, parent.width - 32)
             readonly property real expandedWidth: Math.min(pillRoot.shell.musicPanelWidth, parent.width - 32)
             readonly property bool detailPanelExpanded: musicPanel.expanded || weatherPanel.expanded
-                || clockPanel.expanded || networkPanel.expanded
+                || clockPanel.expanded || networkPanel.expanded || audioPanel.expanded
             width: detailPanelExpanded ? expandedWidth : compactWidth
             height: detailPanelExpanded ? 164 : 40
             radius: detailPanelExpanded ? 14 : 20
@@ -95,6 +95,8 @@ Variants {
                     clockPanel.closePanel();
                 if (exceptPanel !== networkPanel)
                     networkPanel.closePanel();
+                if (exceptPanel !== audioPanel)
+                    audioPanel.closePanel();
             }
 
             RowLayout {
@@ -168,6 +170,14 @@ Variants {
                         }
                         onCloseRequested: networkPanel.scheduleClose()
                     }
+                    AudioIndicator {
+                        shell: pillRoot.shell
+                        onOpenRequested: {
+                            islandShape.closeDetailPanels(audioPanel);
+                            audioPanel.openPanel();
+                        }
+                        onCloseRequested: audioPanel.scheduleClose()
+                    }
                     BluetoothHeadset { shell: pillRoot.shell; device: pillRoot.shell.connectedHeadset }
                 }
 
@@ -238,6 +248,14 @@ Variants {
 
             NetworkIsland {
                 id: networkPanel
+                shell: pillRoot.shell
+                width: islandShape.expandedWidth
+                height: 164
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+
+            AudioIsland {
+                id: audioPanel
                 shell: pillRoot.shell
                 width: islandShape.expandedWidth
                 height: 164

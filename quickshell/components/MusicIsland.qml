@@ -6,7 +6,8 @@ Rectangle {
     required property var shell
     property bool expanded: false
     readonly property bool playing: shell.activePlayer && shell.activePlayer.isPlaying
-    readonly property real systemOutputLevel: shell.systemMuted ? 0 : shell.systemVolume
+    readonly property bool volumeAvailable: shell.activePlayer && shell.activePlayer.volumeSupported
+    readonly property real playerOutputLevel: volumeAvailable ? shell.activePlayerVolume : 0
 
     visible: opacity > 0
     y: 0
@@ -184,8 +185,8 @@ Rectangle {
                 Layout.preferredWidth: 52
                 Layout.fillHeight: true
                 spacing: 5
-                Text { text: "SYS OUT"; color: musicPanel.shell.retroCyan; font.family: musicPanel.shell.pillFont; font.pixelSize: 8 }
-                Text { text: musicPanel.shell.systemMuted ? "MUTE" : Math.round(musicPanel.systemOutputLevel * 100) + "%"; color: musicPanel.shell.pillForeground; font.family: musicPanel.shell.pillFont; font.pixelSize: 14; font.bold: true }
+                Text { text: "PLAYER"; color: musicPanel.shell.retroCyan; font.family: musicPanel.shell.pillFont; font.pixelSize: 8 }
+                Text { text: musicPanel.volumeAvailable ? Math.round(musicPanel.playerOutputLevel * 100) + "%" : "--"; color: musicPanel.shell.pillForeground; font.family: musicPanel.shell.pillFont; font.pixelSize: 14; font.bold: true }
                 Item {
                     width: parent.width; height: 39
                     Row {
@@ -199,17 +200,18 @@ Rectangle {
                                 width: 5; height: 8 + index * 6
                                 anchors.bottom: parent.bottom
                                 radius: 1
-                                color: musicPanel.systemOutputLevel >= threshold ? musicPanel.shell.retroAmber : musicPanel.shell.panelLine
+                                color: musicPanel.playerOutputLevel >= threshold ? musicPanel.shell.retroAmber : musicPanel.shell.panelLine
                                 MouseArea {
                                     anchors.fill: parent
+                                    enabled: musicPanel.volumeAvailable
                                     cursorShape: Qt.PointingHandCursor
-                                    onClicked: musicPanel.shell.setSystemVolume(parent.threshold)
+                                    onClicked: musicPanel.shell.setActivePlayerVolume(parent.threshold)
                                 }
                             }
                         }
                     }
                 }
-                Text { text: musicPanel.shell.systemMuted ? "MUTED" : "SYSTEM"; color: "#a7b6b1"; font.family: musicPanel.shell.pillFont; font.pixelSize: 8 }
+                Text { text: "MPRIS"; color: "#a7b6b1"; font.family: musicPanel.shell.pillFont; font.pixelSize: 8 }
             }
         }
     }
