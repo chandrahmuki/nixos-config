@@ -200,6 +200,11 @@ Rectangle {
                                 anchors.bottom: parent.bottom
                                 radius: 1
                                 color: musicPanel.systemOutputLevel >= threshold ? musicPanel.shell.retroAmber : musicPanel.shell.panelLine
+                                MouseArea {
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: musicPanel.shell.setSystemVolume(parent.threshold)
+                                }
                             }
                         }
                     }
@@ -209,17 +214,4 @@ Rectangle {
         }
     }
 
-    // The output module owns system volume, away from the compact pill.
-    MouseArea {
-        x: parent.width - 72
-        y: parent.height - 84
-        width: 62
-        height: 84
-        cursorShape: Qt.PointingHandCursor
-        onPressed: function(mouse) { musicPanel.shell.setSystemVolume(1 - mouse.y / height); }
-        onPositionChanged: function(mouse) {
-            if (pressed)
-                musicPanel.shell.setSystemVolume(1 - mouse.y / height);
-        }
-    }
 }
