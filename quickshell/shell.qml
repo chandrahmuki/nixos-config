@@ -105,12 +105,21 @@ ShellRoot {
         return device.connected && (device.icon.indexOf("audio") >= 0
             || device.icon.indexOf("headset") >= 0);
     }) || null
-    // Chromium exposes MPRIS controls but ignores its Volume setter. Its
-    // actual per-application volume is the Helium PipeWire stream instead.
+    // Some players expose an MPRIS volume property without applying it to
+    // their actual PipeWire stream. Route those known players to PipeWire.
     property real pipewireBrowserVolume: 1
-    readonly property bool activePlayerUsesPipeWireVolume: activePlayer
-        && (activePlayer.dbusName.toLowerCase().indexOf("chromium") >= 0
-            || activePlayer.desktopEntry.toLowerCase().indexOf("helium") >= 0)
+    readonly property string activePlayerPipeWireStreamMatch: {
+        if (!activePlayer)
+            return "";
+        const dbusName = activePlayer.dbusName.toLowerCase();
+        const desktopEntry = activePlayer.desktopEntry.toLowerCase();
+        if (dbusName.indexOf("cliamp") >= 0 || desktopEntry.indexOf("cliamp") >= 0)
+            return "cliamp";
+        if (dbusName.indexOf("chromium") >= 0 || desktopEntry.indexOf("helium") >= 0)
+            return "helium";
+        return "";
+    }
+    readonly property bool activePlayerUsesPipeWireVolume: activePlayerPipeWireStreamMatch.length > 0
     readonly property real activePlayerVolume: activePlayerUsesPipeWireVolume
         ? pipewireBrowserVolume
         : activePlayer && activePlayer.volumeSupported ? activePlayer.volume : 0
@@ -476,6 +485,7 @@ ShellRoot {
         if (activePlayerUsesPipeWireVolume) {
             pipewireBrowserVolume = volume;
             setBrowserPlayerVolumeProcess.requestedVolume = volume;
+            setBrowserPlayerVolumeProcess.streamMatch = activePlayerPipeWireStreamMatch;
             setBrowserPlayerVolumeProcess.running = true;
             return;
         }
@@ -487,11 +497,10 @@ ShellRoot {
     Process {
         id: setBrowserPlayerVolumeProcess
         property real requestedVolume: 1
-        // Helium's numeric stream IDs change after restarts. Restrict the
-        // lookup to its active playback streams; matching its client would
-        // select a non-volume node, and matching every process would include
-        // its microphone stream.
-        command: ["bash", "-c", "wpctl status | awk '/Streams:/ { streams = 1; next } /Video/ { streams = 0 } streams && /^[[:space:]]*[0-9]+\\. PipeWire ALSA \\[helium\\]/ { id = $1; print substr(id, 1, length(id) - 1) }' | while read -r stream; do wpctl set-volume $stream $1; done", "--", requestedVolume.toFixed(3)]
+        property string streamMatch: ""
+        // Stream IDs change after restarts. Match only the active playback
+        // stream for the current player, never an input/monitor stream.
+        command: ["bash", "-c", "wpctl status | awk -v needle=\"$2\" '/Streams:/ { streams = 1; next } /Video/ { streams = 0 } streams && /^[[:space:]]*[0-9]+\\. PipeWire ALSA/ && index(tolower($0), needle) { id = $1; sub(/\\.$/, \"\", id); print id }' | while read -r stream; do wpctl set-volume $stream $1; done", "--", requestedVolume.toFixed(3), streamMatch]
         running: false
     }
 
