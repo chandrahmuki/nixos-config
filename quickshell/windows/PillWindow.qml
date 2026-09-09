@@ -159,7 +159,6 @@ Variants {
                         }
                     }
 
-                    SystemVolumeControl { shell: pillRoot.shell }
                     NetworkIndicator {
                         shell: pillRoot.shell
                         monitor: pillWindow.hyprMonitor

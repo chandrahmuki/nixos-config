@@ -6,7 +6,7 @@ Rectangle {
     required property var shell
     property bool expanded: false
     readonly property bool playing: shell.activePlayer && shell.activePlayer.isPlaying
-    readonly property bool volumeAvailable: shell.activePlayer && shell.activePlayer.volumeSupported
+    readonly property real systemOutputLevel: shell.systemMuted ? 0 : shell.systemVolume
 
     visible: opacity > 0
     y: 0
@@ -184,8 +184,8 @@ Rectangle {
                 Layout.preferredWidth: 52
                 Layout.fillHeight: true
                 spacing: 5
-                Text { text: "OUT"; color: musicPanel.shell.retroCyan; font.family: musicPanel.shell.pillFont; font.pixelSize: 8 }
-                Text { text: musicPanel.volumeAvailable ? Math.round(musicPanel.shell.activePlayerVolume * 100) + "%" : "--"; color: musicPanel.shell.pillForeground; font.family: musicPanel.shell.pillFont; font.pixelSize: 14; font.bold: true }
+                Text { text: "SYS OUT"; color: musicPanel.shell.retroCyan; font.family: musicPanel.shell.pillFont; font.pixelSize: 8 }
+                Text { text: musicPanel.shell.systemMuted ? "MUTE" : Math.round(musicPanel.systemOutputLevel * 100) + "%"; color: musicPanel.shell.pillForeground; font.family: musicPanel.shell.pillFont; font.pixelSize: 14; font.bold: true }
                 Item {
                     width: parent.width; height: 39
                     Row {
@@ -199,28 +199,27 @@ Rectangle {
                                 width: 5; height: 8 + index * 6
                                 anchors.bottom: parent.bottom
                                 radius: 1
-                                color: musicPanel.volumeAvailable && musicPanel.shell.activePlayerVolume >= threshold ? musicPanel.shell.retroAmber : musicPanel.shell.panelLine
+                                color: musicPanel.systemOutputLevel >= threshold ? musicPanel.shell.retroAmber : musicPanel.shell.panelLine
                             }
                         }
                     }
                 }
-                Text { text: "MPRIS"; color: "#a7b6b1"; font.family: musicPanel.shell.pillFont; font.pixelSize: 8 }
+                Text { text: musicPanel.shell.systemMuted ? "MUTED" : "SYSTEM"; color: "#a7b6b1"; font.family: musicPanel.shell.pillFont; font.pixelSize: 8 }
             }
         }
     }
 
-    // The output module is also the compact volume scrubber.
+    // The output module owns system volume, away from the compact pill.
     MouseArea {
-        visible: musicPanel.volumeAvailable
         x: parent.width - 72
         y: parent.height - 84
         width: 62
         height: 84
         cursorShape: Qt.PointingHandCursor
-        onPressed: function(mouse) { musicPanel.shell.setActivePlayerVolume(1 - mouse.y / height); }
+        onPressed: function(mouse) { musicPanel.shell.setSystemVolume(1 - mouse.y / height); }
         onPositionChanged: function(mouse) {
             if (pressed)
-                musicPanel.shell.setActivePlayerVolume(1 - mouse.y / height);
+                musicPanel.shell.setSystemVolume(1 - mouse.y / height);
         }
     }
 }
