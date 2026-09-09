@@ -192,9 +192,35 @@ Rectangle {
                 Item { Layout.fillHeight: true }
                 RowLayout {
                     Layout.fillWidth: true
+                    Layout.preferredHeight: 14
                     spacing: 4
                     Text { text: "PLAYER"; color: musicPanel.shell.retroAmber; font.family: musicPanel.shell.pillFont; font.pixelSize: 8 }
-                    Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 3; radius: 2; color: musicPanel.shell.panelLine }
+                    Item {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Row {
+                            anchors.centerIn: parent
+                            spacing: 3
+                            Repeater {
+                                model: 5
+                                delegate: Rectangle {
+                                    required property int index
+                                    readonly property real level: (index + 1) / 5
+                                    width: 6
+                                    height: 5 + index * 2
+                                    anchors.bottom: parent.bottom
+                                    radius: 1
+                                    color: musicPanel.playerLevel >= level ? musicPanel.shell.retroAmber : musicPanel.shell.panelLine
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        enabled: musicPanel.volumeAvailable
+                                        cursorShape: Qt.PointingHandCursor
+                                        onClicked: musicPanel.shell.setActivePlayerVolume(parent.level)
+                                    }
+                                }
+                            }
+                        }
+                    }
                     Text { text: musicPanel.volumeAvailable ? Math.round(musicPanel.playerLevel * 100) + "%" : "--"; color: musicPanel.shell.pillForeground; font.family: musicPanel.shell.pillFont; font.pixelSize: 8 }
                 }
             }
