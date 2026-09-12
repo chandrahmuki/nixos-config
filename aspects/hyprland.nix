@@ -26,6 +26,157 @@
       ...
     }: let
       wallpaper = ../wallpapers/nixos_neon_souterrain.png;
+      omarchyThemeAssets = pkgs.fetchFromGitHub {
+        owner = "basecamp";
+        repo = "omarchy";
+        rev = "31bd80daa4613ffdee995ac27467fce5a2990806";
+        hash = "sha256-8twJRNfJlLJvwHL3OyWv+R8/GVYxFS1nIoFTOoYWkb0=";
+      };
+      muggyTheme = pkgs.writeShellApplication {
+        name = "muggy-theme";
+        runtimeInputs = [pkgs.hyprland pkgs.coreutils pkgs.glib pkgs.jq pkgs.kitty pkgs.matugen];
+        text = ''
+          set -euo pipefail
+
+          state_root="''${XDG_STATE_HOME:-$HOME/.local/state}/muggy"
+          state_file="$state_root/theme"
+
+          current_theme() {
+            if [ -r "$state_file" ]; then cat "$state_file"; else printf '%s\n' muggy; fi
+          }
+
+          apply_theme() {
+            theme="$1"
+            case "$theme" in
+              muggy) background="${wallpaper}" ;;
+              catppuccin) background="${omarchyThemeAssets}/themes/catppuccin/backgrounds/2-waves.webp" ;;
+              gruvbox) background="${omarchyThemeAssets}/themes/gruvbox/backgrounds/2-flower-basket.webp" ;;
+              *) echo "Unknown Muggy theme: $theme" >&2; exit 2 ;;
+            esac
+
+            mkdir -p "$state_root"
+            printf '%s\n' "$theme" > "$state_file.tmp"
+            mv "$state_file.tmp" "$state_file"
+            hyprctl hyprpaper preload "$background" >/dev/null 2>&1 || true
+            hyprctl hyprpaper wallpaper ",$background" >/dev/null
+            hyprctl hyprpaper unload unused >/dev/null 2>&1 || true
+
+            # Matugen is deliberately non-interactive here: a UI action must
+            # never wait for a terminal prompt when the image has several
+            # suitable source colours.
+            palette="$(matugen image "$background" --mode dark --prefer saturation --json hex)"
+            primary="$(printf '%s' "$palette" | jq -r '.colors.primary.dark.color | ltrimstr("#")')"
+            outline="$(printf '%s' "$palette" | jq -r '.colors.outline_variant.dark.color | ltrimstr("#")')"
+
+            # Kitty imports this mutable Matugen fragment. After an atomic
+            # update, remote control applies it to all live Kitty windows.
+            cache_root="''${XDG_CACHE_HOME:-$HOME/.cache}/muggy"
+            mkdir -p "$cache_root"
+            kitty_theme="$cache_root/kitty-theme.conf"
+            kitty_theme_tmp="$(mktemp "$cache_root/kitty-theme.XXXXXX")"
+            printf '%s' "$palette" | jq -r '
+              def c($name): .colors[$name].dark.color;
+              "background \(c("background"))",
+              "foreground \(c("on_surface"))",
+              "cursor \(c("primary"))",
+              "selection_background \(c("primary_container"))",
+              "selection_foreground \(c("on_primary_container"))",
+              # Terminal TUIs commonly paint their canvas with ANSI black.
+              # Keep it aligned with the actual Matugen background instead of
+              # surface_container_highest or primary_container, both of which
+              # carry enough hue from the source colour to read green.
+              "color0 \(c("background"))",
+              "color1 \(c("error"))",
+              "color2 \(c("primary"))",
+              "color3 \(c("secondary"))",
+              "color4 \(c("tertiary"))",
+              "color5 \(c("primary_fixed"))",
+              "color6 \(c("secondary_fixed"))",
+              "color7 \(c("on_surface"))",
+              "color8 \(c("outline"))",
+              "color9 \(c("error"))",
+              "color10 \(c("primary_fixed"))",
+              "color11 \(c("secondary_fixed"))",
+              "color12 \(c("tertiary_fixed"))",
+              "color13 \(c("primary_fixed"))",
+              "color14 \(c("secondary"))",
+              "color15 \(c("on_background"))"
+            ' > "$kitty_theme_tmp"
+            mv "$kitty_theme_tmp" "$kitty_theme"
+            # Kitty suffixes a bare listen_on path with its own PID (our
+            # config now spells that out via {kitty_pid}), so there is no
+            # single fixed socket to target: push to every live window.
+            for kitty_socket in "/run/user/$(id -u)"/kitty-*; do
+              [ -S "$kitty_socket" ] || continue
+              kitty @ --to "unix:$kitty_socket" set-colors --all --configured "$kitty_theme" >/dev/null 2>&1 || true
+            done
+
+            # GTK3/GTK4 both import this small final CSS file after their
+            # declarative Stylix base. This gives Matugen precedence without
+            # making Nix-managed files mutable.
+            gtk_css_tmp="$(mktemp "$cache_root/gtk-matugen.css.XXXXXX")"
+            printf '%s' "$palette" | jq -r '
+              def c($name): .colors[$name].dark.color;
+              "@define-color accent_color \(c("primary"));",
+              "@define-color accent_bg_color \(c("primary"));",
+              "@define-color accent_fg_color \(c("on_primary"));",
+              "@define-color destructive_color \(c("error"));",
+              "@define-color destructive_bg_color \(c("error"));",
+              "@define-color destructive_fg_color \(c("on_error"));",
+              "@define-color success_color \(c("primary_fixed"));",
+              "@define-color success_bg_color \(c("primary_fixed"));",
+              "@define-color success_fg_color \(c("on_primary_fixed"));",
+              "@define-color warning_color \(c("secondary"));",
+              "@define-color warning_bg_color \(c("secondary"));",
+              "@define-color warning_fg_color \(c("on_secondary"));",
+              "@define-color error_color \(c("error"));",
+              "@define-color error_bg_color \(c("error"));",
+              "@define-color error_fg_color \(c("on_error"));",
+              "@define-color window_bg_color \(c("background"));",
+              "@define-color window_fg_color \(c("on_background"));",
+              "@define-color view_bg_color \(c("surface"));",
+              "@define-color view_fg_color \(c("on_surface"));",
+              "@define-color headerbar_bg_color \(c("surface_container"));",
+              "@define-color headerbar_fg_color \(c("on_surface"));",
+              "@define-color headerbar_backdrop_color @window_bg_color;",
+              "@define-color sidebar_bg_color \(c("surface_container_low"));",
+              "@define-color sidebar_fg_color \(c("on_surface"));",
+              "@define-color sidebar_backdrop_color @window_bg_color;",
+              "@define-color card_bg_color \(c("surface_container_high"));",
+              "@define-color card_fg_color \(c("on_surface"));",
+              "@define-color dialog_bg_color \(c("surface_container"));",
+              "@define-color dialog_fg_color \(c("on_surface"));",
+              "@define-color popover_bg_color \(c("surface_container_high"));",
+              "@define-color popover_fg_color \(c("on_surface"));",
+              "@define-color theme_selected_bg_color \(c("primary"));",
+              "@define-color theme_selected_fg_color \(c("on_primary"));",
+              "@define-color theme_fg_color \(c("on_surface"));",
+              "@define-color theme_bg_color \(c("background"));"
+            ' > "$gtk_css_tmp"
+            mv "$gtk_css_tmp" "$cache_root/gtk-matugen.css"
+
+            # libadwaita only notices its CSS replacement reliably after a
+            # color-scheme transition. Restore the user's dark preference.
+            gsettings set org.gnome.desktop.interface color-scheme prefer-light
+            gsettings set org.gnome.desktop.interface color-scheme prefer-dark
+
+            # This configuration is Lua-based, so legacy `hyprctl keyword`
+            # calls do not work. Apply the generated border colours through
+            # Hyprland's Lua evaluator instead.
+            hyprctl eval "hl.config({ general = { col = { active_border = \"rgb($primary)\", inactive_border = \"rgb($outline)\" } }, group = { col = { border_active = \"rgb($primary)\" } } })" >/dev/null
+
+            # Quickshell consumes this one-line JSON through SplitParser.
+            # Keep it as the final stdout payload; diagnostics stay on stderr.
+            printf '%s\n' "$palette"
+          }
+
+          case "''${1:-current}" in
+            current) current_theme ;;
+            apply) apply_theme "''${2:?Usage: muggy-theme apply <theme>}" ;;
+            *) echo "Usage: muggy-theme {current|apply <theme>}" >&2; exit 2 ;;
+          esac
+        '';
+      };
       restartQuickshell = pkgs.writeShellApplication {
         name = "restart-quickshell";
         runtimeInputs = [pkgs.quickshell pkgs.gnugrep pkgs.coreutils];
@@ -140,6 +291,7 @@
       home.packages = [
         restartQuickshell
         localWorkspace
+        muggyTheme
         pkgs.grim
         pkgs.slurp
       ];
@@ -225,8 +377,9 @@
             inactive_opacity = 1.0,
             blur = {
               enabled = true,
-              size = 18,
-              passes = 3,
+              size = 10,
+              passes = 2,
+              ignore_opacity = true,
             },
           },
           scrolling = {
@@ -321,10 +474,11 @@
 
         hl.bind(mod .. " + D", hl.dsp.exec_cmd("qs -c muggy ipc call shell toggleLauncher"))
         hl.bind(mod .. " + O", hl.dsp.exec_cmd("qs -c muggy ipc call shell toggleOverview"))
+        hl.bind(mod .. " + SHIFT + T", hl.dsp.exec_cmd("qs -c muggy ipc call shell toggleThemeManager"))
         hl.bind(mod .. " + BACKSPACE", hl.dsp.exec_cmd("qs -c muggy ipc call shell togglePowerMenu"))
         hl.bind("F1", hl.dsp.exec_cmd("handy --toggle-transcription"))
         hl.bind("F1", hl.dsp.exec_cmd("handy --toggle-transcription"), { release = true })
-        hl.bind(mod .. " + T", hl.dsp.exec_cmd("foot"))
+        hl.bind(mod .. " + T", hl.dsp.exec_cmd("${pkgs.kitty}/bin/kitty ${pkgs.fish}/bin/fish"))
         hl.bind(mod .. " + B", hl.dsp.exec_cmd("thunar"))
         hl.bind(mod .. " + F", toggle_true_fullscreen)
         hl.bind(mod .. " + SPACE", toggle_maximized)
