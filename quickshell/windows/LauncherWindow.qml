@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
@@ -105,41 +104,32 @@ Variants {
                             anchors.fill: parent
                             color: "transparent"
 
-                            IconImage {
-                                id: fallbackIcon
+                            Image {
+                                id: themedIcon
                                 anchors.left: parent.left
                                 anchors.leftMargin: 7
                                 anchors.verticalCenter: parent.verticalCenter
-                                width: 23
-                                height: 23
-                                source: Quickshell.iconPath(modelData.icon, "")
-                                visible: false
-                            }
-
-                            MultiEffect {
-                                anchors.fill: fallbackIcon
-                                source: fallbackIcon
-                                colorization: 1.0
-                                colorizationColor: launcher.shell.pillForeground
-                                visible: themedIcon.status !== Image.Ready
-                            }
-
-                            // The launcher uses the same Catppuccin monochrome theme as the
-                            // pill/tray.  The effect above only covers application IDs the
-                            // theme does not ship yet.
-                            Image {
-                                id: themedIcon
-                                anchors.centerIn: fallbackIcon
-                                width: fallbackIcon.width
-                                height: fallbackIcon.height
+                                width: 27
+                                height: 27
                                 source: "file:///home/david/.local/share/icons/catppuccin-mono-light/apps/scalable/"
                                     + modelData.icon + ".svg"
                                 fillMode: Image.PreserveAspectFit
                             }
 
+                            // Some desktop entries use a non-standard icon
+                            // name. Keep their fallback inside the same simple
+                            // Catppuccin pack instead of showing a coloured
+                            // hicolor application logo.
+                            Image {
+                                anchors.fill: themedIcon
+                                source: "file:///home/david/.local/share/icons/catppuccin-mono-light/apps/scalable/application-default.svg"
+                                fillMode: Image.PreserveAspectFit
+                                visible: themedIcon.status !== Image.Ready
+                            }
+
                             Text {
                                 anchors.left: parent.left
-                                anchors.leftMargin: 35
+                                anchors.leftMargin: 39
                                 anchors.right: parent.right
                                 anchors.rightMargin: 8
                                 anchors.verticalCenter: parent.verticalCenter

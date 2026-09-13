@@ -45,6 +45,9 @@
       };
 
       stylix.targets.gtk.extraCss = ''
+        /* Written at runtime by muggy-theme after Matugen runs. */
+        @import url("file:///home/${username}/.cache/muggy/gtk-matugen.css");
+
         @define-color headerbar_bg_color @window_bg_color;
         @define-color headerbar_backdrop_color @window_bg_color;
         @define-color sidebar_bg_color @window_bg_color;

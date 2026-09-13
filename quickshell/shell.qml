@@ -17,6 +17,11 @@ ShellRoot {
     // This source is intentionally hot-reloaded from the checkout.
 
     property bool launcherOpen: false
+    property bool themeManagerOpen: false
+    property string activeThemeId: "muggy"
+    // Replaced atomically after Matugen has analysed the selected wallpaper.
+    // The static profile remains the safe visual fallback if generation fails.
+    property var generatedPalette: ({})
     // Brand splash on session start: the GIF itself plays once and holds on
     // its settled final frame (-loop -1), so these only drive the card's
     // fade-out (splashVisible) and when the window itself stops existing
@@ -70,24 +75,33 @@ ShellRoot {
     property bool weatherOnline: false
     readonly property int launcherWidth: 350
     readonly property int launcherHeight: 430
-    readonly property color background: "#2b3a36" // Stylix base00
-    readonly property color surface: "#354742"    // Stylix base01
-    readonly property color selection: "#5e3a4d"  // Stylix base02
-    readonly property color muted: "#6d877f"      // Stylix base03
-    readonly property color foreground: "#dfd5cd" // Stylix base05
-    readonly property color accent: "#90e0ef"     // Stylix base0D
-    readonly property color active: "#00f5d4"     // Stylix base0B
-    readonly property color pillBackground: "#161616"
-    readonly property color pillForeground: "#f2f2f2"
-    readonly property color pillMuted: "#4b4b4b"
-    readonly property color pillActive: "#ffffff"
+    readonly property var themeProfiles: [
+        { id: "muggy", name: "MUGGY // NEON", description: "Le profil actuel, vert profond et cyan.", background: "#2b3a36", surface: "#354742", selection: "#5e3a4d", muted: "#6d877f", foreground: "#dfd5cd", accent: "#90e0ef", active: "#00f5d4", pillBackground: "#161616", pillForeground: "#f2f2f2", pillMuted: "#4b4b4b", pillActive: "#ffffff", panelSurface: "#1d2321", panelLine: "#43514c", retroAmber: "#f3b562", retroCyan: "#7ec8c2", retroCoral: "#e78a94" },
+        { id: "catppuccin", name: "CATPPUCCIN // MOCHA", description: "Bleu lavande, sombre et calme.", background: "#1e1e2e", surface: "#313244", selection: "#45475a", muted: "#6c7086", foreground: "#cdd6f4", accent: "#89b4fa", active: "#a6e3a1", pillBackground: "#11111b", pillForeground: "#cdd6f4", pillMuted: "#585b70", pillActive: "#ffffff", panelSurface: "#181825", panelLine: "#45475a", retroAmber: "#f9e2af", retroCyan: "#94e2d5", retroCoral: "#f5c2e7" },
+        { id: "gruvbox", name: "GRUVBOX // MATERIAL", description: "Ambre chaud et vert désaturé.", background: "#282828", surface: "#3c3836", selection: "#504945", muted: "#7c6f64", foreground: "#d4be98", accent: "#7daea3", active: "#a9b665", pillBackground: "#1e1e1e", pillForeground: "#d4be98", pillMuted: "#665c54", pillActive: "#f9f5d7", panelSurface: "#1e1e1e", panelLine: "#504945", retroAmber: "#d8a657", retroCyan: "#89b482", retroCoral: "#d3869b" }
+    ]
+    readonly property var activeTheme: themeProfiles.find(function(theme) { return theme.id === activeThemeId; }) || themeProfiles[0]
+    function generatedColor(role, fallback) {
+        return generatedPalette[role] || fallback;
+    }
+    readonly property color background: generatedColor("background", activeTheme.background)
+    readonly property color surface: generatedColor("surface_container", activeTheme.surface)
+    readonly property color selection: generatedColor("surface_container_highest", activeTheme.selection)
+    readonly property color muted: generatedColor("outline", activeTheme.muted)
+    readonly property color foreground: generatedColor("on_surface", activeTheme.foreground)
+    readonly property color accent: generatedColor("primary", activeTheme.accent)
+    readonly property color active: generatedColor("primary_fixed", activeTheme.active)
+    readonly property color pillBackground: generatedColor("surface_container_lowest", activeTheme.pillBackground)
+    readonly property color pillForeground: generatedColor("on_surface", activeTheme.pillForeground)
+    readonly property color pillMuted: generatedColor("outline_variant", activeTheme.pillMuted)
+    readonly property color pillActive: generatedColor("on_primary", activeTheme.pillActive)
     // Shared micro-console language for expandable pill panels.  Keep the
     // accents deliberately sparse so future panels read as one system.
-    readonly property color panelSurface: "#1d2321"
-    readonly property color panelLine: "#43514c"
-    readonly property color retroAmber: "#f3b562"
-    readonly property color retroCyan: "#7ec8c2"
-    readonly property color retroCoral: "#e78a94"
+    readonly property color panelSurface: generatedColor("surface_container_low", activeTheme.panelSurface)
+    readonly property color panelLine: generatedColor("outline_variant", activeTheme.panelLine)
+    readonly property color retroAmber: generatedColor("secondary", activeTheme.retroAmber)
+    readonly property color retroCyan: generatedColor("primary", activeTheme.retroCyan)
+    readonly property color retroCoral: generatedColor("tertiary", activeTheme.retroCoral)
     readonly property string pillFont: "Cozette"
     readonly property var matchingApplications: DesktopEntries.applications.values.filter(function(application) {
         const query = root.searchText.trim().toLowerCase();
@@ -232,7 +246,13 @@ ShellRoot {
             fullscreenPillHideTimer.restart();
     }
 
+    function dismissSplash(): void {
+        splashVisible = false;
+        splashActive = false;
+    }
+
     Timer {
+        id: splashFadeTimer
         // The GIF's own animation is ~1.4s; hold a moment on the settled
         // final frame before starting the card's fade-out.
         interval: 2900
@@ -241,10 +261,20 @@ ShellRoot {
     }
 
     Timer {
+        id: splashDeactivateTimer
         // Gives the fade-out time to finish before the window disappears.
         interval: 3300
         running: true
         onTriggered: root.splashActive = false
+    }
+
+    // Temporary runtime probe: it halts the one-shot startup timers, so the
+    // splash can never leave the session stuck while it is being reviewed.
+    function showSplashForTest(): void {
+        splashFadeTimer.stop();
+        splashDeactivateTimer.stop();
+        splashActive = true;
+        splashVisible = true;
     }
 
     function toggleLauncher(): void {
@@ -345,6 +375,42 @@ ShellRoot {
         if (networkPanelIpcOpen)
             revealFullscreenPill(Hyprland.focusedMonitor.id);
         networkPanelToggleRevision++;
+    }
+
+    Process {
+        id: applyThemeProcess
+        command: ["muggy-theme", "apply", "muggy"]
+        running: false
+        onExited: function(exitCode) {
+            if (exitCode !== 0)
+                console.warn("Matugen theme application failed with exit code", exitCode);
+        }
+        stderr: SplitParser {
+            onRead: data => console.warn("Matugen theme:", data.trim())
+        }
+        stdout: SplitParser {
+            onRead: data => {
+                try {
+                    const report = JSON.parse(data.trim());
+                    root.setMatugenPalette(report.colors);
+                } catch (error) {
+                    console.warn("Matugen returned an invalid palette:", error);
+                }
+            }
+        }
+    }
+
+    Process {
+        id: restoreThemeProcess
+        command: ["muggy-theme", "current"]
+        running: true
+        stdout: SplitParser {
+            onRead: data => {
+                const themeId = data.trim();
+                if (themeId.length > 0)
+                    root.applyShellTheme(themeId);
+            }
+        }
     }
 
     Process {
@@ -824,11 +890,44 @@ ShellRoot {
         focusToplevel(toplevel);
     }
 
+    function toggleThemeManager(): void {
+        themeManagerOpen = !themeManagerOpen;
+    }
+
+    function applyShellTheme(themeId): void {
+        if (!themeProfiles.some(function(theme) { return theme.id === themeId; }))
+            return;
+        activeThemeId = themeId;
+        applyThemeProcess.command = ["muggy-theme", "apply", themeId];
+        applyThemeProcess.running = true;
+        themeManagerOpen = false;
+    }
+
+    function setMatugenPalette(colors): void {
+        if (!colors)
+            return;
+
+        const next = {};
+        for (const role in colors) {
+            const shade = colors[role] && colors[role].dark;
+            if (shade && shade.color)
+                next[role] = shade.color;
+        }
+        if (Object.keys(next).length > 0)
+            generatedPalette = next;
+    }
+
     IpcHandler {
         target: "shell"
         function toggleLauncher(): void { root.toggleLauncher(); }
+        function toggleThemeManager(): void { root.toggleThemeManager(); }
+        function applyTheme(themeId: string): void { root.applyShellTheme(themeId); }
         function toggleOverview(): void { root.toggleOverview(); }
         function toggleNetworkApp(): void { root.toggleNetworkApp(); }
+        function testShowSplash(): void {
+            root.showSplashForTest();
+        }
+        function testDismissSplash(): void { root.dismissSplash(); }
         function togglePowerMenu(): void { root.togglePowerMenu(); }
     }
 
@@ -847,6 +946,10 @@ ShellRoot {
     }
 
     LauncherWindow {
+        shell: root
+    }
+
+    ThemeManagerWindow {
         shell: root
     }
 

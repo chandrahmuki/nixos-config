@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
+import Quickshell.Wayland
 
 // A one-shot MuggyNix brand splash, shown once when the Hyprland/Quickshell
 // session starts. The GIF itself plays once and holds on its settled final
@@ -17,19 +18,19 @@ Variants {
         screen: modelData
         anchors { top: true; bottom: true; left: true; right: true }
         exclusionMode: ExclusionMode.Ignore
+        aboveWindows: true
+        WlrLayershell.layer: WlrLayer.Overlay
         focusable: false
         color: "transparent"
         visible: splash.shell.splashActive
             && Hyprland.monitorFor(modelData) === Hyprland.focusedMonitor
 
         Rectangle {
-            anchors.centerIn: parent
-            width: 900
-            height: 380
-            radius: 20
+            // The splash owns the whole screen; the original pixel logo stays
+            // centered as the only focal element.
+            anchors.fill: parent
+            radius: 0
             color: splash.shell.background
-            border.width: 1
-            border.color: splash.shell.active
             opacity: splash.shell.splashVisible ? 1 : 0
             Behavior on opacity {
                 NumberAnimation { duration: 380; easing.type: Easing.InOutQuad }
@@ -37,15 +38,24 @@ Variants {
 
             AnimatedImage {
                 anchors.centerIn: parent
-                width: 840
+                width: Math.min(parent.width * 0.5, 1440)
                 height: width * 360 / 960
-                source: "../assets/muggynix-intro.gif"
+                // Same original animated pixel logo, with only its opaque
+                // navy canvas keyed out so it belongs to the full-screen
+                // MuggyNix background.
+                source: "../assets/muggynix-intro-transparent.gif"
                 playing: true
                 cache: false
                 fillMode: Image.PreserveAspectFit
-                // The source is already deliberately pixelated; smoothing
-                // would blur the sprite edges instead of keeping them crisp.
+                // The source is deliberately pixelated; smoothing would blur
+                // the sprite edges instead of keeping them crisp.
                 smooth: false
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: splash.shell.dismissSplash()
             }
         }
     }
