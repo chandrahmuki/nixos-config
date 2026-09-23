@@ -7,6 +7,9 @@
     ...
   }: {
     services.desktopManager.gnome.enable = true;
+    # GNOME enables IBus by default; this session uses the regular Wayland
+    # keyboard path and must not start the IBus autostart helper at login.
+    i18n.inputMethod.enable = false;
 
     environment.sessionVariables = {
       MUTTER_DEBUG_FORCE_DISABLE_DIRECT_SCANOUT = "1";

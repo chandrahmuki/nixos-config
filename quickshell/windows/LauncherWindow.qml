@@ -39,10 +39,12 @@ Variants {
             height: launcher.shell.launcherHeight
             anchors.centerIn: parent
             radius: 4
-            // Omarchy-style: an opaque near-black menu, not a translucent card.
-            color: "#18191d"
+            // Opaque card, same family as the theme manager / pill overlays
+            // (pillBackground + a coloured accent border) instead of a
+            // fixed Omarchy hex that didn't follow theme switches.
+            color: launcher.shell.pillBackground
             border.width: 1
-            border.color: "#41cfc0"
+            border.color: launcher.shell.retroCyan
             clip: true
 
             ColumnLayout {
@@ -52,7 +54,7 @@ Variants {
 
                 Item {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 32
+                    Layout.preferredHeight: 40
 
                     TextField {
                         id: launcherInput
@@ -61,12 +63,12 @@ Variants {
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
                         height: parent.height
-                        background: Rectangle { color: "#111217"; radius: 2 }
+                        background: Rectangle { color: launcher.shell.panelSurface; radius: 2 }
                         placeholderText: "Go..."
-                        placeholderTextColor: "#8da09a"
+                        placeholderTextColor: launcher.shell.muted
                         color: launcher.shell.pillForeground
                         font.family: launcher.shell.pillFont
-                        font.pixelSize: 18
+                        font.pixelSize: 22
                         font.bold: true
                         focus: true
                         selectByMouse: true
@@ -98,7 +100,7 @@ Variants {
                         required property var modelData
                         required property int index
                         width: launcherList.width
-                        height: 36
+                        height: 46
 
                         Rectangle {
                             anchors.fill: parent
@@ -109,17 +111,17 @@ Variants {
                                 anchors.left: parent.left
                                 anchors.leftMargin: 7
                                 anchors.verticalCenter: parent.verticalCenter
-                                width: 27
-                                height: 27
-                                source: "file:///home/david/.local/share/icons/catppuccin-mono-light/apps/scalable/"
-                                    + modelData.icon + ".svg"
+                                width: 34
+                                height: 34
+                                source: modelData.icon.indexOf("file://") === 0
+                                    ? modelData.icon
+                                    : modelData.icon.charAt(0) === "/"
+                                        ? "file://" + modelData.icon
+                                        : "file:///home/david/.local/share/icons/catppuccin-mono-light/apps/scalable/"
+                                            + modelData.icon + ".svg"
                                 fillMode: Image.PreserveAspectFit
                             }
 
-                            // Some desktop entries use a non-standard icon
-                            // name. Keep their fallback inside the same simple
-                            // Catppuccin pack instead of showing a coloured
-                            // hicolor application logo.
                             Image {
                                 anchors.fill: themedIcon
                                 source: "file:///home/david/.local/share/icons/catppuccin-mono-light/apps/scalable/application-default.svg"
@@ -127,9 +129,13 @@ Variants {
                                 visible: themedIcon.status !== Image.Ready
                             }
 
+                            // Some desktop entries use a non-standard icon
+                            // name. Keep their fallback inside the same simple
+                            // Catppuccin pack instead of showing a coloured
+                            // hicolor application logo.
                             Text {
                                 anchors.left: parent.left
-                                anchors.leftMargin: 39
+                                anchors.leftMargin: 49
                                 anchors.right: parent.right
                                 anchors.rightMargin: 8
                                 anchors.verticalCenter: parent.verticalCenter
@@ -138,7 +144,7 @@ Variants {
                                 color: launcher.shell.selectedIndex === index
                                     ? launcher.shell.active : launcher.shell.pillForeground
                                 font.family: launcher.shell.pillFont
-                                font.pixelSize: 17
+                                font.pixelSize: 21
                                 font.bold: true
                             }
 

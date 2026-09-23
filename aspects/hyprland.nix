@@ -26,15 +26,11 @@
       ...
     }: let
       wallpaper = ../wallpapers/nixos_neon_souterrain.png;
-      omarchyThemeAssets = pkgs.fetchFromGitHub {
-        owner = "basecamp";
-        repo = "omarchy";
-        rev = "31bd80daa4613ffdee995ac27467fce5a2990806";
-        hash = "sha256-8twJRNfJlLJvwHL3OyWv+R8/GVYxFS1nIoFTOoYWkb0=";
-      };
+      gnomeLinesWallpaper = ../wallpapers/gnome_00_2560x1440.png;
+      gnomeGradientWallpaper = ../wallpapers/wallpaperGnome.png;
       muggyTheme = pkgs.writeShellApplication {
         name = "muggy-theme";
-        runtimeInputs = [pkgs.hyprland pkgs.coreutils pkgs.glib pkgs.jq pkgs.kitty pkgs.matugen];
+        runtimeInputs = [pkgs.hyprland pkgs.coreutils pkgs.glib pkgs.jq pkgs.kitty pkgs.matugen pkgs.papirus-folders];
         text = ''
           set -euo pipefail
 
@@ -45,26 +41,60 @@
             if [ -r "$state_file" ]; then cat "$state_file"; else printf '%s\n' muggy; fi
           }
 
-          apply_theme() {
+          # Shared by apply_theme and preview_scheme so the wallpaper/--prefer
+          # choice per theme lives in exactly one place. Sets $background and
+          # $prefer as a side effect (no subshell — needed by both callers).
+          resolve_background() {
             theme="$1"
+            # Matugen picks its palette from whichever colour in the image
+            # best matches "prefer" — not from the curated Quickshell swatch.
+            # "saturation" (the default) picks the most vivid hue, which for
+            # most photos is the one that actually reads as that theme's
+            # colour; a few images needed a different rule to land on the
+            # blue/green the theme is named for instead of an incidental
+            # sky or parchment tone.
+            prefer="saturation"
             case "$theme" in
               muggy) background="${wallpaper}" ;;
-              catppuccin) background="${omarchyThemeAssets}/themes/catppuccin/backgrounds/2-waves.webp" ;;
-              gruvbox) background="${omarchyThemeAssets}/themes/gruvbox/backgrounds/2-flower-basket.webp" ;;
+              gnome-lines) background="${gnomeLinesWallpaper}"; prefer="lightness" ;;
+              gnome-gradient) background="${gnomeGradientWallpaper}"; prefer="darkness" ;;
               *) echo "Unknown Muggy theme: $theme" >&2; exit 2 ;;
             esac
+          }
+
+          # Fast, side-effect-free: resolves the theme's wallpaper and runs
+          # Matugen with a caller-chosen --type, printing just the primary
+          # colour. Used by the theme deck's live scheme-algorithm swatches,
+          # which call this once per candidate algorithm on every carousel
+          # selection — no state write, no Kitty/GTK push, no border change.
+          preview_scheme() {
+            theme="$1"
+            scheme="''${2:-scheme-vibrant}"
+            resolve_background "$theme"
+            matugen image "$background" --mode dark --prefer "$prefer" --type "$scheme" --json hex \
+              | jq -r '.colors.primary.dark.color'
+          }
+
+          apply_theme() {
+            theme="$1"
+            scheme="''${2:-scheme-vibrant}"
+            resolve_background "$theme"
 
             mkdir -p "$state_root"
             printf '%s\n' "$theme" > "$state_file.tmp"
             mv "$state_file.tmp" "$state_file"
-            hyprctl hyprpaper preload "$background" >/dev/null 2>&1 || true
-            hyprctl hyprpaper wallpaper ",$background" >/dev/null
-            hyprctl hyprpaper unload unused >/dev/null 2>&1 || true
+            # Wallpaper display itself is Quickshell's own BackgroundWindow now
+            # (reacting to activeThemeId directly) — hyprpaper is gone, so
+            # there is nothing to push the image to here.
 
             # Matugen is deliberately non-interactive here: a UI action must
             # never wait for a terminal prompt when the image has several
             # suitable source colours.
-            palette="$(matugen image "$background" --mode dark --prefer saturation --json hex)"
+            # $scheme (default scheme-vibrant, picked in the theme deck)
+            # keeps the same hue matugen already chose via $prefer but
+            # controls how far it pushes saturation/contrast from there —
+            # the tonal-spot Matugen default tended to read as washed-out.
+            palette="$(matugen image "$background" --mode dark --prefer "$prefer" --type "$scheme" --json hex)"
             primary="$(printf '%s' "$palette" | jq -r '.colors.primary.dark.color | ltrimstr("#")')"
             outline="$(printf '%s' "$palette" | jq -r '.colors.outline_variant.dark.color | ltrimstr("#")')"
 
@@ -155,6 +185,24 @@
             ' > "$gtk_css_tmp"
             mv "$gtk_css_tmp" "$cache_root/gtk-matugen.css"
 
+            # Papirus-folders only ships a fixed palette (see `-l`), not
+            # arbitrary hex, so this is a hand-picked nearest match per
+            # theme rather than anything derived from $palette. Best-effort:
+            # a missing/older Papirus build should never fail the apply.
+            case "$theme" in
+              muggy) folder_color="cyan" ;;
+              gnome-lines) folder_color="pink" ;;
+              gnome-gradient) folder_color="pink" ;;
+              # Any theme id without a hand-picked match above (a future
+              # addition, or an older/incomplete list) leaves folder_color
+              # unset under `set -u` and hard-aborts the whole apply — skip
+              # the recolor instead, per the best-effort intent above.
+              *) folder_color="" ;;
+            esac
+            if [ -n "$folder_color" ]; then
+              papirus-folders -C "$folder_color" -t Papirus-Dark -u >/dev/null 2>&1 || true
+            fi
+
             # libadwaita only notices its CSS replacement reliably after a
             # color-scheme transition. Restore the user's dark preference.
             gsettings set org.gnome.desktop.interface color-scheme prefer-light
@@ -162,18 +210,43 @@
 
             # This configuration is Lua-based, so legacy `hyprctl keyword`
             # calls do not work. Apply the generated border colours through
-            # Hyprland's Lua evaluator instead.
-            hyprctl eval "hl.config({ general = { col = { active_border = \"rgb($primary)\", inactive_border = \"rgb($outline)\" } }, group = { col = { border_active = \"rgb($primary)\" } } })" >/dev/null
+            # Hyprland's Lua evaluator instead. A long-lived Quickshell
+            # process can inherit a dead instance signature after Hyprland
+            # restarts, so resolve the newest live lock for every apply.
+            hypr_signature=""
+            newest_hypr_lock=0
+            for lock in "''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"/hypr/*/hyprland.lock; do
+              [ -r "$lock" ] || continue
+              hypr_pid="$(sed -n '1p' "$lock" 2>/dev/null || true)"
+              lock_mtime="$(stat -c %Y "$lock" 2>/dev/null || printf '0')"
+              if [ -n "$hypr_pid" ] && kill -0 "$hypr_pid" 2>/dev/null \
+                && [ "$lock_mtime" -ge "$newest_hypr_lock" ]; then
+                hypr_dir="''${lock%/hyprland.lock}"
+                hypr_signature="''${hypr_dir##*/}"
+                newest_hypr_lock="$lock_mtime"
+              fi
+            done
+            if [ -n "$hypr_signature" ]; then
+              HYPRLAND_INSTANCE_SIGNATURE="$hypr_signature" \
+                hyprctl eval "hl.config({ general = { col = { active_border = \"rgb($primary)\", inactive_border = \"rgb($outline)\" } }, group = { col = { border_active = \"rgb($primary)\" } } })" >/dev/null \
+                || echo "Warning: could not update Hyprland border colours" >&2
+            else
+              echo "Warning: no live Hyprland signature found; skipped border colours" >&2
+            fi
 
             # Quickshell consumes this one-line JSON through SplitParser.
             # Keep it as the final stdout payload; diagnostics stay on stderr.
-            printf '%s\n' "$palette"
+            # Quickshell's SplitParser receives line-delimited messages. Keep
+            # the palette as one complete JSON line or it will try to parse
+            # each pretty-printed fragment independently.
+            printf '%s\n' "$palette" | jq -c .
           }
 
           case "''${1:-current}" in
             current) current_theme ;;
-            apply) apply_theme "''${2:?Usage: muggy-theme apply <theme>}" ;;
-            *) echo "Usage: muggy-theme {current|apply <theme>}" >&2; exit 2 ;;
+            apply) apply_theme "''${2:?Usage: muggy-theme apply <theme> [scheme]}" "''${3:-scheme-vibrant}" ;;
+            preview-scheme) preview_scheme "''${2:?Usage: muggy-theme preview-scheme <theme> <scheme>}" "''${3:-scheme-vibrant}" ;;
+            *) echo "Usage: muggy-theme {current|apply <theme> [scheme]|preview-scheme <theme> <scheme>}" >&2; exit 2 ;;
           esac
         '';
       };
@@ -183,9 +256,31 @@
         text = ''
           qs --config muggy kill --any-display || true
 
+          # A Hyprland restart can leave the shell that invokes this helper
+          # with the previous HYPRLAND_INSTANCE_SIGNATURE. Resolve the newest
+          # live lock instead of reconnecting Quickshell to a dead compositor.
+          hypr_signature=""
+          newest_hypr_lock=0
+          for lock in "$XDG_RUNTIME_DIR"/hypr/*/hyprland.lock; do
+            [ -r "$lock" ] || continue
+            hypr_pid="$(sed -n '1p' "$lock" 2>/dev/null || true)"
+            lock_mtime="$(stat -c %Y "$lock" 2>/dev/null || printf '0')"
+            if [ -n "$hypr_pid" ] && kill -0 "$hypr_pid" 2>/dev/null \
+              && [ "$lock_mtime" -ge "$newest_hypr_lock" ]; then
+              hypr_dir="''${lock%/hyprland.lock}"
+              hypr_signature="''${hypr_dir##*/}"
+              newest_hypr_lock="$lock_mtime"
+            fi
+          done
+
           for _ in $(seq 1 50); do
             if ! qs --config muggy list --json --any-display 2>/dev/null | grep -q '"id"'; then
-              qs --daemonize --no-duplicate --config muggy
+              if [ -n "$hypr_signature" ]; then
+                HYPRLAND_INSTANCE_SIGNATURE="$hypr_signature" \
+                  qs --daemonize --no-duplicate --config muggy
+              else
+                qs --daemonize --no-duplicate --config muggy
+              fi
               exit 0
             fi
             sleep 0.1
@@ -323,13 +418,24 @@
 
       programs.hyprlock.enable = true;
 
-      services.hyprpaper = {
-        enable = true;
-        settings = {
-          preload = ["${wallpaper}"];
-          wallpaper = [",${wallpaper}"];
-        };
-      };
+      # No hyprpaper: the wallpaper is Quickshell's own BackgroundWindow now
+      # (windows/BackgroundWindow.qml), so theme transitions can animate it
+      # directly instead of fighting a second client for the Background
+      # layer — that fight is exactly why hyprpaper was here before, and why
+      # its reveal effect never reliably showed up on top of it.
+      #
+      # Removing our own `services.hyprpaper` block wasn't the whole story:
+      # Stylix provisions hyprpaper on its own too (it wires up whatever
+      # wallpaper daemon fits the session so `stylix.image` gets applied),
+      # entirely independent of that block. That's the actual reason the
+      # unit kept reappearing after every switch — disabled explicitly here,
+      # same as the other per-app Stylix targets below.
+      stylix.targets.hyprpaper.enable = lib.mkForce false;
+      # The target flag above only stops Stylix from *configuring*
+      # hyprpaper's wallpaper — Stylix's hyprpaper target still turns on
+      # home-manager's own `services.hyprpaper` regardless, which is what
+      # actually creates the systemd unit. Force that off too.
+      services.hyprpaper.enable = lib.mkForce false;
 
       # Hypridle performs the security-sensitive idle policy; Quickshell only
       # provides the shell UI and can invoke `hyprlock` from a future menu.
@@ -383,7 +489,19 @@
             },
           },
           scrolling = {
-            fullscreen_on_one_column = true,
+            -- Was silently promoting a plain "maximize" (Super+Space, meant
+            -- to leave fullscreen at 1 so the pill stays up) to a true
+            -- fullscreen (2) whenever the window was alone in its column —
+            -- Hyprland made that call, not the Lua toggle_maximized binding,
+            -- so the pill's fullscreen==2 hide check fired for something
+            -- that was never meant to hide it. Now Super+F is the only path
+            -- to real fullscreen.
+            fullscreen_on_one_column = false,
+            -- Default is 1 (wraps): scrolling past the last column jumps
+            -- straight back to the first, which reads as the same window
+            -- looping forever regardless of direction. 0 stops at the
+            -- boundary column instead.
+            wrap_focus = 0,
           },
           misc = {
             force_default_wallpaper = -1,
@@ -393,6 +511,14 @@
           input = {
             kb_layout = "us",
             follow_mouse = 0,
+          },
+          cursor = {
+            -- Cycling local workspaces (Super+Shift+scroll) dispatches a
+            -- focus change; Hyprland's default warp-cursor-to-focused-window
+            -- behavior then flings the pointer across the screen, landing it
+            -- outside the area the next scroll tick needs to hit and making
+            -- the opposite direction look broken.
+            no_warps = true,
           },
           binds = {
             pass_mouse_when_bound = false,
@@ -425,7 +551,6 @@
         })
 
         local mod = "SUPER"
-        local scrollThrottled = false
 
         -- Super+F alternates between true fullscreen and maximized instead
         -- of dropping a fullscreen window back into the scrolling layout.
@@ -450,14 +575,26 @@
           end
         end
 
+        -- Each call gets its own `throttled` upvalue, so the four scroll
+        -- binds below (column move x2, workspace cycle x2) debounce
+        -- independently. A shared flag let cycling one direction eat the
+        -- immediate attempt to reverse it, since both directions raced for
+        -- the same cooldown window.
         local function throttled_dsp(dsp)
+          local throttled = false
           return function()
-            if scrollThrottled then return end
+            if throttled then return end
 
-            scrollThrottled = true
-            hl.dispatch(dsp)
+            throttled = true
+            -- pcall so a dispatch error (e.g. the cycle script exiting on an
+            -- out-of-range workspace) can't skip the reset below and leave
+            -- this bind permanently dead until the next config reload.
+            local ok, err = pcall(hl.dispatch, dsp)
+            if not ok then
+              print("throttled_dsp: dispatch failed: " .. tostring(err))
+            end
             hl.timer(function()
-              scrollThrottled = false
+              throttled = false
             end, {
               timeout = 200,
               type = "oneshot",
@@ -482,15 +619,25 @@
         hl.bind(mod .. " + B", hl.dsp.exec_cmd("thunar"))
         hl.bind(mod .. " + F", toggle_true_fullscreen)
         hl.bind(mod .. " + SPACE", toggle_maximized)
+        hl.bind(mod .. " + V", hl.dsp.window.float({ action = "toggle" }))
         hl.bind(mod .. " + L", hl.dsp.exec_cmd("loginctl lock-session"))
         hl.bind(mod .. " + Q", hl.dsp.window.close())
+        hl.bind(mod .. " + R", hl.dsp.exec_cmd("muggy-screen-record start"))
+        hl.bind(mod .. " + SHIFT + R", hl.dsp.exec_cmd("muggy-screen-record stop"))
         hl.bind(mod .. " + SHIFT + S", hl.dsp.exec_cmd("sh -c 'selection=$(slurp); [ -n \"$selection\" ] && mkdir -p ${config.home.homeDirectory}/Pictures/Screenshots && grim -g \"$selection\" ${config.home.homeDirectory}/Pictures/Screenshots/screenshot-$(date +%Y%m%d-%H%M%S).png'"))
         hl.bind(mod .. " + left", hl.dsp.focus({ direction = "left" }))
         hl.bind(mod .. " + right", hl.dsp.focus({ direction = "right" }))
         hl.bind(mod .. " + up", hl.dsp.focus({ direction = "up" }))
         hl.bind(mod .. " + down", hl.dsp.focus({ direction = "down" }))
-        hl.bind(mod .. " + mouse_down", throttled_dsp(hl.dsp.layout("move +col")))
-        hl.bind(mod .. " + mouse_up", throttled_dsp(hl.dsp.layout("move -col")))
+        -- "move +/-col" relocates every window a column over and reassigns
+        -- active to whatever lands at the reference position — repeated
+        -- scrolling cycles through all windows instead of just scrolling
+        -- the view. The scrolling layout's "focus" message takes "l"/"r"
+        -- (previous/next column), not "+col"/"-col" (that argument form is
+        -- only for "move") — moves the active column without touching any
+        -- window's position.
+        hl.bind(mod .. " + mouse_down", throttled_dsp(hl.dsp.layout("focus r")))
+        hl.bind(mod .. " + mouse_up", throttled_dsp(hl.dsp.layout("focus l")))
         hl.bind(mod .. " + SHIFT + mouse_down", throttled_dsp(hl.dsp.exec_cmd("local-workspace cycle next")))
         hl.bind(mod .. " + SHIFT + mouse_up", throttled_dsp(hl.dsp.exec_cmd("local-workspace cycle previous")))
         hl.bind(mod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })

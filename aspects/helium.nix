@@ -55,25 +55,37 @@
     '';
   };
 
-  den.aspects.desktop.nixos.environment.etc."chromium/policies/managed/helium.json".text = builtins.toJSON {
-    BrowserSignin = 0;
-    PasswordManagerEnabled = false;
-    CredentialsEnableService = false;
-    SyncDisabled = true;
-    DefaultBrowserSettingEnabled = false;
-    MetricsReportingEnabled = false;
-    BackgroundModeEnabled = false;
-    ChromeCleanupEnabled = false;
-    ChromeCleanupReportingEnabled = false;
-    CookiesAllowedForUrls = [
-      "[*.]microsoft.com"
-      "[*.]microsoftonline.com"
-      "[*.]live.com"
-      "[*.]teams.microsoft.com"
-      "[*.]skype.com"
-      "[*.]cloud.microsoft"
-      "[*.]teams.cloud.microsoft"
-    ];
+  den.aspects.desktop.nixos = {lib, ...}: {
+    environment.etc."chromium/policies/managed/helium.json".text = builtins.toJSON {
+      BrowserSignin = 0;
+      PasswordManagerEnabled = false;
+      CredentialsEnableService = false;
+      SyncDisabled = true;
+      DefaultBrowserSettingEnabled = false;
+      MetricsReportingEnabled = false;
+      BackgroundModeEnabled = false;
+      ChromeCleanupEnabled = false;
+      ChromeCleanupReportingEnabled = false;
+      CookiesAllowedForUrls = [
+        "[*.]microsoft.com"
+        "[*.]microsoftonline.com"
+        "[*.]live.com"
+        "[*.]teams.microsoft.com"
+        "[*.]skype.com"
+        "[*.]cloud.microsoft"
+        "[*.]teams.cloud.microsoft"
+      ];
+    };
+
+    # Stylix's own "chromium" target (modules/chromium/nixos.nix upstream)
+    # force-enables programs.chromium and writes a system-wide
+    # BrowserThemeColor policy (Stylix's static base00 — muggy's green,
+    # forever, since Stylix's scheme never changes at runtime) to every
+    # Chromium-derivative's policy directory. That's the actual source of
+    # the "stuck green, ask your administrator" lock on Helium's own theme
+    # picker — nothing in this repo declared it. Force it off, same pattern
+    # as stylix.targets.hyprpaper in aspects/hyprland.nix.
+    stylix.targets.chromium.enable = lib.mkForce false;
   };
 
 }

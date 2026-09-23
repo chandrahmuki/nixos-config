@@ -8,6 +8,7 @@
     hostname,
     ...
   }: {
+    system.stateVersion = "25.11";
     home-manager.backupFileExtension = "backup";
 
     boot.loader.systemd-boot = {

@@ -67,9 +67,18 @@
             --preview "${pkgs.bat}/bin/bat --color=always --style=numbers --line-range=:500 {}"
         '';
 
-        nfu = "nix flake update $argv";
+        nfu = ''
+          nix flake update $argv
+          or return $status
+
+          if not test -x ./scripts/update-codex.sh
+            echo "nfu: lance cette commande depuis la racine de nixos-config" >&2
+            return 1
+          end
+
+          ./scripts/update-codex.sh
+        '';
       };
     };
   };
-
 }

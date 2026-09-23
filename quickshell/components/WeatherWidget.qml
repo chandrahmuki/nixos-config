@@ -40,7 +40,7 @@ Item {
     Rectangle {
         anchors.fill: parent
         radius: height / 2
-        color: weatherHover.hovered ? "#202020" : "transparent"
+        color: weatherHover.hovered ? weatherControl.shell.surfaceHover : "transparent"
     }
 
     Row {
@@ -49,7 +49,7 @@ Item {
 
         Text {
             text: weatherControl.shell.weatherIcon(weatherControl.shell.weatherCode)
-            color: weatherControl.shell.weatherCode >= 0 ? weatherControl.shell.pillForeground : "#777777"
+            color: weatherControl.shell.weatherCode >= 0 ? weatherControl.shell.pillForeground : weatherControl.shell.pillMuted
             font.family: "JetBrainsMono Nerd Font"
             font.pixelSize: 17
         }

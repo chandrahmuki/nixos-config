@@ -16,18 +16,43 @@ est un resultat observable et fiable, pas seulement une configuration qui evalue
 
 ## Routage des modeles
 
-- **Luna** : inventaire en lecture seule, recherche ciblee, documentation, mise en
-  forme et modification mecanique isolee a faible risque.
-- **Terra Medium** : choix par defaut pour une modification Nix bornee, un
-  diagnostic reproductible ou une implementation dans un petit nombre de fichiers.
+- **Luna** : modele par defaut pour les taches simples a moyennes : inventaire,
+  recherche ciblee, documentation, modification mecanique et implementation
+  bornee a faible risque. Utiliser `low` ou `medium` par defaut ; `high` est
+  permis pour une analyse plus dense et `xhigh` reste exceptionnel, jamais le
+  reglage implicite.
+- **Terra Medium** : implementation fonctionnelle bornee, diagnostic reproductible
+  ou modification Nix dans un petit nombre de fichiers lorsque Luna ne suffit
+  pas, sans le choisir automatiquement pour chaque changement Nix.
 - **Terra High** : interaction entre service, session utilisateur, materiel ou
   application desktop lorsque les frontieres sont deja comprises.
 - **Sol High** : packaging complexe, integration Wayland/portails/audio/input,
-  changement transversal, ambiguite d'architecture, ou nouvelle analyse apres deux
-  iterations ayant echoue pour la meme cause.
-- **Astra** : hors du workflow normal. Ne l'utiliser que sur demande explicite ou
-  pour un blocage architectural exceptionnel apres constitution d'un dossier de
-  preuves compact.
+  changement transversal, orchestration de sous-taches independantes, ambiguite
+  d'architecture, ou nouvelle analyse apres deux iterations ayant echoue pour la
+  meme cause.
+- **Astra** : uniquement pour une tache hypercomplexe, un blocage architectural
+  exceptionnel apres constitution d'un dossier de preuves compact, ou une demande
+  explicite. Astra n'est pas le modele d'orchestration quotidien.
+
+### Budget et orchestration
+
+- Une tache simple reste sur Luna et ne declenche aucun sous-agent. Le modele et
+  le niveau de raisonnement ne sont jamais augmentes par reflexe pour compenser
+  une hypothese non testee.
+- Ne deleguer que des sous-taches independantes et uniquement lorsque la tache
+  l'autorise explicitement. Sol garde le plan, l'integration et le test final.
+- Plafonner une delegation a deux sous-agents concurrents. Utiliser
+  `fork_turns = "none"` pour une tache autonome ; transmettre seulement un petit
+  nombre de tours recents quand le contexte est indispensable.
+- Un sous-agent rend au maximum six constats ou 250 mots, avec chemins, symboles
+  et resultats verifiables. Il ne cree pas d'autre sous-agent et ne relance pas
+  une tentative deja echouee sans nouvelle preuve.
+- Avant et apres une tache longue, verifier le statut et le quota visibles. Arreter
+  immediatement une boucle, une fan-out inattendue, un retry sans progres ou une
+  activite en arriere-plan non demandee ; inspecter les processus orphelins avant
+  de relancer le modele.
+- Le compteur d'usage peut omettre des sous-agents ou activites separees : ne pas
+  conclure qu'une session est economique sur la seule estimation de son fil.
 
 Changer de modele ne remplace jamais un test. Une tache simple correctement testee
 reste chez Terra ou Luna ; une tache mal definie ne devient pas fiable uniquement

@@ -32,7 +32,7 @@ Item {
     Rectangle {
         anchors.fill: parent
         radius: 4
-        color: audioHover.hovered ? "#242424" : "transparent"
+        color: audioHover.hovered ? audioControl.shell.surfaceHover : "transparent"
     }
 
     Text {

@@ -98,7 +98,7 @@ Rectangle {
                         }
                     }
                 }
-                Text { anchors.horizontalCenter: parent.horizontalCenter; text: "LIVE"; color: "#a7b6b1"; font.family: musicPanel.shell.pillFont; font.pixelSize: 8 }
+                Text { anchors.horizontalCenter: parent.horizontalCenter; text: "LIVE"; color: musicPanel.shell.pillMuted; font.family: musicPanel.shell.pillFont; font.pixelSize: 8 }
             }
 
             Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: musicPanel.shell.panelLine }
@@ -109,7 +109,7 @@ Rectangle {
                 Layout.preferredWidth: 188
                 Layout.fillHeight: true
                 radius: 4
-                color: "#111716"
+                color: musicPanel.shell.panelSurface
                 border.width: 1
                 border.color: musicPanel.shell.panelLine
 
@@ -128,9 +128,9 @@ Rectangle {
                     width: parent.width - 26
                     height: 36
                     radius: 3
-                    color: "#202827"
+                    color: musicPanel.shell.surfaceMuted
                     border.width: 1
-                    border.color: "#354640"
+                    border.color: musicPanel.shell.panelLine
                 }
                 Rectangle {
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -138,7 +138,7 @@ Rectangle {
                     width: 38
                     height: 4
                     radius: 2
-                    color: "#0e1211"
+                    color: musicPanel.shell.pillBackground
                 }
 
                 Repeater {
@@ -154,19 +154,19 @@ Rectangle {
                             loops: Animation.Infinite
                             NumberAnimation { from: 0; to: index === 0 ? -360 : 360; duration: index === 0 ? 2400 : 1850 }
                         }
-                        Rectangle { anchors.fill: parent; radius: width / 2; color: "#111716"; border.width: 3; border.color: index === 0 ? musicPanel.shell.retroCyan : musicPanel.shell.retroAmber }
+                        Rectangle { anchors.fill: parent; radius: width / 2; color: musicPanel.shell.panelSurface; border.width: 3; border.color: index === 0 ? musicPanel.shell.retroCyan : musicPanel.shell.retroAmber }
                         Repeater {
                             model: 6
                             delegate: Rectangle {
                                 required property int index
                                 width: 3; height: 9; radius: 1
-                                color: "#4b5a55"
+                                color: musicPanel.shell.iconMuted
                                 x: parent.width / 2 - width / 2
                                 y: 3
                                 transform: Rotation { origin.x: 1.5; origin.y: 16; angle: index * 60 }
                             }
                         }
-                        Rectangle { anchors.centerIn: parent; width: 10; height: 10; radius: 5; color: "#050706"; border.width: 1; border.color: "#62736c" }
+                        Rectangle { anchors.centerIn: parent; width: 10; height: 10; radius: 5; color: musicPanel.shell.pillBackground; border.width: 1; border.color: musicPanel.shell.borderMuted }
                     }
                 }
                 Text {
@@ -174,7 +174,7 @@ Rectangle {
                     anchors.bottomMargin: 5
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: musicPanel.playing ? "▸  00:00" : "Ⅱ  PAUSED"
-                    color: musicPanel.playing ? musicPanel.shell.retroAmber : "#a7b6b1"
+                    color: musicPanel.playing ? musicPanel.shell.retroAmber : musicPanel.shell.pillMuted
                     font.family: musicPanel.shell.pillFont
                     font.pixelSize: 8
                 }
@@ -188,7 +188,7 @@ Rectangle {
                 spacing: 3
                 Text { text: "TRACK"; color: musicPanel.shell.retroCyan; font.family: musicPanel.shell.pillFont; font.pixelSize: 8 }
                 Text { Layout.fillWidth: true; text: musicPanel.shell.activePlayer ? musicPanel.shell.activePlayer.trackTitle : "NO ACTIVE PLAYER"; elide: Text.ElideRight; color: musicPanel.shell.pillForeground; font.family: musicPanel.shell.pillFont; font.pixelSize: 14; font.bold: true }
-                Text { Layout.fillWidth: true; text: musicPanel.shell.activePlayer ? musicPanel.shell.activePlayer.trackArtist : "Start a player to link it here"; elide: Text.ElideRight; color: "#a7b6b1"; font.family: musicPanel.shell.pillFont; font.pixelSize: 10 }
+                Text { Layout.fillWidth: true; text: musicPanel.shell.activePlayer ? musicPanel.shell.activePlayer.trackArtist : "Start a player to link it here"; elide: Text.ElideRight; color: musicPanel.shell.pillMuted; font.family: musicPanel.shell.pillFont; font.pixelSize: 10 }
                 Item { Layout.fillHeight: true }
                 RowLayout {
                     Layout.fillWidth: true
@@ -232,14 +232,14 @@ Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 31
             radius: 3
-            color: "#111716"
+            color: musicPanel.shell.panelSurface
             border.width: 1
             border.color: musicPanel.shell.panelLine
 
-            Rectangle { anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter; width: 34; height: 2; radius: 1; color: "#354640" }
-            Rectangle { anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter; width: 34; height: 2; radius: 1; color: "#354640" }
-            Rectangle { anchors.left: parent.left; anchors.leftMargin: 4; anchors.top: parent.top; anchors.topMargin: 4; width: 3; height: 3; radius: 2; color: "#61716a" }
-            Rectangle { anchors.right: parent.right; anchors.rightMargin: 4; anchors.bottom: parent.bottom; anchors.bottomMargin: 4; width: 3; height: 3; radius: 2; color: "#61716a" }
+            Rectangle { anchors.left: parent.left; anchors.leftMargin: 8; anchors.verticalCenter: parent.verticalCenter; width: 34; height: 2; radius: 1; color: musicPanel.shell.panelLine }
+            Rectangle { anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter; width: 34; height: 2; radius: 1; color: musicPanel.shell.panelLine }
+            Rectangle { anchors.left: parent.left; anchors.leftMargin: 4; anchors.top: parent.top; anchors.topMargin: 4; width: 3; height: 3; radius: 2; color: musicPanel.shell.borderMuted }
+            Rectangle { anchors.right: parent.right; anchors.rightMargin: 4; anchors.bottom: parent.bottom; anchors.bottomMargin: 4; width: 3; height: 3; radius: 2; color: musicPanel.shell.borderMuted }
 
             Item {
                 // Main row: signal (38) + two gaps/divider (19) precedes the
@@ -253,7 +253,7 @@ Rectangle {
                     spacing: 6
                     Rectangle {
                         width: 33; height: 25; radius: 3
-                        color: previous.pressed ? "#42524e" : musicPanel.shell.panelSurface
+                        color: previous.pressed ? musicPanel.shell.surfacePressed : musicPanel.shell.panelSurface
                         border.width: 1; border.color: musicPanel.shell.panelLine
                         opacity: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canGoPrevious ? 1 : 0.35
                         Text { anchors.centerIn: parent; text: "‹‹"; color: musicPanel.shell.pillForeground; font.pixelSize: 13; font.bold: true }
@@ -261,14 +261,14 @@ Rectangle {
                     }
                     Rectangle {
                         width: 92; height: 25; radius: 3
-                        color: playPause.pressed ? "#d99d49" : musicPanel.shell.retroAmber
+                        color: playPause.pressed ? musicPanel.shell.warning : musicPanel.shell.retroAmber
                         opacity: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canTogglePlaying ? 1 : 0.35
-                        Text { anchors.centerIn: parent; text: musicPanel.playing ? "Ⅱ  PAUSE" : "▶  PLAY"; color: "#10201d"; font.family: musicPanel.shell.pillFont; font.pixelSize: 10; font.bold: true }
+                        Text { anchors.centerIn: parent; text: musicPanel.playing ? "Ⅱ  PAUSE" : "▶  PLAY"; color: musicPanel.shell.onAccent; font.family: musicPanel.shell.pillFont; font.pixelSize: 10; font.bold: true }
                         MouseArea { id: playPause; anchors.fill: parent; enabled: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canTogglePlaying; onClicked: musicPanel.shell.activePlayer.togglePlaying() }
                     }
                     Rectangle {
                         width: 33; height: 25; radius: 3
-                        color: next.pressed ? "#42524e" : musicPanel.shell.panelSurface
+                        color: next.pressed ? musicPanel.shell.surfacePressed : musicPanel.shell.panelSurface
                         border.width: 1; border.color: musicPanel.shell.panelLine
                         opacity: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canGoNext ? 1 : 0.35
                         Text { anchors.centerIn: parent; text: "››"; color: musicPanel.shell.pillForeground; font.pixelSize: 13; font.bold: true }

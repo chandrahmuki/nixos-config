@@ -31,9 +31,9 @@
           settings = {
             font_family = "Cozette";
             font_size = 18;
-            # An opaque base keeps Matugen's terminal background exact instead
-            # of compositing it into a green-tinted result.
-            background_opacity = 1.0;
+            # Match Foot's readable translucent/blurred desktop treatment.
+            background_opacity = 0.78;
+            dynamic_background_opacity = true;
             allow_remote_control = "yes";
             # Kitty silently suffixes a bare listen_on path with its own PID
             # anyway; spell it out so muggy-theme can glob every live window's

@@ -60,7 +60,7 @@ Variants {
                 { label: "SUSPEND", icon: "󰖔", accent: powerMenu.shell.active },
                 { label: "RESTART", icon: "󰜉", accent: powerMenu.shell.pillForeground },
                 { label: "LOG OUT", icon: "󰍃", accent: powerMenu.shell.pillForeground },
-                { label: "POWER OFF", icon: "󰐥", accent: "#ffc2d4" }
+                { label: "POWER OFF", icon: "󰐥", accent: powerMenu.shell.critical }
             ]
 
             Item {
@@ -121,9 +121,9 @@ Variants {
                             width: 104
                             height: 104
                             radius: width / 2
-                            color: "#111111"
+                            color: powerMenu.shell.surface
                             border.width: selected ? 2 : 1
-                            border.color: selected ? modelData.accent : "#e1e1e1"
+                            border.color: selected ? modelData.accent : powerMenu.shell.borderStrong
 
                             Behavior on border.color { ColorAnimation { duration: 120 } }
                             Behavior on scale { NumberAnimation { duration: 120; easing.type: Easing.OutQuad } }
@@ -163,7 +163,7 @@ Variants {
                             Text {
                                 anchors.centerIn: parent
                                 text: modelData.icon
-                                color: "#f2f2f2"
+                                color: powerMenu.shell.foreground
                                 font.family: "JetBrainsMono Nerd Font"
                                 font.pixelSize: 42
                             }
@@ -176,9 +176,9 @@ Variants {
                             width: Math.max(96, labelText.implicitWidth + 24)
                             height: 27
                             radius: height / 2
-                            color: "#111111"
+                            color: powerMenu.shell.surface
                             border.width: 1
-                            border.color: selected ? modelData.accent : "#6a6a6a"
+                            border.color: selected ? modelData.accent : powerMenu.shell.borderMuted
 
                             Text {
                                 id: labelText
@@ -218,9 +218,9 @@ Variants {
                 width: helpText.implicitWidth + 26
                 height: 27
                 radius: height / 2
-                color: "#111111"
+                color: powerMenu.shell.surface
                 border.width: 1
-                border.color: "#5a5a5a"
+                border.color: powerMenu.shell.borderMuted
                 z: 2
 
                 Text {
@@ -229,7 +229,7 @@ Variants {
                     text: powerMenu.shell.powerMenuConfirming
                         ? "ENTER AGAIN TO CONFIRM · ESC CANCEL"
                         : "HOLD CLICK · ARROWS · ENTER · ESC"
-                    color: "#dedede"
+                    color: powerMenu.shell.foreground
                     font.family: powerMenu.shell.pillFont
                     font.pixelSize: 11
                     font.bold: true

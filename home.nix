@@ -20,10 +20,6 @@
     NIXOS_CONFIG_HOST = hostname;
   };
 
-  # Les imports d'autres modules utilisateur sont gérés de manière dynamique dans flake.nix
-  imports = [
-  ];
-
   # Activer la gestion de Home Manager par lui-même
   programs.home-manager.enable = true;
 

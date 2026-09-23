@@ -40,7 +40,7 @@ Item {
     Rectangle {
         anchors.fill: parent
         radius: height / 2
-        color: clockHover.hovered ? "#202020" : "transparent"
+        color: clockHover.hovered ? clockControl.shell.surfaceHover : "transparent"
     }
 
     Text {

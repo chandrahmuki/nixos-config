@@ -58,7 +58,7 @@ Variants {
                 color: notificationStack.shell.pillBackground
                 border.width: notification.urgency === NotificationUrgency.Critical ? 2 : 1
                 border.color: notification.urgency === NotificationUrgency.Critical
-                    ? "#ff6b6b" : "#303030"
+                    ? notificationStack.shell.critical : notificationStack.shell.surfaceHover
 
                 MouseArea {
                     anchors.fill: parent
@@ -93,17 +93,33 @@ Variants {
                     anchors.margins: 14
                     spacing: 11
 
-                    Image {
+                    Item {
+                        id: notificationIcon
                         readonly property string iconSource: notification.image.length > 0
                             ? notification.image : notification.appIcon
+                        readonly property bool animatedRecorderIcon: notification.appName === "Muggy Recorder"
                         Layout.alignment: Qt.AlignTop
                         Layout.preferredWidth: 42
                         Layout.preferredHeight: 42
-                        visible: iconSource.length > 0
-                        source: iconSource
-                        sourceSize.width: 84
-                        sourceSize.height: 84
-                        fillMode: Image.PreserveAspectFit
+                        visible: animatedRecorderIcon || iconSource.length > 0
+
+                        Image {
+                            anchors.fill: parent
+                            visible: !notificationIcon.animatedRecorderIcon
+                            source: notificationIcon.iconSource
+                            sourceSize.width: 84
+                            sourceSize.height: 84
+                            fillMode: Image.PreserveAspectFit
+                        }
+
+                        AnimatedImage {
+                            anchors.fill: parent
+                            visible: notificationIcon.animatedRecorderIcon
+                            source: Qt.resolvedUrl("../assets/screen-recorder-animated.gif")
+                            playing: visible
+                            cache: false
+                            fillMode: Image.PreserveAspectFit
+                        }
                     }
 
                     ColumnLayout {
@@ -144,7 +160,7 @@ Variants {
                                     width: actionLabel.implicitWidth + 16
                                     height: 26
                                     radius: 5
-                                    color: actionArea.pressed ? "#303030" : "#1d1d1d"
+                                    color: actionArea.pressed ? notificationStack.shell.surfacePressed : notificationStack.shell.surfaceMuted
 
                                     Text {
                                         id: actionLabel

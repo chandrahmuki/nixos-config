@@ -42,7 +42,7 @@ Item {
     Rectangle {
         anchors.fill: parent
         radius: 4
-        color: networkHover.hovered ? "#242424" : "transparent"
+        color: networkHover.hovered ? networkControl.shell.surfaceHover : "transparent"
     }
 
     Text {

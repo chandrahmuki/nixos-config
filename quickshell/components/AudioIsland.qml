@@ -99,12 +99,12 @@ Rectangle {
                             color: audioPanel.outputLevel >= level ? audioPanel.shell.retroAmber : audioPanel.shell.panelSurface
                             border.width: 1
                             border.color: audioPanel.outputLevel >= level ? audioPanel.shell.retroAmber : audioPanel.shell.panelLine
-                            Text { anchors.centerIn: parent; text: Math.round(parent.level * 100); color: audioPanel.outputLevel >= parent.level ? "#10201d" : audioPanel.shell.pillForeground; font.family: audioPanel.shell.pillFont; font.pixelSize: 11; font.bold: true }
+                            Text { anchors.centerIn: parent; text: Math.round(parent.level * 100); color: audioPanel.outputLevel >= parent.level ? audioPanel.shell.onAccent : audioPanel.shell.pillForeground; font.family: audioPanel.shell.pillFont; font.pixelSize: 11; font.bold: true }
                             MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: audioPanel.shell.setSystemVolume(parent.level) }
                         }
                     }
                 }
-                Text { text: "PIPEWIRE / DEFAULT SINK"; color: "#a7b6b1"; font.family: audioPanel.shell.pillFont; font.pixelSize: 8 }
+                Text { text: "PIPEWIRE / DEFAULT SINK"; color: audioPanel.shell.pillMuted; font.family: audioPanel.shell.pillFont; font.pixelSize: 8 }
             }
         }
     }

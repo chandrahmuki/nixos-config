@@ -34,6 +34,9 @@ result-*
 !wallpapers/*.jpg
 !wallpapers/*.jpeg
 !assets/*.png
+!quickshell/assets/wallpapers/*.jpg
+!quickshell/assets/wallpapers/full/*.jpg
+!quickshell/assets/wallpapers/*.png
 scripts/muggy/muggy
 /muggy
 generated/

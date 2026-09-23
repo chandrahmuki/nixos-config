@@ -18,6 +18,7 @@
       "thunar"
       "neovim"
       "nh"
+      "screen-recording"
       "stylix"
       "terminal"
       "theme"

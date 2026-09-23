@@ -124,7 +124,7 @@ Item {
                     radius: 12
                     color: trayCapsule.shell.pillBackground
                     border.width: 1
-                    border.color: "#d8d8d8"
+                    border.color: trayCapsule.shell.borderStrong
 
                     HoverHandler {
                         onHoveredChanged: {
@@ -148,7 +148,7 @@ Item {
                             Rectangle {
                                 anchors.fill: parent
                                 radius: 7
-                                color: trayBackHover.hovered ? "#2a2a2a" : "transparent"
+                                color: trayBackHover.hovered ? trayCapsule.shell.surfaceHover : "transparent"
                             }
                             Text {
                                 anchors.left: parent.left
@@ -180,14 +180,14 @@ Item {
                                     anchors.centerIn: parent
                                     width: parent.width - 12
                                     height: 1
-                                    color: "#484848"
+                                    color: trayCapsule.shell.panelLine
                                 }
                                 Rectangle {
                                     visible: !modelData.isSeparator
                                     anchors.fill: parent
                                     radius: 7
                                     color: trayOptionHover.hovered
-                                        ? "#2a2a2a" : "transparent"
+                                        ? trayCapsule.shell.surfaceHover : "transparent"
                                 }
                                 Text {
                                     visible: !modelData.isSeparator
@@ -199,7 +199,7 @@ Item {
                                     text: modelData.text
                                     elide: Text.ElideRight
                                     color: modelData.enabled
-                                        ? trayCapsule.shell.pillForeground : "#686868"
+                                        ? trayCapsule.shell.pillForeground : trayCapsule.shell.pillMuted
                                     font.family: trayCapsule.shell.pillFont
                                     font.pixelSize: 13
                                 }
@@ -209,7 +209,7 @@ Item {
                                     anchors.rightMargin: 9
                                     anchors.verticalCenter: parent.verticalCenter
                                     text: "›"
-                                    color: "#bdbdbd"
+                                    color: trayCapsule.shell.pillMuted
                                     font.pixelSize: 18
                                 }
                                 HoverHandler { id: trayOptionHover }

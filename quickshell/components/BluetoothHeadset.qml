@@ -54,7 +54,7 @@ Item {
     Rectangle {
         anchors.fill: parent
         radius: 4
-        color: headsetHover.hovered ? "#242424" : "transparent"
+        color: headsetHover.hovered ? headset.shell.surfaceHover : "transparent"
 
         Item {
             anchors.centerIn: parent
@@ -108,7 +108,7 @@ Item {
             radius: 12
             color: headset.shell.pillBackground
             border.width: 1
-            border.color: "#d8d8d8"
+            border.color: headset.shell.borderStrong
 
             HoverHandler {
                 onHoveredChanged: hovered ? headset.keepPanelOpen() : headset.scheduleClose()
@@ -144,7 +144,7 @@ Item {
                         }
                         Text {
                             text: "CONNECTED  ·  AUDIO READY"
-                            color: "#a7a7a7"
+                            color: headset.shell.iconMuted
                             font.family: headset.shell.pillFont
                             font.pixelSize: 11
                             font.bold: true
@@ -152,18 +152,18 @@ Item {
                     }
                     Text {
                         text: "×"
-                        color: "#a7a7a7"
+                        color: headset.shell.iconMuted
                         font.pixelSize: 18
                     }
                 }
 
-                Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: "#3f3f3f" }
+                Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: headset.shell.panelLine }
 
                 RowLayout {
                     Layout.fillWidth: true
                     Text {
                         text: "BATTERY"
-                        color: "#bdbdbd"
+                        color: headset.shell.pillMuted
                         font.family: headset.shell.pillFont
                         font.pixelSize: 12
                         font.bold: true
@@ -179,7 +179,7 @@ Item {
                             height: 18
                             radius: 3
                             border.width: 1
-                            border.color: "#d8d8d8"
+                            border.color: headset.shell.borderStrong
                             color: "transparent"
 
                             Rectangle {
@@ -202,7 +202,7 @@ Item {
                             width: 4
                             height: 8
                             radius: 1
-                            color: "#d8d8d8"
+                            color: headset.shell.borderStrong
                         }
                     }
 
@@ -219,7 +219,7 @@ Item {
                 Text {
                     Layout.fillWidth: true
                     text: headset.device ? headset.device.address : ""
-                    color: "#777777"
+                    color: headset.shell.pillMuted
                     font.family: headset.shell.pillFont
                     font.pixelSize: 11
                 }
