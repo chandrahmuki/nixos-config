@@ -1,64 +1,54 @@
-{
-  username = "david";
-  userEmail = "amouyaljerome@gmail.com";
-  hostname = "muggy-nixos";
-  system = "x86_64-linux";
-  configDirectory = "/home/david/nixos-config";
-  timeZone = "Europe/Vienna";
-  locale = "de_AT.UTF-8";
+let
+  # Everything not overridden here comes from the public settings, so the
+  # shared profile lists cannot drift apart.
+  base = import ../../settings.nix;
+in
+  base
+  // {
+    username = "david";
+    userEmail = "amouyaljerome@gmail.com";
+    hostname = "muggy-nixos";
+    configDirectory = "/home/david/nixos-config";
+    timeZone = "Europe/Vienna";
+    locale = "de_AT.UTF-8";
 
-  profiles = {
-    desktop = [
-      "bluetooth"
-      "font"
-      "hyprland"
-      "greetd"
-      "helix"
-      "thunar"
-      "neovim"
-      "nh"
-      "screen-recording"
-      "stylix"
-      "terminal"
-      "theme"
-      "utils"
-      "vscode"
-      "walker"
-    ];
-    user = [
-      "btop"
-      "direnv"
-      "git"
-      "microfetch"
-      "notifications"
-      "sops"
-      "tealdeer"
-      "xdg"
-      "yazi"
-    ];
-    personalDesktop = [
-      "ai"
-      "chatgpt"
-      "gaming"
-      "handbrake"
-      "irc"
-      "media"
-      "openvpn"
-      "performance-tuning"
-    ];
-    personalUser = [
-      "discord"
-      "helium"
-      "herdr"
-      "obsidian"
-      "oculante"
-      "parsec"
-      "pdf"
-      "zen-browser"
-    ];
-    machineDesktop = [
-      "machine-storage"
-      "backup"
-    ];
-  };
-}
+    profiles =
+      base.profiles
+      // {
+        user = [
+          "btop"
+          "direnv"
+          "git"
+          "microfetch"
+          "notifications"
+          "sops"
+          "tealdeer"
+          "xdg"
+          "yazi"
+        ];
+        personalDesktop = [
+          "ai"
+          "chatgpt"
+          "gaming"
+          "handbrake"
+          "irc"
+          "media"
+          "openvpn"
+          "performance-tuning"
+        ];
+        personalUser = [
+          "discord"
+          "helium"
+          "herdr"
+          "obsidian"
+          "oculante"
+          "parsec"
+          "pdf"
+          "zen-browser"
+        ];
+        machineDesktop = [
+          "machine-storage"
+          "backup"
+        ];
+      };
+  }
