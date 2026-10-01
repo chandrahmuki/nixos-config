@@ -82,21 +82,48 @@ in {
       home.file.".local/share/icons/hicolor/scalable/apps/io.github.ilya_zlobintsev.LACT.svg".source = "${pkgs.lact}/share/pixmaps/io.github.ilya_zlobintsev.LACT.svg";
 
       home.activation.mutablePapirusDark = lib.hm.dag.entryAfter ["writeBoundary"] ''
-        # The copy below (-L dereferencing ~7600 files) takes several
-        # seconds; skip it when this generation's papirus-icon-theme store
-        # path hasn't changed since the last activation instead of paying
-        # that cost on every single switch.
+        # Only redone when the papirus-icon-theme store path (or this recipe,
+        # the ":v2") changes, not on every switch.
         papirusMarker="$HOME/.local/share/icons/Papirus-Dark.src"
-        if [ ! -e "$HOME/.local/share/icons/Papirus-Dark" ] || [ "$(cat "$papirusMarker" 2>/dev/null)" != "${pkgs.papirus-icon-theme}" ]; then
-          $DRY_RUN_CMD rm -rf $VERBOSE_ARG "$HOME/.local/share/icons/Papirus-Dark"
-          # -L: dereference symlinks into real files. Papirus-Dark's own
-          # tree links out to shared assets (e.g. status/image-missing.svg)
-          # elsewhere in the package; copied as bare symlinks they dangle
-          # outside their original parent and GTK hard-aborts the whole app
-          # the first time it tries to load one (hit via Thunar's toolbar).
-          $DRY_RUN_CMD cp -rL ${pkgs.papirus-icon-theme}/share/icons/Papirus-Dark "$HOME/.local/share/icons/Papirus-Dark"
-          $DRY_RUN_CMD chmod -R u+w "$HOME/.local/share/icons/Papirus-Dark"
-          $DRY_RUN_CMD printf '%s' "${pkgs.papirus-icon-theme}" > "$papirusMarker"
+        papirusSrc="${pkgs.papirus-icon-theme}/share/icons"
+        papirusDst="$HOME/.local/share/icons/Papirus-Dark"
+        if [ ! -e "$papirusDst" ] || [ "$(cat "$papirusMarker" 2>/dev/null)" != "${pkgs.papirus-icon-theme}:v2" ]; then
+          $DRY_RUN_CMD rm -rf $VERBOSE_ARG "$papirusDst"
+          # cp -a keeps the theme's own symlinks. The old `cp -rL` followed
+          # the size directories that link into the shared Papirus theme and
+          # copied ~300k files (1.6 GB) on every Papirus update.
+          $DRY_RUN_CMD cp -a "$papirusSrc/Papirus-Dark" "$papirusDst"
+          $DRY_RUN_CMD chmod -R u+w "$papirusDst"
+          # papirus-folders only edits real files (it skips symlinks) and
+          # refuses a non-writable folder.svg, so places/ of the sizes it
+          # recolours must be real copies; the rest of each size stays links.
+          for size in 22x22 24x24 32x32 48x48 64x64; do
+            if [ -L "$papirusDst/$size" ]; then
+              $DRY_RUN_CMD rm "$papirusDst/$size"
+              $DRY_RUN_CMD mkdir "$papirusDst/$size"
+              for e in "$papirusSrc/Papirus-Dark/$size"/*; do
+                $DRY_RUN_CMD ln -s "$e" "$papirusDst/$size/$(basename "$e")"
+              done
+            fi
+            $DRY_RUN_CMD rm -rf "$papirusDst/$size/places"
+            $DRY_RUN_CMD cp -rL "$papirusSrc/Papirus-Dark/$size/places" "$papirusDst/$size/places"
+            $DRY_RUN_CMD chmod -R u+w "$papirusDst/$size/places"
+          done
+          # Relative links that left the theme dangle in the copy (GTK
+          # hard-aborts on them, hit via Thunar's toolbar): make them
+          # absolute store paths.
+          if [ -z "$DRY_RUN_CMD" ]; then
+            find "$papirusDst" -xtype l -print0 | while IFS= read -r -d "" l; do
+              rel="''${l#"$papirusDst"/}"
+              ln -sfn "$(realpath -m "$(dirname "$papirusSrc/Papirus-Dark/$rel")/$(readlink "$l")")" "$l"
+            done
+          fi
+          $DRY_RUN_CMD printf '%s' "${pkgs.papirus-icon-theme}:v2" > "$papirusMarker"
+          # A fresh copy is back to the default folder colour; put back the
+          # last one muggy-theme chose.
+          # papirus-folders needs awk, which the activation PATH lacks.
+          PATH="${pkgs.gawk}/bin:$PATH" $DRY_RUN_CMD ${pkgs.papirus-folders}/bin/papirus-folders -R -t Papirus-Dark >/dev/null \
+            || echo "papirus-folders -R failed: folder colour not restored" >&2
         fi
       '';
 
