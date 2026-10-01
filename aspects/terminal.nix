@@ -143,11 +143,6 @@
             fish_add_path --prepend /run/wrappers/bin
               set -g fish_greeting ""
 
-              function tx
-                foot -f "JetBrainsMono Nerd Font:size=10" fish -c "tmux attach || tmux new-session" &
-                disown
-              end
-
             set -l _gh_token_file ~/.config/sops/github_token
             if test -f $_gh_token_file
               set -gx GITHUB_TOKEN (cat $_gh_token_file)

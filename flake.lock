@@ -496,26 +496,6 @@
         "type": "github"
       }
     },
-    "opencode": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1790790789,
-        "narHash": "sha256-g4ov7ahzn1xdikQJFdKrO/PoaPML97rZY4tHTTFCvjc=",
-        "owner": "anomalyco",
-        "repo": "opencode",
-        "rev": "9b4882db54627f2656a6990daafa412f9f3c7c82",
-        "type": "github"
-      },
-      "original": {
-        "owner": "anomalyco",
-        "repo": "opencode",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "claude-desktop": "claude-desktop",
@@ -530,7 +510,6 @@
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-master": "nixpkgs-master",
         "omnigraph": "omnigraph",
-        "opencode": "opencode",
         "sops-nix": "sops-nix",
         "stylix": "stylix",
         "zen-browser": "zen-browser"
