@@ -1,8 +1,6 @@
 # NixOS Configuration
 
-NixOS flake for a modern, high-performance GNOME desktop, built with Home Manager, [Den](https://github.com/denful/den) aspects, Stylix theming, and SOPS-Nix secret management.
-
-![GNOME desktop](assets/gnome-desktop.png)
+NixOS flake for a modern, high-performance Hyprland desktop with a Quickshell shell, built with Home Manager, [Den](https://github.com/denful/den) aspects, Stylix theming, and SOPS-Nix secret management.
 
 ---
 
@@ -65,7 +63,7 @@ Identity, locale, timezone, and active aspect profiles are defined centrally:
   locale = "en_US.UTF-8";
 
   profiles = {
-    desktop = [ "gnome" "neovim" "terminal" "theme" "utils" ... ];
+    desktop = [ "hyprland" "neovim" "terminal" "theme" "utils" ... ];
     user = [ "git" "xdg" "yazi" ... ];
     personalDesktop = [ "ai" "gaming" "media" ... ];
     personalUser = [ "discord" "herdr" "zen-browser" ... ];
@@ -81,7 +79,6 @@ Identity, locale, timezone, and active aspect profiles are defined centrally:
 nixos-config/
 ├── aspects/                  # Modular NixOS and Home Manager aspects
 │   ├── ai.nix                # AI tools (Antigravity, Claude, OpenCode, OmniGraph)
-│   ├── gnome.nix             # Desktop environment and extensions
 │   ├── herdr.nix             # Herdr workspace manager
 │   ├── media.nix             # MPV, YT-DLP, Cliamp & playlists
 │   ├── nh.nix                # Nix Helper (nos command)

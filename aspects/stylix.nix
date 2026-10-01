@@ -51,7 +51,6 @@
         };
       };
 
-      targets.gnome.enable = true;
       targets.qt.platform = lib.mkForce "qtct";
     };
 

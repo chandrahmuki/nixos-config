@@ -1,6 +1,4 @@
 {den, ...}: {
-  # Hyprland deliberately lives alongside GNOME: selecting it in tuigreet does
-  # not alter the existing GNOME/Walker session.
   den.aspects.hyprland.nixos = {
     config,
     lib,

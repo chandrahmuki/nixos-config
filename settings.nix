@@ -10,7 +10,6 @@
     desktop = [
       "bluetooth"
       "font"
-      "gnome"
       "hyprland"
       "greetd"
       "helix"

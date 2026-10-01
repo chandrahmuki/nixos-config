@@ -140,10 +140,17 @@
 
     environment = {
       sessionVariables = {
+        # gsettings (used by muggy-theme for the colour scheme) found its schemas
+        # through the GNOME session; point it at the desktop schemas directly.
+        GSETTINGS_SCHEMA_DIR = "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}/glib-2.0/schemas";
         vk_xwayland_wait_ready = "false";
         MESA_SHADER_CACHE_MAX_SIZE = "16G";
       };
       systemPackages = with pkgs; [
+        # gsettings and its desktop schemas: muggy-theme switches the colour
+        # scheme through them. The GNOME module used to provide both.
+        glib
+        gsettings-desktop-schemas
         bubblewrap
         curl
         ffmpeg
@@ -171,10 +178,14 @@
     xdg.portal = {
       enable = true;
       extraPortals = [
-        pkgs.xdg-desktop-portal-gnome
         pkgs.xdg-desktop-portal-gtk
       ];
     };
+
+    # Secret service for the browsers and VS Code, and TLS for GTK/libsoup apps.
+    # Both used to be enabled implicitly by the GNOME desktop module.
+    services.gnome.gnome-keyring.enable = true;
+    services.gnome.glib-networking.enable = true;
 
     zramSwap.enable = true;
   };
