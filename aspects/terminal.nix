@@ -22,6 +22,10 @@
       # Kitty is owned by the runtime Matugen palette, not the static Stylix
       # fallback. Its remote-control socket updates open windows immediately.
       stylix.targets.kitty.enable = false;
+      # Starship uses ANSI names (cyan, blue, purple, etc.) so Kitty's live
+      # Matugen palette recolors each new prompt. A fixed Stylix palette would
+      # keep the prompt on the old theme after Muggy switches themes.
+      stylix.targets.starship.enable = false;
       # Same reasoning, for the per-user (Home Manager) fish target.
       stylix.targets.fish.enable = false;
 
@@ -80,12 +84,49 @@
           enable = true;
           settings = {
             add_newline = false;
+            format = "[╭─](bold cyan)$os$directory$git_branch$git_status$nix_shell$cmd_duration$status\n$character";
+            os = {
+              disabled = false;
+              format = "[$symbol]($style) ";
+              style = "bold cyan";
+              symbols.NixOS = "";
+            };
+            directory = {
+              style = "bold blue";
+              truncation_length = 3;
+              truncation_symbol = "…/";
+              format = "[$path]($style)[$read_only]($read_only_style) ";
+            };
+            git_branch = {
+              symbol = " ";
+              style = "bold purple";
+              format = "[$symbol$branch]($style) ";
+            };
+            git_status = {
+              style = "bold yellow";
+              format = "([$all_status$ahead_behind]($style) )";
+            };
             character = {
-              success_symbol = "[➜](bold green)";
-              error_symbol = "[➜](bold red)";
+              success_symbol = "[╰─❯](bold cyan)";
+              error_symbol = "[╰─❯](bold red)";
             };
             nix_shell = {
-              symbol = "❄️ ";
+              symbol = "❄ ";
+              style = "bold cyan";
+              format = "[$symbol$name]($style) ";
+            };
+            cmd_duration = {
+              min_time = 2000;
+              style = "bold yellow";
+              format = "[⌛ $duration]($style) ";
+            };
+            status = {
+              disabled = false;
+              style = "bold red";
+              symbol = "✘ ";
+              format = "[$symbol$status]($style) ";
+              map_symbol = false;
+              recognize_signal_code = true;
             };
           };
         };
@@ -119,6 +160,12 @@
 
             if status is-interactive
               fish_vi_key_bindings
+
+              # The test builtin offers operators like "!=" after `test ",
+              # which look like stray glyphs in this prompt. Keep other
+              # commands' completions and fish autosuggestions unchanged.
+              complete -c test -e
+              complete -c test -f
 
               bind -M insert \ch kill-word
               bind -M insert \el true
