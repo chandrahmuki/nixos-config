@@ -97,7 +97,7 @@
       denHost = denConfig.den.hosts.${settings.system}.desktop;
     in
       inputs.nixpkgs.lib.nixosSystem {
-        system = settings.system;
+        inherit (settings) system;
         specialArgs =
           {
             inherit inputs settings username hostname;
@@ -130,14 +130,29 @@
       systems = [publicSettings.system];
 
       # Configuration spécifique pour chaque système
-      perSystem = {
-        config,
-        self',
-        inputs',
-        pkgs,
-        system,
-        ...
-      }: {
+      perSystem = {pkgs, ...}: let
+        # Only the Nix files: keeps the check sources small and makes the
+        # checks independent of wallpapers, QML and the like.
+        nixSources = pkgs.lib.fileset.toSource {
+          root = ./.;
+          fileset = pkgs.lib.fileset.union ./statix.toml (pkgs.lib.fileset.fileFilter (file: file.hasExt "nix") ./.);
+        };
+        mkCheck = name: tools: command:
+          pkgs.runCommand "check-${name}" {nativeBuildInputs = tools;} ''
+            cd ${nixSources}
+            ${command}
+            touch $out
+          '';
+      in {
+        formatter = pkgs.alejandra;
+
+        checks = {
+          format = mkCheck "format" [pkgs.alejandra] "alejandra --check .";
+          # Unused bindings; lambda argument names are left alone because the
+          # aspects deliberately accept the usual { config, lib, pkgs, ... }.
+          deadnix = mkCheck "deadnix" [pkgs.deadnix] "deadnix --fail --no-lambda-pattern-names .";
+          statix = mkCheck "statix" [pkgs.statix] "statix check .";
+        };
       };
 
       # Configuration système globale
