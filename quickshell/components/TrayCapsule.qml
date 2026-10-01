@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Services.SystemTray
 
@@ -61,6 +62,7 @@ Item {
             }
 
             Image {
+                id: trayIcon
                 anchors.centerIn: parent
                 width: 17
                 height: 17
@@ -71,6 +73,13 @@ Item {
                         : modelData.icon
                 sourceSize.width: width
                 sourceSize.height: height
+            }
+
+            MultiEffect {
+                anchors.fill: trayIcon
+                source: trayIcon
+                colorization: 1
+                colorizationColor: trayCapsule.shell.retroCyan
             }
 
             MouseArea {

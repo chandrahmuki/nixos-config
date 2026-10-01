@@ -170,14 +170,6 @@ Variants {
                         }
                         onCloseRequested: networkPanel.scheduleClose()
                     }
-                    AudioIndicator {
-                        shell: pillRoot.shell
-                        onOpenRequested: {
-                            islandShape.closeDetailPanels(audioPanel);
-                            audioPanel.openPanel();
-                        }
-                        onCloseRequested: audioPanel.scheduleClose()
-                    }
                     BluetoothHeadset { shell: pillRoot.shell; device: pillRoot.shell.connectedHeadset }
                 }
 
@@ -190,7 +182,7 @@ Variants {
 
                 Row {
                     id: contextGroup
-                    spacing: 2
+                    spacing: 5
                     WeatherWidget {
                         id: weatherWidget
                         shell: pillRoot.shell
@@ -213,6 +205,14 @@ Variants {
                     // Status icons finish the pill instead of interrupting the
                     // weather/time readout.
                     TrayCapsule { shell: pillRoot.shell }
+                    AudioIndicator {
+                        shell: pillRoot.shell
+                        onOpenRequested: {
+                            islandShape.closeDetailPanels(audioPanel);
+                            audioPanel.openPanel();
+                        }
+                        onCloseRequested: audioPanel.scheduleClose()
+                    }
                 }
             }
 

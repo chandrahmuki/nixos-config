@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Effects
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
@@ -120,6 +121,13 @@ Variants {
                                         : "file:///home/david/.local/share/icons/catppuccin-mono-light/apps/scalable/"
                                             + modelData.icon + ".svg"
                                 fillMode: Image.PreserveAspectFit
+                                layer.enabled: status === Image.Ready
+                                layer.effect: MultiEffect {
+                                    saturation: -1
+                                    colorization: 1
+                                    colorizationColor: launcher.shell.selectedIndex === index
+                                        ? launcher.shell.active : launcher.shell.pillForeground
+                                }
                             }
 
                             Image {

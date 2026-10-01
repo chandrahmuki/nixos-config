@@ -39,19 +39,13 @@ Item {
         }
     }
 
-    Rectangle {
-        anchors.fill: parent
-        radius: 4
-        color: networkHover.hovered ? networkControl.shell.surfaceHover : "transparent"
-    }
-
-    Text {
+    PillIcon {
         anchors.centerIn: parent
-        text: networkControl.shell.networkType === "ethernet" ? "󰈀"
+        shell: networkControl.shell
+        hovered: networkHover.hovered
+        glyph: networkControl.shell.networkType === "ethernet" ? "󰈀"
             : networkControl.shell.networkType === "wifi" ? "󰖩" : "󰤭"
-        color: networkControl.shell.networkConnectionName.length > 0
+        iconColor: networkControl.shell.networkConnectionName.length > 0
             ? networkControl.shell.retroCyan : networkControl.shell.pillMuted
-        font.family: "JetBrainsMono Nerd Font"
-        font.pixelSize: 19
     }
 }

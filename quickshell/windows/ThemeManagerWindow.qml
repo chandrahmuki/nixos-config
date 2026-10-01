@@ -20,33 +20,63 @@ Variants {
         color: "transparent"
         visible: themeManager.shell.themeManagerOpen
             && Hyprland.monitorFor(modelData) === Hyprland.focusedMonitor
-        // carousel.currentIndex is the single source of truth for the
-        // selection: it is both the PathView's own drag/flick state and the
-        // target of keyboard nav, so nothing else may declaratively bind to
-        // it (that would fight the view's internal writes on drag).
-        readonly property var selectedTheme: themeManager.shell.themeProfiles[carousel.currentIndex]
+
+        property string filterText: ""
+        property var filteredThemes: themeManager.shell.themeProfiles
+        property int selectedIndex: 0
+        readonly property var selectedTheme: filteredThemes.length > 0
+            ? filteredThemes[Math.min(selectedIndex, filteredThemes.length - 1)]
+            : themeManager.shell.themeProfiles[0]
+        property var schemePreviewColors: ({})
+
         onVisibleChanged: {
             if (!visible)
                 return;
-            carousel.currentIndex = Math.max(0, themeManager.shell.themeProfiles.findIndex(function(theme) {
+            filterText = "";
+            themeFilter.text = "";
+            rebuildThemeList();
+            const activeIndex = filteredThemes.findIndex(function(theme) {
                 return theme.id === themeManager.shell.activeThemeId;
-            }));
-            themeFocus.forceActiveFocus();
+            });
+            selectedIndex = Math.max(0, activeIndex);
+            Qt.callLater(function() { themeFilter.forceActiveFocus(); });
             refreshSchemePreviews();
         }
 
-        // Live swatch per Matugen colour-scheme algorithm, recomputed for
-        // whichever wallpaper is currently centred in the carousel. One
-        // `preview-scheme` call per algorithm, run — costs nothing to apply
-        // (no state/Kitty/GTK writes) so it's safe to fire on every
-        // selection change without debouncing.
-        property var schemePreviewColors: ({})
+        function rebuildThemeList() {
+            const query = filterText.trim().toLowerCase();
+            filteredThemes = themeManager.shell.themeProfiles.filter(function(theme) {
+                return !query
+                    || theme.name.toLowerCase().indexOf(query) >= 0
+                    || theme.id.toLowerCase().indexOf(query) >= 0
+                    || theme.description.toLowerCase().indexOf(query) >= 0;
+            });
+            selectedIndex = Math.max(0, filteredThemes.findIndex(function(theme) {
+                return theme.id === themeManager.shell.activeThemeId;
+            }));
+            refreshSchemePreviews();
+        }
+
+        function moveSelection(delta) {
+            if (filteredThemes.length === 0)
+                return;
+            selectedIndex = (selectedIndex + delta + filteredThemes.length) % filteredThemes.length;
+            themeList.positionViewAtIndex(selectedIndex, ListView.Contain);
+            refreshSchemePreviews();
+        }
+
+        function applySelectedTheme() {
+            if (selectedTheme)
+                themeManager.shell.applyShellTheme(selectedTheme.id);
+        }
+
         function refreshSchemePreviews() {
-            schemePreviewColors = {};
+            schemePreviewColors = ({});
             schemePreviewProcess.running = false;
             schemePreviewProcess.pendingIndex = 0;
             schemePreviewProcess.runNext();
         }
+
         Process {
             id: schemePreviewProcess
             property int pendingIndex: 0
@@ -85,303 +115,352 @@ Variants {
 
         Rectangle {
             id: panel
-            width: Math.min(980, parent.width - 64)
-            height: Math.min(600, parent.height - 96)
+            width: Math.min(880, parent.width - 48)
+            height: Math.min(560, parent.height - 56)
             anchors.centerIn: parent
             color: themeManager.shell.pillBackground
-            border.width: 2
+            border.width: 1
             border.color: themeManager.shell.retroCyan
-            radius: 5
+            radius: 6
             clip: true
 
-            // Swallow clicks anywhere on the panel so they don't fall through
-            // to the backdrop MouseArea and close the window.
+            // Keep clicks inside the menu from reaching the dimmed backdrop.
             MouseArea { anchors.fill: parent }
 
-            Rectangle {
+            ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: 7
-                color: themeManager.shell.panelSurface
-                border.width: 1
-                border.color: themeManager.shell.panelLine
-                radius: 2
+                anchors.margins: 17
+                spacing: 11
 
-                ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 18
-                    spacing: 12
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        Text { text: "THEME DECK"; color: themeManager.shell.pillForeground; font.family: themeManager.shell.pillFont; font.pixelSize: 23; font.bold: true }
-                        Item { Layout.fillWidth: true }
-                        Text { text: "QUICKSHELL // LIVE"; color: themeManager.shell.retroCyan; font.family: themeManager.shell.pillFont; font.pixelSize: 10; font.bold: true }
-                    }
-
-                    Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: themeManager.shell.panelLine }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 30
                     Text {
-                        Layout.fillWidth: true
-                        text: "← → ou clic sur les flèches pour naviguer, Entrée pour appliquer. L'aperçu reste ouvert après application."
-                        color: themeManager.shell.muted
+                        text: "THÈMES"
+                        color: themeManager.shell.pillForeground
                         font.family: themeManager.shell.pillFont
-                        font.pixelSize: 11
-                        wrapMode: Text.WordWrap
+                        font.pixelSize: 20
+                        font.bold: true
                     }
+                    Item { Layout.fillWidth: true }
+                    Text {
+                        text: themeWindow.selectedTheme ? "ACTIF · " + themeManager.shell.activeTheme.name : ""
+                        color: themeManager.shell.retroCyan
+                        font.family: themeManager.shell.pillFont
+                        font.pixelSize: 10
+                        font.bold: true
+                    }
+                }
 
-                    // --- Carousel -------------------------------------------------
-                    Item {
-                        Layout.fillWidth: true
+                Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: themeManager.shell.panelLine }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    spacing: 16
+
+                    ColumnLayout {
+                        Layout.preferredWidth: 300
                         Layout.fillHeight: true
+                        spacing: 8
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 40
+                            color: themeManager.shell.panelSurface
+                            border.width: 1
+                            border.color: themeFilter.activeFocus ? themeManager.shell.accent : themeManager.shell.panelLine
+                            radius: 3
+
+                            Text {
+                                anchors.left: parent.left
+                                anchors.leftMargin: 11
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: "⌕"
+                                color: themeManager.shell.muted
+                                font.family: themeManager.shell.pillFont
+                                font.pixelSize: 20
+                            }
+                            TextInput {
+                                id: themeFilter
+                                anchors.left: parent.left
+                                anchors.leftMargin: 38
+                                anchors.right: parent.right
+                                anchors.rightMargin: 10
+                                anchors.verticalCenter: parent.verticalCenter
+                                height: parent.height - 2
+                                color: themeManager.shell.pillForeground
+                                selectionColor: themeManager.shell.accent
+                                selectedTextColor: themeManager.shell.pillBackground
+                                font.family: themeManager.shell.pillFont
+                                font.pixelSize: 14
+                                verticalAlignment: TextInput.AlignVCenter
+                                clip: true
+                                onTextChanged: {
+                                    themeWindow.filterText = text;
+                                    themeWindow.rebuildThemeList();
+                                }
+                                Keys.priority: Keys.BeforeItem
+                                Keys.onPressed: function(event) {
+                                    if (event.key === Qt.Key_Escape) {
+                                        if (text.length > 0) {
+                                            text = "";
+                                        } else {
+                                            themeManager.shell.themeManagerOpen = false;
+                                        }
+                                        event.accepted = true;
+                                    } else if (event.key === Qt.Key_Up) {
+                                        themeWindow.moveSelection(-1);
+                                        event.accepted = true;
+                                    } else if (event.key === Qt.Key_Down) {
+                                        themeWindow.moveSelection(1);
+                                        event.accepted = true;
+                                    } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                                        themeWindow.applySelectedTheme();
+                                        event.accepted = true;
+                                    }
+                                }
+                                Text {
+                                    anchors.fill: parent
+                                    verticalAlignment: Text.AlignVCenter
+                                    text: "Rechercher un thème…"
+                                    color: themeManager.shell.muted
+                                    font: themeFilter.font
+                                    visible: themeFilter.text.length === 0
+                                    enabled: false
+                                }
+                            }
+                        }
 
                         ListView {
-                            id: carousel
-                            anchors.fill: parent
-                            orientation: ListView.Horizontal
-                            model: themeManager.shell.themeProfiles
-                            spacing: 18
-                            // Centres the current card and snaps to it — a
-                            // plain ListView is far more predictable to drive
-                            // from keyboard than PathView turned out to be
-                            // (its custom path attributes could leave
-                            // currentIndex stuck once dragged off-centre).
-                            preferredHighlightBegin: (width - 300) / 2
-                            preferredHighlightEnd: (width - 300) / 2
-                            highlightRangeMode: ListView.StrictlyEnforceRange
-                            snapMode: ListView.SnapOneItem
-                            focus: false
-                            onCurrentIndexChanged: themeWindow.refreshSchemePreviews()
-                            header: Item { width: (carousel.width - 300) / 2; height: 1 }
-                            footer: Item { width: (carousel.width - 300) / 2; height: 1 }
+                            id: themeList
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            clip: true
+                            spacing: 3
+                            model: themeWindow.filteredThemes
+                            currentIndex: themeWindow.selectedIndex
+                            boundsBehavior: Flickable.StopAtBounds
+                            highlightRangeMode: ListView.NoHighlightRange
+                            onCurrentIndexChanged: positionViewAtIndex(currentIndex, ListView.Contain)
 
                             delegate: Item {
-                                id: card
                                 required property var modelData
                                 required property int index
-                                width: 300
-                                height: 300
-                                // Distance from the centred item drives scale/fade — measured
-                                // in actual on-screen pixels (via contentX), not logical index.
-                                // Driving it from the index instead let rapid key-repeat outrun
-                                // the ListView's own scroll animation: currentIndex jumps
-                                // instantly on every press while the view was still gliding
-                                // toward the previous one, so cards snapped straight to full
-                                // scale/opacity ahead of actually reaching centre — the
-                                // "flattening" effect. Tying it to real position means it can
-                                // only ever be as fast as the scroll itself, in sync by
-                                // construction, so no separate Behavior is needed either.
-                                readonly property real viewportCenterX: card.x - carousel.contentX + card.width / 2
-                                readonly property real distance: Math.abs(viewportCenterX - carousel.width / 2) / (card.width + carousel.spacing)
-                                scale: Math.max(0.62, 1.0 - distance * 0.19)
-                                opacity: Math.max(0.35, 1.0 - distance * 0.35)
-                                z: 100 - Math.round(distance * 10)
+                                width: themeList.width
+                                height: 37
 
                                 Rectangle {
                                     anchors.fill: parent
-                                    radius: 10
-                                    clip: true
-                                    color: modelData.background
-                                    border.width: carousel.currentIndex === card.index ? 3 : 1
-                                    border.color: carousel.currentIndex === card.index ? modelData.accent : modelData.muted
-
-                                    Image {
-                                        anchors.fill: parent
-                                        source: "../assets/wallpapers/" + modelData.wallpaper
-                                        fillMode: Image.PreserveAspectCrop
-                                        asynchronous: true
-                                        smooth: true
-                                    }
-
-                                    // Scrim so the name/description stay readable over
-                                    // any wallpaper, bright or dark.
-                                    Rectangle {
-                                        anchors.left: parent.left
-                                        anchors.right: parent.right
-                                        anchors.bottom: parent.bottom
-                                        height: parent.height * 0.62
-                                        gradient: Gradient {
-                                            GradientStop { position: 0.0; color: "#00000000" }
-                                            GradientStop { position: 1.0; color: Qt.rgba(0, 0, 0, 0.82) }
-                                        }
-                                    }
-
-                                    Text {
-                                        visible: modelData.id === themeManager.shell.activeThemeId
-                                        anchors.top: parent.top
-                                        anchors.right: parent.right
-                                        anchors.margins: 8
-                                        text: "ACTIF"
-                                        color: modelData.active
-                                        font.family: themeManager.shell.pillFont
-                                        font.pixelSize: 10
-                                        font.bold: true
-                                    }
-
-                                    ColumnLayout {
-                                        anchors.left: parent.left
-                                        anchors.right: parent.right
-                                        anchors.bottom: parent.bottom
-                                        anchors.margins: 12
-                                        spacing: 6
-
-                                        Text { text: modelData.name; color: themeManager.shell.foreground; font.family: themeManager.shell.pillFont; font.pixelSize: 13; font.bold: true }
-                                        Text { Layout.fillWidth: true; text: modelData.description; color: themeManager.shell.foreground; opacity: 0.82; font.family: themeManager.shell.pillFont; font.pixelSize: 9; wrapMode: Text.WordWrap }
-                                        Row {
-                                            spacing: 4
-                                            Repeater {
-                                                model: [modelData.background, modelData.surface, modelData.accent, modelData.active, modelData.retroAmber]
-                                                delegate: Rectangle { required property var modelData; width: 15; height: 15; radius: 2; color: modelData; border.width: 1; border.color: themeManager.shell.borderStrong; opacity: 0.9 }
-                                            }
-                                        }
-                                    }
+                                    color: themeWindow.selectedIndex === index ? themeManager.shell.selection : "transparent"
+                                    border.width: themeWindow.selectedIndex === index ? 1 : 0
+                                    border.color: themeManager.shell.panelLine
+                                    radius: 3
                                 }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: carousel.currentIndex = card.index
+                                Rectangle {
+                                    width: 3
+                                    height: parent.height - 12
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 6
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    color: modelData.accent
+                                    radius: 2
                                 }
-                            }
-                        }
-
-                        // Chevron nav, purely a visual/clickable affordance —
-                        // keyboard arrows already drive the same currentIndex.
-                        Text {
-                            anchors.left: parent.left
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: "‹"
-                            color: themeManager.shell.retroCyan
-                            font.pixelSize: 42
-                            font.bold: true
-                            opacity: carousel.currentIndex > 0 ? 0.9 : 0.25
-                            MouseArea {
-                                anchors.fill: parent
-                                anchors.margins: -12
-                                cursorShape: Qt.PointingHandCursor
-                                enabled: carousel.currentIndex > 0
-                                onClicked: carousel.currentIndex -= 1
-                            }
-                        }
-                        Text {
-                            anchors.right: parent.right
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: "›"
-                            color: themeManager.shell.retroCyan
-                            font.pixelSize: 42
-                            font.bold: true
-                            opacity: carousel.currentIndex < themeManager.shell.themeProfiles.length - 1 ? 0.9 : 0.25
-                            MouseArea {
-                                anchors.fill: parent
-                                anchors.margins: -12
-                                cursorShape: Qt.PointingHandCursor
-                                enabled: carousel.currentIndex < themeManager.shell.themeProfiles.length - 1
-                                onClicked: carousel.currentIndex += 1
-                            }
-                        }
-                    }
-
-                    // Matugen colour-scheme algorithm picker: same wallpaper,
-                    // different rules for pulling a palette out of it (see
-                    // aspects/hyprland.nix preview_scheme). Swatch dot shows
-                    // the actual primary colour that algorithm would produce
-                    // for the theme currently centred in the carousel.
-                    RowLayout {
-                        Layout.alignment: Qt.AlignHCenter
-                        spacing: 8
-                        Text { text: "ALGO"; color: themeManager.shell.muted; font.family: themeManager.shell.pillFont; font.pixelSize: 9 }
-                        Repeater {
-                            model: themeManager.shell.matugenSchemes
-                            delegate: Rectangle {
-                                id: schemeButton
-                                required property var modelData
-                                readonly property bool selected: themeManager.shell.matugenScheme === modelData.id
-                                readonly property string previewColor: themeWindow.schemePreviewColors[modelData.id] || themeManager.shell.panelLine
-                                Layout.preferredHeight: 24
-                                Layout.preferredWidth: schemeLabel.implicitWidth + 24
-                                radius: 3
-                                color: themeManager.shell.panelSurface
-                                border.width: selected ? 2 : 1
-                                border.color: selected ? previewColor : themeManager.shell.panelLine
-
-                                RowLayout {
-                                    anchors.centerIn: parent
-                                    spacing: 5
-                                    Rectangle {
-                                        width: 14
-                                        height: 14
-                                        radius: 5
-                                        color: schemeButton.previewColor
-                                        border.width: 1
-                                        border.color: themeManager.shell.borderStrong
-                                        opacity: 0.9
-                                        Behavior on color { ColorAnimation { duration: 150 } }
-                                    }
-                                    Text {
-                                        id: schemeLabel
-                                        text: modelData.name
-                                        color: themeManager.shell.pillForeground
-                                        font.family: themeManager.shell.pillFont
-                                        font.pixelSize: 9
-                                        font.bold: schemeButton.selected
-                                    }
+                                Text {
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 17
+                                    anchors.right: activeMark.left
+                                    anchors.rightMargin: 8
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    text: modelData.name
+                                    color: themeWindow.selectedIndex === index ? themeManager.shell.foreground : themeManager.shell.pillForeground
+                                    font.family: themeManager.shell.pillFont
+                                    font.pixelSize: 12
+                                    font.bold: themeWindow.selectedIndex === index
+                                    elide: Text.ElideRight
+                                }
+                                Text {
+                                    id: activeMark
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 10
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    text: modelData.id === themeManager.shell.activeThemeId ? "✓" : "›"
+                                    color: modelData.id === themeManager.shell.activeThemeId ? modelData.active : themeManager.shell.muted
+                                    font.family: themeManager.shell.pillFont
+                                    font.pixelSize: 14
+                                    font.bold: true
                                 }
                                 MouseArea {
                                     anchors.fill: parent
                                     cursorShape: Qt.PointingHandCursor
-                                    onClicked: themeManager.shell.applyMatugenScheme(schemeButton.modelData.id, themeWindow.selectedTheme.id)
+                                    onClicked: {
+                                        themeWindow.selectedIndex = index;
+                                        themeWindow.applySelectedTheme();
+                                    }
                                 }
                             }
                         }
                     }
 
-                    // Position dots
-                    RowLayout {
-                        Layout.alignment: Qt.AlignHCenter
-                        spacing: 7
-                        Repeater {
-                            model: themeManager.shell.themeProfiles
-                            delegate: Rectangle {
-                                required property int index
-                                width: carousel.currentIndex === index ? 16 : 7
-                                height: 7
-                                radius: 3.5
-                                color: carousel.currentIndex === index ? themeManager.shell.retroCyan : themeManager.shell.panelLine
-                                Behavior on width { NumberAnimation { duration: 120 } }
-                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: carousel.currentIndex = index }
-                            }
-                        }
-                    }
+                    Rectangle { Layout.preferredWidth: 1; Layout.fillHeight: true; color: themeManager.shell.panelLine }
 
-                    RowLayout {
+                    ColumnLayout {
                         Layout.fillWidth: true
-                        Text { text: "ESC pour fermer"; color: themeManager.shell.retroAmber; font.family: themeManager.shell.pillFont; font.pixelSize: 9 }
-                        Item { Layout.fillWidth: true }
-                        Rectangle {
-                            Layout.preferredWidth: 190
-                            Layout.preferredHeight: 34
-                            color: themeWindow.selectedTheme.active
-                            border.width: 1
-                            border.color: themeWindow.selectedTheme.accent
-                            radius: 2
-                            Text { anchors.centerIn: parent; text: "APPLIQUER " + themeWindow.selectedTheme.name; color: themeWindow.selectedTheme.background; font.family: themeManager.shell.pillFont; font.pixelSize: 10; font.bold: true }
-                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: themeManager.shell.applyShellTheme(themeWindow.selectedTheme.id) }
+                        Layout.fillHeight: true
+                        spacing: 9
+
+                        Item {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            Layout.minimumHeight: 180
+                            Rectangle {
+                                anchors.fill: parent
+                                color: themeWindow.selectedTheme.background
+                                border.width: 1
+                                border.color: themeWindow.selectedTheme.accent
+                                radius: 4
+                                clip: true
+                                Image {
+                                    anchors.fill: parent
+                                    source: "../assets/wallpapers/" + themeWindow.selectedTheme.wallpaper
+                                    fillMode: Image.PreserveAspectCrop
+                                    asynchronous: true
+                                    cache: true
+                                    smooth: true
+                                }
+                                Rectangle {
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.bottom: parent.bottom
+                                    height: 78
+                                    gradient: Gradient {
+                                        GradientStop { position: 0; color: "#00000000" }
+                                        GradientStop { position: 1; color: "#cc000000" }
+                                    }
+                                }
+                                Text {
+                                    anchors.left: parent.left
+                                    anchors.bottom: parent.bottom
+                                    anchors.margins: 12
+                                    text: themeWindow.selectedTheme.name
+                                    color: "white"
+                                    font.family: themeManager.shell.pillFont
+                                    font.pixelSize: 19
+                                    font.bold: true
+                                }
+                                Text {
+                                    anchors.right: parent.right
+                                    anchors.top: parent.top
+                                    anchors.margins: 9
+                                    text: "APERÇU"
+                                    color: "white"
+                                    font.family: themeManager.shell.pillFont
+                                    font.pixelSize: 9
+                                    font.bold: true
+                                }
+                            }
+                        }
+
+                        Text {
+                            Layout.fillWidth: true
+                            text: themeWindow.selectedTheme.description
+                            color: themeManager.shell.pillForeground
+                            opacity: 0.86
+                            font.family: themeManager.shell.pillFont
+                            font.pixelSize: 11
+                            wrapMode: Text.WordWrap
+                            maximumLineCount: 2
+                            elide: Text.ElideRight
+                        }
+
+                        Row {
+                            Layout.fillWidth: true
+                            spacing: 6
+                            Repeater {
+                                model: [themeWindow.selectedTheme.background, themeWindow.selectedTheme.surface, themeWindow.selectedTheme.accent, themeWindow.selectedTheme.active, themeWindow.selectedTheme.retroAmber]
+                                delegate: Rectangle {
+                                    required property var modelData
+                                    width: 22
+                                    height: 18
+                                    radius: 3
+                                    color: modelData
+                                    border.width: 1
+                                    border.color: themeManager.shell.panelLine
+                                }
+                            }
+                        }
+
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: 5
+                            Text {
+                                text: "PALETTE"
+                                color: themeManager.shell.muted
+                                font.family: themeManager.shell.pillFont
+                                font.pixelSize: 9
+                                font.bold: true
+                            }
+                            Item { Layout.fillWidth: true }
+                            Repeater {
+                                model: themeManager.shell.matugenSchemes
+                                delegate: Rectangle {
+                                    required property var modelData
+                                    readonly property bool selected: themeManager.shell.matugenScheme === modelData.id
+                                    readonly property color previewColor: themeWindow.schemePreviewColors[modelData.id] || themeManager.shell.panelLine
+                                    Layout.preferredWidth: schemeLabel.implicitWidth + 18
+                                    Layout.preferredHeight: 24
+                                    color: themeManager.shell.panelSurface
+                                    border.width: selected ? 1 : 0
+                                    border.color: previewColor
+                                    radius: 3
+                                    Row {
+                                        anchors.centerIn: parent
+                                        spacing: 4
+                                        Rectangle {
+                                            width: 8
+                                            height: 8
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            color: previewColor
+                                            radius: 4
+                                        }
+                                        Text {
+                                            id: schemeLabel
+                                            text: modelData.name
+                                            color: themeManager.shell.pillForeground
+                                            font.family: themeManager.shell.pillFont
+                                            font.pixelSize: 8
+                                            font.bold: selected
+                                        }
+                                    }
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        cursorShape: Qt.PointingHandCursor
+                                        onClicked: themeManager.shell.applyMatugenScheme(modelData.id, themeWindow.selectedTheme.id)
+                                    }
+                                }
+                            }
                         }
                     }
                 }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 31
+                    Text {
+                        text: "↑ ↓ naviguer    Entrée appliquer    Échap fermer"
+                        color: themeManager.shell.muted
+                        font.family: themeManager.shell.pillFont
+                        font.pixelSize: 9
+                    }
+                    Item { Layout.fillWidth: true }
+                    Text {
+                        text: themeWindow.filteredThemes.length + " thèmes"
+                        color: themeManager.shell.muted
+                        font.family: themeManager.shell.pillFont
+                        font.pixelSize: 9
+                    }
+                }
             }
-
-            // No confirm ripple here anymore: it duplicated the full-screen
-            // circular reveal (BackgroundWindow.qml). Apply now closes the
-            // panel immediately so that reveal is the only animation.
-        }
-
-        Item {
-            id: themeFocus
-            focus: true
-            Keys.onEscapePressed: themeManager.shell.themeManagerOpen = false
-            Keys.onLeftPressed: carousel.currentIndex = Math.max(0, carousel.currentIndex - 1)
-            Keys.onRightPressed: carousel.currentIndex = Math.min(themeManager.shell.themeProfiles.length - 1, carousel.currentIndex + 1)
-            Keys.onReturnPressed: themeManager.shell.applyShellTheme(themeWindow.selectedTheme.id)
-            Keys.onEnterPressed: themeManager.shell.applyShellTheme(themeWindow.selectedTheme.id)
         }
     }
 }

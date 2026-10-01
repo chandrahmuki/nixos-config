@@ -22,7 +22,7 @@ Item {
         width: workspaceRail.cellWidth - 2
         height: parent.height - 8
         radius: 3
-        color: workspaceRail.shell.retroAmber
+        color: workspaceRail.shell.retroCyan
 
         Behavior on x {
             NumberAnimation {

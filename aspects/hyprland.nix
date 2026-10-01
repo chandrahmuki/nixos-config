@@ -28,6 +28,7 @@
       wallpaper = ../wallpapers/nixos_neon_souterrain.png;
       gnomeLinesWallpaper = ../wallpapers/gnome_00_2560x1440.png;
       gnomeGradientWallpaper = ../wallpapers/wallpaperGnome.png;
+      muggynixWallpaperDir = ../quickshell/assets/wallpapers;
       muggyTheme = pkgs.writeShellApplication {
         name = "muggy-theme";
         runtimeInputs = [pkgs.hyprland pkgs.coreutils pkgs.glib pkgs.jq pkgs.kitty pkgs.matugen pkgs.papirus-folders];
@@ -41,9 +42,8 @@
             if [ -r "$state_file" ]; then cat "$state_file"; else printf '%s\n' muggy; fi
           }
 
-          # Shared by apply_theme and preview_scheme so the wallpaper/--prefer
-          # choice per theme lives in exactly one place. Sets $background and
-          # $prefer as a side effect (no subshell — needed by both callers).
+          # Shared by apply_theme and preview_scheme so the wallpaper, mode,
+          # and --prefer choice per theme lives in exactly one place.
           resolve_background() {
             theme="$1"
             # Matugen picks its palette from whichever colour in the image
@@ -54,12 +54,82 @@
             # blue/green the theme is named for instead of an incidental
             # sky or parchment tone.
             prefer="saturation"
+            theme_mode="dark"
+            theme_accent=""
             case "$theme" in
               muggy) background="${wallpaper}" ;;
               gnome-lines) background="${gnomeLinesWallpaper}"; prefer="lightness" ;;
               gnome-gradient) background="${gnomeGradientWallpaper}"; prefer="darkness" ;;
+              catppuccin) background="${muggynixWallpaperDir}/quattro-catppuccin.jpg"; theme_accent="#89b4fa" ;;
+              catppuccin-latte) background="${muggynixWallpaperDir}/quattro-catppuccin-latte.jpg"; theme_mode="light"; theme_accent="#1e66f5" ;;
+              ethereal) background="${muggynixWallpaperDir}/quattro-ethereal.jpg"; theme_accent="#7d82d9" ;;
+              everforest) background="${muggynixWallpaperDir}/quattro-everforest.jpg"; theme_accent="#7fbbb3" ;;
+              flexoki-light) background="${muggynixWallpaperDir}/muggynix-flexoki-light.jpg"; theme_mode="light"; theme_accent="#205EA6" ;;
+              gruvbox) background="${muggynixWallpaperDir}/quattro-gruvbox.jpg"; theme_accent="#7daea3" ;;
+              hackerman) background="${muggynixWallpaperDir}/quattro-hackerman.jpg"; theme_accent="#82FB9C" ;;
+              kanagawa) background="${muggynixWallpaperDir}/quattro-kanagawa.jpg"; theme_accent="#dcd7ba" ;;
+              last-horizon) background="${muggynixWallpaperDir}/quattro-last-horizon.jpg"; theme_accent="#b59790" ;;
+              lumon) background="${muggynixWallpaperDir}/quattro-lumon.jpg"; theme_accent="#8bc9eb" ;;
+              lupine) background="${muggynixWallpaperDir}/muggynix-lupine.jpg"; theme_mode="light"; theme_accent="#3264eb" ;;
+              matte-black) background="${muggynixWallpaperDir}/quattro-matte-black.jpg"; theme_accent="#e68e0d" ;;
+              miasma) background="${muggynixWallpaperDir}/quattro-miasma.jpg"; theme_accent="#78824b" ;;
+              nord) background="${muggynixWallpaperDir}/quattro-nord.jpg"; theme_accent="#81a1c1" ;;
+              osaka-jade) background="${muggynixWallpaperDir}/quattro-osaka-jade.jpg"; theme_accent="#509475" ;;
+              retro-82) background="${muggynixWallpaperDir}/quattro-retro-82.jpg"; theme_accent="#faa968" ;;
+              ristretto) background="${muggynixWallpaperDir}/quattro-ristretto.jpg"; theme_accent="#f38d70" ;;
+              rose-pine) background="${muggynixWallpaperDir}/muggynix-rose-pine.jpg"; theme_mode="light"; theme_accent="#56949f" ;;
+              solitude) background="${muggynixWallpaperDir}/quattro-solitude.jpg"; theme_accent="#798186" ;;
+              tokyo-night) background="${muggynixWallpaperDir}/quattro-tokyo-night.jpg"; theme_accent="#7aa2f7" ;;
+              vantablack) background="${muggynixWallpaperDir}/quattro-vantablack.jpg"; theme_accent="#8d8d8d" ;;
+              white) background="${muggynixWallpaperDir}/quattro-white.jpg"; theme_mode="light"; theme_accent="#6e6e6e" ;;
               *) echo "Unknown Muggy theme: $theme" >&2; exit 2 ;;
             esac
+          }
+
+          # Quattro's accent is curated in colors.toml. Keep that exact accent
+          # while Matugen derives the rest of the palette from its wallpaper.
+          apply_theme_accent() {
+            if [ -z "$theme_accent" ]; then
+              cat
+            elif [ "$theme" = solitude ]; then
+              # Solitude's official Quattro colors.toml is deliberately
+              # monochrome. Matugen samples the wallpaper's warm highlights,
+              # which otherwise gives GTK an olive background and pink errors.
+              jq --arg accent "$theme_accent" '
+                .colors.primary.dark.color = $accent
+                | .colors.primary.default.color = $accent
+                | .colors.primary.light.color = $accent
+                | .colors.primary_container.dark.color = "#343d41"
+                | .colors.on_primary.dark.color = "#101315"
+                | .colors.on_primary_container.dark.color = "#cacccc"
+                | .colors.background.dark.color = "#101315"
+                | .colors.on_background.dark.color = "#cacccc"
+                | .colors.surface.dark.color = "#101315"
+                | .colors.on_surface.dark.color = "#cacccc"
+                | .colors.surface_container.dark.color = "#101315"
+                | .colors.surface_container_low.dark.color = "#0c0e10"
+                | .colors.surface_container_high.dark.color = "#343d41"
+                | .colors.error.dark.color = "#de6145"
+                | .colors.success.dark.color = "#9fa5a9"
+                | .colors.warning.dark.color = "#d9dbdc"
+                | .colors.secondary.dark.color = "#707070"
+                | .colors.tertiary.dark.color = "#9fa5a9"
+                | .colors.primary_fixed.dark.color = "#9a9a9a"
+                | .colors.primary_fixed_dim.dark.color = "#5d6367"
+                | .colors.secondary_fixed.dark.color = "#707070"
+                | .colors.secondary_fixed_dim.dark.color = "#4b4e55"
+                | .colors.tertiary_fixed.dark.color = "#9fa5a9"
+                | .colors.tertiary_fixed_dim.dark.color = "#798186"
+                | .colors.outline.dark.color = "#4b4e55"
+                | .colors.outline_variant.dark.color = "#4b4e55"
+              '
+            else
+              jq --arg accent "$theme_accent" '
+                .colors.primary.dark.color = $accent
+                | .colors.primary.default.color = $accent
+                | .colors.primary.light.color = $accent
+              '
+            fi
           }
 
           # Fast, side-effect-free: resolves the theme's wallpaper and runs
@@ -71,7 +141,8 @@
             theme="$1"
             scheme="''${2:-scheme-vibrant}"
             resolve_background "$theme"
-            matugen image "$background" --mode dark --prefer "$prefer" --type "$scheme" --json hex \
+            matugen image "$background" --mode "$theme_mode" --prefer "$prefer" --type "$scheme" --json hex \
+              | apply_theme_accent \
               | jq -r '.colors.primary.dark.color'
           }
 
@@ -94,7 +165,7 @@
             # keeps the same hue matugen already chose via $prefer but
             # controls how far it pushes saturation/contrast from there —
             # the tonal-spot Matugen default tended to read as washed-out.
-            palette="$(matugen image "$background" --mode dark --prefer "$prefer" --type "$scheme" --json hex)"
+            palette="$(matugen image "$background" --mode "$theme_mode" --prefer "$prefer" --type "$scheme" --json hex | apply_theme_accent)"
             primary="$(printf '%s' "$palette" | jq -r '.colors.primary.dark.color | ltrimstr("#")')"
             outline="$(printf '%s' "$palette" | jq -r '.colors.outline_variant.dark.color | ltrimstr("#")')"
 
@@ -191,13 +262,19 @@
             # a missing/older Papirus build should never fail the apply.
             case "$theme" in
               muggy) folder_color="cyan" ;;
-              gnome-lines) folder_color="pink" ;;
-              gnome-gradient) folder_color="pink" ;;
-              # Any theme id without a hand-picked match above (a future
-              # addition, or an older/incomplete list) leaves folder_color
-              # unset under `set -u` and hard-aborts the whole apply — skip
-              # the recolor instead, per the best-effort intent above.
-              *) folder_color="" ;;
+              gnome-lines|gnome-gradient|rose-pine) folder_color="pink" ;;
+              catppuccin|catppuccin-latte|lupine|lumon) folder_color="blue" ;;
+              ethereal|last-horizon|tokyo-night) folder_color="indigo" ;;
+              everforest|hackerman|miasma) folder_color="green" ;;
+              flexoki-light|retro-82) folder_color="orange" ;;
+              gruvbox|ristretto) folder_color="brown" ;;
+              kanagawa) folder_color="bluegrey" ;;
+              matte-black|solitude) folder_color="grey" ;;
+              nord) folder_color="nordic" ;;
+              osaka-jade) folder_color="teal" ;;
+              vantablack) folder_color="black" ;;
+              white) folder_color="white" ;;
+              *) echo "Unknown Muggy theme folder color: $theme" >&2; exit 2 ;;
             esac
             if [ -n "$folder_color" ]; then
               papirus-folders -C "$folder_color" -t Papirus-Dark -u >/dev/null 2>&1 || true
@@ -389,6 +466,7 @@
         muggyTheme
         pkgs.grim
         pkgs.slurp
+        pkgs.wl-clipboard
       ];
 
       wayland.windowManager.hyprland = {
@@ -624,7 +702,7 @@
         hl.bind(mod .. " + Q", hl.dsp.window.close())
         hl.bind(mod .. " + R", hl.dsp.exec_cmd("muggy-screen-record start"))
         hl.bind(mod .. " + SHIFT + R", hl.dsp.exec_cmd("muggy-screen-record stop"))
-        hl.bind(mod .. " + SHIFT + S", hl.dsp.exec_cmd("sh -c 'selection=$(slurp); [ -n \"$selection\" ] && mkdir -p ${config.home.homeDirectory}/Pictures/Screenshots && grim -g \"$selection\" ${config.home.homeDirectory}/Pictures/Screenshots/screenshot-$(date +%Y%m%d-%H%M%S).png'"))
+        hl.bind(mod .. " + SHIFT + S", hl.dsp.exec_cmd("sh -c 'selection=$(slurp); [ -n \"$selection\" ] || exit; mkdir -p ${config.home.homeDirectory}/Pictures/Screenshots; file=${config.home.homeDirectory}/Pictures/Screenshots/screenshot-$(date +%Y%m%d-%H%M%S).png; grim -g \"$selection\" \"$file\" && wl-copy --type image/png < \"$file\" && ${pkgs.libnotify}/bin/notify-send --app-name=Screenshot --icon=\"$file\" -t 3000 Capture \"Copiée et enregistrée : $(basename \"$file\")\"'"))
         hl.bind(mod .. " + left", hl.dsp.focus({ direction = "left" }))
         hl.bind(mod .. " + right", hl.dsp.focus({ direction = "right" }))
         hl.bind(mod .. " + up", hl.dsp.focus({ direction = "up" }))
@@ -647,6 +725,30 @@
           hl.bind(mod .. " + " .. i, hl.dsp.exec_cmd("local-workspace focus " .. i))
           hl.bind(mod .. " + SHIFT + " .. i, hl.dsp.exec_cmd("local-workspace move " .. i))
         end
+
+        -- Scratchpad terminal: a special workspace that floats over the
+        -- current one. Super+S spawns the kitty that the rule below sends
+        -- into it on first use, then shows/hides it. Toggling an empty
+        -- special workspace only dims the screen.
+        hl.window_rule({
+          name = "scratch-term",
+          match = { class = "^scratch-term$" },
+          workspace = "special:term",
+          float = true,
+          -- kitty asks to open maximized, which overrides size and center.
+          suppress_event = "maximize",
+          size = "monitor_w*0.7 monitor_h*0.6",
+          center = true,
+        })
+        hl.bind(mod .. " + S", function()
+          for _, w in ipairs(hl.get_windows()) do
+            if w.class == "scratch-term" then
+              hl.dispatch(hl.dsp.workspace.toggle_special("term"))
+              return
+            end
+          end
+          hl.dispatch(hl.dsp.exec_cmd("${pkgs.kitty}/bin/kitty --class scratch-term ${pkgs.fish}/bin/fish"))
+        end)
       '';
     };
   };

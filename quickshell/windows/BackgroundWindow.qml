@@ -87,6 +87,7 @@ Variants {
                 smooth: true
                 mipmap: true
             }
+
         }
 
         Item {

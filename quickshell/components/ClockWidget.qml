@@ -3,7 +3,7 @@ import QtQuick
 Item {
     id: clockControl
     required property var shell
-    width: 54
+    width: 76
     height: 24
     signal openRequested()
     signal closeRequested()
@@ -37,18 +37,23 @@ Item {
         }
     }
 
-    Rectangle {
-        anchors.fill: parent
-        radius: height / 2
-        color: clockHover.hovered ? clockControl.shell.surfaceHover : "transparent"
-    }
-
-    Text {
+    Row {
         anchors.centerIn: parent
-        text: Qt.formatTime(clockControl.shell.now, "HH:mm")
-        color: clockControl.shell.pillForeground
-        font.bold: true
-        font.pixelSize: 17
-        font.family: clockControl.shell.pillFont
+        spacing: 2
+
+        PillIcon {
+            shell: clockControl.shell
+            hovered: clockHover.hovered
+            glyph: "󰥔"
+        }
+
+        Text {
+            anchors.verticalCenter: parent.verticalCenter
+            text: Qt.formatTime(clockControl.shell.now, "HH:mm")
+            color: clockControl.shell.retroCyan
+            font.bold: true
+            font.pixelSize: 15
+            font.family: clockControl.shell.pillFont
+        }
     }
 }

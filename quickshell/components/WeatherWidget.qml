@@ -37,25 +37,20 @@ Item {
         }
     }
 
-    Rectangle {
-        anchors.fill: parent
-        radius: height / 2
-        color: weatherHover.hovered ? weatherControl.shell.surfaceHover : "transparent"
-    }
-
     Row {
         anchors.centerIn: parent
         spacing: 3
 
-        Text {
-            text: weatherControl.shell.weatherIcon(weatherControl.shell.weatherCode)
-            color: weatherControl.shell.weatherCode >= 0 ? weatherControl.shell.pillForeground : weatherControl.shell.pillMuted
-            font.family: "JetBrainsMono Nerd Font"
-            font.pixelSize: 17
+        PillIcon {
+            shell: weatherControl.shell
+            hovered: weatherHover.hovered
+            glyph: weatherControl.shell.weatherIcon(weatherControl.shell.weatherCode)
+            iconColor: weatherControl.shell.weatherCode >= 0
+                ? weatherControl.shell.retroCyan : weatherControl.shell.pillMuted
         }
         Text {
             text: weatherControl.shell.weatherTemperature
-            color: weatherControl.shell.pillForeground
+            color: weatherControl.shell.retroCyan
             font.family: weatherControl.shell.pillFont
             font.pixelSize: 13
             font.bold: true

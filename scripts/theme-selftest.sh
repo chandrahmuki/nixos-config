@@ -19,10 +19,12 @@ set -uo pipefail
 cd "$(dirname "$0")/.."
 
 REPO_ROOT="$PWD"
-THEMES=(muggy gnome-lines gnome-gradient)
-FAIL=0
-SKIP_RESTART=false
-[[ "${1:-}" == "--skip-quickshell-restart" ]] && SKIP_RESTART=true
+THEMES=(muggy gnome-lines gnome-gradient catppuccin catppuccin-latte ethereal everforest flexoki-light gruvbox hackerman kanagawa last-horizon lumon lupine matte-black miasma nord osaka-jade retro-82 ristretto rose-pine solitude tokyo-night vantablack white)
+declare -A THEME_WALLPAPERS=(
+  [muggy]=muggy.png [gnome-lines]=gnome-lines.png [gnome-gradient]=gnome-gradient.png
+  [catppuccin]=quattro-catppuccin.jpg [catppuccin-latte]=quattro-catppuccin-latte.jpg  [ethereal]=quattro-ethereal.jpg [everforest]=quattro-everforest.jpg [flexoki-light]=muggynix-flexoki-light.jpg
+  [gruvbox]=quattro-gruvbox.jpg [hackerman]=quattro-hackerman.jpg [kanagawa]=quattro-kanagawa.jpg  [last-horizon]=quattro-last-horizon.jpg [lumon]=quattro-lumon.jpg [lupine]=muggynix-lupine.jpg
+  [matte-black]=quattro-matte-black.jpg [miasma]=quattro-miasma.jpg [nord]=quattro-nord.jpg  [osaka-jade]=quattro-osaka-jade.jpg [retro-82]=quattro-retro-82.jpg [ristretto]=quattro-ristretto.jpg  [rose-pine]=muggynix-rose-pine.jpg [solitude]=quattro-solitude.jpg [tokyo-night]=quattro-tokyo-night.jpg  [vantablack]=quattro-vantablack.jpg [white]=quattro-white.jpg "${1:-}" == "--skip-quickshell-restart" ]] && SKIP_RESTART=true
 
 pass() { printf '  \033[32mPASS\033[0m %s\n' "$1"; }
 fail() { printf '  \033[31mFAIL\033[0m %s\n' "$1"; FAIL=1; }
@@ -31,7 +33,7 @@ section() { printf '\n\033[1m== %s ==\033[0m\n' "$1"; }
 # --- 1. Wallpaper assets present for every theme -----------------------
 section "Wallpaper assets"
 for id in "${THEMES[@]}"; do
-  wallpaper="$REPO_ROOT/quickshell/assets/wallpapers/$id.png"
+  wallpaper="$REPO_ROOT/quickshell/assets/wallpapers/${THEME_WALLPAPERS[$id]}"
   if [[ -s "$wallpaper" ]]; then
     pass "$id"
   else
