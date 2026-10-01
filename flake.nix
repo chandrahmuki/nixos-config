@@ -152,6 +152,21 @@
           # aspects deliberately accept the usual { config, lib, pkgs, ... }.
           deadnix = mkCheck "deadnix" [pkgs.deadnix] "deadnix --fail --no-lambda-pattern-names .";
           statix = mkCheck "statix" [pkgs.statix] "statix check .";
+          # Syntax of the code kept in files/ (Lua, JavaScript, shell). The real
+          # validation of hyprland.lua is Hyprland --verify-config in the VM.
+          payload-syntax =
+            pkgs.runCommand "check-payload-syntax" {
+              nativeBuildInputs = [pkgs.lua5_4 pkgs.nodejs pkgs.bash];
+            } ''
+              cd ${pkgs.lib.fileset.toSource {
+                root = ./.;
+                fileset = ./files;
+              }}/files
+              for f in */*.lua; do luac -p "$f"; done
+              for f in */*.cjs; do node --check "$f"; done
+              for f in */*.sh; do bash -n "$f"; done
+              touch $out
+            '';
         };
       };
 
