@@ -12,33 +12,33 @@
       ...
     }: let
       syncCliampPlaylists = pkgs.writeShellScriptBin "sync-cliamp-playlists" ''
-        playlists_dir="$HOME/.config/cliamp/playlists"
-        mkdir -p "$playlists_dir"
+                playlists_dir="$HOME/.config/cliamp/playlists"
+                mkdir -p "$playlists_dir"
 
-        if [ -d "$HOME/Music/Likes" ]; then
-          find "$HOME/Music/Likes" -type f -name "*.m3u" | while read -r m3u_file; do
-            playlist_name=$(basename "$m3u_file" .m3u | tr '[:upper:]' '[:lower:]' | tr ' ' '_')
-            toml_file="$playlists_dir/$playlist_name.toml"
-            : > "$toml_file"
-            m3u_dir=$(dirname "$m3u_file")
+                if [ -d "$HOME/Music/Likes" ]; then
+                  find "$HOME/Music/Likes" -type f -name "*.m3u" | while read -r m3u_file; do
+                    playlist_name=$(basename "$m3u_file" .m3u | tr '[:upper:]' '[:lower:]' | tr ' ' '_')
+                    toml_file="$playlists_dir/$playlist_name.toml"
+                    : > "$toml_file"
+                    m3u_dir=$(dirname "$m3u_file")
 
-            while IFS= read -r line || [ -n "$line" ]; do
-              [[ "$line" =~ ^[[:space:]]*$ || "$line" =~ ^# ]] && continue
-              if [[ "$line" = /* ]]; then audio_path="$line"; else audio_path="$m3u_dir/$line"; fi
-              if [ -f "$audio_path" ]; then
-                filename=$(basename "$audio_path")
-                title="''${filename%.*}"
-                title="''${title//_/ }"
-                cat >> "$toml_file" <<EOF
-[[track]]
-path = "$audio_path"
-title = "$title"
+                    while IFS= read -r line || [ -n "$line" ]; do
+                      [[ "$line" =~ ^[[:space:]]*$ || "$line" =~ ^# ]] && continue
+                      if [[ "$line" = /* ]]; then audio_path="$line"; else audio_path="$m3u_dir/$line"; fi
+                      if [ -f "$audio_path" ]; then
+                        filename=$(basename "$audio_path")
+                        title="''${filename%.*}"
+                        title="''${title//_/ }"
+                        cat >> "$toml_file" <<EOF
+        [[track]]
+        path = "$audio_path"
+        title = "$title"
 
-EOF
-              fi
-            done < "$m3u_file"
-          done
-        fi
+        EOF
+                      fi
+                    done < "$m3u_file"
+                  done
+                fi
       '';
     in {
       programs.mpv = {
@@ -168,5 +168,4 @@ EOF
       };
     };
   };
-
 }

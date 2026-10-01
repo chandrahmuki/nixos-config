@@ -18,5 +18,4 @@
       "d /var/cache/tuigreet 0755 greeter greeter -"
     ];
   };
-
 }

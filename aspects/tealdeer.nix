@@ -9,5 +9,4 @@
       updates.auto_update = true;
     };
   };
-
 }

@@ -1,8 +1,5 @@
 {den, ...}: {
-  den.aspects.xdg.homeManager = {
-    user,
-    ...
-  }: {
+  den.aspects.xdg.homeManager = {user, ...}: {
     xdg = {
       enable = true;
       mimeApps.enable = true;
@@ -20,5 +17,4 @@
       };
     };
   };
-
 }

@@ -70,7 +70,6 @@
       url = "github:chandrahmuki/OmniGraph";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
   };
 
   # Définition des sorties (Outputs) du flake
@@ -89,34 +88,42 @@
             (inputs.import-tree ./aspects)
             inputs.den.flakeOutputs.flake
           ];
-          specialArgs = {
-            inherit inputs settings;
-          } // extraSpecialArgs;
+          specialArgs =
+            {
+              inherit inputs settings;
+            }
+            // extraSpecialArgs;
         }).config;
       denHost = denConfig.den.hosts.${settings.system}.desktop;
     in
       inputs.nixpkgs.lib.nixosSystem {
         system = settings.system;
-        specialArgs = {
-          inherit inputs settings username hostname;
-        } // extraSpecialArgs;
-        modules = [
-          hardwareModule
-          ./overlays.nix
-          denHost.mainModule
-          inputs.stylix.nixosModules.stylix
-          inputs.home-manager.nixosModules.home-manager
+        specialArgs =
           {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.${username} = {...}: {
-              imports = [./home.nix];
-            };
-            home-manager.extraSpecialArgs = {
-              inherit inputs settings username hostname;
-            } // extraSpecialArgs;
+            inherit inputs settings username hostname;
           }
-        ] ++ extraModules;
+          // extraSpecialArgs;
+        modules =
+          [
+            hardwareModule
+            ./overlays.nix
+            denHost.mainModule
+            inputs.stylix.nixosModules.stylix
+            inputs.home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.${username} = {...}: {
+                imports = [./home.nix];
+              };
+              home-manager.extraSpecialArgs =
+                {
+                  inherit inputs settings username hostname;
+                }
+                // extraSpecialArgs;
+            }
+          ]
+          ++ extraModules;
       };
   in
     inputs.flake-parts.lib.mkFlake {inherit inputs;} {
@@ -143,7 +150,12 @@
             settings = import ./hosts/muggy-nixos/settings.nix;
             hardwareModule = ./hosts/muggy-nixos/hardware-configuration.nix;
             extraModules = [
-              ({config, pkgs, settings, ...}: {
+              ({
+                config,
+                pkgs,
+                settings,
+                ...
+              }: {
                 environment.systemPackages = [
                   pkgs.handy
                   pkgs.wtype

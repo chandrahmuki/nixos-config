@@ -23,13 +23,16 @@
     };
 
     home-manager.users.${username} = {config, ...}: {
-      home.file = lib.optionalAttrs hasGames {
-        "Games".source = config.lib.file.mkOutOfStoreSymlink "/mnt/games";
-      } // lib.optionalAttrs hasStorage {
-        "Storage".source = config.lib.file.mkOutOfStoreSymlink "/mnt/storage";
-      } // lib.optionalAttrs hasBackup {
-        "backups".source = config.lib.file.mkOutOfStoreSymlink "/mnt/backup";
-      };
+      home.file =
+        lib.optionalAttrs hasGames {
+          "Games".source = config.lib.file.mkOutOfStoreSymlink "/mnt/games";
+        }
+        // lib.optionalAttrs hasStorage {
+          "Storage".source = config.lib.file.mkOutOfStoreSymlink "/mnt/storage";
+        }
+        // lib.optionalAttrs hasBackup {
+          "backups".source = config.lib.file.mkOutOfStoreSymlink "/mnt/backup";
+        };
     };
   };
 }

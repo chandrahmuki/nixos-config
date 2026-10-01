@@ -11,5 +11,4 @@
       "image/svg+xml" = ["oculante.desktop"];
     };
   };
-
 }

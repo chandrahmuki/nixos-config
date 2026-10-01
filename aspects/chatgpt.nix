@@ -183,5 +183,4 @@
       home.packages = [chatgpt];
     };
   };
-
 }

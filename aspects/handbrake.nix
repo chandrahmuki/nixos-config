@@ -8,5 +8,4 @@
       home.packages = [pkgs.pkgs-master.handbrake];
     };
   };
-
 }

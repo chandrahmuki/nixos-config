@@ -7,5 +7,4 @@
       recolor-keephue = true;
     };
   };
-
 }

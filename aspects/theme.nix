@@ -5,21 +5,21 @@
     pkgs,
     username,
     ...
-}: let
-  catppuccinMonoIcons = pkgs.stdenvNoCC.mkDerivation {
-    pname = "catppuccin-mono-light-icons";
-    version = "1.0";
-    src = pkgs.fetchurl {
-      url = "https://github.com/nirabyte/full-icon-themes/releases/download/v1.0/catppuccin.tar.xz";
-      hash = "sha256-2U8PjJGBoJzyTNceyeYOKnE4SVmqE4AYkskONql/xlk=";
+  }: let
+    catppuccinMonoIcons = pkgs.stdenvNoCC.mkDerivation {
+      pname = "catppuccin-mono-light-icons";
+      version = "1.0";
+      src = pkgs.fetchurl {
+        url = "https://github.com/nirabyte/full-icon-themes/releases/download/v1.0/catppuccin.tar.xz";
+        hash = "sha256-2U8PjJGBoJzyTNceyeYOKnE4SVmqE4AYkskONql/xlk=";
+      };
+      dontUnpack = true;
+      installPhase = ''
+        mkdir -p $out/share/icons
+        tar -xJf $src -C $out/share/icons
+      '';
     };
-    dontUnpack = true;
-    installPhase = ''
-      mkdir -p $out/share/icons
-      tar -xJf $src -C $out/share/icons
-    '';
-  };
-in {
+  in {
     home-manager.users.${username} = {
       config,
       lib,
@@ -75,8 +75,7 @@ in {
 
       # Keep the monochrome app pack available specifically for the Quickshell
       # launcher without replacing Papirus-Dark as the global GTK icon theme.
-      home.file.".local/share/icons/catppuccin-mono-light".source =
-        "${catppuccinMonoIcons}/share/icons/catppuccin-mono-light";
+      home.file.".local/share/icons/catppuccin-mono-light".source = "${catppuccinMonoIcons}/share/icons/catppuccin-mono-light";
 
       # Symlink pour l'icône manquante dans le thème standard
       home.file.".local/share/icons/hicolor/scalable/apps/io.github.ilya_zlobintsev.LACT.svg".source = "${pkgs.lact}/share/pixmaps/io.github.ilya_zlobintsev.LACT.svg";
