@@ -19,6 +19,10 @@
       } ''
         magick "$src[0]" PNG32:$out
       '';
+    xIcon = pkgs.fetchurl {
+      url = "https://x.com/apple-touch-icon.png";
+      hash = "sha256-qDVC6wVjJClJ19vecgAU+3q0iuFO1Z9D7sNJB8uQxHc=";
+    };
   in {
     imports = [inputs.helium.homeModules.default];
     programs.helium = {
@@ -48,6 +52,17 @@
       StartupWMClass=chrome-teams.cloud.microsoft__-Default
     '';
     xdg.dataFile."icons/hicolor/256x256/apps/chrome-teams.cloud.microsoft_.Default.png".source = teamsIcon;
+    xdg.dataFile."applications/chrome-x.com__-Default.desktop".text = ''
+      [Desktop Entry]
+      Type=Application
+      Name=X
+      Exec=helium --user-data-dir=${config.xdg.dataHome}/helium-x --class=chrome-x.com_.Default --app=https://x.com/
+      Icon=${xIcon}
+      Terminal=false
+      Categories=Network;Social;
+      StartupWMClass=chrome-x.com__-Default
+    '';
+    xdg.dataFile."icons/hicolor/256x256/apps/chrome-x.com_.Default.png".source = xIcon;
     home.activation.removeLegacyTeamsLauncher = lib.hm.dag.entryAfter ["writeBoundary"] ''
       rm -f ${config.xdg.dataHome}/applications/teams.desktop
       rm -f ${config.xdg.dataHome}/applications/chrome-ompifgpmddkgmclendfeacglnodjjndh-Default.desktop
@@ -87,5 +102,4 @@
     # as stylix.targets.hyprpaper in aspects/hyprland.nix.
     stylix.targets.chromium.enable = lib.mkForce false;
   };
-
 }
