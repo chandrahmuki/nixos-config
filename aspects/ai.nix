@@ -7,14 +7,14 @@
     username,
     ...
   }: let
-    codexVersion = "0.156.1";
+    codexVersion = "0.159.2";
     codex = pkgs.stdenvNoCC.mkDerivation {
       pname = "codex";
       version = codexVersion;
 
       src = pkgs.fetchurl {
         url = "https://github.com/openai/codex/releases/download/rust-v${codexVersion}/codex-package-x86_64-unknown-linux-musl.tar.gz";
-        hash = "sha256-i3EVIL7d84VGe42k0sk3NmN8a6HkaBHPDYYGt8SQtvY=";
+        hash = "sha256-ni0ppxO5RHiyQN7C8Q4RMkzQX6123EPnxjm9+KEzems=";
       };
 
       sourceRoot = ".";
@@ -32,6 +32,38 @@
         mainProgram = "codex";
         platforms = ["x86_64-linux"];
       };
+    };
+
+    codex-laya = pkgs.writeShellApplication {
+      name = "codex-laya";
+      runtimeInputs = [pkgs.uv pkgs.python313];
+      text = ''
+        export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [pkgs.stdenv.cc.cc.lib pkgs.zlib]}''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+
+        if [[ "''${1:-}" == "--help" || "''${1:-}" == "-h" ]]; then
+          exec ${pkgs.python313}/bin/python3.13 ${../scripts/codex-laya.py} "$@"
+        fi
+
+        cache_root="''${XDG_CACHE_HOME:-$HOME/.cache}/codex-laya"
+        export UV_CACHE_DIR="''${UV_CACHE_DIR:-$cache_root/uv}"
+        export UV_PYTHON_INSTALL_DIR="''${UV_PYTHON_INSTALL_DIR:-$cache_root/python}"
+        export HF_HOME="''${HF_HOME:-$cache_root/huggingface}"
+        venv="$cache_root/venv"
+
+        if [[ ! -x "$venv/bin/python" ]]; then
+          mkdir -p "$cache_root"
+          uv venv --python ${pkgs.python313}/bin/python3.13 "$venv"
+        fi
+
+        if ! "$venv/bin/python" -c 'import laya, torch' >/dev/null 2>&1; then
+          uv pip install --python "$venv/bin/python" torch==2.14.0 \
+            --index-url https://download.pytorch.org/whl/cpu
+          uv pip install --python "$venv/bin/python" laya==0.3.20 \
+            --index-url https://pypi.org/simple
+        fi
+
+        exec "$venv/bin/python" ${../scripts/codex-laya.py} "$@"
+      '';
     };
 
     antigravity-cli = pkgs.stdenvNoCC.mkDerivation {
@@ -65,6 +97,7 @@
         pkgs.pkgs-master.claude-code
         pkgs.claude-desktop
         codex
+        codex-laya
         inputs.omnigraph.packages.${pkgs.stdenv.hostPlatform.system}.default
         inputs.muggy.packages.${pkgs.stdenv.hostPlatform.system}.default
       ];
@@ -106,5 +139,4 @@
       };
     };
   };
-
 }
