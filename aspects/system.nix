@@ -59,8 +59,8 @@
       gc.automatic = false;
       optimise.automatic = true;
       registry.nixpkgs.flake = inputs.nixpkgs;
-      nixPath = ["nixpkgs=${inputs.nixpkgs}"];
       settings = {
+        nix-path = ["nixpkgs=${inputs.nixpkgs}"];
         experimental-features = [
           "nix-command"
           "flakes"

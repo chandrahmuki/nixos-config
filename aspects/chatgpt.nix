@@ -93,11 +93,11 @@
 
     chatgpt = pkgs.stdenv.mkDerivation {
       pname = "chatgpt";
-      version = "26.803.81509";
+      version = "26.928.21956";
 
       src = pkgs.fetchurl {
         url = "https://persistent.oaistatic.com/codex-app-prod/linux/deb/latest/chatgpt_amd64.deb";
-        hash = "sha256-kyglt2pB6AZDIEqaqcz9HLJHH/v8vh0xSZQ2D8qv+zU=";
+        hash = "sha256-msjQcRtGATaNSd7dv1Co/lI1jLYbbZ96XBi0HtRQCtg=";
       };
 
       nativeBuildInputs = [
