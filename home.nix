@@ -3,30 +3,27 @@
   hostname,
   settings,
   config,
-  pkgs,
   lib,
   ...
-}:
-# <-- N'oublie pas d'ajouter { config, pkgs, ... }: en haut !
-{
-  # Informations sur le profil utilisateur et son dossier personnel
+}: {
+  # User profile and home directory
   home.username = username;
   home.homeDirectory = "/home/${username}";
 
-  # Version initiale de l'état Home Manager (ne pas modifier)
+  # Initial Home Manager state version (do not change)
   home.stateVersion = "25.11";
   home.sessionVariables = {
     NIXOS_CONFIG_DIR = settings.configDirectory;
     NIXOS_CONFIG_HOST = hostname;
   };
 
-  # Activer la gestion de Home Manager par lui-même
+  # Let Home Manager manage itself
   programs.home-manager.enable = true;
 
-  # Silencing Home Manager 26.05 warnings by keeping legacy behavior
-  # Thémage GTK4 reprenant la configuration GTK globale
+  # GTK4 follows the global GTK theme. Setting it keeps the legacy behaviour and
+  # silences the Home Manager 26.05 warning.
   gtk.gtk4.theme = lib.mkDefault config.gtk.theme;
 
-  # Exportation des variables de répertoires XDG par défaut (Downloads, Music, etc.) dans la session
+  # Export the default XDG user directories (Downloads, Music, etc.) in the session
   xdg.userDirs.setSessionVariables = true;
 }

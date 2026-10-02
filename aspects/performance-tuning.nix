@@ -48,7 +48,7 @@
       ];
     };
 
-    # Forcer VA-API sur radeonsi pour AMD
+    # Force VA-API on radeonsi for AMD
     environment.sessionVariables = {
       LIBVA_DRIVER_NAME = "radeonsi";
       VDPAU_DRIVER = "radeonsi";

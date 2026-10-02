@@ -1,19 +1,19 @@
 {
   description = "NixOS Unstable avec Home Manager intégré";
 
-  # Dépôts de paquets et canaux externes (Inputs)
+  # External package sources and channels (inputs)
   inputs = {
-    # Dépôts Nixpkgs principaux et de développement
+    # Main and development Nixpkgs
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-master.url = "github:nixos/nixpkgs/master";
 
-    # Outils et gestionnaires de configuration utilisateur
+    # User configuration tools and managers
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Utilitaire de structuration modulaire de flake
+    # Utility to structure the flake in modules
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs";
@@ -22,10 +22,10 @@
     import-tree.url = "github:denful/import-tree";
     den.url = "github:denful/den";
 
-    # Noyau Linux optimisé CachyOS
+    # CachyOS optimised Linux kernel
     nix-cachyos.url = "github:xddxdd/nix-cachyos-kernel/release";
 
-    # Chiffrement et gestion des secrets (SOPS-Nix)
+    # Secret encryption and management (SOPS-Nix)
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -37,20 +37,20 @@
       inputs.flake-parts.follows = "flake-parts";
     };
 
-    # Navigateur web Zen Browser
+    # Zen Browser web browser
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
 
-    # Navigateur minimaliste Chromium Helium
+    # Minimalist Chromium browser Helium
     helium = {
       url = "github:oxcl/nix-flake-helium-browser";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Thémage global système et utilisateur
+    # System-wide and user theming
     stylix = {
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -72,7 +72,7 @@
     };
   };
 
-  # Définition des sorties (Outputs) du flake
+  # Flake outputs
   outputs = inputs: let
     publicSettings = import ./settings.nix;
     mkNixosConfiguration = {
@@ -129,7 +129,7 @@
     inputs.flake-parts.lib.mkFlake {inherit inputs;} {
       systems = [publicSettings.system];
 
-      # Configuration spécifique pour chaque système
+      # Per-system configuration
       perSystem = {pkgs, ...}: let
         # Only the Nix files: keeps the check sources small and makes the
         # checks independent of wallpapers, QML and the like.
@@ -170,12 +170,12 @@
         };
       };
 
-      # Configuration système globale
+      # Global system configuration
       flake = {
         lib.mkNixosConfiguration = mkNixosConfiguration;
 
         nixosConfigurations = {
-          # Votre machine personnelle
+          # Personal machine
           muggy-nixos = mkNixosConfiguration {
             settings = import ./hosts/muggy-nixos/settings.nix;
             hardwareModule = ./hosts/muggy-nixos/hardware-configuration.nix;
@@ -194,7 +194,7 @@
             ];
           };
 
-          # Configuration générique / template pour tout utilisateur
+          # Generic configuration / template for any user
           generic = mkNixosConfiguration {
             settings = publicSettings;
             hardwareModule = ./hosts/system/hardware-configuration.nix;

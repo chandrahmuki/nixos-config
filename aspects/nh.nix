@@ -13,8 +13,8 @@
         extraArgs = "--keep-since 7d --keep 5";
       };
     };
-    # PATH (dont /run/wrappers/bin pour sudo) est déjà garanti par
-    # fish_add_path dans aspects/terminal.nix, pas besoin de le refaire ici.
+    # PATH (including /run/wrappers/bin for sudo) is already ensured by
+    # fish_add_path in aspects/terminal.nix, no need to repeat it here.
     home-manager.users.${username}.programs.fish.functions = {
       nos = "nh os switch ${settings.configDirectory} --hostname ${settings.hostname} --ask -L --diff always";
 

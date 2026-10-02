@@ -6,68 +6,68 @@
     ...
   }:
     lib.mkIf (builtins.hasAttr "/mnt/btrfs-system" config.fileSystems && builtins.hasAttr "/mnt/backup" config.fileSystems) {
-      # Configuration de btrbk pour les backups automatiques
+      # btrbk configuration for automatic backups
       services.btrbk = {
         instances.local = {
           onCalendar = "hourly";
           settings = {
-            # Format des noms de snapshots
+            # Snapshot name format
             timestamp_format = "long";
-            # Jour de référence pour les backups hebdomadaires
+            # Reference day for weekly backups
             preserve_day_of_week = "monday";
-            # Heure de référence pour les backups quotidiens
+            # Reference hour for daily backups
             preserve_hour_of_day = "0";
 
-            # Toujours créer le snapshot local même si le backup distant échoue
-            # Cela évite que le service s'arrête en erreur si le disque de backup est plein
+            # Always create the local snapshot even if the remote backup fails
+            # This keeps the service from failing when the backup disk is full
             snapshot_create = "always";
 
-            # POLITIQUE DE RÉTENTION ÉQUILIBRÉE
+            # BALANCED RETENTION POLICY
             # -------------------------------
-            # Snapshots locaux (sur le NVMe, pour rollback rapide)
+            # Local snapshots (on the NVMe, for quick rollback)
             snapshot_preserve_min = "6h";
             snapshot_preserve = "6h 2d"; # On ne garde que 2 jours en local pour pas saturer
 
-            # Backups cibles (sur le disque SATA de 447 Go)
+            # Backup targets (on the 447 GB SATA disk)
             target_preserve_min = "7d";
             target_preserve = "7d 4w 6m"; # On garde 6 mois d'historique ici !
 
-            # CONFIGURATION DES VOLUMES
+            # VOLUME CONFIGURATION
             # ------------------------
             # Volume principal (NVMe)
             volume."/mnt/btrfs-system" = {
-              # Le subvolume à sauvegarder (on utilise une chaîne brute pour éviter toute confusion)
+              # The subvolume to back up (a plain string avoids any ambiguity)
               subvolume = "@home";
-              # Où stocker les snapshots locaux (sur le même disque)
+              # Where to store the local snapshots (on the same disk)
               snapshot_dir = "@snapshots";
-              # Où envoyer les backups (sur le disque de 447 Go)
+              # Where to send the backups (on the 447 GB disk)
               target = "/mnt/backup";
             };
           };
         };
       };
 
-      # Correction du comportement du service pour éviter les erreurs au boot
+      # Service tweaks to avoid errors at boot
       systemd.services.btrbk-local = {
-        # On force le service à attendre que le disque de backup soit monté
+        # Make the service wait until the backup disk is mounted
         after = ["mnt-backup.mount" "mnt-btrfs\\x2dsystem.mount"];
         requires = ["mnt-backup.mount" "mnt-btrfs\\x2dsystem.mount"];
 
         unitConfig = {
-          # Si le disque n'est pas là, on ne considère pas ça comme une erreur critique du système
+          # A missing disk is not treated as a critical system error
           ConditionPathIsMountPoint = "/mnt/backup";
         };
 
         serviceConfig = {
-          # AUTO-CLEAN : On lance un nettoyage automatique AVANT le backup
-          # Le "-" au début dit à systemd de continuer même si le clean ne trouve rien
+          # AUTO-CLEAN: run an automatic cleanup BEFORE the backup
+          # The leading "-" tells systemd to carry on even if the clean finds nothing
           ExecStartPre = [
             "-${pkgs.btrbk}/bin/btrbk -c /etc/btrbk/local.conf clean /mnt/backup"
           ];
         };
       };
 
-      # On garde le timer non-persistant pour ne pas spammer au boot
+      # Keep the timer non-persistent so it does not fire at every boot
       systemd.timers.btrbk-local = {
         timerConfig.Persistent = lib.mkForce false;
       };

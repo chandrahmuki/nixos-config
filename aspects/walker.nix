@@ -6,10 +6,10 @@
     username,
     ...
   }: {
-    # Activer le service système pour le backend d'applications Elephant
+    # Enable the system service for the Elephant application backend
     services.elephant.enable = true;
 
-    # Configurer le service systemd utilisateur d'Elephant
+    # Configure Elephant's systemd user service
     systemd.user.services.elephant = {
       path = [
         pkgs.elephant
@@ -22,16 +22,16 @@
         "/etc/profiles/per-user/${username}"
         "/home/${username}/.nix-profile"
       ];
-      # Retarder le démarrage pour qu'il attende que la session graphique soit active
-      # et que les variables (WAYLAND_DISPLAY, DISPLAY) soient disponibles.
+      # Delay the start until the graphical session is active
+      # and the variables (WAYLAND_DISPLAY, DISPLAY) are available.
       wantedBy = lib.mkForce ["graphical-session.target"];
       partOf = ["graphical-session.target"];
     };
 
-    # Service de fond pour démarrer Walker en mode démon et le rendre instantané
+    # Background service that starts Walker in daemon mode to make it instant
     systemd.user.services.walker = {
       description = "Walker Application Runner Daemon";
-      # Chemins d'accès indispensables pour trouver l'exécutable elephant et les applications système
+      # Paths needed to find the elephant executable and the system applications
       path = [
         pkgs.elephant
         pkgs.walker
@@ -44,7 +44,7 @@
         "/home/${username}/.nix-profile"
       ];
       serviceConfig = {
-        # Démarrage de Walker en mode démon (GApplication-service) pour éviter les délais au chargement
+        # Start Walker in daemon mode (GApplication service) to avoid loading delays
         ExecStart = "${pkgs.walker}/bin/walker --gapplication-service";
         Restart = "on-failure";
       };
@@ -63,11 +63,11 @@
         pkgs.walker
       ];
 
-      # Copie du layout.xml par défaut de Walker (package version 2.17.0,
-      # resources/themes/default/layout.xml) avec juste width-request et
-      # max/min-content-width réduits (600→480, 500→400). Reste de la
-      # structure identique à l'original pour éviter de réintroduire le bug
-      # d'ellipse Pango rencontré avec une largeur trop étroite (300px).
+      # Copy of Walker's default layout.xml (package version 2.17.0,
+      # resources/themes/default/layout.xml) with only width-request and
+      # max/min-content-width reduced (600→480, 500→400). The rest of the
+      # structure is identical to the original to avoid reintroducing the
+      # Pango ellipsis bug seen with a width that is too narrow (300px).
       xdg.configFile."walker/themes/tokyonight/layout.xml".text = ''
         <?xml version="1.0" encoding="UTF-8"?>
         <interface>
@@ -215,15 +215,15 @@
         </interface>
       '';
 
-      # Walker tourne en démon (--gapplication-service) et ne relit jamais son
-      # thème/layout après démarrage : sans ce hook, tout changement de CSS/
-      # config.toml reste invisible tant qu'on ne relance pas le service à la
-      # main. On le redémarre donc à chaque switch pour que "nos" suffise.
+      # Walker runs as a daemon (--gapplication-service) and never rereads its
+      # theme/layout after startup: without this hook, any CSS/config.toml
+      # change stays invisible until the service is restarted by hand. It is
+      # therefore restarted on every switch so that "nos" is enough.
       home.activation.restartWalker = lib.hm.dag.entryAfter ["reloadSystemd"] ''
         $DRY_RUN_CMD ${pkgs.systemd}/bin/systemctl --user restart walker.service elephant.service 2>/dev/null || true
       '';
 
-      # Configuration de Walker style Omarchy (sans 'force = true')
+      # Walker configuration in the Omarchy style (without 'force = true')
       xdg.configFile."walker/config.toml".text = ''
         theme = "tokyonight"
         app_launch_prefix = ""

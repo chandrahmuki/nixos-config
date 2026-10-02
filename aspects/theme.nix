@@ -77,7 +77,7 @@
       # launcher without replacing Papirus-Dark as the global GTK icon theme.
       home.file.".local/share/icons/catppuccin-mono-light".source = "${catppuccinMonoIcons}/share/icons/catppuccin-mono-light";
 
-      # Symlink pour l'icône manquante dans le thème standard
+      # Symlink for the icon missing from the standard theme
       home.file.".local/share/icons/hicolor/scalable/apps/io.github.ilya_zlobintsev.LACT.svg".source = "${pkgs.lact}/share/pixmaps/io.github.ilya_zlobintsev.LACT.svg";
 
       home.activation.mutablePapirusDark = lib.hm.dag.entryAfter ["writeBoundary"] ''
