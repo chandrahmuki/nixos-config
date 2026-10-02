@@ -11,6 +11,30 @@ enum layers { _QWERTY, _LOWER, _RAISE, _ADJUST };
 #define LOWER_KEY MO(_LOWER)
 #define RAISE_KEY MO(_RAISE)
 
+// Home row mods: tap for the letter, hold for the modifier. Super on the pinkies,
+// then Alt, Ctrl, Shift towards the index fingers, mirrored on the right hand.
+// Alt is the left Alt on both hands (the right Alt would be AltGr).
+#define HM_A    GUI_T(KC_A)
+#define HM_S    ALT_T(KC_S)
+#define HM_D    CTL_T(KC_D)
+#define HM_F    SFT_T(KC_F)
+#define HM_J    SFT_T(KC_J)
+#define HM_K    CTL_T(KC_K)
+#define HM_L    ALT_T(KC_L)
+#define HM_SCLN GUI_T(KC_SCLN)
+
+// Chordal Hold: a home row mod only becomes a modifier when the other key is on the
+// OTHER hand. For a shortcut such as Super+S, hold the Super of the opposite hand
+// (";" for a left-hand key, "A" for a right-hand key), or use the Super key of the
+// bottom row, which is a plain key.
+const char chordal_hold_layout[MATRIX_ROWS][MATRIX_COLS] PROGMEM = LAYOUT_ortho_5x12(
+    'L', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R', 'R', 'R', 'R',
+    'L', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R', 'R', 'R', 'R',
+    'L', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R', 'R', 'R', 'R',
+    'L', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R', 'R', 'R', 'R',
+    'L', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R', 'R', 'R', 'R'
+);
+
 // Rows are in the physical order of LAYOUT_ortho_5x12. The bottom row of the
 // matrix is interleaved (8,0 8,1 8,2 9,3 9,4 9,5 9,0 9,1 9,2 8,3 8,4 8,5), so it
 // must never be read as "left half then right half".
@@ -20,7 +44,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_QWERTY] = LAYOUT_ortho_5x12(
         KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_DEL,
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC,
-        KC_ESC,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
+        KC_ESC,  HM_A,    HM_S,    HM_D,    HM_F,    KC_G,    KC_H,    HM_J,    HM_K,    HM_L,    HM_SCLN, KC_QUOT,
         KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_UP,   SC_SENT,
         KC_NO,   KC_LCTL, KC_LALT, KC_LGUI, LOWER_KEY, KC_SPC, KC_SPC,  RAISE_KEY, KC_SLSH, KC_LEFT, KC_DOWN, KC_RGHT
     ),
