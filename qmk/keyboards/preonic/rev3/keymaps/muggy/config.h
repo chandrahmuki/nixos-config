@@ -14,3 +14,6 @@
 
 // Dead-key sequences need the host to see each key in its own report.
 #define TAP_CODE_DELAY 10
+
+// Per-key hold time, see get_tapping_term() in keymap.c.
+#define TAPPING_TERM_PER_KEY

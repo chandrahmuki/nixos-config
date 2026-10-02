@@ -129,6 +129,29 @@ bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t *tap_hold_record,
     return get_chordal_hold_default(tap_hold_record, other_record);
 }
 
+// Permissive Hold turns "A down, other key down and up, A up" into Super+key even
+// when it was fast typing. Super is on the pinkies, where this happens most, so it
+// is off for those two keys: a Super hold has to last the whole tapping term.
+bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case HM_A:
+        case HM_SCLN:
+            return false;
+    }
+    return true;
+}
+
+// The Super keys sit on the pinkies, the slowest and most accident-prone fingers, so
+// they need a longer hold than the other home row mods (TAPPING_TERM, 200 ms).
+uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case HM_A:
+        case HM_SCLN:
+            return 260;
+    }
+    return TAPPING_TERM;
+}
+
 // A dead key followed by a letter (dead == 0: the letter is typed with AltGr).
 static void send_accent(uint16_t dead, uint16_t key, bool shift) {
     if (dead) {
