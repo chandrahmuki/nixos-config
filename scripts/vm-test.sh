@@ -5,6 +5,7 @@
 #   scripts/vm-test.sh start         build + boot, wait for SSH and Hyprland
 #   scripts/vm-test.sh shot [name]   screenshot -> prints the PNG path
 #   scripts/vm-test.sh key KEY...    send keys, e.g. `key meta_l-s`
+#   scripts/vm-test.sh mouse click X Y | drag X1 Y1 X2 Y2   pointer events (guest pixels)
 #   scripts/vm-test.sh exec CMD...   run a command as the user inside the VM
 #   scripts/vm-test.sh hypr ARGS...  hyprctl inside the VM
 #   scripts/vm-test.sh log [unit]    journal of the VM (user unit if given)
@@ -84,6 +85,19 @@ cmd_key() {
   done
 }
 
+cmd_mouse() {
+  # mouse click X Y | mouse drag X1 Y1 X2 Y2   (pixels of the 1280x800 guest screen)
+  local w="${VM_W:-1280}" h="${VM_H:-800}" op="$1"; shift
+  abs() { printf '{"type":"abs","data":{"axis":"%s","value":%d}}' "$1" "$(( $2 * 32767 / $3 ))"; }
+  move() { qmp_cmd "{\"execute\":\"input-send-event\",\"arguments\":{\"events\":[$(abs x "$1" "$w"),$(abs y "$2" "$h")]}}" >/dev/null; sleep 0.3; }
+  btn() { qmp_cmd "{\"execute\":\"input-send-event\",\"arguments\":{\"events\":[{\"type\":\"btn\",\"data\":{\"down\":$1,\"button\":\"left\"}}]}}" >/dev/null; sleep 0.3; }
+  case "$op" in
+    click) move "$1" "$2"; btn true; btn false ;;
+    drag) move "$1" "$2"; btn true; move "$3" "$4"; btn false ;;
+    *) echo "usage: mouse click X Y | mouse drag X1 Y1 X2 Y2" >&2; return 2 ;;
+  esac
+}
+
 cmd_stop() {
   if [[ -S "$qmp" ]]; then qmp_cmd '{"execute":"quit"}' >/dev/null || true; fi
   sleep 1
@@ -97,6 +111,7 @@ case "${1:-}" in
   exec) shift; vm_ssh "$hypr_env $*" ;;
   hypr) shift; vm_ssh "$hypr_env hyprctl $*" ;;
   log) shift; if [[ $# -gt 0 ]]; then vm_ssh "journalctl --user -u $1 --no-pager | tail -60"; else vm_ssh "journalctl -b --no-pager | tail -80"; fi ;;
+  mouse) shift; cmd_mouse "$@" ;;
   stop) cmd_stop ;;
   *) sed -n '2,12p' "$0"; exit 2 ;;
 esac

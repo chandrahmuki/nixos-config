@@ -32,6 +32,11 @@
         runtimeInputs = [pkgs.hyprland pkgs.coreutils pkgs.glib pkgs.jq pkgs.kitty pkgs.matugen pkgs.papirus-folders];
         text = builtins.replaceStrings ["@gnomeGradientWallpaper@" "@gnomeLinesWallpaper@" "@muggynixWallpaperDir@" "@wallpaper@"] ["${gnomeGradientWallpaper}" "${gnomeLinesWallpaper}" "${muggynixWallpaperDir}" "${wallpaper}"] (builtins.readFile ../files/hyprland/muggy-theme.sh);
       };
+      muggyScreenshot = pkgs.writeShellApplication {
+        name = "muggy-screenshot";
+        runtimeInputs = [pkgs.slurp pkgs.grim pkgs.wl-clipboard pkgs.libnotify pkgs.coreutils];
+        text = builtins.readFile ../files/hyprland/muggy-screenshot.sh;
+      };
       restartQuickshell = pkgs.writeShellApplication {
         name = "restart-quickshell";
         runtimeInputs = [pkgs.quickshell pkgs.gnugrep pkgs.coreutils];
@@ -44,6 +49,7 @@
       };
     in {
       home.packages = [
+        muggyScreenshot
         restartQuickshell
         localWorkspace
         muggyTheme
@@ -128,7 +134,7 @@
 
       # Keep this short and explicit.  The scroll layout is native in the
       # installed Hyprland; no version-locked layout plugin is involved.
-      xdg.configFile."hypr/hyprland.lua".text = builtins.replaceStrings ["@homeDirectory@" "@fish@" "@kitty@" "@libnotify@"] ["${config.home.homeDirectory}" "${pkgs.fish}" "${pkgs.kitty}" "${pkgs.libnotify}"] (builtins.readFile ../files/hyprland/hyprland.lua);
+      xdg.configFile."hypr/hyprland.lua".text = builtins.replaceStrings ["@fish@" "@kitty@"] ["${pkgs.fish}" "${pkgs.kitty}"] (builtins.readFile ../files/hyprland/hyprland.lua);
     };
   };
 }
