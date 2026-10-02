@@ -40,6 +40,8 @@ hl.config({
   },
   input = {
     kb_layout = "us",
+    -- AltGr dead keys for the French accent layer of the Preonic keymap.
+    kb_variant = "altgr-intl",
     follow_mouse = 0,
   },
   cursor = {

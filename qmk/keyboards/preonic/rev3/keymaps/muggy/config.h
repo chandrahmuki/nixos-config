@@ -11,3 +11,6 @@
 #define CHORDAL_HOLD
 // While typing fast, a home row key right after another letter stays a letter.
 #define FLOW_TAP_TERM 150
+
+// Dead-key sequences need the host to see each key in its own report.
+#define TAP_CODE_DELAY 10
