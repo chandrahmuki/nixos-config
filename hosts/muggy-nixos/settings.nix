@@ -35,6 +35,7 @@ in
           "media"
           "openvpn"
           "performance-tuning"
+          "qmk"
         ];
         personalUser = [
           "discord"
