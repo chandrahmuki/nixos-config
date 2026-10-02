@@ -1,0 +1,4 @@
+# Build output of qmk compile
+*.bin
+*.hex
+.build/

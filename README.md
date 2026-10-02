@@ -108,7 +108,8 @@ nixos-config/
 │   └── mk-nixos-configuration.nix  # Builds a system from a host description
 ├── nvim/                     # Neovim configuration
 ├── quickshell/               # QML shell, linked out of the store for hot reload
-├── scripts/                  # vm-test (headless VM), theme-selftest, update-codex
+├── qmk/                      # QMK keymap of the Preonic keyboard, its layout backup and how to flash it
+├── scripts/                  # vm-test (headless VM), qmk-flash, theme-selftest, update-codex
 ├── secrets/                  # Encrypted SOPS secrets (secrets.yaml)
 ├── wallpapers/               # Wallpapers used by Stylix and the shell
 ├── flake.nix                 # Flake inputs, outputs, formatter and checks
