@@ -90,7 +90,13 @@ en passant a Sol.
    - Test d'acceptation de bout en bout reussi.
 
 5. **Valider une configuration NixOS**
-   - Executer `git diff --check`.
+   - Executer `git diff --check` et `nix flake check` (format `alejandra`, code mort
+     `deadnix`, `statix`, syntaxe du code de `files/`).
+   - Le Lua, le JavaScript et les scripts shell vivent dans `files/` (marqueurs
+     `@nom@` remplaces par `builtins.replaceStrings`) : modifier ces fichiers, pas des
+     chaines Nix. Pour un changement qui ne doit rien modifier (format, commentaires,
+     deplacement de code), comparer les `drvPath` du toplevel avant et apres : ils
+     doivent etre identiques.
    - Construire avec :
      `nix build .#nixosConfigurations.muggy-nixos.config.system.build.toplevel --no-link --print-out-paths`.
    - Utiliser uniquement le chemin affiche par `--print-out-paths`.
@@ -98,6 +104,11 @@ en passant a Sol.
      visible si sudo exige un mot de passe.
    - Apres activation, verifier `/run/current-system`, les executables, groupes,
      services, processus et raccourcis concernes.
+   - Pour tester sans toucher a la session de l'utilisateur (focus, fenetres), utiliser
+     la VM headless `scripts/vm-test.sh` (`start`, `shot`, `key`, `exec`, `hypr`, `log`,
+     `stop`) : la demarrer seulement le temps d'un test, puis toujours `stop`. Les
+     captures se lisent avec l'outil de lecture d'images, les touches partent par QMP.
+     Ne jamais tester dans la session reelle de l'utilisateur pendant qu'il travaille.
 
 6. **Tester le vrai workflow**
    - Lancer l'application dans la session graphique reelle.

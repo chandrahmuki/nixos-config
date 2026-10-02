@@ -11,7 +11,8 @@ NixOS flake for a modern, high-performance Hyprland desktop with a Quickshell sh
   - **`muggy-nixos`**: Primary personalized desktop configuration (Gaming, AI tooling, Media, SOPS).
   - **`generic` / `default`**: Portable, out-of-the-box profile for any machine without hardware lock-in.
 - **Developer & AI Tooling**: Native integration for Antigravity CLI, OpenCode, Claude Desktop / Code, Codex, Herdr, and OmniGraph.
-- **Fast Deployments**: Optimized deployment workflow using `nh` (`nos` command) with visual diffs.
+- **Fast Deployments**: Optimized deployment workflow using `nh` (`nos` command) with visual diffs, and `nosw` to pre-build in the background on every save.
+- **Checked**: `nix flake check` runs formatting (`alejandra`), dead code (`deadnix`), `statix`, and a syntax check of the Lua, JavaScript and shell kept in `files/`. A headless QEMU VM boots the real configuration to test changes without touching the live session.
 - **Security & Privacy**: Secrets encrypted via Age/SOPS-Nix; AI workspace memories and sessions kept 100% local via `.gitignore`.
 
 ---
@@ -45,13 +46,24 @@ nos
 
 # Update flake dependencies
 nfu
+
+# Pre-build on every save, so `nos` only has to activate
+nosw
+```
+
+Checks and tests:
+
+```sh
+nix fmt                 # format every Nix file with alejandra
+nix flake check         # format, dead code, statix, syntax of files/
+scripts/vm-test.sh start   # boot the config headless (see the script header)
 ```
 
 ---
 
 ## ⚙️ Customization (`settings.nix`)
 
-Identity, locale, timezone, and active aspect profiles are defined centrally:
+Identity, locale, timezone, and active aspect profiles are defined centrally. `settings.nix` is the public base; `hosts/<name>/settings.nix` extends it and only states what differs:
 
 ```nix
 {
@@ -85,14 +97,24 @@ nixos-config/
 │   ├── sops.nix              # SOPS-Nix encrypted secret management
 │   ├── terminal.nix          # Fish, Foot, Starship, Zoxide
 │   └── ...
-├── assets/                   # Wallpapers, themes, and radio configurations
+├── assets/                   # Radio configuration
+├── files/                    # Lua, JavaScript and shell kept out of Nix strings
+│   ├── hyprland/             # hyprland.lua and the muggy-theme, restart-quickshell, local-workspace scripts
+│   └── chatgpt/              # ELF interpreter relocator for the ChatGPT package
 ├── hosts/
-│   ├── muggy-nixos/          # Personal workstation hardware & settings
-│   └── system/               # Generic hardware template
+│   ├── muggy-nixos/          # Personal workstation: default.nix, settings, hardware, extra packages
+│   └── system/               # Generic host: default.nix and a hardware template
+├── lib/
+│   └── mk-nixos-configuration.nix  # Builds a system from a host description
+├── nvim/                     # Neovim configuration
+├── quickshell/               # QML shell, linked out of the store for hot reload
+├── scripts/                  # vm-test (headless VM), theme-selftest, update-codex
 ├── secrets/                  # Encrypted SOPS secrets (secrets.yaml)
-├── flake.nix                 # Flake inputs, outputs, and system definitions
+├── wallpapers/               # Wallpapers used by Stylix and the shell
+├── flake.nix                 # Flake inputs, outputs, formatter and checks
 ├── home.nix                  # Home Manager base
-└── settings.nix              # Base template settings
+├── settings.nix              # Public base settings
+└── statix.toml               # statix configuration
 ```
 
 ---
