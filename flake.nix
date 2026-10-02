@@ -75,56 +75,8 @@
   # Flake outputs
   outputs = inputs: let
     publicSettings = import ./settings.nix;
-    mkNixosConfiguration = {
-      settings,
-      hardwareModule,
-      extraModules ? [],
-      extraSpecialArgs ? {},
-    }: let
-      inherit (settings) username hostname;
-      denConfig =
-        (inputs.nixpkgs.lib.evalModules {
-          modules = [
-            (inputs.import-tree ./aspects)
-            inputs.den.flakeOutputs.flake
-          ];
-          specialArgs =
-            {
-              inherit inputs settings;
-            }
-            // extraSpecialArgs;
-        }).config;
-      denHost = denConfig.den.hosts.${settings.system}.desktop;
-    in
-      inputs.nixpkgs.lib.nixosSystem {
-        inherit (settings) system;
-        specialArgs =
-          {
-            inherit inputs settings username hostname;
-          }
-          // extraSpecialArgs;
-        modules =
-          [
-            hardwareModule
-            ./overlays.nix
-            denHost.mainModule
-            inputs.stylix.nixosModules.stylix
-            inputs.home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.${username} = {...}: {
-                imports = [./home.nix];
-              };
-              home-manager.extraSpecialArgs =
-                {
-                  inherit inputs settings username hostname;
-                }
-                // extraSpecialArgs;
-            }
-          ]
-          ++ extraModules;
-      };
+    mkNixosConfiguration = import ./lib/mk-nixos-configuration.nix {inherit inputs;};
+    generic = mkNixosConfiguration (import ./hosts/system);
   in
     inputs.flake-parts.lib.mkFlake {inherit inputs;} {
       systems = [publicSettings.system];
@@ -176,34 +128,11 @@
 
         nixosConfigurations = {
           # Personal machine
-          muggy-nixos = mkNixosConfiguration {
-            settings = import ./hosts/muggy-nixos/settings.nix;
-            hardwareModule = ./hosts/muggy-nixos/hardware-configuration.nix;
-            extraModules = [
-              ({
-                config,
-                pkgs,
-                settings,
-                ...
-              }: {
-                environment.systemPackages = [
-                  pkgs.handy
-                  pkgs.wtype
-                ];
-              })
-            ];
-          };
+          muggy-nixos = mkNixosConfiguration (import ./hosts/muggy-nixos);
 
           # Generic configuration / template for any user
-          generic = mkNixosConfiguration {
-            settings = publicSettings;
-            hardwareModule = ./hosts/system/hardware-configuration.nix;
-          };
-
-          default = mkNixosConfiguration {
-            settings = publicSettings;
-            hardwareModule = ./hosts/system/hardware-configuration.nix;
-          };
+          inherit generic;
+          default = generic;
         };
       };
     };
