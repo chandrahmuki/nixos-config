@@ -178,26 +178,30 @@ for i = 1, 5 do
   hl.bind(mod .. " + SHIFT + " .. i, hl.dsp.exec_cmd("local-workspace move " .. i))
 end
 
--- Scratchpad terminal: a special workspace that floats over the
--- current one. Super+S spawns the kitty that the rule below sends
--- into it on first use, then shows/hides it. Toggling an empty
+-- Scratchpads: a special workspace that floats over the current one. The key
+-- spawns the program on first use, then shows/hides it. Toggling an empty
 -- special workspace only dims the screen.
-hl.window_rule({
-  name = "scratch-term",
-  match = { class = "^scratch-term$" },
-  workspace = "special:term",
-  float = true,
-  -- kitty asks to open maximized, which overrides size and center.
-  suppress_event = "maximize",
-  size = "monitor_w*0.7 monitor_h*0.6",
-  center = true,
-})
-hl.bind(mod .. " + S", function()
-  for _, w in ipairs(hl.get_windows()) do
-    if w.class == "scratch-term" then
-      hl.dispatch(hl.dsp.workspace.toggle_special("term"))
-      return
+local function scratchpad(key, name, command)
+  hl.window_rule({
+    name = "scratch-" .. name,
+    match = { class = "^scratch-" .. name .. "$" },
+    workspace = "special:" .. name,
+    float = true,
+    -- kitty asks to open maximized, which overrides size and center.
+    suppress_event = "maximize",
+    size = "monitor_w*0.7 monitor_h*0.6",
+    center = true,
+  })
+  hl.bind(mod .. " + " .. key, function()
+    for _, w in ipairs(hl.get_windows()) do
+      if w.class == "scratch-" .. name then
+        hl.dispatch(hl.dsp.workspace.toggle_special(name))
+        return
+      end
     end
-  end
-  hl.dispatch(hl.dsp.exec_cmd("@kitty@/bin/kitty --class scratch-term @fish@/bin/fish"))
-end)
+    hl.dispatch(hl.dsp.exec_cmd(command))
+  end)
+end
+
+scratchpad("S", "term", "@kitty@/bin/kitty --class scratch-term @fish@/bin/fish")
+scratchpad("I", "irc", "@kitty@/bin/kitty --class scratch-irc weechat")
