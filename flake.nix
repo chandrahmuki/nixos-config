@@ -130,6 +130,12 @@
           # Personal machine
           muggy-nixos = mkNixosConfiguration (import ./hosts/muggy-nixos);
 
+          # Home NAS: files, music and video, headless (see hosts/nas/README.md)
+          nas = inputs.nixpkgs.lib.nixosSystem {
+            inherit (publicSettings) system;
+            modules = [./hosts/nas];
+          };
+
           # Generic configuration / template for any user
           inherit generic;
           default = generic;
