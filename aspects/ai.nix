@@ -7,14 +7,14 @@
     username,
     ...
   }: let
-    codexVersion = "0.159.2";
+    codexVersion = "0.162.1";
     codex = pkgs.stdenvNoCC.mkDerivation {
       pname = "codex";
       version = codexVersion;
 
       src = pkgs.fetchurl {
         url = "https://github.com/openai/codex/releases/download/rust-v${codexVersion}/codex-package-x86_64-unknown-linux-musl.tar.gz";
-        hash = "sha256-ni0ppxO5RHiyQN7C8Q4RMkzQX6123EPnxjm9+KEzems=";
+        hash = "sha256-pnb1ciquDYbL43ZDMvCOqx/didwKMAs61P+/SGEfo+M=";
       };
 
       sourceRoot = ".";
