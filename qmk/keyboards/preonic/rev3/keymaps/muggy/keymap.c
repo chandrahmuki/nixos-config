@@ -152,6 +152,25 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     return TAPPING_TERM;
 }
 
+// Holding a home row key or "/" a little too long, without pressing another key,
+// would type nothing. Retro tapping types the letter on release instead. A mod held
+// alone for a mouse click (Shift+click) types its letter too; use the bottom row for that.
+bool get_retro_tapping(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case FRENCH_KEY:
+        case HM_A:
+        case HM_S:
+        case HM_D:
+        case HM_F:
+        case HM_J:
+        case HM_K:
+        case HM_L:
+        case HM_SCLN:
+            return true;
+    }
+    return false;
+}
+
 // A dead key followed by a letter (dead == 0: the letter is typed with AltGr).
 static void send_accent(uint16_t dead, uint16_t key, bool shift) {
     if (dead) {

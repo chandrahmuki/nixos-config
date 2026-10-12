@@ -17,3 +17,8 @@
 
 // Per-key hold time, see get_tapping_term() in keymap.c.
 #define TAPPING_TERM_PER_KEY
+
+// Retro tapping on the home row keys and "/", see get_retro_tapping() in keymap.c. A
+// lone Alt or Super is released through F18 so it does not open application menus.
+#define RETRO_TAPPING_PER_KEY
+#define DUMMY_MOD_NEUTRALIZER_KEYCODE KC_F18
