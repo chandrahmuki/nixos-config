@@ -74,13 +74,16 @@ for i = 1, 5 do
   hl.workspace_rule({ workspace = tostring(i + 5), monitor = "HDMI-A-1" })
 end
 
--- The power menu is the only full-screen shell surface that blurs
--- the desktop. Its namespace keeps the pill and hover widgets crisp.
-hl.layer_rule({
-  match = { namespace = "muggynix-power-menu" },
-  blur = true,
-  ignore_alpha = 0.1,
-})
+-- The power menu and the shortcuts sheet are the only full-screen shell
+-- surfaces that blur the desktop. Their namespaces keep the pill and hover
+-- widgets crisp.
+for _, namespace in ipairs({ "muggynix-power-menu", "muggynix-shortcuts" }) do
+  hl.layer_rule({
+    match = { namespace = namespace },
+    blur = true,
+    ignore_alpha = 0.1,
+  })
+end
 
 local mod = "SUPER"
 
@@ -145,6 +148,7 @@ hl.bind(mod .. " + D", hl.dsp.exec_cmd("qs -c muggy ipc call shell toggleLaunche
 hl.bind(mod .. " + O", hl.dsp.exec_cmd("qs -c muggy ipc call shell toggleOverview"))
 hl.bind(mod .. " + SHIFT + T", hl.dsp.exec_cmd("qs -c muggy ipc call shell toggleThemeManager"))
 hl.bind(mod .. " + BACKSPACE", hl.dsp.exec_cmd("qs -c muggy ipc call shell togglePowerMenu"))
+hl.bind(mod .. " + H", hl.dsp.exec_cmd("qs -c muggy ipc call shell toggleShortcuts"))
 hl.bind("F1", hl.dsp.exec_cmd("handy --toggle-transcription"))
 hl.bind("F1", hl.dsp.exec_cmd("handy --toggle-transcription"), { release = true })
 hl.bind(mod .. " + T", hl.dsp.exec_cmd("@kitty@/bin/kitty @fish@/bin/fish"))

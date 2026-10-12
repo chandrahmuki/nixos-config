@@ -43,6 +43,7 @@ ShellRoot {
     property bool splashActive: true
     property bool overviewOpen: false
     property bool powerMenuOpen: false
+    property bool shortcutsOpen: false
     property bool fullscreenPillReveal: false
     property bool fullscreenPillOverlayActive: false
     property int fullscreenPillMonitorId: -1
@@ -359,6 +360,7 @@ ShellRoot {
     function toggleLauncher(): void {
         launcherOpen = !launcherOpen;
         if (launcherOpen) {
+            shortcutsOpen = false;
             themeManagerOpen = false;
             searchText = "";
             selectedIndex = 0;
@@ -858,6 +860,7 @@ ShellRoot {
     function toggleOverview(): void {
         overviewOpen = !overviewOpen;
         if (overviewOpen) {
+            shortcutsOpen = false;
             const focusedIndex = overviewWorkspaces.indexOf(Hyprland.focusedWorkspace);
             overviewWorkspaceIndex = focusedIndex >= 0 ? focusedIndex : 0;
             overviewIndex = 0;
@@ -866,6 +869,8 @@ ShellRoot {
 
     function togglePowerMenu(): void {
         powerMenuOpen = !powerMenuOpen;
+        if (powerMenuOpen)
+            shortcutsOpen = false;
         powerMenuIndex = 0;
         powerMenuConfirming = false;
     }
@@ -1004,8 +1009,24 @@ ShellRoot {
 
     function toggleThemeManager(): void {
         themeManagerOpen = !themeManagerOpen;
-        if (themeManagerOpen)
+        if (themeManagerOpen) {
             launcherOpen = false;
+            shortcutsOpen = false;
+        }
+    }
+
+    function toggleShortcuts(): void {
+        shortcutsOpen = !shortcutsOpen;
+        if (shortcutsOpen) {
+            launcherOpen = false;
+            themeManagerOpen = false;
+            overviewOpen = false;
+            powerMenuOpen = false;
+        }
+    }
+
+    function closeShortcuts(): void {
+        shortcutsOpen = false;
     }
 
     function applyShellTheme(themeId): void {
@@ -1095,6 +1116,7 @@ ShellRoot {
         }
         function testDismissSplash(): void { root.dismissSplash(); }
         function togglePowerMenu(): void { root.togglePowerMenu(); }
+        function toggleShortcuts(): void { root.toggleShortcuts(); }
     }
 
     FullscreenPillRevealWindow {
@@ -1129,6 +1151,10 @@ ShellRoot {
 
     // Kept as a window component so the menu can own its overlay focus grab.
     PowerMenuWindow {
+        shell: root
+    }
+
+    ShortcutsWindow {
         shell: root
     }
 
