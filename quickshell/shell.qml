@@ -10,6 +10,7 @@ import Quickshell.Services.Mpris
 import Quickshell.Services.Notifications
 import Quickshell.Services.SystemTray
 import Quickshell.Bluetooth
+import "services"
 import "windows"
 
 ShellRoot {
@@ -44,6 +45,12 @@ ShellRoot {
     property bool overviewOpen: false
     property bool powerMenuOpen: false
     property bool shortcutsOpen: false
+
+    // Weather has its own service; widgets read it as `shell.weather`.
+    property alias weather: weatherService
+    WeatherService {
+        id: weatherService
+    }
     property bool fullscreenPillReveal: false
     property bool fullscreenPillOverlayActive: false
     property int fullscreenPillMonitorId: -1
@@ -74,19 +81,6 @@ ShellRoot {
     property real uploadRate: 0
     property var downloadHistory: Array(18).fill(0)
     property var uploadHistory: Array(18).fill(0)
-    property string weatherCity: "LOCALISATION…"
-    // IP geolocation can resolve to a nearby town, so keep the weather view
-    // tied to the user's actual city instead.
-    readonly property string weatherLocation: "Gänserndorf"
-    property string weatherTemperature: "—"
-    property string weatherFeelsLike: "—"
-    property string weatherHumidity: "—"
-    property string weatherWind: "—"
-    property string weatherRain: "—"
-    property int weatherCode: -1
-    property string weatherUpdated: "—"
-    property var weatherForecast: []
-    property bool weatherOnline: false
     readonly property int launcherWidth: 430
     readonly property int launcherHeight: 540
     readonly property var themeProfiles: [
@@ -672,62 +666,6 @@ ShellRoot {
         return Math.round(bytesPerSecond) + " B/s";
     }
 
-    function weatherIcon(code: int): string {
-        if (code === 113)
-            return "󰖙";
-        if (code === 116)
-            return "󰖕";
-        if (code === 119 || code === 122)
-            return "󰖐";
-        if ([143, 248, 260].includes(code))
-            return "󰖑";
-        if ([200, 386, 389, 392, 395].includes(code))
-            return "󰖓";
-        if ([179, 227, 230, 323, 326, 329, 332, 335, 338, 368, 371].includes(code))
-            return "󰖘";
-        if ([176, 182, 185, 263, 266, 281, 284, 293, 296, 299, 302, 305, 308,
-            311, 314, 317, 320, 350, 353, 356, 359, 362, 365, 374, 377].includes(code))
-            return "󰖖";
-        return "󰖐";
-    }
-
-    function weatherCondition(code: int): string {
-        if (code === 113)
-            return "CLEAR";
-        if (code === 116)
-            return "PARTLY CLOUDY";
-        if (code === 119 || code === 122)
-            return "CLOUDY";
-        if ([143, 248, 260].includes(code))
-            return "FOG";
-        if ([200, 386, 389, 392, 395].includes(code))
-            return "THUNDER";
-        if ([179, 227, 230, 323, 326, 329, 332, 335, 338, 368, 371].includes(code))
-            return "SNOW";
-        if ([176, 182, 185, 263, 266, 281, 284, 293, 296, 299, 302, 305, 308,
-            311, 314, 317, 320, 350, 353, 356, 359, 362, 365, 374, 377].includes(code))
-            return "RAIN";
-        return "CLOUDY";
-    }
-
-    function weatherDayLabel(date: string): string {
-        const names = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
-        return names[new Date(date + "T12:00:00").getDay()];
-    }
-
-
-    function setWeatherOffline(): void {
-        weatherOnline = false;
-        weatherCity = "WEATHER OFFLINE";
-        weatherTemperature = "—";
-        weatherFeelsLike = "—";
-        weatherHumidity = "—";
-        weatherWind = "—";
-        weatherRain = "—";
-        weatherCode = -1;
-        weatherUpdated = "OFFLINE";
-        weatherForecast = [];
-    }
 
     function selectFallbackPlayer(): void {
         activePlayer = Mpris.players.values.find(function(player) {
@@ -758,55 +696,6 @@ ShellRoot {
         }
     }
 
-    Process {
-        id: weatherProcess
-        // wttr.in needs no API key. A fixed city is more reliable than an
-        // IP-derived location, which can resolve to a nearby town.
-        command: ["bash", "-o", "pipefail", "-c", "curl --fail --silent --show-error --max-time 8 'https://wttr.in/G%C3%A4nserndorf?format=j1' | tr -d '\\n'; printf '\\n'"]
-        running: true
-        onExited: function(exitCode) {
-            if (exitCode !== 0)
-                root.setWeatherOffline();
-        }
-        stdout: SplitParser {
-            onRead: data => {
-                try {
-                    const report = JSON.parse(data.trim());
-                    const current = report.current_condition[0];
-                    root.weatherOnline = true;
-                    root.weatherCity = root.weatherLocation.toUpperCase();
-                    root.weatherTemperature = current.temp_C + "°";
-                    root.weatherFeelsLike = current.FeelsLikeC + "°";
-                    root.weatherHumidity = current.humidity + "%";
-                    root.weatherWind = current.winddir16Point + " " + current.windspeedKmph + " KM/H";
-                    root.weatherRain = current.precipMM + " MM";
-                    root.weatherCode = Number(current.weatherCode);
-                    root.weatherUpdated = Qt.formatTime(new Date(), "HH:mm");
-                    root.weatherForecast = report.weather.slice(0, 3).map(function(day) {
-                        const hourly = day.hourly[Math.floor(day.hourly.length / 2)];
-                        return {
-                            label: root.weatherDayLabel(day.date),
-                            temperature: day.maxtempC + "°",
-                            code: Number(hourly.weatherCode)
-                        };
-                    });
-                } catch (error) {
-                    console.warn("Weather update failed:", error);
-                    root.setWeatherOffline();
-                }
-            }
-        }
-    }
-
-    Timer {
-        interval: 1200000
-        running: true
-        repeat: true
-        onTriggered: {
-            if (!weatherProcess.running)
-                weatherProcess.running = true;
-        }
-    }
 
     Instantiator {
         model: Mpris.players

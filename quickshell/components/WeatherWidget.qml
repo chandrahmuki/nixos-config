@@ -44,12 +44,12 @@ Item {
         PillIcon {
             shell: weatherControl.shell
             hovered: weatherHover.hovered
-            glyph: weatherControl.shell.weatherIcon(weatherControl.shell.weatherCode)
-            iconColor: weatherControl.shell.weatherCode >= 0
+            glyph: weatherControl.shell.weather.icon(weatherControl.shell.weather.code)
+            iconColor: weatherControl.shell.weather.code >= 0
                 ? weatherControl.shell.retroCyan : weatherControl.shell.pillMuted
         }
         Text {
-            text: weatherControl.shell.weatherTemperature
+            text: weatherControl.shell.weather.temperature
             color: weatherControl.shell.retroCyan
             font.family: weatherControl.shell.pillFont
             font.pixelSize: 13

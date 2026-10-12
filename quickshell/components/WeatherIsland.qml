@@ -68,17 +68,17 @@ Rectangle {
                 width: 5
                 height: 5
                 radius: 3
-                color: weatherPanel.shell.weatherOnline
+                color: weatherPanel.shell.weather.online
                     ? weatherPanel.shell.retroCyan : weatherPanel.shell.retroCoral
                 SequentialAnimation on opacity {
-                    running: weatherPanel.expanded && weatherPanel.shell.weatherOnline
+                    running: weatherPanel.expanded && weatherPanel.shell.weather.online
                     loops: Animation.Infinite
                     NumberAnimation { to: 0.35; duration: 800; easing.type: Easing.InOutSine }
                     NumberAnimation { to: 1; duration: 800; easing.type: Easing.InOutSine }
                 }
             }
             Text {
-                text: weatherPanel.shell.weatherCity
+                text: weatherPanel.shell.weather.city
                 color: weatherPanel.shell.pillForeground
                 font.family: weatherPanel.shell.pillFont
                 font.pixelSize: 12
@@ -86,7 +86,7 @@ Rectangle {
             }
             Item { Layout.fillWidth: true }
             Text {
-                text: "UPDATED " + weatherPanel.shell.weatherUpdated
+                text: "UPDATED " + weatherPanel.shell.weather.updated
                 color: weatherPanel.shell.retroCyan
                 font.family: weatherPanel.shell.pillFont
                 font.pixelSize: 9
@@ -114,14 +114,14 @@ Rectangle {
                 Text {
                     id: heroIcon
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: weatherPanel.shell.weatherIcon(weatherPanel.shell.weatherCode)
+                    text: weatherPanel.shell.weather.icon(weatherPanel.shell.weather.code)
                     color: weatherPanel.shell.retroAmber
                     font.family: "JetBrainsMono Nerd Font"
                     font.pixelSize: 28
                     rotation: 0
                     SequentialAnimation on rotation {
-                        running: weatherPanel.expanded && weatherPanel.shell.weatherOnline
-                            && weatherPanel.shell.weatherCode === 113
+                        running: weatherPanel.expanded && weatherPanel.shell.weather.online
+                            && weatherPanel.shell.weather.code === 113
                         loops: Animation.Infinite
                         PauseAnimation { duration: 2600 }
                         NumberAnimation { to: 4; duration: 230; easing.type: Easing.InOutSine }
@@ -131,7 +131,7 @@ Rectangle {
                 }
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: weatherPanel.shell.weatherTemperature
+                    text: weatherPanel.shell.weather.temperature
                     color: weatherPanel.shell.pillForeground
                     font.family: weatherPanel.shell.pillFont
                     font.pixelSize: 27
@@ -139,11 +139,11 @@ Rectangle {
                 }
                 Text {
                     width: parent.width
-                    text: weatherPanel.shell.weatherOnline
-                        ? weatherPanel.shell.weatherCondition(weatherPanel.shell.weatherCode) : "OFFLINE"
+                    text: weatherPanel.shell.weather.online
+                        ? weatherPanel.shell.weather.condition(weatherPanel.shell.weather.code) : "OFFLINE"
                     horizontalAlignment: Text.AlignHCenter
                     elide: Text.ElideRight
-                    color: weatherPanel.shell.weatherOnline
+                    color: weatherPanel.shell.weather.online
                         ? weatherPanel.shell.retroAmber : weatherPanel.shell.retroCoral
                     font.family: weatherPanel.shell.pillFont
                     font.pixelSize: 9
@@ -160,10 +160,10 @@ Rectangle {
 
                 Repeater {
                     model: [
-                        ["FEELS", weatherPanel.shell.weatherFeelsLike],
-                        ["HUMID", weatherPanel.shell.weatherHumidity],
-                        ["WIND", weatherPanel.shell.weatherWind],
-                        ["RAIN", weatherPanel.shell.weatherRain]
+                        ["FEELS", weatherPanel.shell.weather.feelsLike],
+                        ["HUMID", weatherPanel.shell.weather.humidity],
+                        ["WIND", weatherPanel.shell.weather.wind],
+                        ["RAIN", weatherPanel.shell.weather.rain]
                     ]
                     delegate: Row {
                         required property var modelData
@@ -198,7 +198,7 @@ Rectangle {
                 Layout.fillHeight: true
                 spacing: 6
                 Repeater {
-                    model: weatherPanel.shell.weatherForecast
+                    model: weatherPanel.shell.weather.forecast
                     delegate: Rectangle {
                         required property var modelData
                         required property int index
@@ -221,7 +221,7 @@ Rectangle {
                             }
                             Text {
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                text: weatherPanel.shell.weatherIcon(modelData.code)
+                                text: weatherPanel.shell.weather.icon(modelData.code)
                                 color: index === 1 ? weatherPanel.shell.retroCoral : weatherPanel.shell.retroAmber
                                 font.family: "JetBrainsMono Nerd Font"
                                 font.pixelSize: 17
