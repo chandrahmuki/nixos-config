@@ -5,7 +5,7 @@ Rectangle {
     id: audioPanel
     required property var shell
     property bool expanded: false
-    readonly property real outputLevel: shell.systemMuted ? 0 : shell.systemVolume
+    readonly property real outputLevel: shell.audio.muted ? 0 : shell.audio.volume
 
     visible: opacity > 0
     y: 0
@@ -48,10 +48,10 @@ Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 15
             spacing: 6
-            Rectangle { width: 5; height: 5; radius: 3; color: audioPanel.shell.systemMuted ? audioPanel.shell.retroCoral : audioPanel.shell.retroAmber }
+            Rectangle { width: 5; height: 5; radius: 3; color: audioPanel.shell.audio.muted ? audioPanel.shell.retroCoral : audioPanel.shell.retroAmber }
             Text { text: "SYSTEM AUDIO"; color: audioPanel.shell.pillForeground; font.family: audioPanel.shell.pillFont; font.pixelSize: 12; font.bold: true }
             Item { Layout.fillWidth: true }
-            Text { text: audioPanel.shell.systemMuted ? "MUTED" : "MASTER OUTPUT"; color: audioPanel.shell.systemMuted ? audioPanel.shell.retroCoral : audioPanel.shell.retroAmber; font.family: audioPanel.shell.pillFont; font.pixelSize: 9 }
+            Text { text: audioPanel.shell.audio.muted ? "MUTED" : "MASTER OUTPUT"; color: audioPanel.shell.audio.muted ? audioPanel.shell.retroCoral : audioPanel.shell.retroAmber; font.family: audioPanel.shell.pillFont; font.pixelSize: 9 }
         }
 
         Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: audioPanel.shell.panelLine }
@@ -71,9 +71,9 @@ Rectangle {
                 Column {
                     anchors.centerIn: parent
                     spacing: 4
-                    Text { anchors.horizontalCenter: parent.horizontalCenter; text: audioPanel.shell.systemMuted ? "󰖁" : "󰕾"; color: audioPanel.shell.systemMuted ? audioPanel.shell.retroCoral : audioPanel.shell.retroAmber; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 30 }
+                    Text { anchors.horizontalCenter: parent.horizontalCenter; text: audioPanel.shell.audio.muted ? "󰖁" : "󰕾"; color: audioPanel.shell.audio.muted ? audioPanel.shell.retroCoral : audioPanel.shell.retroAmber; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 30 }
                     Text { anchors.horizontalCenter: parent.horizontalCenter; text: "MASTER"; color: audioPanel.shell.retroCyan; font.family: audioPanel.shell.pillFont; font.pixelSize: 8 }
-                    Text { anchors.horizontalCenter: parent.horizontalCenter; text: audioPanel.shell.systemMuted ? "MUTED" : Math.round(audioPanel.outputLevel * 100) + "%"; color: audioPanel.shell.pillForeground; font.family: audioPanel.shell.pillFont; font.pixelSize: 18; font.bold: true }
+                    Text { anchors.horizontalCenter: parent.horizontalCenter; text: audioPanel.shell.audio.muted ? "MUTED" : Math.round(audioPanel.outputLevel * 100) + "%"; color: audioPanel.shell.pillForeground; font.family: audioPanel.shell.pillFont; font.pixelSize: 18; font.bold: true }
                 }
             }
 
@@ -100,7 +100,7 @@ Rectangle {
                             border.width: 1
                             border.color: audioPanel.outputLevel >= level ? audioPanel.shell.retroAmber : audioPanel.shell.panelLine
                             Text { anchors.centerIn: parent; text: Math.round(parent.level * 100); color: audioPanel.outputLevel >= parent.level ? audioPanel.shell.onAccent : audioPanel.shell.pillForeground; font.family: audioPanel.shell.pillFont; font.pixelSize: 11; font.bold: true }
-                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: audioPanel.shell.setSystemVolume(parent.level) }
+                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: audioPanel.shell.audio.setVolume(parent.level) }
                         }
                     }
                 }

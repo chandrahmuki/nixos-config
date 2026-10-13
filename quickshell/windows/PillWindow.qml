@@ -128,9 +128,9 @@ Variants {
                     spacing: 3
 
                     Item {
-                        width: pillRoot.shell.activePlayer ? 32 : 0
+                        width: pillRoot.shell.music.player ? 32 : 0
                         height: 26
-                        visible: pillRoot.shell.activePlayer
+                        visible: pillRoot.shell.music.player
 
                         Row {
                             anchors.centerIn: parent
@@ -140,8 +140,8 @@ Variants {
                                 delegate: Rectangle {
                                     required property int index
                                     width: 3
-                                    height: pillRoot.shell.activePlayer && pillRoot.shell.activePlayer.isPlaying
-                                        ? 3 + pillRoot.shell.cavaLevels[index] * 0.14 : 3
+                                    height: pillRoot.shell.music.player && pillRoot.shell.music.player.isPlaying
+                                        ? 3 + pillRoot.shell.music.cavaLevels[index] * 0.14 : 3
                                     radius: 1.5
                                     color: pillRoot.shell.retroCyan
                                     Behavior on height { NumberAnimation { duration: 45; easing.type: Easing.OutQuad } }

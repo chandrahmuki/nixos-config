@@ -64,6 +64,18 @@ ShellRoot {
         id: notificationService
         shell: root
     }
+
+    // System audio has its own service; widgets read it as `shell.audio`.
+    property alias audio: audioService
+    AudioService {
+        id: audioService
+    }
+
+    // The music player has its own service; widgets read it as `shell.music`.
+    property alias music: musicService
+    MusicService {
+        id: musicService
+    }
     property bool fullscreenPillReveal: false
     property bool fullscreenPillOverlayActive: false
     property int fullscreenPillMonitorId: -1
@@ -75,8 +87,6 @@ ShellRoot {
     property int overviewIndex: 0
     property int overviewWorkspaceIndex: 0
     property date now: new Date()
-    property real systemVolume: 0
-    property bool systemMuted: false
     property string networkPanelMonitorName: ""
     // IPC can request the network detail panel without owning a separate
     // layer-shell window. The matching PillWindow consumes this revision.
@@ -181,31 +191,11 @@ ShellRoot {
         return left.id - right.id;
     })
     readonly property var selectedOverviewWorkspace: overviewWorkspaces[overviewWorkspaceIndex]
-    property var activePlayer: null
     readonly property var connectedHeadset: Bluetooth.devices.values.find(function(device) {
         return device.connected && (device.icon.indexOf("audio") >= 0
             || device.icon.indexOf("headset") >= 0);
     }) || null
-    // Some players expose an MPRIS volume property without applying it to
-    // their actual PipeWire stream. Route those known players to PipeWire.
-    property real pipewireBrowserVolume: 1
-    readonly property string activePlayerPipeWireStreamMatch: {
-        if (!activePlayer)
-            return "";
-        const dbusName = activePlayer.dbusName.toLowerCase();
-        const desktopEntry = activePlayer.desktopEntry.toLowerCase();
-        if (dbusName.indexOf("cliamp") >= 0 || desktopEntry.indexOf("cliamp") >= 0)
-            return "cliamp";
-        if (dbusName.indexOf("chromium") >= 0 || desktopEntry.indexOf("helium") >= 0)
-            return "helium";
-        return "";
-    }
-    readonly property bool activePlayerUsesPipeWireVolume: activePlayerPipeWireStreamMatch.length > 0
-    readonly property real activePlayerVolume: activePlayerUsesPipeWireVolume
-        ? pipewireBrowserVolume
-        : activePlayer && activePlayer.volumeSupported ? activePlayer.volume : 0
     readonly property int musicPanelWidth: 470
-    property var cavaLevels: [0, 0, 0, 0]
     readonly property var overviewToplevels: selectedOverviewWorkspace
         ? Hyprland.toplevels.values.filter(function(toplevel) {
             return toplevel.workspace === selectedOverviewWorkspace;
@@ -429,73 +419,7 @@ ShellRoot {
     }
 
 
-    Process {
-        id: volumeStatusProcess
-        command: ["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"]
-        running: true
-        stdout: SplitParser {
-            onRead: data => {
-                const match = data.match(/Volume:\s+([0-9.]+)/);
-                if (match)
-                    root.systemVolume = Math.max(0, Math.min(1, Number(match[1])));
-                root.systemMuted = data.includes("MUTED");
-            }
-        }
-    }
 
-
-    Timer {
-        interval: 2000
-        running: true
-        repeat: true
-        onTriggered: {
-            if (!volumeStatusProcess.running)
-                volumeStatusProcess.running = true;
-        }
-    }
-
-
-    Process {
-        id: setVolumeProcess
-        property real requestedVolume: 0
-        command: ["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@",
-            Math.round(requestedVolume * 100) + "%"]
-        running: false
-    }
-
-    function setSystemVolume(value: real): void {
-        systemVolume = Math.max(0, Math.min(1, value));
-        systemMuted = false;
-        setVolumeProcess.requestedVolume = systemVolume;
-        setVolumeProcess.running = true;
-    }
-
-    function setActivePlayerVolume(value: real): void {
-        if (!activePlayer)
-            return;
-
-        const volume = Math.max(0, Math.min(1, value));
-        if (activePlayerUsesPipeWireVolume) {
-            pipewireBrowserVolume = volume;
-            setBrowserPlayerVolumeProcess.requestedVolume = volume;
-            setBrowserPlayerVolumeProcess.streamMatch = activePlayerPipeWireStreamMatch;
-            setBrowserPlayerVolumeProcess.running = true;
-            return;
-        }
-
-        if (activePlayer.volumeSupported)
-            activePlayer.volume = volume;
-    }
-
-    Process {
-        id: setBrowserPlayerVolumeProcess
-        property real requestedVolume: 1
-        property string streamMatch: ""
-        // Stream IDs change after restarts. Match only the active playback
-        // stream for the current player, never an input/monitor stream.
-        command: ["bash", "-c", "wpctl status | awk -v needle=\"$2\" '/Streams:/ { streams = 1; next } /Video/ { streams = 0 } streams && /^[[:space:]]*[0-9]+\\. PipeWire ALSA/ && index(tolower($0), needle) { id = $1; sub(/\\.$/, \"\", id); print id }' | while read -r stream; do wpctl set-volume $stream $1; done", "--", requestedVolume.toFixed(3), streamMatch]
-        running: false
-    }
 
     function localWorkspaceLabel(workspaceId: int): int {
         return workspaceId >= 6 && workspaceId <= 10 ? workspaceId - 5 : workspaceId;
@@ -507,56 +431,6 @@ ShellRoot {
 
 
 
-    function selectFallbackPlayer(): void {
-        activePlayer = Mpris.players.values.find(function(player) {
-            return player.isPlaying;
-        }) || null;
-    }
-
-    Process {
-        id: cavaProcess
-        // CAVA emits one semicolon-delimited frame per line. Keeping it here
-        // avoids a second daemon and makes the pill own its visualizer.
-        command: ["bash", "-c", "printf '%s\\n' '[general]' 'bars = 4' 'framerate = 15' 'autosens = 1' '[input]' 'method = pulse' 'source = auto' '[output]' 'method = raw' 'raw_target = /dev/stdout' 'data_format = ascii' 'ascii_max_range = 100' 'bar_delimiter = 59' 'frame_delimiter = 10' | cava -p /dev/stdin"]
-        // No music means no visualizer process or frame parsing.
-        running: root.activePlayer && root.activePlayer.isPlaying
-
-        stdout: SplitParser {
-            onRead: data => {
-                var frame = data.trim().split(";").filter(function(value) {
-                    return value.length > 0;
-                });
-                if (frame.length !== 4)
-                    return;
-
-                root.cavaLevels = frame.map(function(value) {
-                    return Math.max(0, Math.min(100, Number(value) || 0));
-                });
-            }
-        }
-    }
-
-
-    Instantiator {
-        model: Mpris.players
-
-        delegate: Connections {
-            required property var modelData
-            target: modelData
-
-            Component.onCompleted: {
-                if (modelData.isPlaying)
-                    root.activePlayer = modelData;
-            }
-
-            function onIsPlayingChanged(): void {
-                if (modelData.isPlaying)
-                    root.activePlayer = modelData;
-                else if (root.activePlayer === modelData)
-                    root.selectFallbackPlayer();
-            }
-        }
-    }
 
     function moveSelection(offset: int): void {
         if (matchingApplications.length === 0)

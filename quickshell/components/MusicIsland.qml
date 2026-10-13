@@ -5,9 +5,9 @@ Rectangle {
     id: musicPanel
     required property var shell
     property bool expanded: false
-    readonly property bool playing: shell.activePlayer && shell.activePlayer.isPlaying
-    readonly property bool volumeAvailable: shell.activePlayer && shell.activePlayer.volumeSupported
-    readonly property real playerLevel: volumeAvailable ? shell.activePlayerVolume : 0
+    readonly property bool playing: shell.music.player && shell.music.player.isPlaying
+    readonly property bool volumeAvailable: shell.music.player && shell.music.player.volumeSupported
+    readonly property real playerLevel: volumeAvailable ? shell.music.volume : 0
 
     visible: opacity > 0
     y: 0
@@ -89,7 +89,7 @@ Rectangle {
                             delegate: Rectangle {
                                 required property int index
                                 width: 4
-                                height: musicPanel.playing ? 5 + musicPanel.shell.cavaLevels[index] * 0.18 : 5
+                                height: musicPanel.playing ? 5 + musicPanel.shell.music.cavaLevels[index] * 0.18 : 5
                                 anchors.bottom: parent.bottom
                                 radius: 1
                                 color: musicPanel.shell.retroCyan
@@ -187,8 +187,8 @@ Rectangle {
                 Layout.fillHeight: true
                 spacing: 3
                 Text { text: "TRACK"; color: musicPanel.shell.retroCyan; font.family: musicPanel.shell.pillFont; font.pixelSize: 8 }
-                Text { Layout.fillWidth: true; text: musicPanel.shell.activePlayer ? musicPanel.shell.activePlayer.trackTitle : "NO ACTIVE PLAYER"; elide: Text.ElideRight; color: musicPanel.shell.pillForeground; font.family: musicPanel.shell.pillFont; font.pixelSize: 14; font.bold: true }
-                Text { Layout.fillWidth: true; text: musicPanel.shell.activePlayer ? musicPanel.shell.activePlayer.trackArtist : "Start a player to link it here"; elide: Text.ElideRight; color: musicPanel.shell.pillMuted; font.family: musicPanel.shell.pillFont; font.pixelSize: 10 }
+                Text { Layout.fillWidth: true; text: musicPanel.shell.music.player ? musicPanel.shell.music.player.trackTitle : "NO ACTIVE PLAYER"; elide: Text.ElideRight; color: musicPanel.shell.pillForeground; font.family: musicPanel.shell.pillFont; font.pixelSize: 14; font.bold: true }
+                Text { Layout.fillWidth: true; text: musicPanel.shell.music.player ? musicPanel.shell.music.player.trackArtist : "Start a player to link it here"; elide: Text.ElideRight; color: musicPanel.shell.pillMuted; font.family: musicPanel.shell.pillFont; font.pixelSize: 10 }
                 Item { Layout.fillHeight: true }
                 RowLayout {
                     Layout.fillWidth: true
@@ -215,7 +215,7 @@ Rectangle {
                                         anchors.fill: parent
                                         enabled: musicPanel.volumeAvailable
                                         cursorShape: Qt.PointingHandCursor
-                                        onClicked: musicPanel.shell.setActivePlayerVolume(parent.level)
+                                        onClicked: musicPanel.shell.music.setVolume(parent.level)
                                     }
                                 }
                             }
@@ -255,24 +255,24 @@ Rectangle {
                         width: 33; height: 25; radius: 3
                         color: previous.pressed ? musicPanel.shell.surfacePressed : musicPanel.shell.panelSurface
                         border.width: 1; border.color: musicPanel.shell.panelLine
-                        opacity: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canGoPrevious ? 1 : 0.35
+                        opacity: musicPanel.shell.music.player && musicPanel.shell.music.player.canGoPrevious ? 1 : 0.35
                         Text { anchors.centerIn: parent; text: "‹‹"; color: musicPanel.shell.pillForeground; font.pixelSize: 13; font.bold: true }
-                        MouseArea { id: previous; anchors.fill: parent; enabled: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canGoPrevious; onClicked: musicPanel.shell.activePlayer.previous() }
+                        MouseArea { id: previous; anchors.fill: parent; enabled: musicPanel.shell.music.player && musicPanel.shell.music.player.canGoPrevious; onClicked: musicPanel.shell.music.player.previous() }
                     }
                     Rectangle {
                         width: 92; height: 25; radius: 3
                         color: playPause.pressed ? musicPanel.shell.warning : musicPanel.shell.retroAmber
-                        opacity: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canTogglePlaying ? 1 : 0.35
+                        opacity: musicPanel.shell.music.player && musicPanel.shell.music.player.canTogglePlaying ? 1 : 0.35
                         Text { anchors.centerIn: parent; text: musicPanel.playing ? "Ⅱ  PAUSE" : "▶  PLAY"; color: musicPanel.shell.onAccent; font.family: musicPanel.shell.pillFont; font.pixelSize: 10; font.bold: true }
-                        MouseArea { id: playPause; anchors.fill: parent; enabled: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canTogglePlaying; onClicked: musicPanel.shell.activePlayer.togglePlaying() }
+                        MouseArea { id: playPause; anchors.fill: parent; enabled: musicPanel.shell.music.player && musicPanel.shell.music.player.canTogglePlaying; onClicked: musicPanel.shell.music.player.togglePlaying() }
                     }
                     Rectangle {
                         width: 33; height: 25; radius: 3
                         color: next.pressed ? musicPanel.shell.surfacePressed : musicPanel.shell.panelSurface
                         border.width: 1; border.color: musicPanel.shell.panelLine
-                        opacity: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canGoNext ? 1 : 0.35
+                        opacity: musicPanel.shell.music.player && musicPanel.shell.music.player.canGoNext ? 1 : 0.35
                         Text { anchors.centerIn: parent; text: "››"; color: musicPanel.shell.pillForeground; font.pixelSize: 13; font.bold: true }
-                        MouseArea { id: next; anchors.fill: parent; enabled: musicPanel.shell.activePlayer && musicPanel.shell.activePlayer.canGoNext; onClicked: musicPanel.shell.activePlayer.next() }
+                        MouseArea { id: next; anchors.fill: parent; enabled: musicPanel.shell.music.player && musicPanel.shell.music.player.canGoNext; onClicked: musicPanel.shell.music.player.next() }
                     }
                 }
             }

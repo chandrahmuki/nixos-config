@@ -11,7 +11,7 @@ Item {
     visible: device && device.connected
     width: visible ? 22 : 0
     height: 24
-    readonly property bool musicPlaying: shell.activePlayer && shell.activePlayer.isPlaying
+    readonly property bool musicPlaying: shell.music.player && shell.music.player.isPlaying
 
     Timer {
         id: closeTimer

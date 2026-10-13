@@ -37,9 +37,9 @@ Item {
 
     Text {
         anchors.centerIn: parent
-        text: audioControl.shell.systemMuted || audioControl.shell.systemVolume <= 0.01
-            ? "󰖁" : audioControl.shell.systemVolume < 0.5 ? "󰖀" : "󰕾"
-        color: audioControl.shell.systemMuted ? audioControl.shell.retroCoral : audioControl.shell.retroAmber
+        text: audioControl.shell.audio.muted || audioControl.shell.audio.volume <= 0.01
+            ? "󰖁" : audioControl.shell.audio.volume < 0.5 ? "󰖀" : "󰕾"
+        color: audioControl.shell.audio.muted ? audioControl.shell.retroCoral : audioControl.shell.retroAmber
         font.family: "JetBrainsMono Nerd Font"
         font.pixelSize: 18
     }
