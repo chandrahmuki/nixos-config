@@ -5,23 +5,23 @@ Item {
     id: workspaceRail
     required property var shell
     required property var monitor
-    readonly property int cellWidth: 22
+    readonly property int cellWidth: 36
     readonly property var slots: [1, 2, 3, 4, 5]
     readonly property int activeWorkspaceIndex: {
         return workspaceRail.monitor && workspaceRail.monitor.activeWorkspace
             ? workspaceRail.shell.localWorkspaceLabel(workspaceRail.monitor.activeWorkspace.id) - 1 : -1;
     }
     implicitWidth: workspaceCells.implicitWidth
-    implicitHeight: 26
+    implicitHeight: 44
 
     Rectangle {
         id: activeWorkspaceSegment
         visible: workspaceRail.activeWorkspaceIndex >= 0
-        x: 1 + workspaceRail.activeWorkspaceIndex * workspaceRail.cellWidth
-        y: 4
-        width: workspaceRail.cellWidth - 2
-        height: parent.height - 8
-        radius: 3
+        x: 2 + workspaceRail.activeWorkspaceIndex * workspaceRail.cellWidth
+        y: (parent.height - height) / 2
+        width: workspaceRail.cellWidth - 4
+        height: 32
+        radius: 6
         color: workspaceRail.shell.theme.retroCyan
 
         Behavior on x {
@@ -55,12 +55,10 @@ Item {
                     anchors.centerIn: parent
                     text: modelData
                     color: active ? workspaceRail.shell.theme.pillBackground
-                        : occupied ? workspaceRail.shell.theme.retroCyan : workspaceRail.shell.theme.pillMuted
+                        : occupied ? workspaceRail.shell.theme.pillForeground : workspaceRail.shell.theme.pillSecondary
                     font.family: workspaceRail.shell.theme.pillFont
-                    font.pixelSize: active || occupied ? 14 : 11
-                    font.bold: occupied
-                    style: active ? Text.Outline : Text.Normal
-                    styleColor: color
+                    font.pixelSize: active || occupied ? 18 : 16
+                    font.bold: active || occupied
                 }
 
                 MouseArea {

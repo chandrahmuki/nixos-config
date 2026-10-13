@@ -9,8 +9,8 @@ Item {
     property bool panelOpen: false
 
     visible: device && device.connected
-    width: visible ? 22 : 0
-    height: 24
+    width: visible ? 40 : 0
+    height: 44
     readonly property bool musicPlaying: shell.music.player && shell.music.player.isPlaying
 
     Timer {
@@ -53,38 +53,30 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        radius: 4
+        anchors.margins: 2
+        radius: 6
         color: headsetHover.hovered ? headset.shell.theme.surfaceHover : "transparent"
 
-        Item {
+        PixelIcon {
             anchors.centerIn: parent
-            width: 22
-            height: 24
+            name: "headset"
+            color: headset.shell.theme.pillForeground
+        }
 
-            Text {
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                text: "󰋋"
-                color: headset.shell.theme.retroCyan
-                font.family: "JetBrainsMono Nerd Font"
-                font.pixelSize: 16
-            }
+        // Blinks while the music plays through the headset.
+        Rectangle {
+            x: parent.width - width - 3
+            y: 3
+            width: 6
+            height: 6
+            color: headset.shell.theme.retroAmber
+            visible: headset.musicPlaying
 
-            Rectangle {
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-                width: 4
-                height: 4
-                radius: 2
-                color: headset.shell.theme.retroAmber
-                visible: headset.musicPlaying
-
-                SequentialAnimation on opacity {
-                    running: headset.musicPlaying
-                    loops: Animation.Infinite
-                    NumberAnimation { to: 0.25; duration: 550 }
-                    NumberAnimation { to: 1; duration: 550 }
-                }
+            SequentialAnimation on opacity {
+                running: headset.musicPlaying
+                loops: Animation.Infinite
+                NumberAnimation { to: 0.25; duration: 550 }
+                NumberAnimation { to: 1; duration: 550 }
             }
         }
     }

@@ -3,8 +3,8 @@ import QtQuick
 Item {
     id: weatherControl
     required property var shell
-    width: 56
-    height: 24
+    width: 48
+    height: 44
     signal openRequested()
     signal closeRequested()
 
@@ -37,22 +37,31 @@ Item {
         }
     }
 
-    Row {
-        anchors.centerIn: parent
-        spacing: 3
+    Rectangle {
+        anchors.fill: parent
+        anchors.margins: 2
+        radius: 6
+        color: weatherHover.hovered ? weatherControl.shell.theme.surfaceHover : "transparent"
+    }
 
-        PillIcon {
-            shell: weatherControl.shell
-            hovered: weatherHover.hovered
-            glyph: weatherControl.shell.weather.icon(weatherControl.shell.weather.code)
-            iconColor: weatherControl.shell.weather.code >= 0
-                ? weatherControl.shell.theme.retroCyan : weatherControl.shell.theme.pillMuted
+    // The temperature sits under the icon, inside the same cell.
+    Column {
+        anchors.centerIn: parent
+        spacing: 2
+
+        PixelIcon {
+            anchors.horizontalCenter: parent.horizontalCenter
+            size: 16
+            name: weatherControl.shell.weather.iconName(weatherControl.shell.weather.code)
+            color: weatherControl.shell.weather.code >= 0
+                ? weatherControl.shell.theme.pillForeground : weatherControl.shell.theme.pillSecondary
         }
         Text {
+            anchors.horizontalCenter: parent.horizontalCenter
             text: weatherControl.shell.weather.temperature
-            color: weatherControl.shell.theme.retroCyan
+            color: weatherControl.shell.theme.pillForeground
             font.family: weatherControl.shell.theme.pillFont
-            font.pixelSize: 13
+            font.pixelSize: 12
             font.bold: true
         }
     }

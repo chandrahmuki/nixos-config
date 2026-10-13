@@ -5,8 +5,8 @@ Item {
     required property var shell
     signal openRequested()
     signal closeRequested()
-    width: 22
-    height: 24
+    width: 40
+    height: 44
 
     Timer {
         id: openTimer
@@ -31,16 +31,16 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        radius: 4
+        anchors.margins: 2
+        radius: 6
         color: audioHover.hovered ? audioControl.shell.theme.surfaceHover : "transparent"
     }
 
-    Text {
+    PixelIcon {
         anchors.centerIn: parent
-        text: audioControl.shell.audio.muted || audioControl.shell.audio.volume <= 0.01
-            ? "󰖁" : audioControl.shell.audio.volume < 0.5 ? "󰖀" : "󰕾"
-        color: audioControl.shell.audio.muted ? audioControl.shell.theme.retroCoral : audioControl.shell.theme.retroAmber
-        font.family: "JetBrainsMono Nerd Font"
-        font.pixelSize: 18
+        name: audioControl.shell.audio.muted || audioControl.shell.audio.volume <= 0.01
+            ? "volume-muted" : audioControl.shell.audio.volume < 0.5 ? "volume-low" : "volume"
+        color: audioControl.shell.audio.muted
+            ? audioControl.shell.theme.retroCoral : audioControl.shell.theme.pillForeground
     }
 }

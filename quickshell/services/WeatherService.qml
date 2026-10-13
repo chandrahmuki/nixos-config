@@ -39,6 +39,26 @@ Item {
         return "󰖐";
     }
 
+    // Name of the pixel icon (assets/icons) for a wttr.in weather code.
+    function iconName(code: int): string {
+        if (code === 113)
+            return "sun";
+        if (code === 116)
+            return "partly-cloudy";
+        if (code === 119 || code === 122)
+            return "cloud";
+        if ([143, 248, 260].includes(code))
+            return "fog";
+        if ([200, 386, 389, 392, 395].includes(code))
+            return "thunder";
+        if ([179, 227, 230, 323, 326, 329, 332, 335, 338, 368, 371].includes(code))
+            return "snow";
+        if ([176, 182, 185, 263, 266, 281, 284, 293, 296, 299, 302, 305, 308,
+            311, 314, 317, 320, 350, 353, 356, 359, 362, 365, 374, 377].includes(code))
+            return "rain";
+        return "cloud";
+    }
+
     function condition(code: int): string {
         if (code === 113)
             return "CLEAR";

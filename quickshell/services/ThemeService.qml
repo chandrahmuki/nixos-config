@@ -70,6 +70,10 @@ Item {
     property color pillForeground: generatedColor("on_surface", activeTheme.pillForeground)
     property color pillMuted: generatedColor("outline_variant", activeTheme.pillMuted)
     property color pillActive: generatedColor("on_primary", activeTheme.pillActive)
+    // Secondary text and icons of the pill: the foreground at 65% over the pill
+    // background. The "muted" greys of the profiles are too faint on several themes.
+    readonly property color pillSecondary: Qt.tint(pillBackground,
+        Qt.rgba(pillForeground.r, pillForeground.g, pillForeground.b, 0.65))
     // Shared micro-console language for expandable pill panels.  Keep the
     // accents deliberately sparse so future panels read as one system.
     property color panelSurface: generatedColor("surface_container_low", activeTheme.panelSurface)

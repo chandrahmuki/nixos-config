@@ -7,8 +7,9 @@ Item {
     property var monitor: null
     signal openRequested()
     signal closeRequested()
-    width: 22
-    height: 24
+    width: 40
+    height: 44
+    readonly property bool connected: shell.network.connectionName.length > 0
 
     Timer {
         id: openTimer
@@ -39,13 +40,28 @@ Item {
         }
     }
 
-    PillIcon {
+    Rectangle {
+        anchors.fill: parent
+        anchors.margins: 2
+        radius: 6
+        color: networkHover.hovered ? networkControl.shell.theme.surfaceHover : "transparent"
+    }
+
+    PixelIcon {
         anchors.centerIn: parent
-        shell: networkControl.shell
-        hovered: networkHover.hovered
-        glyph: networkControl.shell.network.type === "ethernet" ? "󰈀"
-            : networkControl.shell.network.type === "wifi" ? "󰖩" : "󰤭"
-        iconColor: networkControl.shell.network.connectionName.length > 0
-            ? networkControl.shell.theme.retroCyan : networkControl.shell.theme.pillMuted
+        name: networkControl.shell.network.type === "ethernet" ? "ethernet"
+            : networkControl.shell.network.type === "wifi" ? "wifi" : "wifi-off"
+        color: networkControl.connected
+            ? networkControl.shell.theme.pillForeground : networkControl.shell.theme.pillSecondary
+    }
+
+    // Live connection marker.
+    Rectangle {
+        visible: networkControl.connected
+        x: parent.width - width - 5
+        y: 5
+        width: 6
+        height: 6
+        color: networkControl.shell.theme.retroCyan
     }
 }

@@ -32,7 +32,7 @@ Variants {
         // this doesn't push other windows down.
         implicitHeight: 182
         exclusionMode: ExclusionMode.Normal
-        exclusiveZone: 54
+        exclusiveZone: 74
         WlrLayershell.layer: revealTarget
             || (pillRoot.shell.fullscreenPillOverlayActive
                 && pillRoot.shell.fullscreenPillMonitorId === hyprMonitorId)
@@ -59,8 +59,8 @@ Variants {
             readonly property bool detailPanelExpanded: musicPanel.expanded || weatherPanel.expanded
                 || clockPanel.expanded || networkPanel.expanded || audioPanel.expanded
             width: detailPanelExpanded ? expandedWidth : compactWidth
-            height: detailPanelExpanded ? 164 : 40
-            radius: detailPanelExpanded ? 14 : 20
+            height: detailPanelExpanded ? 164 : 60
+            radius: detailPanelExpanded ? 14 : 18
             x: (parent.width - width) / 2
             y: pillWindow.strictFullscreen
                 && !pillWindow.revealTarget ? -height : 7
@@ -101,50 +101,51 @@ Variants {
 
             RowLayout {
                 id: baseRow
-                // Pinned to the compact pill's own fixed center (top + 20),
+                // Pinned to the compact pill's own fixed center (top + 30),
                 // not centerIn islandShape: islandShape grows downward from a
                 // fixed top edge, so centering on its moving middle would
                 // drag this content (and its hover target) down mid-morph.
                 anchors.horizontalCenter: parent.horizontalCenter
-                y: 20 - height / 2
-                spacing: 8
+                y: 30 - height / 2
+                spacing: 12
                 opacity: islandShape.detailPanelExpanded ? 0 : 1
                 Behavior on opacity { NumberAnimation { duration: 100 } }
 
+                // Four groups, left to right: workspaces, music (only while a
+                // player exists), time and weather, then the system.
                 WorkspaceRail {
                     shell: pillRoot.shell
                     monitor: pillWindow.hyprMonitor
                 }
 
-                Rectangle {
-                    Layout.preferredWidth: 1
-                    Layout.preferredHeight: 18
-                    color: pillRoot.shell.theme.panelLine
-                    opacity: 0.7
-                }
-
-                Row {
-                    id: mediaSystemGroup
-                    spacing: 3
+                PillCapsule {
+                    shell: pillRoot.shell
+                    padding: 0
+                    visible: pillRoot.shell.music.player
 
                     Item {
-                        width: pillRoot.shell.music.player ? 32 : 0
-                        height: 26
-                        visible: pillRoot.shell.music.player
+                        width: 56
+                        height: 44
 
+                        // The four CAVA bars rise from a common baseline.
                         Row {
                             anchors.centerIn: parent
-                            spacing: 3
+                            spacing: 4
                             Repeater {
                                 model: 4
-                                delegate: Rectangle {
+                                delegate: Item {
                                     required property int index
-                                    width: 3
-                                    height: pillRoot.shell.music.player && pillRoot.shell.music.player.isPlaying
-                                        ? 3 + pillRoot.shell.music.cavaLevels[index] * 0.14 : 3
-                                    radius: 1.5
-                                    color: pillRoot.shell.theme.retroCyan
-                                    Behavior on height { NumberAnimation { duration: 45; easing.type: Easing.OutQuad } }
+                                    width: 4
+                                    height: 28
+
+                                    Rectangle {
+                                        anchors.bottom: parent.bottom
+                                        width: parent.width
+                                        height: pillRoot.shell.music.player && pillRoot.shell.music.player.isPlaying
+                                            ? 4 + pillRoot.shell.music.cavaLevels[index] * 0.24 : 4
+                                        color: pillRoot.shell.theme.retroCyan
+                                        Behavior on height { NumberAnimation { duration: 45; easing.type: Easing.OutQuad } }
+                                    }
                                 }
                             }
                         }
@@ -160,6 +161,46 @@ Variants {
                             }
                         }
                     }
+                }
+
+                PillCapsule {
+                    shell: pillRoot.shell
+
+                    ClockWidget {
+                        shell: pillRoot.shell
+                        onOpenRequested: {
+                            islandShape.closeDetailPanels(clockPanel);
+                            clockPanel.openPanel();
+                        }
+                        onCloseRequested: clockPanel.scheduleClose()
+                    }
+
+                    Item {
+                        width: 2
+                        height: 44
+
+                        Rectangle {
+                            anchors.centerIn: parent
+                            width: 2
+                            height: 24
+                            color: pillRoot.shell.theme.panelLine
+                        }
+                    }
+
+                    WeatherWidget {
+                        shell: pillRoot.shell
+                        onOpenRequested: {
+                            islandShape.closeDetailPanels(weatherPanel);
+                            weatherPanel.openPanel();
+                        }
+                        onCloseRequested: weatherPanel.scheduleClose()
+                    }
+                }
+
+                // Network, headset and volume first; the tray, whose length
+                // depends on the running applications, closes the pill.
+                PillCapsule {
+                    shell: pillRoot.shell
 
                     NetworkIndicator {
                         shell: pillRoot.shell
@@ -171,40 +212,6 @@ Variants {
                         onCloseRequested: networkPanel.scheduleClose()
                     }
                     BluetoothHeadset { shell: pillRoot.shell; device: pillRoot.shell.connectedHeadset }
-                }
-
-                Rectangle {
-                    Layout.preferredWidth: 1
-                    Layout.preferredHeight: 18
-                    color: pillRoot.shell.theme.panelLine
-                    opacity: 0.7
-                }
-
-                Row {
-                    id: contextGroup
-                    spacing: 5
-                    WeatherWidget {
-                        id: weatherWidget
-                        shell: pillRoot.shell
-                        onOpenRequested: {
-                            islandShape.closeDetailPanels(weatherPanel);
-                            weatherPanel.openPanel();
-                        }
-                        onCloseRequested: {
-                            weatherPanel.scheduleClose();
-                        }
-                    }
-                    ClockWidget {
-                        shell: pillRoot.shell
-                        onOpenRequested: {
-                            islandShape.closeDetailPanels(clockPanel);
-                            clockPanel.openPanel();
-                        }
-                        onCloseRequested: clockPanel.scheduleClose()
-                    }
-                    // Status icons finish the pill instead of interrupting the
-                    // weather/time readout.
-                    TrayCapsule { shell: pillRoot.shell }
                     AudioIndicator {
                         shell: pillRoot.shell
                         onOpenRequested: {
@@ -213,6 +220,7 @@ Variants {
                         }
                         onCloseRequested: audioPanel.scheduleClose()
                     }
+                    TrayCapsule { shell: pillRoot.shell }
                 }
             }
 

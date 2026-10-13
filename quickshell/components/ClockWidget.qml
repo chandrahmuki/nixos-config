@@ -3,8 +3,8 @@ import QtQuick
 Item {
     id: clockControl
     required property var shell
-    width: 76
-    height: 24
+    width: clockText.implicitWidth + 16
+    height: 44
     signal openRequested()
     signal closeRequested()
 
@@ -37,23 +37,21 @@ Item {
         }
     }
 
-    Row {
+    Rectangle {
+        anchors.fill: parent
+        anchors.margins: 2
+        radius: 6
+        color: clockHover.hovered ? clockControl.shell.theme.surfaceHover : "transparent"
+    }
+
+    // Just the time: the clock icon next to it carried no information.
+    Text {
+        id: clockText
         anchors.centerIn: parent
-        spacing: 2
-
-        PillIcon {
-            shell: clockControl.shell
-            hovered: clockHover.hovered
-            glyph: "󰥔"
-        }
-
-        Text {
-            anchors.verticalCenter: parent.verticalCenter
-            text: Qt.formatTime(clockControl.shell.now, "HH:mm")
-            color: clockControl.shell.theme.retroCyan
-            font.bold: true
-            font.pixelSize: 15
-            font.family: clockControl.shell.theme.pillFont
-        }
+        text: Qt.formatTime(clockControl.shell.now, "HH:mm")
+        color: clockControl.shell.theme.pillForeground
+        font.bold: true
+        font.pixelSize: 24
+        font.family: clockControl.shell.theme.pillFont
     }
 }

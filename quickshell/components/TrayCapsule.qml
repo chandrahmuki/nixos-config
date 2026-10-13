@@ -7,7 +7,7 @@ Item {
     id: trayCapsule
     required property var shell
     implicitWidth: trayRow.implicitWidth
-    implicitHeight: 24
+    implicitHeight: 44
     width: implicitWidth
     height: implicitHeight
 
@@ -21,8 +21,8 @@ Item {
         delegate: Item {
             id: trayItem
             required property var modelData
-            width: visible ? 20 : 0
-            height: 24
+            width: visible ? 28 : 0
+            height: 44
             visible: modelData.status !== Status.Passive
             property bool menuOpen: false
             property var submenuEntry: null
@@ -64,8 +64,8 @@ Item {
             Image {
                 id: trayIcon
                 anchors.centerIn: parent
-                width: 17
-                height: 17
+                width: 20
+                height: 20
                 source: modelData.id === "remmina-icon"
                     ? "file:///home/david/.local/share/icons/catppuccin-mono-light/status/scalable/remmina-status.svg"
                     : modelData.id === "blueman"
@@ -79,7 +79,7 @@ Item {
                 anchors.fill: trayIcon
                 source: trayIcon
                 colorization: 1
-                colorizationColor: trayCapsule.shell.theme.retroCyan
+                colorizationColor: trayCapsule.shell.theme.pillSecondary
             }
 
             MouseArea {
