@@ -5,7 +5,7 @@ Rectangle {
     id: networkPanel
     required property var shell
     property bool expanded: false
-    readonly property bool online: shell.networkConnectionName.length > 0
+    readonly property bool online: shell.network.connectionName.length > 0
 
     visible: opacity > 0
     y: 0
@@ -81,8 +81,8 @@ Rectangle {
                 }
             }
             Text {
-                text: networkPanel.shell.networkType === "wifi" ? "WI-FI / LINKED"
-                    : networkPanel.shell.networkType === "ethernet" ? "ETHERNET / LINKED" : "NETWORK / OFFLINE"
+                text: networkPanel.shell.network.type === "wifi" ? "WI-FI / LINKED"
+                    : networkPanel.shell.network.type === "ethernet" ? "ETHERNET / LINKED" : "NETWORK / OFFLINE"
                 color: networkPanel.shell.pillForeground
                 font.family: networkPanel.shell.pillFont
                 font.pixelSize: 12
@@ -109,15 +109,15 @@ Rectangle {
                 Layout.fillHeight: true
                 spacing: 3
                 Text {
-                    text: networkPanel.shell.networkType === "ethernet" ? "󰈀"
-                        : networkPanel.shell.networkType === "wifi" ? "󰖩" : "󰤭"
+                    text: networkPanel.shell.network.type === "ethernet" ? "󰈀"
+                        : networkPanel.shell.network.type === "wifi" ? "󰖩" : "󰤭"
                     color: networkPanel.online ? networkPanel.shell.retroAmber : networkPanel.shell.retroCoral
                     font.family: "JetBrainsMono Nerd Font"
                     font.pixelSize: 28
                 }
                 Text {
                     width: parent.width
-                    text: networkPanel.online ? networkPanel.shell.networkConnectionName : "DISCONNECTED"
+                    text: networkPanel.online ? networkPanel.shell.network.connectionName : "DISCONNECTED"
                     elide: Text.ElideRight
                     color: networkPanel.shell.pillForeground
                     font.family: networkPanel.shell.pillFont
@@ -125,7 +125,7 @@ Rectangle {
                     font.bold: true
                 }
                 Text {
-                    text: networkPanel.shell.networkDevice || "NO DEVICE"
+                    text: networkPanel.shell.network.device || "NO DEVICE"
                     color: networkPanel.shell.retroAmber
                     font.family: networkPanel.shell.pillFont
                     font.pixelSize: 9
@@ -140,8 +140,8 @@ Rectangle {
                 spacing: 6
                 Repeater {
                     model: [
-                        ["↓ DOWN", networkPanel.shell.rateLabel(networkPanel.shell.downloadRate), networkPanel.shell.retroCyan],
-                        ["↑ UP", networkPanel.shell.rateLabel(networkPanel.shell.uploadRate), networkPanel.shell.retroCoral]
+                        ["↓ DOWN", networkPanel.shell.network.rateLabel(networkPanel.shell.network.downloadRate), networkPanel.shell.retroCyan],
+                        ["↑ UP", networkPanel.shell.network.rateLabel(networkPanel.shell.network.uploadRate), networkPanel.shell.retroCoral]
                     ]
                     delegate: Column {
                         required property var modelData
@@ -161,8 +161,8 @@ Rectangle {
                 spacing: 7
                 Repeater {
                     model: [
-                        ["ADDR", networkPanel.shell.networkAddress],
-                        ["GW", networkPanel.shell.networkGateway]
+                        ["ADDR", networkPanel.shell.network.address],
+                        ["GW", networkPanel.shell.network.gateway]
                     ]
                     delegate: Column {
                         required property var modelData
@@ -182,8 +182,8 @@ Rectangle {
                 spacing: 7
                 Repeater {
                     model: [
-                        ["RX", networkPanel.shell.downloadHistory, networkPanel.shell.retroCyan],
-                        ["TX", networkPanel.shell.uploadHistory, networkPanel.shell.retroCoral]
+                        ["RX", networkPanel.shell.network.downloadHistory, networkPanel.shell.retroCyan],
+                        ["TX", networkPanel.shell.network.uploadHistory, networkPanel.shell.retroCoral]
                     ]
                     delegate: Column {
                         id: graphRow

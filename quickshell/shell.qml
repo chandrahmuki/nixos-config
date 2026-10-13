@@ -51,6 +51,12 @@ ShellRoot {
     WeatherService {
         id: weatherService
     }
+
+    // Network data has its own service; widgets read it as `shell.network`.
+    property alias network: networkService
+    NetworkService {
+        id: networkService
+    }
     property bool fullscreenPillReveal: false
     property bool fullscreenPillOverlayActive: false
     property int fullscreenPillMonitorId: -1
@@ -71,16 +77,6 @@ ShellRoot {
     // layer-shell window. The matching PillWindow consumes this revision.
     property bool networkPanelIpcOpen: false
     property int networkPanelToggleRevision: 0
-    property string networkType: ""
-    property string networkConnectionName: ""
-    property string networkDevice: ""
-    property string networkAddress: "—"
-    property string networkGateway: "—"
-    property string networkDns: "—"
-    property real downloadRate: 0
-    property real uploadRate: 0
-    property var downloadHistory: Array(18).fill(0)
-    property var uploadHistory: Array(18).fill(0)
     readonly property int launcherWidth: 430
     readonly property int launcherHeight: 540
     readonly property var themeProfiles: [
@@ -517,74 +513,6 @@ ShellRoot {
         }
     }
 
-    Process {
-        id: networkStatusProcess
-        command: ["bash", "-c",
-            "nmcli -t -f DEVICE,TYPE,STATE,CONNECTION device | grep -E '^[^:]+:(wifi|ethernet):connected:' | head -n 1"]
-        running: true
-        stdout: SplitParser {
-            onRead: data => {
-                const fields = data.split(":");
-                root.networkDevice = fields[0] || "";
-                root.networkType = fields[1] || "";
-                root.networkConnectionName = fields.slice(3).join(":") || "";
-                if (!networkDetailsProcess.running && root.networkDevice.length > 0)
-                    networkDetailsProcess.running = true;
-            }
-        }
-    }
-
-    Process {
-        id: networkDetailsProcess
-        property int fieldIndex: 0
-        command: ["nmcli", "-g", "IP4.ADDRESS,IP4.GATEWAY,IP4.DNS", "device", "show", root.networkDevice]
-        running: false
-        onRunningChanged: if (running) fieldIndex = 0
-        stdout: SplitParser {
-            onRead: data => {
-                const value = data.trim().replace(/\/\d+$/, "");
-                if (networkDetailsProcess.fieldIndex === 0)
-                    root.networkAddress = value || "—";
-                else if (networkDetailsProcess.fieldIndex === 1)
-                    root.networkGateway = value || "—";
-                else if (networkDetailsProcess.fieldIndex === 2)
-                    root.networkDns = value || "—";
-                networkDetailsProcess.fieldIndex++;
-            }
-        }
-    }
-
-    Process {
-        id: networkTrafficProcess
-        property int fieldIndex: 0
-        property real sampledRx: 0
-        property real lastRx: -1
-        property real lastTx: -1
-        command: ["cat", "/sys/class/net/" + root.networkDevice + "/statistics/rx_bytes",
-            "/sys/class/net/" + root.networkDevice + "/statistics/tx_bytes"]
-        running: false
-        onRunningChanged: if (running) fieldIndex = 0
-        stdout: SplitParser {
-            onRead: data => {
-                const value = Number(data.trim()) || 0;
-                if (networkTrafficProcess.fieldIndex === 0)
-                    networkTrafficProcess.sampledRx = value;
-                else {
-                    const down = networkTrafficProcess.lastRx < 0 ? 0
-                        : Math.max(0, networkTrafficProcess.sampledRx - networkTrafficProcess.lastRx);
-                    const up = networkTrafficProcess.lastTx < 0 ? 0
-                        : Math.max(0, value - networkTrafficProcess.lastTx);
-                    root.downloadRate = down;
-                    root.uploadRate = up;
-                    root.downloadHistory = root.downloadHistory.slice(1).concat([Math.min(1, down / 12500000)]);
-                    root.uploadHistory = root.uploadHistory.slice(1).concat([Math.min(1, up / 2500000)]);
-                    networkTrafficProcess.lastRx = networkTrafficProcess.sampledRx;
-                    networkTrafficProcess.lastTx = value;
-                }
-                networkTrafficProcess.fieldIndex++;
-            }
-        }
-    }
 
     Timer {
         interval: 2000
@@ -593,20 +521,9 @@ ShellRoot {
         onTriggered: {
             if (!volumeStatusProcess.running)
                 volumeStatusProcess.running = true;
-            if (!networkStatusProcess.running)
-                networkStatusProcess.running = true;
         }
     }
 
-    Timer {
-        interval: 1000
-        running: root.networkDevice.length > 0
-        repeat: true
-        onTriggered: {
-            if (!networkTrafficProcess.running)
-                networkTrafficProcess.running = true;
-        }
-    }
 
     Process {
         id: setVolumeProcess
@@ -658,13 +575,6 @@ ShellRoot {
         return monitorName === "HDMI-A-1" ? localSlot + 5 : localSlot;
     }
 
-    function rateLabel(bytesPerSecond: real): string {
-        if (bytesPerSecond >= 1000000)
-            return (bytesPerSecond / 1000000).toFixed(1) + " MB/s";
-        if (bytesPerSecond >= 1000)
-            return (bytesPerSecond / 1000).toFixed(1) + " KB/s";
-        return Math.round(bytesPerSecond) + " B/s";
-    }
 
 
     function selectFallbackPlayer(): void {

@@ -43,9 +43,9 @@ Item {
         anchors.centerIn: parent
         shell: networkControl.shell
         hovered: networkHover.hovered
-        glyph: networkControl.shell.networkType === "ethernet" ? "󰈀"
-            : networkControl.shell.networkType === "wifi" ? "󰖩" : "󰤭"
-        iconColor: networkControl.shell.networkConnectionName.length > 0
+        glyph: networkControl.shell.network.type === "ethernet" ? "󰈀"
+            : networkControl.shell.network.type === "wifi" ? "󰖩" : "󰤭"
+        iconColor: networkControl.shell.network.connectionName.length > 0
             ? networkControl.shell.retroCyan : networkControl.shell.pillMuted
     }
 }
