@@ -27,7 +27,7 @@ Variants {
         visible: notificationWindow.hyprMonitor
             && Hyprland.focusedMonitor
             && notificationWindow.hyprMonitor.id === Hyprland.focusedMonitor.id
-            && notificationStack.shell.activeNotifications.length > 0
+            && notificationStack.shell.notifications.active.length > 0
 
         ListView {
             id: notificationList
@@ -35,7 +35,7 @@ Variants {
             anchors.margins: 12
             clip: true
             spacing: 9
-            model: notificationStack.shell.activeNotifications
+            model: notificationStack.shell.notifications.active
             remove: Transition {
                 ParallelAnimation {
                     NumberAnimation { property: "opacity"; to: 0; duration: 180 }
@@ -47,7 +47,7 @@ Variants {
                 id: notificationCard
                 required property var modelData
                 readonly property var notification: modelData
-                readonly property string link: notificationStack.shell.linkForNotification(notification)
+                readonly property string link: notificationStack.shell.notifications.linkFor(notification)
                 // D-Bus expiration timeouts are already expressed in ms.
                 readonly property int timeout: notification.expireTimeout > 0
                     ? notification.expireTimeout : 7000
@@ -66,7 +66,7 @@ Variants {
                     enabled: notificationCard.link.length > 0
                     cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                     onClicked: {
-                        notificationStack.shell.openNotificationLink(notificationCard.link);
+                        notificationStack.shell.notifications.openLink(notificationCard.link);
                         notification.dismiss();
                     }
                 }
@@ -82,7 +82,7 @@ Variants {
                 Connections {
                     target: notification
                     function onClosed(): void {
-                        notificationStack.shell.forgetNotification(notification.id);
+                        notificationStack.shell.notifications.forget(notification.id);
                     }
                 }
 
@@ -147,7 +147,7 @@ Variants {
                             font.pixelSize: 18
                             font.family: notificationStack.shell.pillFont
                             wrapMode: Text.Wrap
-                            onLinkActivated: link => notificationStack.shell.openNotificationLink(link)
+                            onLinkActivated: link => notificationStack.shell.notifications.openLink(link)
                         }
 
                         Row {
@@ -173,7 +173,7 @@ Variants {
                                     MouseArea {
                                         id: actionArea
                                         anchors.fill: parent
-                                        onClicked: notificationStack.shell.invokeNotificationAction(modelData)
+                                        onClicked: notificationStack.shell.notifications.invokeAction(modelData)
                                     }
                                 }
                             }

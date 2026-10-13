@@ -57,6 +57,13 @@ ShellRoot {
     NetworkService {
         id: networkService
     }
+
+    // Notifications have their own service; widgets read it as `shell.notifications`.
+    property alias notifications: notificationService
+    NotificationService {
+        id: notificationService
+        shell: root
+    }
     property bool fullscreenPillReveal: false
     property bool fullscreenPillOverlayActive: false
     property int fullscreenPillMonitorId: -1
@@ -68,8 +75,6 @@ ShellRoot {
     property int overviewIndex: 0
     property int overviewWorkspaceIndex: 0
     property date now: new Date()
-    property var activeNotifications: []
-    property string defaultBrowserDesktopId: ""
     property real systemVolume: 0
     property bool systemMuted: false
     property string networkPanelMonitorName: ""
@@ -357,29 +362,6 @@ ShellRoot {
         }
     }
 
-    NotificationServer {
-        id: notificationServer
-        // Advertise the capabilities that the shell actually renders. This
-        // prevents clients such as Blueman from falling back to a GTK dialog.
-        bodyMarkupSupported: true
-        bodyHyperlinksSupported: true
-        bodyImagesSupported: true
-        actionsSupported: true
-        imageSupported: true
-
-        onNotification: notification => {
-            notification.tracked = true;
-            root.activeNotifications = [notification].concat(root.activeNotifications.filter(function(item) {
-                return item.id !== notification.id;
-            })).slice(0, 5);
-        }
-    }
-
-    function forgetNotification(id: int): void {
-        activeNotifications = activeNotifications.filter(function(notification) {
-            return notification.id !== id;
-        });
-    }
 
     function focusToplevel(toplevel): void {
         if (!toplevel)
@@ -394,49 +376,6 @@ ShellRoot {
         });
     }
 
-    function focusDefaultBrowser(): void {
-        const browserId = defaultBrowserDesktopId.toLowerCase();
-        const browserStem = browserId.replace(/\.desktop$/, "");
-        let browser = Hyprland.toplevels.values.find(function(toplevel) {
-            const entry = desktopEntryFor(toplevel);
-            if (entry) {
-                const entryId = entry.id.toLowerCase();
-                const entryStem = entryId.replace(/\.desktop$/, "");
-                if (entryId === browserId || entryStem === browserStem)
-                    return true;
-            }
-
-            const ipc = toplevel.lastIpcObject || {};
-            return (ipc.class || "").toLowerCase() === browserStem;
-        });
-        console.log("Focusing browser:", browserId, browser ? browser.address : "not found");
-        focusToplevel(browser);
-    }
-
-    function openNotificationLink(link): void {
-        Qt.openUrlExternally(link);
-        if (/^https?:/i.test(link))
-            browserFocusTimer.restart();
-    }
-
-    function linkForNotification(notification): string {
-        const match = notification.body.match(/href\s*=\s*["']([^"']+)["']/i);
-        return match ? match[1] : "";
-    }
-
-    function invokeNotificationAction(action): void {
-        action.invoke();
-        // Most web notifications call their primary action "open". Give the
-        // browser a moment to handle it, then explicitly restore its focus.
-        if (action.identifier === "open" || action.identifier === "default")
-            browserFocusTimer.restart();
-    }
-
-    Timer {
-        id: browserFocusTimer
-        interval: 180
-        onTriggered: root.focusDefaultBrowser()
-    }
 
     function toggleNetworkApp(): void {
         if (!Hyprland.focusedMonitor)
@@ -489,15 +428,6 @@ ShellRoot {
         }
     }
 
-    Process {
-        // Keep link focus tied to the user's configured browser, not a
-        // hard-coded application class.
-        command: ["xdg-settings", "get", "default-web-browser"]
-        running: true
-        stdout: SplitParser {
-            onRead: data => root.defaultBrowserDesktopId = data.trim().toLowerCase()
-        }
-    }
 
     Process {
         id: volumeStatusProcess
