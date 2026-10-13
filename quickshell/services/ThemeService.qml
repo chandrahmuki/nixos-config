@@ -74,6 +74,10 @@ Item {
     // background. The "muted" greys of the profiles are too faint on several themes.
     readonly property color pillSecondary: Qt.tint(pillBackground,
         Qt.rgba(pillForeground.r, pillForeground.g, pillForeground.b, 0.65))
+    // The accent at 55% and 22% over the pill background: labels and frames, then dotted
+    // lines and unlit gauge blocks, of the terminal-style panels.
+    readonly property color panelDim: Qt.tint(pillBackground, Qt.rgba(retroCyan.r, retroCyan.g, retroCyan.b, 0.55))
+    readonly property color panelFaint: Qt.tint(pillBackground, Qt.rgba(retroCyan.r, retroCyan.g, retroCyan.b, 0.22))
     // Shared micro-console language for expandable pill panels.  Keep the
     // accents deliberately sparse so future panels read as one system.
     property color panelSurface: generatedColor("surface_container_low", activeTheme.panelSurface)
@@ -115,7 +119,7 @@ Item {
     Behavior on retroAmber { ColorAnimation { duration: 900; easing.type: Easing.OutCubic } }
     Behavior on retroCyan { ColorAnimation { duration: 900; easing.type: Easing.OutCubic } }
     Behavior on retroCoral { ColorAnimation { duration: 900; easing.type: Easing.OutCubic } }
-    readonly property string pillFont: "Cozette"
+    readonly property string pillFont: "Pixelify Sans"
 
     Process {
         id: applyProcess

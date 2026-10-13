@@ -1,22 +1,10 @@
 import QtQuick
 import QtQuick.Layouts
 
-Rectangle {
+CrtPanel {
     id: clockPanel
-    required property var shell
-    property bool expanded: false
-
-    visible: opacity > 0
-    y: 0
-    opacity: expanded ? 1 : 0
-    scale: expanded ? 1 : 0.96
-    transformOrigin: Item.Center
-    radius: 14
-    clip: true
-    color: shell.theme.pillBackground
-
-    Behavior on opacity { NumberAnimation { duration: 180 } }
-    Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+    title: "LOCAL CHRONO"
+    status: timeZoneLabel()
 
     function weekdayLabel(date: date): string {
         return ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"][date.getDay()];
@@ -49,186 +37,129 @@ Rectangle {
         return "LOCAL / UTC" + (offset >= 0 ? "+" : "") + offset;
     }
 
-    function openPanel(): void {
-        closeTimer.stop();
-        expanded = true;
-    }
-
-    function closePanel(): void {
-        closeTimer.stop();
-        expanded = false;
-    }
-
-    function scheduleClose(): void {
-        closeTimer.restart();
-    }
-
-    Timer {
-        id: closeTimer
-        interval: 300
-        repeat: false
-        onTriggered: {
-            if (!panelHover.hovered)
-                clockPanel.expanded = false;
-        }
-    }
-
-    HoverHandler {
-        id: panelHover
-        enabled: clockPanel.expanded
-        onHoveredChanged: {
-            if (hovered)
-                closeTimer.stop();
-            else
-                clockPanel.scheduleClose();
-        }
-    }
-
-    ColumnLayout {
+    RowLayout {
         anchors.fill: parent
-        anchors.margins: 10
-        spacing: 5
+        spacing: 16
 
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 15
+        // Time, seconds, and date.
+        ColumnLayout {
+            Layout.preferredWidth: 168
+            Layout.fillHeight: true
             spacing: 6
-            Rectangle {
-                width: 5; height: 5; radius: 3
-                color: clockPanel.shell.theme.retroCyan
-                SequentialAnimation on opacity {
-                    running: clockPanel.expanded
-                    loops: Animation.Infinite
-                    NumberAnimation { to: 0.35; duration: 500 }
-                    NumberAnimation { to: 1; duration: 500 }
+
+            Item { Layout.fillHeight: true }
+            Row {
+                spacing: 8
+                Text {
+                    id: timeText
+                    text: Qt.formatTime(clockPanel.shell.now, "HH:mm")
+                    color: clockPanel.shell.theme.retroCyan
+                    font.family: clockPanel.shell.theme.pillFont
+                    font.pixelSize: 46
+                    font.bold: true
+                }
+                Text {
+                    anchors.baseline: timeText.baseline
+                    text: Qt.formatTime(clockPanel.shell.now, "ss")
+                    color: clockPanel.shell.theme.panelDim
+                    font.family: clockPanel.shell.theme.pillFont
+                    font.pixelSize: 17
+                    font.bold: true
                 }
             }
             Text {
-                text: "LOCAL CHRONO"
-                color: clockPanel.shell.theme.pillForeground
+                text: clockPanel.weekdayLabel(clockPanel.shell.now) + " "
+                    + clockPanel.dayMonthLabel(clockPanel.shell.now) + " " + clockPanel.shell.now.getFullYear()
+                color: clockPanel.shell.theme.panelDim
                 font.family: clockPanel.shell.theme.pillFont
                 font.pixelSize: 12
                 font.bold: true
+                font.letterSpacing: 1.5
             }
-            Item { Layout.fillWidth: true }
-            Text {
-                text: clockPanel.timeZoneLabel()
-                color: clockPanel.shell.theme.retroCyan
-                font.family: clockPanel.shell.theme.pillFont
-                font.pixelSize: 9
-            }
+            Item { Layout.fillHeight: true }
         }
 
-        Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: clockPanel.shell.theme.panelLine }
+        // Analog clock.
+        Canvas {
+            id: analogClock
+            Layout.preferredWidth: 100
+            Layout.preferredHeight: 100
+            Layout.alignment: Qt.AlignVCenter
+            onPaint: {
+                const context = getContext("2d");
+                const center = width / 2;
+                const now = clockPanel.shell.now;
+                const theme = clockPanel.shell.theme;
+                context.reset();
+                context.strokeStyle = theme.panelDim;
+                context.lineWidth = 2;
+                context.beginPath();
+                context.arc(center, center, 44, 0, Math.PI * 2);
+                context.stroke();
+                context.strokeStyle = theme.panelDim;
+                for (let index = 0; index < 12; index++) {
+                    const angle = index * Math.PI / 6 - Math.PI / 2;
+                    const inner = index % 3 === 0 ? 33 : 37;
+                    context.beginPath();
+                    context.moveTo(center + Math.cos(angle) * inner, center + Math.sin(angle) * inner);
+                    context.lineTo(center + Math.cos(angle) * 41, center + Math.sin(angle) * 41);
+                    context.stroke();
+                }
+                function hand(angle, length, lineWidth, color) {
+                    context.strokeStyle = color;
+                    context.lineWidth = lineWidth;
+                    context.beginPath();
+                    context.moveTo(center, center);
+                    context.lineTo(center + Math.cos(angle) * length, center + Math.sin(angle) * length);
+                    context.stroke();
+                }
+                hand((now.getHours() % 12 + now.getMinutes() / 60) * Math.PI / 6 - Math.PI / 2, 22, 4, theme.retroCyan);
+                hand((now.getMinutes() + now.getSeconds() / 60) * Math.PI / 30 - Math.PI / 2, 33, 3, theme.retroCyan);
+                hand(now.getSeconds() * Math.PI / 30 - Math.PI / 2, 38, 1, theme.panelDim);
+                context.fillStyle = theme.retroCyan;
+                context.fillRect(center - 3, center - 3, 6, 6);
+            }
+            Connections {
+                target: clockPanel.shell
+                function onNowChanged(): void { analogClock.requestPaint(); }
+            }
+            Component.onCompleted: requestPaint()
+        }
 
-        RowLayout {
+        // Week, day of the year and zone.
+        ColumnLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            spacing: 10
+            spacing: 0
 
-            Column {
-                Layout.preferredWidth: 148
-                Layout.fillHeight: true
-                spacing: 0
-                Text {
-                    width: parent.width
-                    text: Qt.formatTime(clockPanel.shell.now, "HH:mm")
-                    color: clockPanel.shell.theme.pillForeground
-                    font.family: clockPanel.shell.theme.pillFont
-                    font.pixelSize: 33
-                    font.bold: true
-                }
-                Row {
-                    spacing: 5
-                    Text {
-                        text: Qt.formatTime(clockPanel.shell.now, "ss") + " SEC"
-                        color: clockPanel.shell.theme.retroCoral
-                        font.family: clockPanel.shell.theme.pillFont
-                        font.pixelSize: 10
-                        font.bold: true
-                    }
-                    Text {
-                        text: clockPanel.weekdayLabel(clockPanel.shell.now) + " / " + clockPanel.dayMonthLabel(clockPanel.shell.now)
-                        color: clockPanel.shell.theme.retroAmber
-                        font.family: clockPanel.shell.theme.pillFont
-                        font.pixelSize: 10
-                    }
-                }
-                Text {
-                    text: String(clockPanel.shell.now.getFullYear())
-                    color: clockPanel.shell.theme.pillMuted
-                    font.family: clockPanel.shell.theme.pillFont
-                    font.pixelSize: 10
-                }
-            }
-
-            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: clockPanel.shell.theme.panelLine }
-
-            Canvas {
-                id: analogClock
-                Layout.preferredWidth: 78
-                Layout.preferredHeight: 78
-                Layout.alignment: Qt.AlignVCenter
-                onPaint: {
-                    const context = getContext("2d");
-                    const center = width / 2;
-                    const now = clockPanel.shell.now;
-                    context.reset();
-                    context.strokeStyle = clockPanel.shell.theme.panelLine;
-                    context.lineWidth = 1;
-                    context.beginPath();
-                    context.arc(center, center, 34, 0, Math.PI * 2);
-                    context.stroke();
-                    for (let index = 0; index < 12; index++) {
-                        const angle = index * Math.PI / 6 - Math.PI / 2;
-                        const inner = index % 3 === 0 ? 25 : 28;
-                        context.beginPath();
-                        context.moveTo(center + Math.cos(angle) * inner, center + Math.sin(angle) * inner);
-                        context.lineTo(center + Math.cos(angle) * 31, center + Math.sin(angle) * 31);
-                        context.stroke();
-                    }
-                    function hand(angle, length, lineWidth, color) {
-                        context.strokeStyle = color;
-                        context.lineWidth = lineWidth;
-                        context.beginPath();
-                        context.moveTo(center, center);
-                        context.lineTo(center + Math.cos(angle) * length, center + Math.sin(angle) * length);
-                        context.stroke();
-                    }
-                    hand((now.getHours() % 12 + now.getMinutes() / 60) * Math.PI / 6 - Math.PI / 2, 17, 3, clockPanel.shell.theme.retroAmber);
-                    hand((now.getMinutes() + now.getSeconds() / 60) * Math.PI / 30 - Math.PI / 2, 25, 2, clockPanel.shell.theme.pillForeground);
-                    hand(now.getSeconds() * Math.PI / 30 - Math.PI / 2, 29, 1, clockPanel.shell.theme.retroCoral);
-                    context.fillStyle = clockPanel.shell.theme.retroCyan;
-                    context.beginPath();
-                    context.arc(center, center, 2.5, 0, Math.PI * 2);
-                    context.fill();
-                }
-                Connections {
-                    target: clockPanel.shell
-                    function onNowChanged(): void { analogClock.requestPaint(); }
-                }
-                Component.onCompleted: requestPaint()
-            }
-
-            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: clockPanel.shell.theme.panelLine }
-
-            Column {
+            CrtRow {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                spacing: 8
-                Repeater {
-                    model: [
-                        ["WEEK", String(clockPanel.isoWeek(clockPanel.shell.now)).padStart(2, "0")],
-                        ["DAY", clockPanel.dayOfYear(clockPanel.shell.now) + " / " + clockPanel.daysInYear(clockPanel.shell.now)],
-                        ["ZONE", clockPanel.timeZoneLabel()]
-                    ]
-                    delegate: Row {
-                        required property var modelData
-                        width: parent.width
-                        Text { width: 42; text: modelData[0]; color: clockPanel.shell.theme.retroCyan; font.family: clockPanel.shell.theme.pillFont; font.pixelSize: 9 }
-                        Text { text: modelData[1]; color: clockPanel.shell.theme.pillForeground; font.family: clockPanel.shell.theme.pillFont; font.pixelSize: 11; font.bold: true }
-                    }
-                }
+                shell: clockPanel.shell
+                label: "WEEK"
+                value: String(clockPanel.isoWeek(clockPanel.shell.now)).padStart(2, "0")
+            }
+            CrtRow {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                shell: clockPanel.shell
+                label: "DAY"
+                value: clockPanel.dayOfYear(clockPanel.shell.now) + "/" + clockPanel.daysInYear(clockPanel.shell.now)
+            }
+            CrtGauge {
+                shell: clockPanel.shell
+                count: 20
+                lit: Math.round(clockPanel.dayOfYear(clockPanel.shell.now)
+                    / clockPanel.daysInYear(clockPanel.shell.now) * 20)
+                blockWidth: 7
+                blockHeight: 8
+            }
+            CrtRow {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                shell: clockPanel.shell
+                label: "ZONE"
+                value: clockPanel.timeZoneLabel().replace("LOCAL / ", "")
             }
         }
     }

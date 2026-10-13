@@ -30,7 +30,7 @@ Variants {
         // size — cheap, and never touches the compositor's own animation.
         // exclusiveZone (not this) is what actually reserves bar space, so
         // this doesn't push other windows down.
-        implicitHeight: 182
+        implicitHeight: 214
         exclusionMode: ExclusionMode.Normal
         exclusiveZone: 74
         WlrLayershell.layer: revealTarget
@@ -59,8 +59,8 @@ Variants {
             readonly property bool detailPanelExpanded: musicPanel.expanded || weatherPanel.expanded
                 || clockPanel.expanded || networkPanel.expanded || audioPanel.expanded
             width: detailPanelExpanded ? expandedWidth : compactWidth
-            height: detailPanelExpanded ? 164 : 60
-            radius: detailPanelExpanded ? 14 : 18
+            height: detailPanelExpanded ? 186 : 60
+            radius: detailPanelExpanded ? 6 : 18
             x: (parent.width - width) / 2
             y: pillWindow.strictFullscreen
                 && !pillWindow.revealTarget ? -height : 7
@@ -234,7 +234,7 @@ Variants {
                 id: musicPanel
                 shell: pillRoot.shell
                 width: islandShape.expandedWidth
-                height: 164
+                height: 186
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
@@ -242,7 +242,7 @@ Variants {
                 id: weatherPanel
                 shell: pillRoot.shell
                 width: islandShape.expandedWidth
-                height: 164
+                height: 186
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
@@ -250,7 +250,7 @@ Variants {
                 id: clockPanel
                 shell: pillRoot.shell
                 width: islandShape.expandedWidth
-                height: 164
+                height: 186
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
@@ -258,7 +258,7 @@ Variants {
                 id: networkPanel
                 shell: pillRoot.shell
                 width: islandShape.expandedWidth
-                height: 164
+                height: 186
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
@@ -266,7 +266,7 @@ Variants {
                 id: audioPanel
                 shell: pillRoot.shell
                 width: islandShape.expandedWidth
-                height: 164
+                height: 186
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 

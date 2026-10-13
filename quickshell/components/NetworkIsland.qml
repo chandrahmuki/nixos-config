@@ -1,33 +1,14 @@
 import QtQuick
 import QtQuick.Layouts
 
-Rectangle {
+CrtPanel {
     id: networkPanel
-    required property var shell
-    property bool expanded: false
     readonly property bool online: shell.network.connectionName.length > 0
 
-    visible: opacity > 0
-    y: 0
-    opacity: expanded ? 1 : 0
-    scale: expanded ? 1 : 0.96
-    transformOrigin: Item.Center
-    radius: 14
-    clip: true
-    color: shell.theme.pillBackground
-
-    Behavior on opacity { NumberAnimation { duration: 180 } }
-    Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
-
-    function openPanel(): void {
-        closeTimer.stop();
-        expanded = true;
-    }
-
-    function closePanel(): void {
-        closeTimer.stop();
-        expanded = false;
-    }
+    title: shell.network.type === "wifi" ? "WI-FI / LINKED"
+        : shell.network.type === "ethernet" ? "ETHERNET / LINKED" : "NETWORK / OFFLINE"
+    status: online ? "LIVE LINK" : "NO CARRIER"
+    statusColor: online ? shell.theme.panelDim : shell.theme.retroCoral
 
     function togglePanel(): void {
         if (expanded)
@@ -36,177 +17,135 @@ Rectangle {
             openPanel();
     }
 
-    function scheduleClose(): void {
-        closeTimer.restart();
-    }
-
-    Timer {
-        id: closeTimer
-        interval: 300
-        repeat: false
-        onTriggered: {
-            if (!panelHover.hovered)
-                networkPanel.expanded = false;
-        }
-    }
-
-    HoverHandler {
-        id: panelHover
-        enabled: networkPanel.expanded
-        onHoveredChanged: {
-            if (hovered)
-                closeTimer.stop();
-            else
-                networkPanel.scheduleClose();
-        }
-    }
-
-    ColumnLayout {
+    // Three columns placed explicitly: the connection, the listing, the history.
+    Item {
         anchors.fill: parent
-        anchors.margins: 10
-        spacing: 5
 
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 15
-            spacing: 6
-            Rectangle {
-                width: 5; height: 5; radius: 3
-                color: networkPanel.online ? networkPanel.shell.theme.retroCyan : networkPanel.shell.theme.retroCoral
-                SequentialAnimation on opacity {
-                    running: networkPanel.expanded && networkPanel.online
-                    loops: Animation.Infinite
-                    NumberAnimation { to: 0.35; duration: 600 }
-                    NumberAnimation { to: 1; duration: 600 }
-                }
+        ColumnLayout {
+            id: connection
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: 128
+            spacing: 5
+
+            Item { Layout.fillHeight: true }
+            PixelIcon {
+                size: 48
+                name: networkPanel.shell.network.type === "ethernet" ? "ethernet"
+                    : networkPanel.shell.network.type === "wifi" ? "wifi" : "wifi-off"
+                color: networkPanel.online
+                    ? networkPanel.shell.theme.retroCyan : networkPanel.shell.theme.retroCoral
             }
             Text {
-                text: networkPanel.shell.network.type === "wifi" ? "WI-FI / LINKED"
-                    : networkPanel.shell.network.type === "ethernet" ? "ETHERNET / LINKED" : "NETWORK / OFFLINE"
-                color: networkPanel.shell.theme.pillForeground
+                Layout.fillWidth: true
+                text: networkPanel.online ? networkPanel.shell.network.connectionName : "DISCONNECTED"
+                elide: Text.ElideRight
+                color: networkPanel.shell.theme.retroCyan
                 font.family: networkPanel.shell.theme.pillFont
-                font.pixelSize: 12
+                font.pixelSize: 13
                 font.bold: true
             }
-            Item { Layout.fillWidth: true }
             Text {
-                text: networkPanel.online ? "LIVE LINK" : "NO CARRIER"
-                color: networkPanel.online ? networkPanel.shell.theme.retroCyan : networkPanel.shell.theme.retroCoral
+                text: networkPanel.shell.network.device || "NO DEVICE"
+                color: networkPanel.shell.theme.panelDim
                 font.family: networkPanel.shell.theme.pillFont
-                font.pixelSize: 9
+                font.pixelSize: 11
+                font.bold: true
+                font.letterSpacing: 1
+            }
+            Item { Layout.fillHeight: true }
+        }
+
+        ColumnLayout {
+            id: listing
+            anchors.left: connection.right
+            anchors.leftMargin: 16
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: 158
+            spacing: 0
+
+            Repeater {
+                model: [
+                    ["DOWN", networkPanel.shell.network.rateLabel(networkPanel.shell.network.downloadRate), 13],
+                    ["UP", networkPanel.shell.network.rateLabel(networkPanel.shell.network.uploadRate), 13],
+                    ["ADDR", networkPanel.shell.network.address, 12],
+                    ["GW", networkPanel.shell.network.gateway, 12]
+                ]
+                delegate: CrtRow {
+                    required property var modelData
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    shell: networkPanel.shell
+                    label: modelData[0]
+                    value: modelData[1]
+                    valueSize: modelData[2]
+                }
             }
         }
 
-        Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: networkPanel.shell.theme.panelLine }
+        // Receive and transmit history: 18 samples, 3 px bars every 5 px.
+        Item {
+            anchors.left: listing.right
+            anchors.leftMargin: 16
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            clip: true
 
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            spacing: 10
-
-            Column {
-                Layout.preferredWidth: 135
-                Layout.fillHeight: true
-                spacing: 3
-                Text {
-                    text: networkPanel.shell.network.type === "ethernet" ? "󰈀"
-                        : networkPanel.shell.network.type === "wifi" ? "󰖩" : "󰤭"
-                    color: networkPanel.online ? networkPanel.shell.theme.retroAmber : networkPanel.shell.theme.retroCoral
-                    font.family: "JetBrainsMono Nerd Font"
-                    font.pixelSize: 28
-                }
-                Text {
-                    width: parent.width
-                    text: networkPanel.online ? networkPanel.shell.network.connectionName : "DISCONNECTED"
-                    elide: Text.ElideRight
-                    color: networkPanel.shell.theme.pillForeground
-                    font.family: networkPanel.shell.theme.pillFont
-                    font.pixelSize: 12
-                    font.bold: true
-                }
-                Text {
-                    text: networkPanel.shell.network.device || "NO DEVICE"
-                    color: networkPanel.shell.theme.retroAmber
-                    font.family: networkPanel.shell.theme.pillFont
-                    font.pixelSize: 9
-                }
+            Rectangle {
+                width: 2
+                height: parent.height
+                color: networkPanel.shell.theme.panelFaint
             }
 
-            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: networkPanel.shell.theme.panelLine }
+            ColumnLayout {
+                anchors.left: parent.left
+                anchors.leftMargin: 12
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 8
 
-            Column {
-                Layout.preferredWidth: 102
-                Layout.fillHeight: true
-                spacing: 6
-                Repeater {
-                    model: [
-                        ["↓ DOWN", networkPanel.shell.network.rateLabel(networkPanel.shell.network.downloadRate), networkPanel.shell.theme.retroCyan],
-                        ["↑ UP", networkPanel.shell.network.rateLabel(networkPanel.shell.network.uploadRate), networkPanel.shell.theme.retroCoral]
-                    ]
-                    delegate: Column {
-                        required property var modelData
-                        width: parent.width
-                        spacing: 1
-                        Text { text: modelData[0]; color: modelData[2]; font.family: networkPanel.shell.theme.pillFont; font.pixelSize: 9 }
-                        Text { text: modelData[1]; color: networkPanel.shell.theme.pillForeground; font.family: networkPanel.shell.theme.pillFont; font.pixelSize: 12; font.bold: true }
-                    }
-                }
-            }
-
-            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: networkPanel.shell.theme.panelLine }
-
-            Column {
-                Layout.preferredWidth: 74
-                Layout.fillHeight: true
-                spacing: 7
-                Repeater {
-                    model: [
-                        ["ADDR", networkPanel.shell.network.address],
-                        ["GW", networkPanel.shell.network.gateway]
-                    ]
-                    delegate: Column {
-                        required property var modelData
-                        width: parent.width
-                        spacing: 1
-                        Text { text: modelData[0]; color: networkPanel.shell.theme.retroAmber; font.family: networkPanel.shell.theme.pillFont; font.pixelSize: 8 }
-                        Text { width: parent.width; text: modelData[1]; elide: Text.ElideRight; color: networkPanel.shell.theme.pillForeground; font.family: networkPanel.shell.theme.pillFont; font.pixelSize: 9 }
-                    }
-                }
-            }
-
-            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: networkPanel.shell.theme.panelLine }
-
-            Column {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                spacing: 7
                 Repeater {
                     model: [
                         ["RX", networkPanel.shell.network.downloadHistory, networkPanel.shell.theme.retroCyan],
-                        ["TX", networkPanel.shell.network.uploadHistory, networkPanel.shell.theme.retroCoral]
+                        ["TX", networkPanel.shell.network.uploadHistory, networkPanel.shell.theme.panelDim]
                     ]
-                    delegate: Column {
+                    delegate: ColumnLayout {
                         id: graphRow
                         required property var modelData
                         readonly property var graphSpec: modelData
                         readonly property color graphColor: graphSpec[2]
-                        width: parent.width
-                        spacing: 2
-                        Text { text: modelData[0]; color: graphRow.graphColor; font.family: networkPanel.shell.theme.pillFont; font.pixelSize: 8 }
+                        Layout.fillWidth: true
+                        spacing: 3
+
+                        Text {
+                            text: graphRow.graphSpec[0]
+                            color: graphRow.graphColor
+                            font.family: networkPanel.shell.theme.pillFont
+                            font.pixelSize: 11
+                            font.bold: true
+                            font.letterSpacing: 1.5
+                        }
                         Row {
-                            width: parent.width
-                            height: 20
+                            Layout.preferredHeight: 24
                             spacing: 2
                             Repeater {
                                 model: graphRow.graphSpec[1]
-                                delegate: Rectangle {
+                                delegate: Item {
                                     required property var modelData
                                     readonly property real level: Number(modelData) || 0
                                     width: 3
-                                    height: 3 + level * 17
-                                    anchors.bottom: parent.bottom
-                                    radius: 1
-                                    color: networkPanel.online ? graphRow.graphColor : networkPanel.shell.theme.panelLine
+                                    height: 24
+
+                                    Rectangle {
+                                        anchors.bottom: parent.bottom
+                                        width: parent.width
+                                        height: 3 + parent.level * 21
+                                        color: networkPanel.online
+                                            ? graphRow.graphColor : networkPanel.shell.theme.panelFaint
+                                    }
                                 }
                             }
                         }

@@ -103,7 +103,7 @@ ShellRoot {
         return device.connected && (device.icon.indexOf("audio") >= 0
             || device.icon.indexOf("headset") >= 0);
     }) || null
-    readonly property int musicPanelWidth: 470
+    readonly property int musicPanelWidth: 492
     readonly property var overviewToplevels: selectedOverviewWorkspace
         ? Hyprland.toplevels.values.filter(function(toplevel) {
             return toplevel.workspace === selectedOverviewWorkspace;

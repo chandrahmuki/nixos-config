@@ -1,239 +1,117 @@
 import QtQuick
 import QtQuick.Layouts
 
-Rectangle {
+CrtPanel {
     id: weatherPanel
-    required property var shell
-    property bool expanded: false
+    title: shell.weather.city
+    status: "UPDATED " + shell.weather.updated
+    statusColor: shell.weather.online ? shell.theme.panelDim : shell.theme.retroCoral
 
-    visible: opacity > 0
-    y: 0
-    opacity: expanded ? 1 : 0
-    scale: expanded ? 1 : 0.96
-    transformOrigin: Item.Center
-    radius: 14
-    clip: true
-    color: shell.theme.pillBackground
-
-    Behavior on opacity { NumberAnimation { duration: 180 } }
-    Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
-
-    function openPanel(): void {
-        closeTimer.stop();
-        expanded = true;
-    }
-
-    function closePanel(): void {
-        closeTimer.stop();
-        expanded = false;
-    }
-
-    function scheduleClose(): void {
-        closeTimer.restart();
-    }
-
-    Timer {
-        id: closeTimer
-        interval: 300
-        repeat: false
-        onTriggered: {
-            if (!panelHover.hovered)
-                weatherPanel.expanded = false;
-        }
-    }
-
-    HoverHandler {
-        id: panelHover
-        enabled: weatherPanel.expanded
-        onHoveredChanged: {
-            if (hovered)
-                closeTimer.stop();
-            else
-                weatherPanel.scheduleClose();
-        }
-    }
-
-    ColumnLayout {
+    RowLayout {
         anchors.fill: parent
-        anchors.margins: 10
-        spacing: 5
+        spacing: 16
 
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 15
-            spacing: 6
+        // Current conditions.
+        ColumnLayout {
+            Layout.preferredWidth: 105
+            Layout.fillHeight: true
+            spacing: 4
 
-            Rectangle {
-                id: statusDot
-                width: 5
-                height: 5
-                radius: 3
+            Item { Layout.fillHeight: true }
+            PixelIcon {
+                size: 48
+                name: weatherPanel.shell.weather.iconName(weatherPanel.shell.weather.code)
                 color: weatherPanel.shell.weather.online
-                    ? weatherPanel.shell.theme.retroCyan : weatherPanel.shell.theme.retroCoral
-                SequentialAnimation on opacity {
-                    running: weatherPanel.expanded && weatherPanel.shell.weather.online
-                    loops: Animation.Infinite
-                    NumberAnimation { to: 0.35; duration: 800; easing.type: Easing.InOutSine }
-                    NumberAnimation { to: 1; duration: 800; easing.type: Easing.InOutSine }
-                }
+                    ? weatherPanel.shell.theme.retroCyan : weatherPanel.shell.theme.panelDim
             }
             Text {
-                text: weatherPanel.shell.weather.city
-                color: weatherPanel.shell.theme.pillForeground
-                font.family: weatherPanel.shell.theme.pillFont
-                font.pixelSize: 12
-                font.bold: true
-            }
-            Item { Layout.fillWidth: true }
-            Text {
-                text: "UPDATED " + weatherPanel.shell.weather.updated
+                text: weatherPanel.shell.weather.temperature
                 color: weatherPanel.shell.theme.retroCyan
                 font.family: weatherPanel.shell.theme.pillFont
-                font.pixelSize: 9
+                font.pixelSize: 38
+                font.bold: true
             }
+            Text {
+                Layout.fillWidth: true
+                text: weatherPanel.shell.weather.online
+                    ? weatherPanel.shell.weather.condition(weatherPanel.shell.weather.code) : "OFFLINE"
+                elide: Text.ElideRight
+                color: weatherPanel.shell.weather.online
+                    ? weatherPanel.shell.theme.panelDim : weatherPanel.shell.theme.retroCoral
+                font.family: weatherPanel.shell.theme.pillFont
+                font.pixelSize: 11
+                font.bold: true
+                font.letterSpacing: 2
+            }
+            Item { Layout.fillHeight: true }
         }
 
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 1
-            color: weatherPanel.shell.theme.panelLine
-        }
-
-        RowLayout {
+        // The four readings, as a listing.
+        ColumnLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            spacing: 10
+            spacing: 0
 
-            // HERO: the only large visual, deliberately left-aligned like a
-            // small hardware display rather than a stretched dashboard card.
-            Column {
-                Layout.preferredWidth: 104
-                Layout.fillHeight: true
-                spacing: 1
-
-                Text {
-                    id: heroIcon
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: weatherPanel.shell.weather.icon(weatherPanel.shell.weather.code)
-                    color: weatherPanel.shell.theme.retroAmber
-                    font.family: "JetBrainsMono Nerd Font"
-                    font.pixelSize: 28
-                    rotation: 0
-                    SequentialAnimation on rotation {
-                        running: weatherPanel.expanded && weatherPanel.shell.weather.online
-                            && weatherPanel.shell.weather.code === 113
-                        loops: Animation.Infinite
-                        PauseAnimation { duration: 2600 }
-                        NumberAnimation { to: 4; duration: 230; easing.type: Easing.InOutSine }
-                        NumberAnimation { to: -3; duration: 360; easing.type: Easing.InOutSine }
-                        NumberAnimation { to: 0; duration: 230; easing.type: Easing.InOutSine }
-                    }
-                }
-                Text {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: weatherPanel.shell.weather.temperature
-                    color: weatherPanel.shell.theme.pillForeground
-                    font.family: weatherPanel.shell.theme.pillFont
-                    font.pixelSize: 27
-                    font.bold: true
-                }
-                Text {
-                    width: parent.width
-                    text: weatherPanel.shell.weather.online
-                        ? weatherPanel.shell.weather.condition(weatherPanel.shell.weather.code) : "OFFLINE"
-                    horizontalAlignment: Text.AlignHCenter
-                    elide: Text.ElideRight
-                    color: weatherPanel.shell.weather.online
-                        ? weatherPanel.shell.theme.retroAmber : weatherPanel.shell.theme.retroCoral
-                    font.family: weatherPanel.shell.theme.pillFont
-                    font.pixelSize: 9
+            Repeater {
+                model: [
+                    ["FEELS", weatherPanel.shell.weather.feelsLike],
+                    ["HUMID", weatherPanel.shell.weather.humidity],
+                    ["WIND", weatherPanel.shell.weather.wind],
+                    ["RAIN", weatherPanel.shell.weather.rain]
+                ]
+                delegate: CrtRow {
+                    required property var modelData
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    shell: weatherPanel.shell
+                    label: modelData[0]
+                    value: modelData[1]
                 }
             }
+        }
 
-            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: weatherPanel.shell.theme.panelLine }
+        // Next three days, each column separated by a dotted rule.
+        Row {
+            Layout.fillHeight: true
+            spacing: 0
 
-            // METRICS: a compact vertical readout, not another card grid.
-            Column {
-                Layout.preferredWidth: 126
-                Layout.fillHeight: true
-                spacing: 0
+            Repeater {
+                model: weatherPanel.shell.weather.forecast
+                delegate: Item {
+                    required property var modelData
+                    width: 48
+                    height: parent.height
 
-                Repeater {
-                    model: [
-                        ["FEELS", weatherPanel.shell.weather.feelsLike],
-                        ["HUMID", weatherPanel.shell.weather.humidity],
-                        ["WIND", weatherPanel.shell.weather.wind],
-                        ["RAIN", weatherPanel.shell.weather.rain]
-                    ]
-                    delegate: Row {
-                        required property var modelData
-                        width: parent.width
-                        height: 22
+                    Rectangle {
+                        width: 2
+                        height: parent.height
+                        color: weatherPanel.shell.theme.panelFaint
+                    }
+                    Column {
+                        anchors.centerIn: parent
+                        spacing: 6
                         Text {
-                            width: 45
-                            text: modelData[0]
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: modelData.label
+                            color: weatherPanel.shell.theme.panelDim
+                            font.family: weatherPanel.shell.theme.pillFont
+                            font.pixelSize: 11
+                            font.bold: true
+                            font.letterSpacing: 1.5
+                        }
+                        PixelIcon {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            size: 16
+                            name: weatherPanel.shell.weather.iconName(modelData.code)
+                            color: weatherPanel.shell.theme.retroCyan
+                        }
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: modelData.temperature
                             color: weatherPanel.shell.theme.retroCyan
                             font.family: weatherPanel.shell.theme.pillFont
-                            font.pixelSize: 9
-                        }
-                        Text {
-                            width: parent.width - 45
-                            text: modelData[1]
-                            elide: Text.ElideRight
-                            color: weatherPanel.shell.theme.pillForeground
-                            font.family: weatherPanel.shell.theme.pillFont
-                            font.pixelSize: 10
+                            font.pixelSize: 15
                             font.bold: true
-                        }
-                    }
-                }
-            }
-
-            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: weatherPanel.shell.theme.panelLine }
-
-            // FORECAST: three bounded mini displays use coral only as a
-            // temperature/status accent, leaving the rest quiet and legible.
-            Row {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                spacing: 6
-                Repeater {
-                    model: weatherPanel.shell.weather.forecast
-                    delegate: Rectangle {
-                        required property var modelData
-                        required property int index
-                        width: 55
-                        height: parent.height
-                        radius: 3
-                        color: weatherPanel.shell.theme.panelSurface
-                        border.width: 1
-                        border.color: weatherPanel.shell.theme.panelLine
-
-                        Column {
-                            anchors.centerIn: parent
-                            spacing: 3
-                            Text {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                text: modelData.label
-                                color: weatherPanel.shell.theme.retroCyan
-                                font.family: weatherPanel.shell.theme.pillFont
-                                font.pixelSize: 9
-                            }
-                            Text {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                text: weatherPanel.shell.weather.icon(modelData.code)
-                                color: index === 1 ? weatherPanel.shell.theme.retroCoral : weatherPanel.shell.theme.retroAmber
-                                font.family: "JetBrainsMono Nerd Font"
-                                font.pixelSize: 17
-                            }
-                            Text {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                text: modelData.temperature
-                                color: weatherPanel.shell.theme.pillForeground
-                                font.family: weatherPanel.shell.theme.pillFont
-                                font.pixelSize: 11
-                                font.bold: true
-                            }
                         }
                     }
                 }
