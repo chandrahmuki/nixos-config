@@ -41,9 +41,9 @@ Variants {
                 height: Math.min(560, parent.height - 80)
                 anchors.centerIn: parent
                 radius: 12
-                color: overview.shell.surface
+                color: overview.shell.theme.surface
                 border.width: 1
-                border.color: overview.shell.accent
+                border.color: overview.shell.theme.accent
 
                 Item {
                     id: overviewKeyboard
@@ -68,7 +68,7 @@ Variants {
                     Text {
                         Layout.fillWidth: true
                         text: "Workspaces — " + Hyprland.monitors.values.length + " écrans"
-                        color: overview.shell.foreground
+                        color: overview.shell.theme.foreground
                         font.pixelSize: 20
                         font.bold: true
                     }
@@ -76,7 +76,7 @@ Variants {
                     Text {
                         Layout.fillWidth: true
                         text: "Tab workspace · flèches fenêtre · Entrée ouvrir · Échap fermer"
-                        color: overview.shell.foreground
+                        color: overview.shell.theme.foreground
                         opacity: 0.7
                     }
 
@@ -98,10 +98,10 @@ Variants {
                             height: workspaceSlots.height
                             radius: 7
                             color: overview.shell.overviewWorkspaceIndex === index
-                                ? overview.shell.selection : overview.shell.background
+                                ? overview.shell.theme.selection : overview.shell.theme.background
                             border.width: overview.shell.overviewWorkspaceIndex === index ? 2 : 1
                             border.color: overview.shell.overviewWorkspaceIndex === index
-                                ? overview.shell.accent : overview.shell.surface
+                                ? overview.shell.theme.accent : overview.shell.theme.surface
 
                             Text {
                                 anchors.fill: parent
@@ -110,7 +110,7 @@ Variants {
                                 text: (modelData.monitor ? modelData.monitor.name : "Écran")
                                     + " · workspace " + modelData.id
                                 color: overview.shell.overviewWorkspaceIndex === index
-                                    ? overview.shell.accent : overview.shell.foreground
+                                    ? overview.shell.theme.accent : overview.shell.theme.foreground
                                 elide: Text.ElideRight
                             }
 
@@ -128,11 +128,11 @@ Variants {
                             width: 52
                             height: workspaceSlots.height
                             radius: 7
-                            color: overview.shell.background
+                            color: overview.shell.theme.background
                             border.width: 1
-                            border.color: overview.shell.surface
+                            border.color: overview.shell.theme.surface
 
-                            Text { anchors.centerIn: parent; text: "+"; color: overview.shell.foreground; font.pixelSize: 22 }
+                            Text { anchors.centerIn: parent; text: "+"; color: overview.shell.theme.foreground; font.pixelSize: 22 }
                             MouseArea {
                                 anchors.fill: parent
                             onClicked: {
@@ -169,10 +169,10 @@ Variants {
                                 anchors.margins: 5
                                 radius: 8
                                 color: overview.shell.overviewIndex === index
-                                    ? overview.shell.selection : overview.shell.background
+                                    ? overview.shell.theme.selection : overview.shell.theme.background
                                 border.width: overview.shell.overviewIndex === index ? 2 : 1
                                 border.color: overview.shell.overviewIndex === index
-                                    ? overview.shell.accent : overview.shell.surface
+                                    ? overview.shell.theme.accent : overview.shell.theme.surface
 
                                 RowLayout {
                                     anchors.fill: parent
@@ -197,7 +197,7 @@ Variants {
                                             text: modelData.title || "Sans titre"
                                             elide: Text.ElideRight
                                             color: overview.shell.overviewIndex === index
-                                                ? overview.shell.accent : overview.shell.foreground
+                                                ? overview.shell.theme.accent : overview.shell.theme.foreground
                                             font.pixelSize: 16
                                             font.bold: true
                                         }
@@ -206,7 +206,7 @@ Variants {
                                             Layout.fillWidth: true
                                             text: modelData.lastIpcObject.class || "Application"
                                             elide: Text.ElideRight
-                                            color: overview.shell.foreground
+                                            color: overview.shell.theme.foreground
                                             opacity: 0.7
                                         }
                                     }
@@ -228,7 +228,7 @@ Variants {
                             anchors.centerIn: parent
                             visible: overview.shell.overviewToplevels.length === 0
                             text: "Aucune fenêtre dans ce workspace"
-                            color: overview.shell.foreground
+                            color: overview.shell.theme.foreground
                             opacity: 0.7
                         }
                     }

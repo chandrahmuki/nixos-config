@@ -35,7 +35,7 @@ Variants {
         // below it while the black action controls stay crisp above.
         Rectangle {
             anchors.fill: parent
-            color: powerMenu.shell.background
+            color: powerMenu.shell.theme.background
             opacity: 0.82
         }
 
@@ -57,10 +57,10 @@ Variants {
             Keys.onEnterPressed: powerMenu.shell.activatePowerMenuSelection()
 
             readonly property var actions: [
-                { label: "SUSPEND", icon: "󰖔", accent: powerMenu.shell.active },
-                { label: "RESTART", icon: "󰜉", accent: powerMenu.shell.pillForeground },
-                { label: "LOG OUT", icon: "󰍃", accent: powerMenu.shell.pillForeground },
-                { label: "POWER OFF", icon: "󰐥", accent: powerMenu.shell.critical }
+                { label: "SUSPEND", icon: "󰖔", accent: powerMenu.shell.theme.active },
+                { label: "RESTART", icon: "󰜉", accent: powerMenu.shell.theme.pillForeground },
+                { label: "LOG OUT", icon: "󰍃", accent: powerMenu.shell.theme.pillForeground },
+                { label: "POWER OFF", icon: "󰐥", accent: powerMenu.shell.theme.critical }
             ]
 
             Item {
@@ -121,9 +121,9 @@ Variants {
                             width: 104
                             height: 104
                             radius: width / 2
-                            color: powerMenu.shell.surface
+                            color: powerMenu.shell.theme.surface
                             border.width: selected ? 2 : 1
-                            border.color: selected ? modelData.accent : powerMenu.shell.borderStrong
+                            border.color: selected ? modelData.accent : powerMenu.shell.theme.borderStrong
 
                             Behavior on border.color { ColorAnimation { duration: 120 } }
                             Behavior on scale { NumberAnimation { duration: 120; easing.type: Easing.OutQuad } }
@@ -163,7 +163,7 @@ Variants {
                             Text {
                                 anchors.centerIn: parent
                                 text: modelData.icon
-                                color: powerMenu.shell.foreground
+                                color: powerMenu.shell.theme.foreground
                                 font.family: "JetBrainsMono Nerd Font"
                                 font.pixelSize: 42
                             }
@@ -176,16 +176,16 @@ Variants {
                             width: Math.max(96, labelText.implicitWidth + 24)
                             height: 27
                             radius: height / 2
-                            color: powerMenu.shell.surface
+                            color: powerMenu.shell.theme.surface
                             border.width: 1
-                            border.color: selected ? modelData.accent : powerMenu.shell.borderMuted
+                            border.color: selected ? modelData.accent : powerMenu.shell.theme.borderMuted
 
                             Text {
                                 id: labelText
                                 anchors.centerIn: parent
                                 text: confirming ? "CONFIRM" : modelData.label
-                                color: selected ? modelData.accent : powerMenu.shell.pillForeground
-                                font.family: powerMenu.shell.pillFont
+                                color: selected ? modelData.accent : powerMenu.shell.theme.pillForeground
+                                font.family: powerMenu.shell.theme.pillFont
                                 font.pixelSize: 13
                                 font.bold: true
                             }
@@ -218,9 +218,9 @@ Variants {
                 width: helpText.implicitWidth + 26
                 height: 27
                 radius: height / 2
-                color: powerMenu.shell.surface
+                color: powerMenu.shell.theme.surface
                 border.width: 1
-                border.color: powerMenu.shell.borderMuted
+                border.color: powerMenu.shell.theme.borderMuted
                 z: 2
 
                 Text {
@@ -229,8 +229,8 @@ Variants {
                     text: powerMenu.shell.powerMenuConfirming
                         ? "ENTER AGAIN TO CONFIRM · ESC CANCEL"
                         : "HOLD CLICK · ARROWS · ENTER · ESC"
-                    color: powerMenu.shell.foreground
-                    font.family: powerMenu.shell.pillFont
+                    color: powerMenu.shell.theme.foreground
+                    font.family: powerMenu.shell.theme.pillFont
                     font.pixelSize: 11
                     font.bold: true
                 }

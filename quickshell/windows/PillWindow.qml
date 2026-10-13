@@ -66,7 +66,7 @@ Variants {
                 && !pillWindow.revealTarget ? -height : 7
             visible: !pillWindow.strictFullscreen || pillWindow.revealTarget
             clip: true
-            color: pillRoot.shell.pillBackground
+            color: pillRoot.shell.theme.pillBackground
             Behavior on width { NumberAnimation { duration: 260; easing.type: Easing.OutExpo } }
             Behavior on height { NumberAnimation { duration: 260; easing.type: Easing.OutExpo } }
             Behavior on radius { NumberAnimation { duration: 260; easing.type: Easing.OutExpo } }
@@ -119,7 +119,7 @@ Variants {
                 Rectangle {
                     Layout.preferredWidth: 1
                     Layout.preferredHeight: 18
-                    color: pillRoot.shell.panelLine
+                    color: pillRoot.shell.theme.panelLine
                     opacity: 0.7
                 }
 
@@ -143,7 +143,7 @@ Variants {
                                     height: pillRoot.shell.music.player && pillRoot.shell.music.player.isPlaying
                                         ? 3 + pillRoot.shell.music.cavaLevels[index] * 0.14 : 3
                                     radius: 1.5
-                                    color: pillRoot.shell.retroCyan
+                                    color: pillRoot.shell.theme.retroCyan
                                     Behavior on height { NumberAnimation { duration: 45; easing.type: Easing.OutQuad } }
                                 }
                             }
@@ -176,7 +176,7 @@ Variants {
                 Rectangle {
                     Layout.preferredWidth: 1
                     Layout.preferredHeight: 18
-                    color: pillRoot.shell.panelLine
+                    color: pillRoot.shell.theme.panelLine
                     opacity: 0.7
                 }
 

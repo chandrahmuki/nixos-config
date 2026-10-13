@@ -5,14 +5,14 @@ Item {
     required property var shell
     required property string glyph
     property bool hovered: false
-    property color iconColor: shell.retroCyan
+    property color iconColor: shell.theme.retroCyan
     width: 22
     height: 24
 
     Rectangle {
         anchors.fill: parent
         radius: 4
-        color: pillIcon.hovered ? pillIcon.shell.surfaceHover : pillIcon.shell.pillActive
+        color: pillIcon.hovered ? pillIcon.shell.theme.surfaceHover : pillIcon.shell.theme.pillActive
         Behavior on color { ColorAnimation { duration: 120 } }
     }
 

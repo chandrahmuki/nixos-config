@@ -22,11 +22,11 @@ Variants {
             && Hyprland.monitorFor(modelData) === Hyprland.focusedMonitor
 
         property string filterText: ""
-        property var filteredThemes: themeManager.shell.themeProfiles
+        property var filteredThemes: themeManager.shell.theme.themeProfiles
         property int selectedIndex: 0
         readonly property var selectedTheme: filteredThemes.length > 0
             ? filteredThemes[Math.min(selectedIndex, filteredThemes.length - 1)]
-            : themeManager.shell.themeProfiles[0]
+            : themeManager.shell.theme.themeProfiles[0]
         property var schemePreviewColors: ({})
 
         onVisibleChanged: {
@@ -36,7 +36,7 @@ Variants {
             themeFilter.text = "";
             rebuildThemeList();
             const activeIndex = filteredThemes.findIndex(function(theme) {
-                return theme.id === themeManager.shell.activeThemeId;
+                return theme.id === themeManager.shell.theme.activeThemeId;
             });
             selectedIndex = Math.max(0, activeIndex);
             Qt.callLater(function() { themeFilter.forceActiveFocus(); });
@@ -45,14 +45,14 @@ Variants {
 
         function rebuildThemeList() {
             const query = filterText.trim().toLowerCase();
-            filteredThemes = themeManager.shell.themeProfiles.filter(function(theme) {
+            filteredThemes = themeManager.shell.theme.themeProfiles.filter(function(theme) {
                 return !query
                     || theme.name.toLowerCase().indexOf(query) >= 0
                     || theme.id.toLowerCase().indexOf(query) >= 0
                     || theme.description.toLowerCase().indexOf(query) >= 0;
             });
             selectedIndex = Math.max(0, filteredThemes.findIndex(function(theme) {
-                return theme.id === themeManager.shell.activeThemeId;
+                return theme.id === themeManager.shell.theme.activeThemeId;
             }));
             refreshSchemePreviews();
         }
@@ -81,7 +81,7 @@ Variants {
             id: schemePreviewProcess
             property int pendingIndex: 0
             function runNext() {
-                const schemes = themeManager.shell.matugenSchemes;
+                const schemes = themeManager.shell.theme.matugenSchemes;
                 if (pendingIndex >= schemes.length || !themeWindow.selectedTheme)
                     return;
                 command = ["muggy-theme", "preview-scheme", themeWindow.selectedTheme.id, schemes[pendingIndex].id];
@@ -89,7 +89,7 @@ Variants {
             }
             stdout: SplitParser {
                 onRead: data => {
-                    const schemes = themeManager.shell.matugenSchemes;
+                    const schemes = themeManager.shell.theme.matugenSchemes;
                     if (schemePreviewProcess.pendingIndex >= schemes.length)
                         return;
                     const id = schemes[schemePreviewProcess.pendingIndex].id;
@@ -110,7 +110,7 @@ Variants {
             onCleared: themeManager.shell.themeManagerOpen = false
         }
 
-        Rectangle { anchors.fill: parent; color: themeManager.shell.overlayScrim; opacity: 0.62 }
+        Rectangle { anchors.fill: parent; color: themeManager.shell.theme.overlayScrim; opacity: 0.62 }
         MouseArea { anchors.fill: parent; onClicked: themeManager.shell.themeManagerOpen = false }
 
         Rectangle {
@@ -118,9 +118,9 @@ Variants {
             width: Math.min(880, parent.width - 48)
             height: Math.min(560, parent.height - 56)
             anchors.centerIn: parent
-            color: themeManager.shell.pillBackground
+            color: themeManager.shell.theme.pillBackground
             border.width: 1
-            border.color: themeManager.shell.retroCyan
+            border.color: themeManager.shell.theme.retroCyan
             radius: 6
             clip: true
 
@@ -137,22 +137,22 @@ Variants {
                     Layout.preferredHeight: 30
                     Text {
                         text: "THÈMES"
-                        color: themeManager.shell.pillForeground
-                        font.family: themeManager.shell.pillFont
+                        color: themeManager.shell.theme.pillForeground
+                        font.family: themeManager.shell.theme.pillFont
                         font.pixelSize: 20
                         font.bold: true
                     }
                     Item { Layout.fillWidth: true }
                     Text {
-                        text: themeWindow.selectedTheme ? "ACTIF · " + themeManager.shell.activeTheme.name : ""
-                        color: themeManager.shell.retroCyan
-                        font.family: themeManager.shell.pillFont
+                        text: themeWindow.selectedTheme ? "ACTIF · " + themeManager.shell.theme.activeTheme.name : ""
+                        color: themeManager.shell.theme.retroCyan
+                        font.family: themeManager.shell.theme.pillFont
                         font.pixelSize: 10
                         font.bold: true
                     }
                 }
 
-                Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: themeManager.shell.panelLine }
+                Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: themeManager.shell.theme.panelLine }
 
                 RowLayout {
                     Layout.fillWidth: true
@@ -167,9 +167,9 @@ Variants {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 40
-                            color: themeManager.shell.panelSurface
+                            color: themeManager.shell.theme.panelSurface
                             border.width: 1
-                            border.color: themeFilter.activeFocus ? themeManager.shell.accent : themeManager.shell.panelLine
+                            border.color: themeFilter.activeFocus ? themeManager.shell.theme.accent : themeManager.shell.theme.panelLine
                             radius: 3
 
                             Text {
@@ -177,8 +177,8 @@ Variants {
                                 anchors.leftMargin: 11
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: "⌕"
-                                color: themeManager.shell.muted
-                                font.family: themeManager.shell.pillFont
+                                color: themeManager.shell.theme.muted
+                                font.family: themeManager.shell.theme.pillFont
                                 font.pixelSize: 20
                             }
                             TextInput {
@@ -189,10 +189,10 @@ Variants {
                                 anchors.rightMargin: 10
                                 anchors.verticalCenter: parent.verticalCenter
                                 height: parent.height - 2
-                                color: themeManager.shell.pillForeground
-                                selectionColor: themeManager.shell.accent
-                                selectedTextColor: themeManager.shell.pillBackground
-                                font.family: themeManager.shell.pillFont
+                                color: themeManager.shell.theme.pillForeground
+                                selectionColor: themeManager.shell.theme.accent
+                                selectedTextColor: themeManager.shell.theme.pillBackground
+                                font.family: themeManager.shell.theme.pillFont
                                 font.pixelSize: 14
                                 verticalAlignment: TextInput.AlignVCenter
                                 clip: true
@@ -224,7 +224,7 @@ Variants {
                                     anchors.fill: parent
                                     verticalAlignment: Text.AlignVCenter
                                     text: "Rechercher un thème…"
-                                    color: themeManager.shell.muted
+                                    color: themeManager.shell.theme.muted
                                     font: themeFilter.font
                                     visible: themeFilter.text.length === 0
                                     enabled: false
@@ -252,9 +252,9 @@ Variants {
 
                                 Rectangle {
                                     anchors.fill: parent
-                                    color: themeWindow.selectedIndex === index ? themeManager.shell.selection : "transparent"
+                                    color: themeWindow.selectedIndex === index ? themeManager.shell.theme.selection : "transparent"
                                     border.width: themeWindow.selectedIndex === index ? 1 : 0
-                                    border.color: themeManager.shell.panelLine
+                                    border.color: themeManager.shell.theme.panelLine
                                     radius: 3
                                 }
                                 Rectangle {
@@ -273,8 +273,8 @@ Variants {
                                     anchors.rightMargin: 8
                                     anchors.verticalCenter: parent.verticalCenter
                                     text: modelData.name
-                                    color: themeWindow.selectedIndex === index ? themeManager.shell.foreground : themeManager.shell.pillForeground
-                                    font.family: themeManager.shell.pillFont
+                                    color: themeWindow.selectedIndex === index ? themeManager.shell.theme.foreground : themeManager.shell.theme.pillForeground
+                                    font.family: themeManager.shell.theme.pillFont
                                     font.pixelSize: 12
                                     font.bold: themeWindow.selectedIndex === index
                                     elide: Text.ElideRight
@@ -284,9 +284,9 @@ Variants {
                                     anchors.right: parent.right
                                     anchors.rightMargin: 10
                                     anchors.verticalCenter: parent.verticalCenter
-                                    text: modelData.id === themeManager.shell.activeThemeId ? "✓" : "›"
-                                    color: modelData.id === themeManager.shell.activeThemeId ? modelData.active : themeManager.shell.muted
-                                    font.family: themeManager.shell.pillFont
+                                    text: modelData.id === themeManager.shell.theme.activeThemeId ? "✓" : "›"
+                                    color: modelData.id === themeManager.shell.theme.activeThemeId ? modelData.active : themeManager.shell.theme.muted
+                                    font.family: themeManager.shell.theme.pillFont
                                     font.pixelSize: 14
                                     font.bold: true
                                 }
@@ -302,7 +302,7 @@ Variants {
                         }
                     }
 
-                    Rectangle { Layout.preferredWidth: 1; Layout.fillHeight: true; color: themeManager.shell.panelLine }
+                    Rectangle { Layout.preferredWidth: 1; Layout.fillHeight: true; color: themeManager.shell.theme.panelLine }
 
                     ColumnLayout {
                         Layout.fillWidth: true
@@ -344,7 +344,7 @@ Variants {
                                     anchors.margins: 12
                                     text: themeWindow.selectedTheme.name
                                     color: "white"
-                                    font.family: themeManager.shell.pillFont
+                                    font.family: themeManager.shell.theme.pillFont
                                     font.pixelSize: 19
                                     font.bold: true
                                 }
@@ -354,7 +354,7 @@ Variants {
                                     anchors.margins: 9
                                     text: "APERÇU"
                                     color: "white"
-                                    font.family: themeManager.shell.pillFont
+                                    font.family: themeManager.shell.theme.pillFont
                                     font.pixelSize: 9
                                     font.bold: true
                                 }
@@ -364,9 +364,9 @@ Variants {
                         Text {
                             Layout.fillWidth: true
                             text: themeWindow.selectedTheme.description
-                            color: themeManager.shell.pillForeground
+                            color: themeManager.shell.theme.pillForeground
                             opacity: 0.86
-                            font.family: themeManager.shell.pillFont
+                            font.family: themeManager.shell.theme.pillFont
                             font.pixelSize: 11
                             wrapMode: Text.WordWrap
                             maximumLineCount: 2
@@ -385,7 +385,7 @@ Variants {
                                     radius: 3
                                     color: modelData
                                     border.width: 1
-                                    border.color: themeManager.shell.panelLine
+                                    border.color: themeManager.shell.theme.panelLine
                                 }
                             }
                         }
@@ -395,21 +395,21 @@ Variants {
                             spacing: 5
                             Text {
                                 text: "PALETTE"
-                                color: themeManager.shell.muted
-                                font.family: themeManager.shell.pillFont
+                                color: themeManager.shell.theme.muted
+                                font.family: themeManager.shell.theme.pillFont
                                 font.pixelSize: 9
                                 font.bold: true
                             }
                             Item { Layout.fillWidth: true }
                             Repeater {
-                                model: themeManager.shell.matugenSchemes
+                                model: themeManager.shell.theme.matugenSchemes
                                 delegate: Rectangle {
                                     required property var modelData
-                                    readonly property bool selected: themeManager.shell.matugenScheme === modelData.id
-                                    readonly property color previewColor: themeWindow.schemePreviewColors[modelData.id] || themeManager.shell.panelLine
+                                    readonly property bool selected: themeManager.shell.theme.matugenScheme === modelData.id
+                                    readonly property color previewColor: themeWindow.schemePreviewColors[modelData.id] || themeManager.shell.theme.panelLine
                                     Layout.preferredWidth: schemeLabel.implicitWidth + 18
                                     Layout.preferredHeight: 24
-                                    color: themeManager.shell.panelSurface
+                                    color: themeManager.shell.theme.panelSurface
                                     border.width: selected ? 1 : 0
                                     border.color: previewColor
                                     radius: 3
@@ -426,8 +426,8 @@ Variants {
                                         Text {
                                             id: schemeLabel
                                             text: modelData.name
-                                            color: themeManager.shell.pillForeground
-                                            font.family: themeManager.shell.pillFont
+                                            color: themeManager.shell.theme.pillForeground
+                                            font.family: themeManager.shell.theme.pillFont
                                             font.pixelSize: 8
                                             font.bold: selected
                                         }
@@ -435,7 +435,7 @@ Variants {
                                     MouseArea {
                                         anchors.fill: parent
                                         cursorShape: Qt.PointingHandCursor
-                                        onClicked: themeManager.shell.applyMatugenScheme(modelData.id, themeWindow.selectedTheme.id)
+                                        onClicked: themeManager.shell.theme.applyScheme(modelData.id, themeWindow.selectedTheme.id)
                                     }
                                 }
                             }
@@ -448,15 +448,15 @@ Variants {
                     Layout.preferredHeight: 31
                     Text {
                         text: "↑ ↓ naviguer    Entrée appliquer    Échap fermer"
-                        color: themeManager.shell.muted
-                        font.family: themeManager.shell.pillFont
+                        color: themeManager.shell.theme.muted
+                        font.family: themeManager.shell.theme.pillFont
                         font.pixelSize: 9
                     }
                     Item { Layout.fillWidth: true }
                     Text {
                         text: themeWindow.filteredThemes.length + " thèmes"
-                        color: themeManager.shell.muted
-                        font.family: themeManager.shell.pillFont
+                        color: themeManager.shell.theme.muted
+                        font.family: themeManager.shell.theme.pillFont
                         font.pixelSize: 9
                     }
                 }

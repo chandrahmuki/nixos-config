@@ -43,9 +43,9 @@ Variants {
             // Opaque card, same family as the theme manager / pill overlays
             // (pillBackground + a coloured accent border) instead of a
             // fixed Omarchy hex that didn't follow theme switches.
-            color: launcher.shell.pillBackground
+            color: launcher.shell.theme.pillBackground
             border.width: 1
-            border.color: launcher.shell.retroCyan
+            border.color: launcher.shell.theme.retroCyan
             clip: true
 
             ColumnLayout {
@@ -64,11 +64,11 @@ Variants {
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
                         height: parent.height
-                        background: Rectangle { color: launcher.shell.panelSurface; radius: 2 }
+                        background: Rectangle { color: launcher.shell.theme.panelSurface; radius: 2 }
                         placeholderText: "Go..."
-                        placeholderTextColor: launcher.shell.muted
-                        color: launcher.shell.pillForeground
-                        font.family: launcher.shell.pillFont
+                        placeholderTextColor: launcher.shell.theme.muted
+                        color: launcher.shell.theme.pillForeground
+                        font.family: launcher.shell.theme.pillFont
                         font.pixelSize: 22
                         font.bold: true
                         focus: true
@@ -126,7 +126,7 @@ Variants {
                                     saturation: -1
                                     colorization: 1
                                     colorizationColor: launcher.shell.selectedIndex === index
-                                        ? launcher.shell.active : launcher.shell.pillForeground
+                                        ? launcher.shell.theme.active : launcher.shell.theme.pillForeground
                                 }
                             }
 
@@ -150,8 +150,8 @@ Variants {
                                 text: modelData.name
                                 elide: Text.ElideRight
                                 color: launcher.shell.selectedIndex === index
-                                    ? launcher.shell.active : launcher.shell.pillForeground
-                                font.family: launcher.shell.pillFont
+                                    ? launcher.shell.theme.active : launcher.shell.theme.pillForeground
+                                font.family: launcher.shell.theme.pillFont
                                 font.pixelSize: 21
                                 font.bold: true
                             }

@@ -14,7 +14,7 @@ Rectangle {
     transformOrigin: Item.Center
     radius: 14
     clip: true
-    color: shell.pillBackground
+    color: shell.theme.pillBackground
 
     Behavior on opacity { NumberAnimation { duration: 180 } }
     Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
@@ -48,13 +48,13 @@ Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 15
             spacing: 6
-            Rectangle { width: 5; height: 5; radius: 3; color: audioPanel.shell.audio.muted ? audioPanel.shell.retroCoral : audioPanel.shell.retroAmber }
-            Text { text: "SYSTEM AUDIO"; color: audioPanel.shell.pillForeground; font.family: audioPanel.shell.pillFont; font.pixelSize: 12; font.bold: true }
+            Rectangle { width: 5; height: 5; radius: 3; color: audioPanel.shell.audio.muted ? audioPanel.shell.theme.retroCoral : audioPanel.shell.theme.retroAmber }
+            Text { text: "SYSTEM AUDIO"; color: audioPanel.shell.theme.pillForeground; font.family: audioPanel.shell.theme.pillFont; font.pixelSize: 12; font.bold: true }
             Item { Layout.fillWidth: true }
-            Text { text: audioPanel.shell.audio.muted ? "MUTED" : "MASTER OUTPUT"; color: audioPanel.shell.audio.muted ? audioPanel.shell.retroCoral : audioPanel.shell.retroAmber; font.family: audioPanel.shell.pillFont; font.pixelSize: 9 }
+            Text { text: audioPanel.shell.audio.muted ? "MUTED" : "MASTER OUTPUT"; color: audioPanel.shell.audio.muted ? audioPanel.shell.theme.retroCoral : audioPanel.shell.theme.retroAmber; font.family: audioPanel.shell.theme.pillFont; font.pixelSize: 9 }
         }
 
-        Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: audioPanel.shell.panelLine }
+        Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: audioPanel.shell.theme.panelLine }
 
         RowLayout {
             Layout.fillWidth: true
@@ -65,25 +65,25 @@ Rectangle {
                 Layout.preferredWidth: 102
                 Layout.fillHeight: true
                 radius: 3
-                color: audioPanel.shell.panelSurface
+                color: audioPanel.shell.theme.panelSurface
                 border.width: 1
-                border.color: audioPanel.shell.panelLine
+                border.color: audioPanel.shell.theme.panelLine
                 Column {
                     anchors.centerIn: parent
                     spacing: 4
-                    Text { anchors.horizontalCenter: parent.horizontalCenter; text: audioPanel.shell.audio.muted ? "󰖁" : "󰕾"; color: audioPanel.shell.audio.muted ? audioPanel.shell.retroCoral : audioPanel.shell.retroAmber; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 30 }
-                    Text { anchors.horizontalCenter: parent.horizontalCenter; text: "MASTER"; color: audioPanel.shell.retroCyan; font.family: audioPanel.shell.pillFont; font.pixelSize: 8 }
-                    Text { anchors.horizontalCenter: parent.horizontalCenter; text: audioPanel.shell.audio.muted ? "MUTED" : Math.round(audioPanel.outputLevel * 100) + "%"; color: audioPanel.shell.pillForeground; font.family: audioPanel.shell.pillFont; font.pixelSize: 18; font.bold: true }
+                    Text { anchors.horizontalCenter: parent.horizontalCenter; text: audioPanel.shell.audio.muted ? "󰖁" : "󰕾"; color: audioPanel.shell.audio.muted ? audioPanel.shell.theme.retroCoral : audioPanel.shell.theme.retroAmber; font.family: "JetBrainsMono Nerd Font"; font.pixelSize: 30 }
+                    Text { anchors.horizontalCenter: parent.horizontalCenter; text: "MASTER"; color: audioPanel.shell.theme.retroCyan; font.family: audioPanel.shell.theme.pillFont; font.pixelSize: 8 }
+                    Text { anchors.horizontalCenter: parent.horizontalCenter; text: audioPanel.shell.audio.muted ? "MUTED" : Math.round(audioPanel.outputLevel * 100) + "%"; color: audioPanel.shell.theme.pillForeground; font.family: audioPanel.shell.theme.pillFont; font.pixelSize: 18; font.bold: true }
                 }
             }
 
-            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: audioPanel.shell.panelLine }
+            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: audioPanel.shell.theme.panelLine }
 
             ColumnLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 spacing: 6
-                Text { text: "CLICK A LEVEL"; color: audioPanel.shell.retroCyan; font.family: audioPanel.shell.pillFont; font.pixelSize: 9 }
+                Text { text: "CLICK A LEVEL"; color: audioPanel.shell.theme.retroCyan; font.family: audioPanel.shell.theme.pillFont; font.pixelSize: 9 }
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
@@ -96,15 +96,15 @@ Rectangle {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             radius: 3
-                            color: audioPanel.outputLevel >= level ? audioPanel.shell.retroAmber : audioPanel.shell.panelSurface
+                            color: audioPanel.outputLevel >= level ? audioPanel.shell.theme.retroAmber : audioPanel.shell.theme.panelSurface
                             border.width: 1
-                            border.color: audioPanel.outputLevel >= level ? audioPanel.shell.retroAmber : audioPanel.shell.panelLine
-                            Text { anchors.centerIn: parent; text: Math.round(parent.level * 100); color: audioPanel.outputLevel >= parent.level ? audioPanel.shell.onAccent : audioPanel.shell.pillForeground; font.family: audioPanel.shell.pillFont; font.pixelSize: 11; font.bold: true }
+                            border.color: audioPanel.outputLevel >= level ? audioPanel.shell.theme.retroAmber : audioPanel.shell.theme.panelLine
+                            Text { anchors.centerIn: parent; text: Math.round(parent.level * 100); color: audioPanel.outputLevel >= parent.level ? audioPanel.shell.theme.onAccent : audioPanel.shell.theme.pillForeground; font.family: audioPanel.shell.theme.pillFont; font.pixelSize: 11; font.bold: true }
                             MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: audioPanel.shell.audio.setVolume(parent.level) }
                         }
                     }
                 }
-                Text { text: "PIPEWIRE / DEFAULT SINK"; color: audioPanel.shell.pillMuted; font.family: audioPanel.shell.pillFont; font.pixelSize: 8 }
+                Text { text: "PIPEWIRE / DEFAULT SINK"; color: audioPanel.shell.theme.pillMuted; font.family: audioPanel.shell.theme.pillFont; font.pixelSize: 8 }
             }
         }
     }

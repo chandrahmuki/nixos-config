@@ -46,6 +46,6 @@ Item {
         glyph: networkControl.shell.network.type === "ethernet" ? "󰈀"
             : networkControl.shell.network.type === "wifi" ? "󰖩" : "󰤭"
         iconColor: networkControl.shell.network.connectionName.length > 0
-            ? networkControl.shell.retroCyan : networkControl.shell.pillMuted
+            ? networkControl.shell.theme.retroCyan : networkControl.shell.theme.pillMuted
     }
 }

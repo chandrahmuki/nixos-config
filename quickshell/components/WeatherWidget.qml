@@ -46,12 +46,12 @@ Item {
             hovered: weatherHover.hovered
             glyph: weatherControl.shell.weather.icon(weatherControl.shell.weather.code)
             iconColor: weatherControl.shell.weather.code >= 0
-                ? weatherControl.shell.retroCyan : weatherControl.shell.pillMuted
+                ? weatherControl.shell.theme.retroCyan : weatherControl.shell.theme.pillMuted
         }
         Text {
             text: weatherControl.shell.weather.temperature
-            color: weatherControl.shell.retroCyan
-            font.family: weatherControl.shell.pillFont
+            color: weatherControl.shell.theme.retroCyan
+            font.family: weatherControl.shell.theme.pillFont
             font.pixelSize: 13
             font.bold: true
         }

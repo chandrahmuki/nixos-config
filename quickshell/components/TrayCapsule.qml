@@ -79,7 +79,7 @@ Item {
                 anchors.fill: trayIcon
                 source: trayIcon
                 colorization: 1
-                colorizationColor: trayCapsule.shell.retroCyan
+                colorizationColor: trayCapsule.shell.theme.retroCyan
             }
 
             MouseArea {
@@ -131,9 +131,9 @@ Item {
                 Rectangle {
                     anchors.fill: parent
                     radius: 12
-                    color: trayCapsule.shell.pillBackground
+                    color: trayCapsule.shell.theme.pillBackground
                     border.width: 1
-                    border.color: trayCapsule.shell.borderStrong
+                    border.color: trayCapsule.shell.theme.borderStrong
 
                     HoverHandler {
                         onHoveredChanged: {
@@ -157,15 +157,15 @@ Item {
                             Rectangle {
                                 anchors.fill: parent
                                 radius: 7
-                                color: trayBackHover.hovered ? trayCapsule.shell.surfaceHover : "transparent"
+                                color: trayBackHover.hovered ? trayCapsule.shell.theme.surfaceHover : "transparent"
                             }
                             Text {
                                 anchors.left: parent.left
                                 anchors.leftMargin: 9
                                 anchors.verticalCenter: parent.verticalCenter
                                 text: "‹  BACK"
-                                color: trayCapsule.shell.pillForeground
-                                font.family: trayCapsule.shell.pillFont
+                                color: trayCapsule.shell.theme.pillForeground
+                                font.family: trayCapsule.shell.theme.pillFont
                                 font.pixelSize: 13
                                 font.bold: true
                             }
@@ -189,14 +189,14 @@ Item {
                                     anchors.centerIn: parent
                                     width: parent.width - 12
                                     height: 1
-                                    color: trayCapsule.shell.panelLine
+                                    color: trayCapsule.shell.theme.panelLine
                                 }
                                 Rectangle {
                                     visible: !modelData.isSeparator
                                     anchors.fill: parent
                                     radius: 7
                                     color: trayOptionHover.hovered
-                                        ? trayCapsule.shell.surfaceHover : "transparent"
+                                        ? trayCapsule.shell.theme.surfaceHover : "transparent"
                                 }
                                 Text {
                                     visible: !modelData.isSeparator
@@ -208,8 +208,8 @@ Item {
                                     text: modelData.text
                                     elide: Text.ElideRight
                                     color: modelData.enabled
-                                        ? trayCapsule.shell.pillForeground : trayCapsule.shell.pillMuted
-                                    font.family: trayCapsule.shell.pillFont
+                                        ? trayCapsule.shell.theme.pillForeground : trayCapsule.shell.theme.pillMuted
+                                    font.family: trayCapsule.shell.theme.pillFont
                                     font.pixelSize: 13
                                 }
                                 Text {
@@ -218,7 +218,7 @@ Item {
                                     anchors.rightMargin: 9
                                     anchors.verticalCenter: parent.verticalCenter
                                     text: "›"
-                                    color: trayCapsule.shell.pillMuted
+                                    color: trayCapsule.shell.theme.pillMuted
                                     font.pixelSize: 18
                                 }
                                 HoverHandler { id: trayOptionHover }

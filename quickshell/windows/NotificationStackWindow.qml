@@ -55,10 +55,10 @@ Variants {
                 height: notificationContent.implicitHeight + 28
                 radius: 14
                 scale: 1
-                color: notificationStack.shell.pillBackground
+                color: notificationStack.shell.theme.pillBackground
                 border.width: notification.urgency === NotificationUrgency.Critical ? 2 : 1
                 border.color: notification.urgency === NotificationUrgency.Critical
-                    ? notificationStack.shell.critical : notificationStack.shell.surfaceHover
+                    ? notificationStack.shell.theme.critical : notificationStack.shell.theme.surfaceHover
 
                 MouseArea {
                     anchors.fill: parent
@@ -129,10 +129,10 @@ Variants {
                         Text {
                             Layout.fillWidth: true
                             text: notification.summary
-                            color: notificationStack.shell.foreground
+                            color: notificationStack.shell.theme.foreground
                             font.bold: true
                             font.pixelSize: 20
-                            font.family: notificationStack.shell.pillFont
+                            font.family: notificationStack.shell.theme.pillFont
                             wrapMode: Text.Wrap
                         }
 
@@ -141,11 +141,11 @@ Variants {
                             visible: notification.body.length > 0
                             text: notification.body
                             textFormat: Text.RichText
-                            color: notificationStack.shell.foreground
-                            linkColor: notificationStack.shell.accent
+                            color: notificationStack.shell.theme.foreground
+                            linkColor: notificationStack.shell.theme.accent
                             opacity: 0.88
                             font.pixelSize: 18
-                            font.family: notificationStack.shell.pillFont
+                            font.family: notificationStack.shell.theme.pillFont
                             wrapMode: Text.Wrap
                             onLinkActivated: link => notificationStack.shell.notifications.openLink(link)
                         }
@@ -160,15 +160,15 @@ Variants {
                                     width: actionLabel.implicitWidth + 16
                                     height: 26
                                     radius: 5
-                                    color: actionArea.pressed ? notificationStack.shell.surfacePressed : notificationStack.shell.surfaceMuted
+                                    color: actionArea.pressed ? notificationStack.shell.theme.surfacePressed : notificationStack.shell.theme.surfaceMuted
 
                                     Text {
                                         id: actionLabel
                                         anchors.centerIn: parent
                                         text: modelData.text
-                                        color: notificationStack.shell.accent
+                                        color: notificationStack.shell.theme.accent
                                         font.pixelSize: 16
-                                        font.family: notificationStack.shell.pillFont
+                                        font.family: notificationStack.shell.theme.pillFont
                                     }
                                     MouseArea {
                                         id: actionArea
@@ -189,14 +189,14 @@ Variants {
                     anchors.top: parent.top
                     anchors.right: parent.right
                     anchors.margins: 9
-                    color: dismissOverlay.pressed ? notificationStack.shell.selection : "transparent"
+                    color: dismissOverlay.pressed ? notificationStack.shell.theme.selection : "transparent"
 
                     Text {
                         anchors.centerIn: parent
                         text: "×"
-                        color: notificationStack.shell.foreground
+                        color: notificationStack.shell.theme.foreground
                         font.pixelSize: 22
-                        font.family: notificationStack.shell.pillFont
+                        font.family: notificationStack.shell.theme.pillFont
                     }
                     MouseArea {
                         id: dismissOverlay

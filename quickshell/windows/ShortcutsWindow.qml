@@ -91,7 +91,7 @@ Variants {
 
         Rectangle {
             anchors.fill: parent
-            color: shortcuts.shell.background
+            color: shortcuts.shell.theme.background
             opacity: 0.82
         }
 
@@ -112,9 +112,9 @@ Variants {
                 width: Math.min(1320 * shortcutsWindow.k, parent.width - 48)
                 height: Math.min(content.implicitHeight + 64 * shortcutsWindow.k, parent.height - 48)
                 radius: 18 * shortcutsWindow.k
-                color: shortcuts.shell.surface
+                color: shortcuts.shell.theme.surface
                 border.width: 1
-                border.color: shortcuts.shell.borderStrong
+                border.color: shortcuts.shell.theme.borderStrong
 
                 // Keeps a click on the card from reaching the veil behind it.
                 MouseArea { anchors.fill: parent }
@@ -137,8 +137,8 @@ Variants {
 
                             Text {
                                 text: column.modelData.title
-                                color: shortcuts.shell.accent
-                                font.family: shortcuts.shell.pillFont
+                                color: shortcuts.shell.theme.accent
+                                font.family: shortcuts.shell.theme.pillFont
                                 font.pixelSize: 18 * shortcutsWindow.k
                                 font.bold: true
                                 font.letterSpacing: 2 * shortcutsWindow.k
@@ -168,16 +168,16 @@ Variants {
                                                 width: chipText.implicitWidth + 12 * shortcutsWindow.k
                                                 height: 30 * shortcutsWindow.k
                                                 radius: 6 * shortcutsWindow.k
-                                                color: shortcuts.shell.surfaceHover
+                                                color: shortcuts.shell.theme.surfaceHover
                                                 border.width: 1
-                                                border.color: shortcuts.shell.borderMuted
+                                                border.color: shortcuts.shell.theme.borderMuted
 
                                                 Text {
                                                     id: chipText
                                                     anchors.centerIn: parent
                                                     text: chip.modelData
-                                                    color: shortcuts.shell.pillForeground
-                                                    font.family: shortcuts.shell.pillFont
+                                                    color: shortcuts.shell.theme.pillForeground
+                                                    font.family: shortcuts.shell.theme.pillFont
                                                     font.pixelSize: 15 * shortcutsWindow.k
                                                 }
                                             }
@@ -189,8 +189,8 @@ Variants {
                                         Layout.alignment: Qt.AlignTop
                                         Layout.topMargin: 5 * shortcutsWindow.k
                                         text: row.modelData.label
-                                        color: shortcuts.shell.foreground
-                                        font.family: shortcuts.shell.pillFont
+                                        color: shortcuts.shell.theme.foreground
+                                        font.family: shortcuts.shell.theme.pillFont
                                         font.pixelSize: 16 * shortcutsWindow.k
                                         wrapMode: Text.WordWrap
                                     }

@@ -13,7 +13,7 @@ Rectangle {
     transformOrigin: Item.Center
     radius: 14
     clip: true
-    color: shell.pillBackground
+    color: shell.theme.pillBackground
 
     Behavior on opacity { NumberAnimation { duration: 180 } }
     Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
@@ -95,7 +95,7 @@ Rectangle {
             spacing: 6
             Rectangle {
                 width: 5; height: 5; radius: 3
-                color: clockPanel.shell.retroCyan
+                color: clockPanel.shell.theme.retroCyan
                 SequentialAnimation on opacity {
                     running: clockPanel.expanded
                     loops: Animation.Infinite
@@ -105,21 +105,21 @@ Rectangle {
             }
             Text {
                 text: "LOCAL CHRONO"
-                color: clockPanel.shell.pillForeground
-                font.family: clockPanel.shell.pillFont
+                color: clockPanel.shell.theme.pillForeground
+                font.family: clockPanel.shell.theme.pillFont
                 font.pixelSize: 12
                 font.bold: true
             }
             Item { Layout.fillWidth: true }
             Text {
                 text: clockPanel.timeZoneLabel()
-                color: clockPanel.shell.retroCyan
-                font.family: clockPanel.shell.pillFont
+                color: clockPanel.shell.theme.retroCyan
+                font.family: clockPanel.shell.theme.pillFont
                 font.pixelSize: 9
             }
         }
 
-        Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: clockPanel.shell.panelLine }
+        Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: clockPanel.shell.theme.panelLine }
 
         RowLayout {
             Layout.fillWidth: true
@@ -133,8 +133,8 @@ Rectangle {
                 Text {
                     width: parent.width
                     text: Qt.formatTime(clockPanel.shell.now, "HH:mm")
-                    color: clockPanel.shell.pillForeground
-                    font.family: clockPanel.shell.pillFont
+                    color: clockPanel.shell.theme.pillForeground
+                    font.family: clockPanel.shell.theme.pillFont
                     font.pixelSize: 33
                     font.bold: true
                 }
@@ -142,27 +142,27 @@ Rectangle {
                     spacing: 5
                     Text {
                         text: Qt.formatTime(clockPanel.shell.now, "ss") + " SEC"
-                        color: clockPanel.shell.retroCoral
-                        font.family: clockPanel.shell.pillFont
+                        color: clockPanel.shell.theme.retroCoral
+                        font.family: clockPanel.shell.theme.pillFont
                         font.pixelSize: 10
                         font.bold: true
                     }
                     Text {
                         text: clockPanel.weekdayLabel(clockPanel.shell.now) + " / " + clockPanel.dayMonthLabel(clockPanel.shell.now)
-                        color: clockPanel.shell.retroAmber
-                        font.family: clockPanel.shell.pillFont
+                        color: clockPanel.shell.theme.retroAmber
+                        font.family: clockPanel.shell.theme.pillFont
                         font.pixelSize: 10
                     }
                 }
                 Text {
                     text: String(clockPanel.shell.now.getFullYear())
-                    color: clockPanel.shell.pillMuted
-                    font.family: clockPanel.shell.pillFont
+                    color: clockPanel.shell.theme.pillMuted
+                    font.family: clockPanel.shell.theme.pillFont
                     font.pixelSize: 10
                 }
             }
 
-            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: clockPanel.shell.panelLine }
+            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: clockPanel.shell.theme.panelLine }
 
             Canvas {
                 id: analogClock
@@ -174,7 +174,7 @@ Rectangle {
                     const center = width / 2;
                     const now = clockPanel.shell.now;
                     context.reset();
-                    context.strokeStyle = clockPanel.shell.panelLine;
+                    context.strokeStyle = clockPanel.shell.theme.panelLine;
                     context.lineWidth = 1;
                     context.beginPath();
                     context.arc(center, center, 34, 0, Math.PI * 2);
@@ -195,10 +195,10 @@ Rectangle {
                         context.lineTo(center + Math.cos(angle) * length, center + Math.sin(angle) * length);
                         context.stroke();
                     }
-                    hand((now.getHours() % 12 + now.getMinutes() / 60) * Math.PI / 6 - Math.PI / 2, 17, 3, clockPanel.shell.retroAmber);
-                    hand((now.getMinutes() + now.getSeconds() / 60) * Math.PI / 30 - Math.PI / 2, 25, 2, clockPanel.shell.pillForeground);
-                    hand(now.getSeconds() * Math.PI / 30 - Math.PI / 2, 29, 1, clockPanel.shell.retroCoral);
-                    context.fillStyle = clockPanel.shell.retroCyan;
+                    hand((now.getHours() % 12 + now.getMinutes() / 60) * Math.PI / 6 - Math.PI / 2, 17, 3, clockPanel.shell.theme.retroAmber);
+                    hand((now.getMinutes() + now.getSeconds() / 60) * Math.PI / 30 - Math.PI / 2, 25, 2, clockPanel.shell.theme.pillForeground);
+                    hand(now.getSeconds() * Math.PI / 30 - Math.PI / 2, 29, 1, clockPanel.shell.theme.retroCoral);
+                    context.fillStyle = clockPanel.shell.theme.retroCyan;
                     context.beginPath();
                     context.arc(center, center, 2.5, 0, Math.PI * 2);
                     context.fill();
@@ -210,7 +210,7 @@ Rectangle {
                 Component.onCompleted: requestPaint()
             }
 
-            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: clockPanel.shell.panelLine }
+            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: clockPanel.shell.theme.panelLine }
 
             Column {
                 Layout.fillWidth: true
@@ -225,8 +225,8 @@ Rectangle {
                     delegate: Row {
                         required property var modelData
                         width: parent.width
-                        Text { width: 42; text: modelData[0]; color: clockPanel.shell.retroCyan; font.family: clockPanel.shell.pillFont; font.pixelSize: 9 }
-                        Text { text: modelData[1]; color: clockPanel.shell.pillForeground; font.family: clockPanel.shell.pillFont; font.pixelSize: 11; font.bold: true }
+                        Text { width: 42; text: modelData[0]; color: clockPanel.shell.theme.retroCyan; font.family: clockPanel.shell.theme.pillFont; font.pixelSize: 9 }
+                        Text { text: modelData[1]; color: clockPanel.shell.theme.pillForeground; font.family: clockPanel.shell.theme.pillFont; font.pixelSize: 11; font.bold: true }
                     }
                 }
             }

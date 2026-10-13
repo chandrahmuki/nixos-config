@@ -13,7 +13,7 @@ Rectangle {
     transformOrigin: Item.Center
     radius: 14
     clip: true
-    color: shell.pillBackground
+    color: shell.theme.pillBackground
 
     Behavior on opacity { NumberAnimation { duration: 180 } }
     Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
@@ -69,7 +69,7 @@ Rectangle {
                 height: 5
                 radius: 3
                 color: weatherPanel.shell.weather.online
-                    ? weatherPanel.shell.retroCyan : weatherPanel.shell.retroCoral
+                    ? weatherPanel.shell.theme.retroCyan : weatherPanel.shell.theme.retroCoral
                 SequentialAnimation on opacity {
                     running: weatherPanel.expanded && weatherPanel.shell.weather.online
                     loops: Animation.Infinite
@@ -79,16 +79,16 @@ Rectangle {
             }
             Text {
                 text: weatherPanel.shell.weather.city
-                color: weatherPanel.shell.pillForeground
-                font.family: weatherPanel.shell.pillFont
+                color: weatherPanel.shell.theme.pillForeground
+                font.family: weatherPanel.shell.theme.pillFont
                 font.pixelSize: 12
                 font.bold: true
             }
             Item { Layout.fillWidth: true }
             Text {
                 text: "UPDATED " + weatherPanel.shell.weather.updated
-                color: weatherPanel.shell.retroCyan
-                font.family: weatherPanel.shell.pillFont
+                color: weatherPanel.shell.theme.retroCyan
+                font.family: weatherPanel.shell.theme.pillFont
                 font.pixelSize: 9
             }
         }
@@ -96,7 +96,7 @@ Rectangle {
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 1
-            color: weatherPanel.shell.panelLine
+            color: weatherPanel.shell.theme.panelLine
         }
 
         RowLayout {
@@ -115,7 +115,7 @@ Rectangle {
                     id: heroIcon
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: weatherPanel.shell.weather.icon(weatherPanel.shell.weather.code)
-                    color: weatherPanel.shell.retroAmber
+                    color: weatherPanel.shell.theme.retroAmber
                     font.family: "JetBrainsMono Nerd Font"
                     font.pixelSize: 28
                     rotation: 0
@@ -132,8 +132,8 @@ Rectangle {
                 Text {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: weatherPanel.shell.weather.temperature
-                    color: weatherPanel.shell.pillForeground
-                    font.family: weatherPanel.shell.pillFont
+                    color: weatherPanel.shell.theme.pillForeground
+                    font.family: weatherPanel.shell.theme.pillFont
                     font.pixelSize: 27
                     font.bold: true
                 }
@@ -144,13 +144,13 @@ Rectangle {
                     horizontalAlignment: Text.AlignHCenter
                     elide: Text.ElideRight
                     color: weatherPanel.shell.weather.online
-                        ? weatherPanel.shell.retroAmber : weatherPanel.shell.retroCoral
-                    font.family: weatherPanel.shell.pillFont
+                        ? weatherPanel.shell.theme.retroAmber : weatherPanel.shell.theme.retroCoral
+                    font.family: weatherPanel.shell.theme.pillFont
                     font.pixelSize: 9
                 }
             }
 
-            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: weatherPanel.shell.panelLine }
+            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: weatherPanel.shell.theme.panelLine }
 
             // METRICS: a compact vertical readout, not another card grid.
             Column {
@@ -172,16 +172,16 @@ Rectangle {
                         Text {
                             width: 45
                             text: modelData[0]
-                            color: weatherPanel.shell.retroCyan
-                            font.family: weatherPanel.shell.pillFont
+                            color: weatherPanel.shell.theme.retroCyan
+                            font.family: weatherPanel.shell.theme.pillFont
                             font.pixelSize: 9
                         }
                         Text {
                             width: parent.width - 45
                             text: modelData[1]
                             elide: Text.ElideRight
-                            color: weatherPanel.shell.pillForeground
-                            font.family: weatherPanel.shell.pillFont
+                            color: weatherPanel.shell.theme.pillForeground
+                            font.family: weatherPanel.shell.theme.pillFont
                             font.pixelSize: 10
                             font.bold: true
                         }
@@ -189,7 +189,7 @@ Rectangle {
                 }
             }
 
-            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: weatherPanel.shell.panelLine }
+            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: weatherPanel.shell.theme.panelLine }
 
             // FORECAST: three bounded mini displays use coral only as a
             // temperature/status accent, leaving the rest quiet and legible.
@@ -205,9 +205,9 @@ Rectangle {
                         width: 55
                         height: parent.height
                         radius: 3
-                        color: weatherPanel.shell.panelSurface
+                        color: weatherPanel.shell.theme.panelSurface
                         border.width: 1
-                        border.color: weatherPanel.shell.panelLine
+                        border.color: weatherPanel.shell.theme.panelLine
 
                         Column {
                             anchors.centerIn: parent
@@ -215,22 +215,22 @@ Rectangle {
                             Text {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 text: modelData.label
-                                color: weatherPanel.shell.retroCyan
-                                font.family: weatherPanel.shell.pillFont
+                                color: weatherPanel.shell.theme.retroCyan
+                                font.family: weatherPanel.shell.theme.pillFont
                                 font.pixelSize: 9
                             }
                             Text {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 text: weatherPanel.shell.weather.icon(modelData.code)
-                                color: index === 1 ? weatherPanel.shell.retroCoral : weatherPanel.shell.retroAmber
+                                color: index === 1 ? weatherPanel.shell.theme.retroCoral : weatherPanel.shell.theme.retroAmber
                                 font.family: "JetBrainsMono Nerd Font"
                                 font.pixelSize: 17
                             }
                             Text {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 text: modelData.temperature
-                                color: weatherPanel.shell.pillForeground
-                                font.family: weatherPanel.shell.pillFont
+                                color: weatherPanel.shell.theme.pillForeground
+                                font.family: weatherPanel.shell.theme.pillFont
                                 font.pixelSize: 11
                                 font.bold: true
                             }

@@ -50,10 +50,10 @@ Item {
         Text {
             anchors.verticalCenter: parent.verticalCenter
             text: Qt.formatTime(clockControl.shell.now, "HH:mm")
-            color: clockControl.shell.retroCyan
+            color: clockControl.shell.theme.retroCyan
             font.bold: true
             font.pixelSize: 15
-            font.family: clockControl.shell.pillFont
+            font.family: clockControl.shell.theme.pillFont
         }
     }
 }

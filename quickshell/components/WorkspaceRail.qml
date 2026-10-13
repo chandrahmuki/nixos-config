@@ -22,7 +22,7 @@ Item {
         width: workspaceRail.cellWidth - 2
         height: parent.height - 8
         radius: 3
-        color: workspaceRail.shell.retroCyan
+        color: workspaceRail.shell.theme.retroCyan
 
         Behavior on x {
             NumberAnimation {
@@ -54,9 +54,9 @@ Item {
                 Text {
                     anchors.centerIn: parent
                     text: modelData
-                    color: active ? workspaceRail.shell.pillBackground
-                        : occupied ? workspaceRail.shell.retroCyan : workspaceRail.shell.pillMuted
-                    font.family: workspaceRail.shell.pillFont
+                    color: active ? workspaceRail.shell.theme.pillBackground
+                        : occupied ? workspaceRail.shell.theme.retroCyan : workspaceRail.shell.theme.pillMuted
+                    font.family: workspaceRail.shell.theme.pillFont
                     font.pixelSize: active || occupied ? 14 : 11
                     font.bold: occupied
                     style: active ? Text.Outline : Text.Normal

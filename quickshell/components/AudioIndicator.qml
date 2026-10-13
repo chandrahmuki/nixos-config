@@ -32,14 +32,14 @@ Item {
     Rectangle {
         anchors.fill: parent
         radius: 4
-        color: audioHover.hovered ? audioControl.shell.surfaceHover : "transparent"
+        color: audioHover.hovered ? audioControl.shell.theme.surfaceHover : "transparent"
     }
 
     Text {
         anchors.centerIn: parent
         text: audioControl.shell.audio.muted || audioControl.shell.audio.volume <= 0.01
             ? "󰖁" : audioControl.shell.audio.volume < 0.5 ? "󰖀" : "󰕾"
-        color: audioControl.shell.audio.muted ? audioControl.shell.retroCoral : audioControl.shell.retroAmber
+        color: audioControl.shell.audio.muted ? audioControl.shell.theme.retroCoral : audioControl.shell.theme.retroAmber
         font.family: "JetBrainsMono Nerd Font"
         font.pixelSize: 18
     }

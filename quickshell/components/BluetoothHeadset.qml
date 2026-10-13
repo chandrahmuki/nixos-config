@@ -54,7 +54,7 @@ Item {
     Rectangle {
         anchors.fill: parent
         radius: 4
-        color: headsetHover.hovered ? headset.shell.surfaceHover : "transparent"
+        color: headsetHover.hovered ? headset.shell.theme.surfaceHover : "transparent"
 
         Item {
             anchors.centerIn: parent
@@ -65,7 +65,7 @@ Item {
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 text: "󰋋"
-                color: headset.shell.retroCyan
+                color: headset.shell.theme.retroCyan
                 font.family: "JetBrainsMono Nerd Font"
                 font.pixelSize: 16
             }
@@ -76,7 +76,7 @@ Item {
                 width: 4
                 height: 4
                 radius: 2
-                color: headset.shell.retroAmber
+                color: headset.shell.theme.retroAmber
                 visible: headset.musicPlaying
 
                 SequentialAnimation on opacity {
@@ -106,9 +106,9 @@ Item {
         Rectangle {
             anchors.fill: parent
             radius: 12
-            color: headset.shell.pillBackground
+            color: headset.shell.theme.pillBackground
             border.width: 1
-            border.color: headset.shell.borderStrong
+            border.color: headset.shell.theme.borderStrong
 
             HoverHandler {
                 onHoveredChanged: hovered ? headset.keepPanelOpen() : headset.scheduleClose()
@@ -125,7 +125,7 @@ Item {
 
                     Text {
                         text: "󰋋"
-                        color: headset.shell.pillForeground
+                        color: headset.shell.theme.pillForeground
                         font.family: "JetBrainsMono Nerd Font"
                         font.pixelSize: 24
                     }
@@ -137,34 +137,34 @@ Item {
                             Layout.fillWidth: true
                             text: headset.device ? headset.device.name : "Bluetooth audio"
                             elide: Text.ElideRight
-                            color: headset.shell.pillForeground
-                            font.family: headset.shell.pillFont
+                            color: headset.shell.theme.pillForeground
+                            font.family: headset.shell.theme.pillFont
                             font.pixelSize: 16
                             font.bold: true
                         }
                         Text {
                             text: "CONNECTED  ·  AUDIO READY"
-                            color: headset.shell.iconMuted
-                            font.family: headset.shell.pillFont
+                            color: headset.shell.theme.iconMuted
+                            font.family: headset.shell.theme.pillFont
                             font.pixelSize: 11
                             font.bold: true
                         }
                     }
                     Text {
                         text: "×"
-                        color: headset.shell.iconMuted
+                        color: headset.shell.theme.iconMuted
                         font.pixelSize: 18
                     }
                 }
 
-                Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: headset.shell.panelLine }
+                Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: headset.shell.theme.panelLine }
 
                 RowLayout {
                     Layout.fillWidth: true
                     Text {
                         text: "BATTERY"
-                        color: headset.shell.pillMuted
-                        font.family: headset.shell.pillFont
+                        color: headset.shell.theme.pillMuted
+                        font.family: headset.shell.theme.pillFont
                         font.pixelSize: 12
                         font.bold: true
                     }
@@ -179,7 +179,7 @@ Item {
                             height: 18
                             radius: 3
                             border.width: 1
-                            border.color: headset.shell.borderStrong
+                            border.color: headset.shell.theme.borderStrong
                             color: "transparent"
 
                             Rectangle {
@@ -191,7 +191,7 @@ Item {
                                     ? Math.max(0, Math.min(1, headset.device.battery)) : 0))
                                 height: parent.height - 6
                                 radius: 1.5
-                                color: headset.shell.pillForeground
+                                color: headset.shell.theme.pillForeground
                             }
                         }
 
@@ -202,15 +202,15 @@ Item {
                             width: 4
                             height: 8
                             radius: 1
-                            color: headset.shell.borderStrong
+                            color: headset.shell.theme.borderStrong
                         }
                     }
 
                     Text {
                         text: headset.device && headset.device.batteryAvailable
                             ? Math.round(headset.device.battery * 100) + "%" : "—"
-                        color: headset.shell.pillForeground
-                        font.family: headset.shell.pillFont
+                        color: headset.shell.theme.pillForeground
+                        font.family: headset.shell.theme.pillFont
                         font.pixelSize: 18
                         font.bold: true
                     }
@@ -219,8 +219,8 @@ Item {
                 Text {
                     Layout.fillWidth: true
                     text: headset.device ? headset.device.address : ""
-                    color: headset.shell.pillMuted
-                    font.family: headset.shell.pillFont
+                    color: headset.shell.theme.pillMuted
+                    font.family: headset.shell.theme.pillFont
                     font.pixelSize: 11
                 }
             }

@@ -14,7 +14,7 @@ Rectangle {
     transformOrigin: Item.Center
     radius: 14
     clip: true
-    color: shell.pillBackground
+    color: shell.theme.pillBackground
 
     Behavior on opacity { NumberAnimation { duration: 180 } }
     Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
@@ -72,7 +72,7 @@ Rectangle {
             spacing: 6
             Rectangle {
                 width: 5; height: 5; radius: 3
-                color: networkPanel.online ? networkPanel.shell.retroCyan : networkPanel.shell.retroCoral
+                color: networkPanel.online ? networkPanel.shell.theme.retroCyan : networkPanel.shell.theme.retroCoral
                 SequentialAnimation on opacity {
                     running: networkPanel.expanded && networkPanel.online
                     loops: Animation.Infinite
@@ -83,21 +83,21 @@ Rectangle {
             Text {
                 text: networkPanel.shell.network.type === "wifi" ? "WI-FI / LINKED"
                     : networkPanel.shell.network.type === "ethernet" ? "ETHERNET / LINKED" : "NETWORK / OFFLINE"
-                color: networkPanel.shell.pillForeground
-                font.family: networkPanel.shell.pillFont
+                color: networkPanel.shell.theme.pillForeground
+                font.family: networkPanel.shell.theme.pillFont
                 font.pixelSize: 12
                 font.bold: true
             }
             Item { Layout.fillWidth: true }
             Text {
                 text: networkPanel.online ? "LIVE LINK" : "NO CARRIER"
-                color: networkPanel.online ? networkPanel.shell.retroCyan : networkPanel.shell.retroCoral
-                font.family: networkPanel.shell.pillFont
+                color: networkPanel.online ? networkPanel.shell.theme.retroCyan : networkPanel.shell.theme.retroCoral
+                font.family: networkPanel.shell.theme.pillFont
                 font.pixelSize: 9
             }
         }
 
-        Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: networkPanel.shell.panelLine }
+        Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: networkPanel.shell.theme.panelLine }
 
         RowLayout {
             Layout.fillWidth: true
@@ -111,7 +111,7 @@ Rectangle {
                 Text {
                     text: networkPanel.shell.network.type === "ethernet" ? "󰈀"
                         : networkPanel.shell.network.type === "wifi" ? "󰖩" : "󰤭"
-                    color: networkPanel.online ? networkPanel.shell.retroAmber : networkPanel.shell.retroCoral
+                    color: networkPanel.online ? networkPanel.shell.theme.retroAmber : networkPanel.shell.theme.retroCoral
                     font.family: "JetBrainsMono Nerd Font"
                     font.pixelSize: 28
                 }
@@ -119,20 +119,20 @@ Rectangle {
                     width: parent.width
                     text: networkPanel.online ? networkPanel.shell.network.connectionName : "DISCONNECTED"
                     elide: Text.ElideRight
-                    color: networkPanel.shell.pillForeground
-                    font.family: networkPanel.shell.pillFont
+                    color: networkPanel.shell.theme.pillForeground
+                    font.family: networkPanel.shell.theme.pillFont
                     font.pixelSize: 12
                     font.bold: true
                 }
                 Text {
                     text: networkPanel.shell.network.device || "NO DEVICE"
-                    color: networkPanel.shell.retroAmber
-                    font.family: networkPanel.shell.pillFont
+                    color: networkPanel.shell.theme.retroAmber
+                    font.family: networkPanel.shell.theme.pillFont
                     font.pixelSize: 9
                 }
             }
 
-            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: networkPanel.shell.panelLine }
+            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: networkPanel.shell.theme.panelLine }
 
             Column {
                 Layout.preferredWidth: 102
@@ -140,20 +140,20 @@ Rectangle {
                 spacing: 6
                 Repeater {
                     model: [
-                        ["↓ DOWN", networkPanel.shell.network.rateLabel(networkPanel.shell.network.downloadRate), networkPanel.shell.retroCyan],
-                        ["↑ UP", networkPanel.shell.network.rateLabel(networkPanel.shell.network.uploadRate), networkPanel.shell.retroCoral]
+                        ["↓ DOWN", networkPanel.shell.network.rateLabel(networkPanel.shell.network.downloadRate), networkPanel.shell.theme.retroCyan],
+                        ["↑ UP", networkPanel.shell.network.rateLabel(networkPanel.shell.network.uploadRate), networkPanel.shell.theme.retroCoral]
                     ]
                     delegate: Column {
                         required property var modelData
                         width: parent.width
                         spacing: 1
-                        Text { text: modelData[0]; color: modelData[2]; font.family: networkPanel.shell.pillFont; font.pixelSize: 9 }
-                        Text { text: modelData[1]; color: networkPanel.shell.pillForeground; font.family: networkPanel.shell.pillFont; font.pixelSize: 12; font.bold: true }
+                        Text { text: modelData[0]; color: modelData[2]; font.family: networkPanel.shell.theme.pillFont; font.pixelSize: 9 }
+                        Text { text: modelData[1]; color: networkPanel.shell.theme.pillForeground; font.family: networkPanel.shell.theme.pillFont; font.pixelSize: 12; font.bold: true }
                     }
                 }
             }
 
-            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: networkPanel.shell.panelLine }
+            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: networkPanel.shell.theme.panelLine }
 
             Column {
                 Layout.preferredWidth: 74
@@ -168,13 +168,13 @@ Rectangle {
                         required property var modelData
                         width: parent.width
                         spacing: 1
-                        Text { text: modelData[0]; color: networkPanel.shell.retroAmber; font.family: networkPanel.shell.pillFont; font.pixelSize: 8 }
-                        Text { width: parent.width; text: modelData[1]; elide: Text.ElideRight; color: networkPanel.shell.pillForeground; font.family: networkPanel.shell.pillFont; font.pixelSize: 9 }
+                        Text { text: modelData[0]; color: networkPanel.shell.theme.retroAmber; font.family: networkPanel.shell.theme.pillFont; font.pixelSize: 8 }
+                        Text { width: parent.width; text: modelData[1]; elide: Text.ElideRight; color: networkPanel.shell.theme.pillForeground; font.family: networkPanel.shell.theme.pillFont; font.pixelSize: 9 }
                     }
                 }
             }
 
-            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: networkPanel.shell.panelLine }
+            Rectangle { Layout.fillHeight: true; Layout.preferredWidth: 1; color: networkPanel.shell.theme.panelLine }
 
             Column {
                 Layout.fillWidth: true
@@ -182,8 +182,8 @@ Rectangle {
                 spacing: 7
                 Repeater {
                     model: [
-                        ["RX", networkPanel.shell.network.downloadHistory, networkPanel.shell.retroCyan],
-                        ["TX", networkPanel.shell.network.uploadHistory, networkPanel.shell.retroCoral]
+                        ["RX", networkPanel.shell.network.downloadHistory, networkPanel.shell.theme.retroCyan],
+                        ["TX", networkPanel.shell.network.uploadHistory, networkPanel.shell.theme.retroCoral]
                     ]
                     delegate: Column {
                         id: graphRow
@@ -192,7 +192,7 @@ Rectangle {
                         readonly property color graphColor: graphSpec[2]
                         width: parent.width
                         spacing: 2
-                        Text { text: modelData[0]; color: graphRow.graphColor; font.family: networkPanel.shell.pillFont; font.pixelSize: 8 }
+                        Text { text: modelData[0]; color: graphRow.graphColor; font.family: networkPanel.shell.theme.pillFont; font.pixelSize: 8 }
                         Row {
                             width: parent.width
                             height: 20
@@ -206,7 +206,7 @@ Rectangle {
                                     height: 3 + level * 17
                                     anchors.bottom: parent.bottom
                                     radius: 1
-                                    color: networkPanel.online ? graphRow.graphColor : networkPanel.shell.panelLine
+                                    color: networkPanel.online ? graphRow.graphColor : networkPanel.shell.theme.panelLine
                                 }
                             }
                         }

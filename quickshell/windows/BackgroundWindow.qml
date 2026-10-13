@@ -11,8 +11,8 @@ import Quickshell.Wayland
 // transient overlay window.
 //
 // Base image always shows the settled current theme's wallpaper; the two
-// layers above it only exist while shell.themeTransitionToId is set, and
-// grow a circular mask (shell.themeTransitionProgress, driven from
+// layers above it only exist while shell.theme.transitionToId is set, and
+// grow a circular mask (shell.theme.transitionProgress, driven from
 // shell.qml's playThemeTransition) from the centre of the screen to reveal
 // the incoming wallpaper over the outgoing one — Omarchy's own technique.
 Variants {
@@ -33,20 +33,20 @@ Variants {
         visible: true
 
         function wallpaperUrl(themeId) {
-            const theme = background.shell.themeProfiles.find(function(profile) {
+            const theme = background.shell.theme.themeProfiles.find(function(profile) {
                 return profile.id === themeId;
             });
             return theme ? "../assets/wallpapers/" + theme.wallpaper : "";
         }
 
-        readonly property bool transitioning: background.shell.themeTransitionToId !== ""
+        readonly property bool transitioning: background.shell.theme.transitionToId !== ""
 
         // Small bundled assets, not arbitrary user photos, so a synchronous
         // decode costs a few ms at most — worth it to guarantee content is
         // actually painted before a transition's reveal animation finishes.
         Image {
             anchors.fill: parent
-            source: bgWindow.wallpaperUrl(background.shell.activeThemeId)
+            source: bgWindow.wallpaperUrl(background.shell.theme.activeThemeId)
             fillMode: Image.PreserveAspectCrop
             asynchronous: false
             cache: true
@@ -57,7 +57,7 @@ Variants {
         Image {
             anchors.fill: parent
             visible: bgWindow.transitioning
-            source: bgWindow.wallpaperUrl(background.shell.themeTransitionFromId)
+            source: bgWindow.wallpaperUrl(background.shell.theme.transitionFromId)
             fillMode: Image.PreserveAspectCrop
             asynchronous: false
             cache: true
@@ -80,7 +80,7 @@ Variants {
 
             Image {
                 anchors.fill: parent
-                source: bgWindow.wallpaperUrl(background.shell.themeTransitionToId)
+                source: bgWindow.wallpaperUrl(background.shell.theme.transitionToId)
                 fillMode: Image.PreserveAspectCrop
                 asynchronous: false
                 cache: true
@@ -99,7 +99,7 @@ Variants {
             Rectangle {
                 readonly property real reach: Math.sqrt(Math.pow(revealMask.width / 2, 2) + Math.pow(revealMask.height / 2, 2)) + 8
                 anchors.centerIn: parent
-                width: reach * 2 * background.shell.themeTransitionProgress
+                width: reach * 2 * background.shell.theme.transitionProgress
                 height: width
                 radius: width / 2
                 color: "white"

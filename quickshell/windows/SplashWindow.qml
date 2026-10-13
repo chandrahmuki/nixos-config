@@ -30,7 +30,7 @@ Variants {
             // centered as the only focal element.
             anchors.fill: parent
             radius: 0
-            color: splash.shell.background
+            color: splash.shell.theme.background
             opacity: splash.shell.splashVisible ? 1 : 0
             Behavior on opacity {
                 NumberAnimation { duration: 380; easing.type: Easing.InOutQuad }
