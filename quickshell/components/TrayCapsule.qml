@@ -11,6 +11,17 @@ Item {
     width: implicitWidth
     height: implicitHeight
 
+    // Counted from the model, not from the width: a hidden capsule would make
+    // every item invisible and keep the width at 0.
+    readonly property int activeCount: {
+        let n = 0;
+        for (const item of SystemTray.items.values) {
+            if (item.status !== Status.Passive)
+                n++;
+        }
+        return n;
+    }
+
     Row {
         id: trayRow
         anchors.left: parent.left

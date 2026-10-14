@@ -198,7 +198,8 @@ Variants {
                 }
 
                 // Network, headset and volume first; the tray, whose length
-                // depends on the running applications, closes the pill.
+                // depends on the running applications, has its own capsule
+                // and closes the pill.
                 PillCapsule {
                     shell: pillRoot.shell
 
@@ -220,7 +221,13 @@ Variants {
                         }
                         onCloseRequested: audioPanel.scheduleClose()
                     }
-                    TrayCapsule { shell: pillRoot.shell }
+                }
+
+                PillCapsule {
+                    shell: pillRoot.shell
+                    visible: trayItems.activeCount > 0
+
+                    TrayCapsule { id: trayItems; shell: pillRoot.shell }
                 }
             }
 
