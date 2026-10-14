@@ -21,8 +21,6 @@
       "terminal"
       "theme"
       "utils"
-      "vscode"
-      "walker"
     ];
     user = [
       "btop"

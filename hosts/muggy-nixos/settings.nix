@@ -30,7 +30,6 @@ in
           "ai"
           "chatgpt"
           "gaming"
-          "handbrake"
           "irc"
           "media"
           "openvpn"

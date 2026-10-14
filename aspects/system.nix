@@ -45,7 +45,6 @@
       alsa.support32Bit = true;
       pulse.enable = true;
     };
-    services.udev.packages = [pkgs.via];
     services.fstrim.enable = true;
     services.scx = {
       enable = true;
@@ -157,7 +156,6 @@
         socat
         libva-utils
         nvtopPackages.amd
-        via
         nvd
       ];
     };
