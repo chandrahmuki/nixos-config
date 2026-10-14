@@ -50,8 +50,8 @@ Item {
         anchors.centerIn: parent
         text: Qt.formatTime(clockControl.shell.now, "HH:mm")
         color: clockControl.shell.theme.pillForeground
-        font.bold: true
-        font.pixelSize: 24
+        font.weight: Font.DemiBold
+        font.pixelSize: 22
         font.family: clockControl.shell.theme.pillFont
     }
 }

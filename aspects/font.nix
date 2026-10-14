@@ -4,8 +4,6 @@
       nerd-fonts.jetbrains-mono
       nerd-fonts.hack
       cozette
-      # Only the Pixelify Sans family of the Google Fonts collection (80 KB), used by the Quickshell pill.
-      (google-fonts.override {fonts = ["PixelifySans"];})
       noto-fonts
       dejavu_fonts
       noto-fonts-color-emoji

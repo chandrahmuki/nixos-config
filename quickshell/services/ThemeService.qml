@@ -119,7 +119,7 @@ Item {
     Behavior on retroAmber { ColorAnimation { duration: 900; easing.type: Easing.OutCubic } }
     Behavior on retroCyan { ColorAnimation { duration: 900; easing.type: Easing.OutCubic } }
     Behavior on retroCoral { ColorAnimation { duration: 900; easing.type: Easing.OutCubic } }
-    readonly property string pillFont: "Pixelify Sans"
+    readonly property string pillFont: "JetBrainsMono Nerd Font"
 
     Process {
         id: applyProcess
