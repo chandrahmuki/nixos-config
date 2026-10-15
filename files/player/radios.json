@@ -1,0 +1,306 @@
+[
+  {
+    "name": "Ambient Sleeping Pill",
+    "url": "https://radio.stereoscenic.com/asp-s",
+    "tags": [
+      "ambient",
+      "eno",
+      "beatless",
+      "sleep"
+    ]
+  },
+  {
+    "name": "ambient.fm",
+    "url": "https://ambient.fm/live/",
+    "tags": [
+      "ambient",
+      "eno",
+      "deep ambient",
+      "meditation"
+    ]
+  },
+  {
+    "name": "Positively Meditation",
+    "url": "https://streaming.positivity.radio/pr/posimeditation/icecast.audio",
+    "tags": [
+      "ambient",
+      "eno",
+      "meditation"
+    ]
+  },
+  {
+    "name": "Deep in Space",
+    "url": "https://stream.drugradio.ru:8020/stream128",
+    "tags": [
+      "ambient",
+      "eno",
+      "space"
+    ]
+  },
+  {
+    "name": "Isekoi Non-Stop Ambient",
+    "url": "https://public.isekoi-radio.com/listen/ambient/ambientradio.flac",
+    "tags": [
+      "ambient",
+      "eno",
+      "relax"
+    ]
+  },
+  {
+    "name": "Positively Max Richter",
+    "url": "https://streaming.positivity.radio/pr/maxrichter/icecast.audio",
+    "tags": [
+      "ambient",
+      "neoclassical",
+      "sleep"
+    ]
+  },
+  {
+    "name": "YT Alienworlds · Alien (1979)",
+    "url": "https://www.youtube.com/watch?v=NxHKOA3C3GU",
+    "tags": [
+      "youtube",
+      "alienworlds",
+      "ambient",
+      "soundscape",
+      "scifi"
+    ]
+  },
+  {
+    "name": "YT Alienworlds · Alien Isolation",
+    "url": "https://www.youtube.com/watch?v=r1o-R99rOPw",
+    "tags": [
+      "youtube",
+      "alienworlds",
+      "ambient",
+      "soundscape",
+      "scifi"
+    ]
+  },
+  {
+    "name": "YT Alienworlds · Heat Cityscape",
+    "url": "https://www.youtube.com/watch?v=xdJuE4unsx4",
+    "tags": [
+      "youtube",
+      "alienworlds",
+      "ambient",
+      "soundscape"
+    ]
+  },
+  {
+    "name": "YT Alienworlds · Top Gun Anthem",
+    "url": "https://www.youtube.com/watch?v=0CDTsw0B6n0",
+    "tags": [
+      "youtube",
+      "alienworlds",
+      "ambient",
+      "soundscape"
+    ]
+  },
+  {
+    "name": "YT Alien LV-426 8h",
+    "url": "https://www.youtube.com/watch?v=-y5wT78XJrM",
+    "tags": [
+      "youtube",
+      "ambient",
+      "scifi",
+      "8h"
+    ]
+  },
+  {
+    "name": "YT Arrival sci-fi ambient 8h",
+    "url": "https://www.youtube.com/watch?v=PHkwvN9xTdc",
+    "tags": [
+      "youtube",
+      "ambient",
+      "scifi",
+      "8h",
+      "sleep"
+    ]
+  },
+  {
+    "name": "SomaFM Drone Zone",
+    "url": "https://ice2.somafm.com/dronezone-128-mp3",
+    "tags": [
+      "ambient",
+      "drone",
+      "atmospheric"
+    ]
+  },
+  {
+    "name": "SomaFM Deep Space One",
+    "url": "https://ice2.somafm.com/deepspaceone-128-mp3",
+    "tags": [
+      "ambient",
+      "space",
+      "electronic"
+    ]
+  },
+  {
+    "name": "SomaFM Space Station",
+    "url": "https://ice2.somafm.com/spacestation-128-aac",
+    "tags": [
+      "ambient",
+      "electronica",
+      "space"
+    ]
+  },
+  {
+    "name": "NTS Slow Focus",
+    "url": "https://stream-mixtape-geo.ntslive.net/mixtape",
+    "tags": [
+      "ambient",
+      "drone",
+      "relaxing"
+    ]
+  },
+  {
+    "name": "ETX.FM",
+    "url": "https://etx.fm/stream",
+    "tags": [
+      "ambient",
+      "drone",
+      "experimental"
+    ]
+  },
+  {
+    "name": "0N Chillout",
+    "url": "https://0n-chillout.radionetz.de/0n-chillout.mp3",
+    "tags": [
+      "ambient",
+      "chillout"
+    ]
+  },
+  {
+    "name": "Nature Radio Rain",
+    "url": "https://maggie.torontocast.com:2020/stream/natureradiorain",
+    "tags": [
+      "ambient",
+      "nature",
+      "rain"
+    ]
+  },
+  {
+    "name": "SomaFM Groove Salad",
+    "url": "https://ice5.somafm.com/groovesalad-128-mp3",
+    "tags": [
+      "ambient",
+      "chillout",
+      "downtempo"
+    ]
+  },
+  {
+    "name": "SomaFM Groove Salad Classic",
+    "url": "https://ice5.somafm.com/gsclassic-128-mp3",
+    "tags": [
+      "ambient",
+      "downtempo"
+    ]
+  },
+  {
+    "name": "REYFM Lofi",
+    "url": "https://listen.reyfm.de/lofi_320kbps.mp3",
+    "tags": [
+      "lofi",
+      "chill"
+    ]
+  },
+  {
+    "name": "I Love Chillhop",
+    "url": "https://ilm.stream12.radiohost.de/ilm_ilovechillhop_mp3-192?upd-meta&upd-scheme=https&_art=dD0xNzkxODM1NDc0JmQ9YWE4YmQ5ZmY0MWJmYmM5OGMyYWY",
+    "tags": [
+      "lofi",
+      "chillhop",
+      "study"
+    ]
+  },
+  {
+    "name": "0R Lo-Fi",
+    "url": "https://0nlineradio.radioho.st/0r-lo-fi",
+    "tags": [
+      "lofi",
+      "chill",
+      "focus"
+    ]
+  },
+  {
+    "name": "0nlineradio Lo-Fi",
+    "url": "https://stream.0nlineradio.com/lo-fi",
+    "tags": [
+      "lofi",
+      "chillout"
+    ]
+  },
+  {
+    "name": "NIA Lo-Fi",
+    "url": "https://radio.nia.nc/radio/8020/lofi-hq-stream.aac",
+    "tags": [
+      "lofi",
+      "chillout"
+    ]
+  },
+  {
+    "name": "laut.fm Lofi",
+    "url": "https://stream.laut.fm/lofi",
+    "tags": [
+      "lofi",
+      "instrumental",
+      "hiphop"
+    ]
+  },
+  {
+    "name": "Radio Record Lo-Fi",
+    "url": "https://radiorecord.hostingradio.ru/lofi96.aacp",
+    "tags": [
+      "lofi"
+    ]
+  },
+  {
+    "name": "Nightwave Plaza",
+    "url": "https://radio.plaza.one/ogg",
+    "tags": [
+      "vaporwave",
+      "lofi",
+      "citypop"
+    ]
+  },
+  {
+    "name": "SomaFM Secret Agent",
+    "url": "https://ice5.somafm.com/secretagent-128-mp3",
+    "tags": [
+      "downtempo",
+      "lounge",
+      "jazz"
+    ]
+  },
+  {
+    "name": "SomaFM Beat Blender",
+    "url": "https://ice2.somafm.com/beatblender-128-mp3",
+    "tags": [
+      "downtempo",
+      "deep house",
+      "electronica"
+    ]
+  },
+  {
+    "name": "Radio ACID Chill",
+    "url": "https://stream.radioacid.com/stream",
+    "tags": [
+      "chill",
+      "electronic"
+    ]
+  },
+  {
+    "name": "YT Alienworlds · toute la chaîne",
+    "url": "https://www.youtube.com/channel/UCVF-frOHD_Z4q0aUJq409RA/videos",
+    "tags": [
+      "youtube",
+      "alienworlds",
+      "ambient",
+      "soundscape",
+      "playlist",
+      "chaine",
+      "channel"
+    ]
+  }
+]

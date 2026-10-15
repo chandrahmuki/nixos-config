@@ -1,0 +1,30 @@
+{
+  "label": "Winamp",
+  "order": 4,
+  "colors": {
+    "frame": "#87d7ff",
+    "accent": "#ffafd7",
+    "alt": "#afffd7",
+    "dim": "#8c9694",
+    "text": "#e6ecea",
+    "cyan": "#87d7ff"
+  },
+  "frame": { "v": "│", "color": "frame", "pad": 1 },
+  "rows": [
+    { "edge": ["┌", "─", "┐"], "align": "left", "text": [["cyan", "TINYMUGG"]] },
+    { "segs": [["text", "  {note} {pos}. {title:18} — {artist:14}"]] },
+    { "segs": [["dim", "  ──────────────────────────────────────────"]] },
+    { "segs": [["accent", "  "], ["@clock", { "row": 0, "color": "accent" }], ["dim", "    "], ["@viz", { "bars": 9, "rows": 3, "row": 0, "colors": ["alt"] }]] },
+    { "segs": [["accent", "  "], ["@clock", { "row": 1, "color": "accent" }], ["dim", "    "], ["@viz", { "bars": 9, "rows": 3, "row": 1, "colors": ["alt"] }]] },
+    { "segs": [["accent", "  "], ["@clock", { "row": 2, "color": "accent" }], ["dim", "    "], ["@viz", { "bars": 9, "rows": 3, "row": 2, "colors": ["alt"] }]] },
+    { "segs": [["cyan", "  "], ["@bar", { "w": 42, "on": "cyan", "off": "dim" }]] },
+    { "segs": [
+      ["cyan", "  ⏮  ⏯  ⏭  ⏹"], ["dim", "        "],
+      ["accent|dim@shuf", "⇄  "], ["accent|dim@loop", "↻"],
+      ["dim", "        vol "], ["@bar", { "of": "volume", "w": 4, "on": "text", "off": "dim" }]
+    ] },
+    { "edge": ["├", "─", "┤"] },
+    { "list": { "rows": 7, "fmt": "{cursor}{play} {num}. {name:34}", "sel": "text", "playing": "cyan" } },
+    { "edge": ["└", "─", "┘"], "status": true }
+  ]
+}

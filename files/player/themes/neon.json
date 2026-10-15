@@ -1,0 +1,32 @@
+{
+  "label": "Neon",
+  "order": 6,
+  "colors": {
+    "frame": "#ff87d7",
+    "accent": "#ffaf5f",
+    "alt": "#5fd7ff",
+    "dim": "#9a8fb0",
+    "text": "#f0e8ff",
+    "pink": "#ff87d7",
+    "lilac": "#af87ff",
+    "cyan": "#5fd7ff",
+    "orange": "#ffaf5f"
+  },
+  "frame": { "v": "│", "color": "frame", "pad": 1 },
+  "rows": [
+    { "edge": ["╭", "─", "╮"], "align": "center", "text": [["orange", "T I N Y M U G G"]] },
+    { "segs": [["text", "  {title_spaced:40}"]] },
+    { "segs": [["dim", "  {artist:24}"], ["pink", "{time}"]] },
+    {},
+    {},
+    { "viz": { "rows": 8, "bars": 22, "rowcolors": ["cyan", "cyan", "lilac", "lilac", "pink", "pink", "orange", "orange"] } },
+    { "segs": [["@bar", { "w": 44, "on": "orange", "off": "dim" }]] },
+    { "segs": [
+      ["dim", "  ⏮  ⏯  ⏭"], ["dim", "            vol "],
+      ["@bar", { "of": "volume", "w": 5, "on": "lilac", "off": "dim" }],
+      ["dim", "   "], ["pink|dim@shuf", "⇄  "], ["pink|dim@loop", "↻"]
+    ] },
+    { "list": { "rows": 1, "fmt": "{play} {name:40}", "sel": "text", "playing": "text" } },
+    { "edge": ["╰", "─", "╯"], "status": true }
+  ]
+}

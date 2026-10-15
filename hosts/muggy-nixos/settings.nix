@@ -43,6 +43,7 @@ in
           "obsidian"
           "oculante"
           "parsec"
+          "player"
           "pdf"
           "zen-browser"
         ];

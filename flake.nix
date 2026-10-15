@@ -108,7 +108,7 @@
           # validation of hyprland.lua is Hyprland --verify-config in the VM.
           payload-syntax =
             pkgs.runCommand "check-payload-syntax" {
-              nativeBuildInputs = [pkgs.lua5_4 pkgs.nodejs pkgs.bash];
+              nativeBuildInputs = [pkgs.lua5_4 pkgs.nodejs pkgs.bash pkgs.jq];
             } ''
               cd ${pkgs.lib.fileset.toSource {
                 root = ./.;
@@ -117,6 +117,10 @@
               for f in */*.lua; do luac -p "$f"; done
               for f in */*.cjs; do node --check "$f"; done
               for f in */*.sh; do bash -n "$f"; done
+              # Player themes: valid JSON with rows and the colors the player itself uses.
+              for f in player/themes/*.json; do
+                jq -e '(.rows | type == "array") and (.colors | has("frame") and has("accent") and has("alt") and has("dim"))' "$f" >/dev/null
+              done
               touch $out
             '';
         };

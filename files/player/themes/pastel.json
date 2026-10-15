@@ -1,0 +1,33 @@
+{
+  "label": "Pastel",
+  "order": 1,
+  "colors": {
+    "frame": "#d7afff",
+    "accent": "#ffafd7",
+    "alt": "#afffd7",
+    "dim": "#8c9694",
+    "text": "#e6ecea",
+    "cyan": "#87d7ff"
+  },
+  "frame": { "v": "│", "color": "frame", "pad": 1 },
+  "rows": [
+    { "edge": ["╭", "─", "╮"], "align": "center", "text": [["accent", "♪ TinyMugg ♪"]] },
+    { "segs": [["accent", "{face} {note}  "], ["alt", "{artist:30}"]] },
+    { "segs": [["accent", "          {title:32}"]] },
+    {},
+    { "segs": [["@bar", { "w": 22, "on": "accent", "off": "dim" }], ["dim", "  {time} / {duration}"]] },
+    { "segs": [
+      ["alt", "vol "],
+      ["@bar", { "of": "volume", "w": 5, "on": "alt", "off": "dim" }],
+      ["alt", "  "],
+      ["accent|dim@shuf", "⇄ shuffle  "],
+      ["accent|dim@loop", "↻ loop  "],
+      ["dim", "{pos}/{count}"]
+    ] },
+    { "edge": ["├", "─", "┤"] },
+    { "list": { "rows": 6 } },
+    { "edge": ["├", "─", "┤"] },
+    { "viz": { "rows": 2, "bars": 22, "colors": ["accent", "frame", "alt", "cyan"], "baseline": "▁" } },
+    { "edge": ["╰", "─", "╯"], "status": true }
+  ]
+}

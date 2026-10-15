@@ -1,0 +1,65 @@
+{
+  "label": "LCD",
+  "order": 3,
+  "colors": {
+    "frame": "#6b9a3c",
+    "accent": "#bcd96b",
+    "alt": "#bcd96b",
+    "dim": "#6b9a3c",
+    "text": "#bcd96b",
+    "lcd": "#9bbc0f",
+    "lcddark": "#0f380f",
+    "lcdmid": "#306230"
+  },
+  "frame": { "v": "│", "color": "frame", "pad": 1 },
+  "rows": [
+    { "edge": ["╭", "─", "╮"], "align": "center", "text": [["accent", "TINYMUGG"]] },
+    {},
+    { "segs": [["dim", "   "], ["lcdmid", "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓", "lcd"]] },
+    { "segs": [
+      ["dim", "   "], ["lcdmid", "┃", "lcd"],
+      ["lcdmid", " {note} ", "lcd"], ["lcddark", "{title:35}", "lcd"],
+      ["lcdmid", "┃", "lcd"]
+    ] },
+    { "segs": [
+      ["dim", "   "], ["lcdmid", "┃", "lcd"],
+      ["lcdmid", "   ", "lcd"], ["lcddark", "{artist:35}", "lcd"],
+      ["lcdmid", "┃", "lcd"]
+    ] },
+    { "segs": [
+      ["dim", "   "], ["lcdmid", "┃", "lcd"],
+      ["lcdmid", "                                      ", "lcd"],
+      ["lcdmid", "┃", "lcd"]
+    ] },
+    { "segs": [
+      ["dim", "   "], ["lcdmid", "┃", "lcd"],
+      ["lcdmid", " ", "lcd"],
+      ["@bar", { "w": 26, "fill": "▮", "rest": "▯", "on": "lcddark", "off": "lcdmid", "bg": "lcd" }],
+      ["lcdmid", "  ", "lcd"], ["lcddark", "{time}", "lcd"], ["lcdmid", "    ", "lcd"],
+      ["lcdmid", "┃", "lcd"]
+    ] },
+    { "segs": [
+      ["dim", "   "], ["lcdmid", "┃", "lcd"],
+      ["lcdmid", " ", "lcd"],
+      ["@viz", { "bars": 18, "rows": 2, "row": 0, "colors": ["lcddark"], "bg": "lcd" }],
+      ["lcdmid", " ", "lcd"],
+      ["lcdmid", "┃", "lcd"]
+    ] },
+    { "segs": [
+      ["dim", "   "], ["lcdmid", "┃", "lcd"],
+      ["lcdmid", " ", "lcd"],
+      ["@viz", { "bars": 18, "rows": 2, "row": 1, "colors": ["lcddark"], "bg": "lcd" }],
+      ["lcdmid", " ", "lcd"],
+      ["lcdmid", "┃", "lcd"]
+    ] },
+    { "segs": [["dim", "   "], ["lcdmid", "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛", "lcd"]] },
+    {},
+    { "segs": [
+      ["accent", "  ◀◀   ▶   ▶▶"], ["dim", "     ⇄ SHUF  "],
+      ["accent|dim@loop", "↻ LOOP"], ["dim", "   {pos}/{count}"]
+    ] },
+    {},
+    { "list": { "rows": 3, "cursor": "▸", "fmt": "  {cursor}{play} {name:32}", "sel": "accent", "playing": "accent" } },
+    { "edge": ["╰", "─", "╯"], "status": true }
+  ]
+}

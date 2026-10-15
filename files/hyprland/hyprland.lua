@@ -205,7 +205,7 @@ end
 -- Scratchpads: a special workspace that floats over the current one. The key
 -- spawns the program on first use, then shows/hides it. Toggling an empty
 -- special workspace only dims the screen.
-local function scratchpad(key, name, command)
+local function scratchpad(key, name, command, size)
   hl.window_rule({
     name = "scratch-" .. name,
     match = { class = "^scratch-" .. name .. "$" },
@@ -213,7 +213,7 @@ local function scratchpad(key, name, command)
     float = true,
     -- kitty asks to open maximized, which overrides size and center.
     suppress_event = "maximize",
-    size = "monitor_w*0.7 monitor_h*0.6",
+    size = size or "monitor_w*0.7 monitor_h*0.6",
     center = true,
   })
   hl.bind(mod .. " + " .. key, function()
@@ -229,3 +229,5 @@ end
 
 scratchpad("S", "term", "@kitty@/bin/kitty --class scratch-term @fish@/bin/fish")
 scratchpad("I", "irc", "@kitty@/bin/kitty --class scratch-irc weechat")
+-- The player UI is 48 columns by 17 rows: a smaller font than the other scratchpads.
+scratchpad("M", "music", "@kitty@/bin/kitty --class scratch-music -o font_size=11 -o window_padding_width=6 player -f", "450 365")

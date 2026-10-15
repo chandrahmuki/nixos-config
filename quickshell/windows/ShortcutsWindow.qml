@@ -42,6 +42,7 @@ Variants {
                 { keys: ["Super", "Clic droit"], label: "Redimensionner" },
                 { keys: ["Super", "S"], label: "Terminal flottant" },
                 { keys: ["Super", "I"], label: "IRC (WeeChat)" },
+                { keys: ["Super", "M"], label: "Lecteur de musique" },
                 { keys: ["Super", "Shift", "S"], label: "Capture d'écran" },
                 { keys: ["Super", "R"], label: "Enregistrer l'écran" },
                 { keys: ["Super", "Shift", "R"], label: "Stop enregistrement" },

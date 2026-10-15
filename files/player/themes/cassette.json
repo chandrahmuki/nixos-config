@@ -1,0 +1,33 @@
+{
+  "label": "Cassette",
+  "order": 2,
+  "colors": {
+    "frame": "#d7afff",
+    "accent": "#ffafd7",
+    "alt": "#afffd7",
+    "dim": "#8c9694",
+    "text": "#e6ecea",
+    "orange": "#ffaf87"
+  },
+  "frame": { "v": "│", "color": "frame", "pad": 1 },
+  "rows": [
+    { "edge": ["╭", "─", "╮"], "align": "center", "text": [["accent", "♪ TinyMugg ♪"]] },
+    {},
+    { "segs": [["orange", "  ┌──────────────────────────────────────┐"]] },
+    { "segs": [["orange", "  │ "], ["text", "{title:20}"], ["dim", " · "], ["dim", "{artist:13}"], ["orange", " │"]] },
+    { "segs": [["orange", "  │  ╭──────╮                  ╭──────╮  │"]] },
+    { "segs": [
+      ["orange", "  │  │ "], ["accent", "{reel}"], ["orange", " ░░ │"],
+      ["@bar", { "w": 18, "head": "●", "on": "accent", "off": "dim" }],
+      ["orange", "│ ░░ "], ["accent", "{reel}"], ["orange", " │  │"]
+    ] },
+    { "segs": [["orange", "  │  ╰──────╯                  ╰──────╯  │"]] },
+    { "segs": [["orange", "  └──────────────────────────────────────┘"]] },
+    { "segs": [["accent", "     ⏮   ⏯   ⏭"], ["dim", "        {time} / {duration}"]] },
+    { "edge": ["├", "─", "┤"] },
+    { "list": { "rows": 3, "fmt": "{cursor}{play} {num}  {name:32}" } },
+    { "edge": ["├", "─", "┤"] },
+    { "viz": { "rows": 2, "bars": 22, "colors": ["orange"], "baseline": "▁" } },
+    { "edge": ["╰", "─", "╯"], "status": true }
+  ]
+}
