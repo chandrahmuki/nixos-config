@@ -151,7 +151,7 @@ CrtPanel {
                 count: 20
                 lit: Math.round(clockPanel.dayOfYear(clockPanel.shell.now)
                     / clockPanel.daysInYear(clockPanel.shell.now) * 20)
-                blockWidth: 7
+                blockWidth: 5
                 blockHeight: 8
             }
             CrtRow {
