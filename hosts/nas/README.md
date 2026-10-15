@@ -25,9 +25,17 @@ not be tested there is marked below.
 ## Remote access (not testable in the VM)
 
 `sudo tailscale up` on the NAS, then install Tailscale on the phone with the same
-account. Add the tailnet name of the NAS (`nas.<tailnet>.ts.net`) to
-`services.nextcloud.settings.trusted_domains` in `nextcloud.nix`.
-Ports are not opened on the router.
+account. Done on 2026-10-15: the NAS is `nas.tailbc7882.ts.net` (100.127.232.108) and
+both are in `services.nextcloud.settings.trusted_domains` in `nextcloud.nix`, with the
+names and address it has on the home network. Nextcloud answers on every one of them
+(checked with a Host header); anything else gets "Trusted domain error".
+Ports are not opened on the router. The web services are plain HTTP: over Tailscale
+the traffic is encrypted by WireGuard, on the home network it is not.
+
+Deploying: `nixos-rebuild --target-host` fails ("lacks a signature by a trusted key"):
+`david` is not a trusted user of the NAS store, on purpose. Copy the repository to the
+NAS (`rsync -a --exclude=.git ./ david@nas:nixos-config/`), then on the NAS
+`sudo nixos-rebuild switch --flake path:$HOME/nixos-config#nas`.
 
 ## Not included on purpose
 

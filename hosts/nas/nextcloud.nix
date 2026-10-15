@@ -15,7 +15,16 @@
       # Not in the repository: create it by hand before the first start (README.md).
       adminpassFile = "/var/lib/nextcloud-secrets/admin-pass";
     };
-    settings.trusted_domains = ["nas.local" "nas"];
+    # Every address the NAS answers to: its names on the home network, its address there
+    # (the router hands it out, so it can change) and its Tailscale name and address.
+    settings.trusted_domains = [
+      "nas"
+      "nas.local"
+      "nas.fritz.box"
+      "192.168.178.34"
+      "nas.tailbc7882.ts.net"
+      "100.127.232.108"
+    ];
   };
 
   networking.firewall.allowedTCPPorts = [80];
