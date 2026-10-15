@@ -124,7 +124,12 @@ local function throttled_dsp(dsp)
     -- pcall so a dispatch error (e.g. the cycle script exiting on an
     -- out-of-range workspace) can't skip the reset below and leave
     -- this bind permanently dead until the next config reload.
-    local ok, err = pcall(hl.dispatch, dsp)
+    local ok, err
+    if type(dsp) == "function" then
+      ok, err = pcall(dsp)
+    else
+      ok, err = pcall(hl.dispatch, dsp)
+    end
     if not ok then
       print("throttled_dsp: dispatch failed: " .. tostring(err))
     end
@@ -172,8 +177,21 @@ hl.bind(mod .. " + down", hl.dsp.focus({ direction = "down" }))
 -- (previous/next column), not "+col"/"-col" (that argument form is
 -- only for "move") — moves the active column without touching any
 -- window's position.
-hl.bind(mod .. " + mouse_down", throttled_dsp(hl.dsp.layout("focus r")))
-hl.bind(mod .. " + mouse_up", throttled_dsp(hl.dsp.layout("focus l")))
+-- While a scratchpad has the focus, the active workspace is its special workspace and the
+-- layout message would land there ("no window to focus"). Hide the scratchpad first, as
+-- focusing any tiled window does anyway, then scroll the workspace underneath.
+local function focus_column(direction)
+  return function()
+    local active = hl.get_active_window()
+    local name = active and active.workspace and active.workspace.name
+    if name and name:sub(1, 8) == "special:" then
+      hl.dispatch(hl.dsp.workspace.toggle_special(name:sub(9)))
+    end
+    hl.dispatch(hl.dsp.layout("focus " .. direction))
+  end
+end
+hl.bind(mod .. " + mouse_down", throttled_dsp(focus_column("r")))
+hl.bind(mod .. " + mouse_up", throttled_dsp(focus_column("l")))
 hl.bind(mod .. " + SHIFT + mouse_down", throttled_dsp(hl.dsp.exec_cmd("local-workspace cycle next")))
 hl.bind(mod .. " + SHIFT + mouse_up", throttled_dsp(hl.dsp.exec_cmd("local-workspace cycle previous")))
 hl.bind(mod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
