@@ -5,7 +5,8 @@
 #   scripts/vm-test.sh start         build + boot, wait for SSH and Hyprland
 #   scripts/vm-test.sh shot [name]   screenshot -> prints the PNG path
 #   scripts/vm-test.sh key KEY...    send keys, e.g. `key meta_l-s`
-#   scripts/vm-test.sh mouse click X Y | drag X1 Y1 X2 Y2   pointer events (guest pixels)
+#   scripts/vm-test.sh mouse click X Y | drag X1 Y1 X2 Y2 | move X Y   pointer events (guest pixels)
+#   scripts/vm-test.sh reload        restart Quickshell in the VM (it does not hot-reload the 9p checkout)
 #   scripts/vm-test.sh exec CMD...   run a command as the user inside the VM
 #   scripts/vm-test.sh hypr ARGS...  hyprctl inside the VM
 #   scripts/vm-test.sh log [unit]    journal of the VM (user unit if given)
@@ -32,6 +33,7 @@ qmp_cmd() {
 }
 
 hypr_env='export XDG_RUNTIME_DIR=/run/user/$(id -u); export HYPRLAND_INSTANCE_SIGNATURE=$(ls -t $XDG_RUNTIME_DIR/hypr/ | head -1);'
+wayland_env='export WAYLAND_DISPLAY=$(ls $XDG_RUNTIME_DIR | grep -E "^wayland-[0-9]+$" | head -1);'
 
 cmd_start() {
   mkdir -p "$state"
@@ -86,7 +88,8 @@ cmd_key() {
 }
 
 cmd_mouse() {
-  # mouse click X Y | mouse drag X1 Y1 X2 Y2   (pixels of the 1280x800 guest screen)
+  # mouse click X Y | mouse drag X1 Y1 X2 Y2 | mouse move X Y   (pixels of the 1280x800 guest screen)
+  # move only moves the pointer, no button: to test a hover, move away first, then onto the target.
   local w="${VM_W:-1280}" h="${VM_H:-800}" op="$1"; shift
   abs() { printf '{"type":"abs","data":{"axis":"%s","value":%d}}' "$1" "$(( $2 * 32767 / $3 ))"; }
   move() { qmp_cmd "{\"execute\":\"input-send-event\",\"arguments\":{\"events\":[$(abs x "$1" "$w"),$(abs y "$2" "$h")]}}" >/dev/null; sleep 0.3; }
@@ -94,8 +97,26 @@ cmd_mouse() {
   case "$op" in
     click) move "$1" "$2"; btn true; btn false ;;
     drag) move "$1" "$2"; btn true; move "$3" "$4"; btn false ;;
-    *) echo "usage: mouse click X Y | mouse drag X1 Y1 X2 Y2" >&2; return 2 ;;
+    move) move "$1" "$2" ;;
+    *) echo "usage: mouse click X Y | mouse drag X1 Y1 X2 Y2 | mouse move X Y" >&2; return 2 ;;
   esac
+}
+
+cmd_reload() {
+  local before out after
+  before="$(vm_ssh "pgrep -f 'bin/quickshell --' | head -1" || true)"
+  out="$(vm_ssh "$hypr_env $wayland_env restart-quickshell 2>&1" || true)"
+  if ! grep -q "Configuration Loaded" <<<"$out"; then
+    echo "reload: Quickshell did not report 'Configuration Loaded':" >&2
+    tail -5 <<<"$out" >&2
+    return 1
+  fi
+  after="$(vm_ssh "pgrep -f 'bin/quickshell --' | head -1" || true)"
+  if [[ -z "$after" || "$after" == "$before" ]]; then
+    echo "reload: Quickshell PID did not change (${before:-none} -> ${after:-none})" >&2
+    return 1
+  fi
+  echo "quickshell reloaded: PID ${before:-none} -> $after"
 }
 
 cmd_stop() {
@@ -112,6 +133,7 @@ case "${1:-}" in
   hypr) shift; vm_ssh "$hypr_env hyprctl $*" ;;
   log) shift; if [[ $# -gt 0 ]]; then vm_ssh "journalctl --user -u $1 --no-pager | tail -60"; else vm_ssh "journalctl -b --no-pager | tail -80"; fi ;;
   mouse) shift; cmd_mouse "$@" ;;
+  reload) cmd_reload ;;
   stop) cmd_stop ;;
   *) sed -n '2,12p' "$0"; exit 2 ;;
 esac
