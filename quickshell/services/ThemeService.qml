@@ -66,10 +66,16 @@ Item {
     property color foreground: generatedColor("on_surface", activeTheme.foreground)
     property color accent: generatedColor("primary", activeTheme.accent)
     property color active: generatedColor("primary_fixed", activeTheme.active)
-    property color pillBackground: generatedColor("surface_container_lowest", activeTheme.pillBackground)
-    property color pillForeground: generatedColor("on_surface", activeTheme.pillForeground)
-    property color pillMuted: generatedColor("outline_variant", activeTheme.pillMuted)
-    property color pillActive: generatedColor("on_primary", activeTheme.pillActive)
+    // The pill and everything built like it (capsules, launcher, notifications, theme deck,
+    // power menu, tray) follow the colours chosen for the theme in its profile. The Matugen
+    // palette is always the dark variant and comes from the wallpaper: used here it made every
+    // pill near-black, light themes included, and tinted it by the wallpaper instead of the theme.
+    property color pillBackground: activeTheme.pillBackground
+    property color pillForeground: activeTheme.pillForeground
+    // The muted greys of the profiles are too faint to read as text on most pills (contrast
+    // 1.3 to 2.5 on a dozen themes): muted text is the foreground at 65% over the pill instead.
+    property color pillMuted: pillSecondary
+    property color pillActive: activeTheme.pillActive
     // Secondary text and icons of the pill: the foreground at 65% over the pill
     // background. The "muted" greys of the profiles are too faint on several themes.
     readonly property color pillSecondary: Qt.tint(pillBackground,
@@ -80,8 +86,8 @@ Item {
     readonly property color panelFaint: Qt.tint(pillBackground, Qt.rgba(retroCyan.r, retroCyan.g, retroCyan.b, 0.22))
     // Shared micro-console language for expandable pill panels.  Keep the
     // accents deliberately sparse so future panels read as one system.
-    property color panelSurface: generatedColor("surface_container_low", activeTheme.panelSurface)
-    property color panelLine: generatedColor("outline_variant", activeTheme.panelLine)
+    property color panelSurface: activeTheme.panelSurface
+    property color panelLine: activeTheme.panelLine
     property color retroAmber: generatedColor("secondary", activeTheme.retroAmber)
     property color retroCyan: generatedColor("primary", activeTheme.retroCyan)
     property color retroCoral: generatedColor("tertiary", activeTheme.retroCoral)
