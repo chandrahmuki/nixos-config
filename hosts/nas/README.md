@@ -3,8 +3,11 @@
 Headless home NAS, separate from the desktop (`muggy-nixos`): Nextcloud (files),
 Navidrome (music), Jellyfin (video), Tailscale (remote access), smartd (disk health).
 
-`hardware-configuration.nix` is a placeholder. Everything else was exercised in a
-VM with `scripts/nas-test.sh`; what could not be tested there is marked below.
+`hardware-configuration.nix` comes from the machine (AOOSTAR WTR PRO, Ryzen 7 5825U,
+32 GB): system on the 500 GB SATA SSD in btrfs like the desktop (`@`, `@nix`, `@log`,
+`@home`), `/data` on the empty ext4 partition of the 2 TB disk for now. The two M.2 slots
+are empty. Everything else was exercised in a VM with `scripts/nas-test.sh`; what could
+not be tested there is marked below.
 
 ## First install (on the machine)
 
