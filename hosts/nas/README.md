@@ -37,6 +37,18 @@ Deploying: `nixos-rebuild --target-host` fails ("lacks a signature by a trusted 
 NAS (`rsync -a --exclude=.git ./ david@nas:nixos-config/`), then on the NAS
 `sudo nixos-rebuild switch --flake path:$HOME/nixos-config#nas`.
 
+## Shared folder (SMB)
+
+`samba.nix` shares `/data/partage` as `partage`, for the home network and Tailscale only
+(no guests). Set the Samba password of the admin once, it is not in the repository:
+`sudo smbpasswd -a david`. Connect with user `david`:
+
+- Mac Finder, iPhone Files, Linux file manager: `smb://192.168.178.34` at home,
+  `smb://100.127.232.108` through Tailscale. The short name `smb://nas` does not work from
+  the iPhone (it sits behind the Deco mesh node, which does not resolve it); checked with
+  the IP address.
+- Windows: `\\192.168.178.34\partage`.
+
 ## Not included on purpose
 
 Immich (photos), Forgejo (git), hardware video transcoding, backups. A NAS is not a

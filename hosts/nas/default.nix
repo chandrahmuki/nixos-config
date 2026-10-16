@@ -13,6 +13,7 @@ in {
     ./hardware-configuration.nix
     ./nextcloud.nix
     ./media.nix
+    ./samba.nix
     ./tailscale.nix
   ];
 
