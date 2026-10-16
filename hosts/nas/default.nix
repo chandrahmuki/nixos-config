@@ -2,7 +2,11 @@
 # A separate host from the desktop: no Hyprland, no theming, no Home Manager.
 #
 # First boot checklist: README.md in this directory.
-{pkgs, ...}: let
+{
+  lib,
+  pkgs,
+  ...
+}: let
   admin = "david";
 in {
   imports = [
@@ -45,6 +49,18 @@ in {
       addresses = true;
     };
   };
+
+  # /data is nofail (the machine still boots without that disk), which also lets the
+  # services start before it is mounted: after a hard power cut the disk is checked first
+  # and came up 4 s after Nextcloud, which saw an empty data directory and failed. Make every
+  # service that reads or writes /data wait for it, and not start at all if it never comes.
+  systemd.services = lib.genAttrs [
+    "nextcloud-setup"
+    "nextcloud-update-db"
+    "phpfpm-nextcloud"
+    "navidrome"
+    "jellyfin"
+  ] (_: {unitConfig.RequiresMountsFor = ["/data"];});
 
   # Early warning for the old disks.
   services.smartd.enable = true;
