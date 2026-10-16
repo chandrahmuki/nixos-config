@@ -14,6 +14,8 @@ in {
     ./nextcloud.nix
     ./media.nix
     ./samba.nix
+    ./immich.nix
+    ./kavita.nix
     ./tailscale.nix
   ];
 

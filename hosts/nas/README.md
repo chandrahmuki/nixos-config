@@ -49,7 +49,28 @@ NAS (`rsync -a --exclude=.git ./ david@nas:nixos-config/`), then on the NAS
   the IP address.
 - Windows: `\\192.168.178.34\partage`.
 
+## Services and folders
+
+| Service | Address (home / Tailscale) | Data |
+|---|---|---|
+| Nextcloud | `http://nas/` | `/data/nextcloud` |
+| Navidrome (music) | `:4533` | `/data/media/music` |
+| Jellyfin (video) | `:8096`, libraries Movies and Shows | `/data/media/video/{Movies,Shows}` |
+| Immich (photos) | `:2283` | `/data/immich` |
+| Kavita (manga, books) | `:5000`, libraries Manga and Book | `/data/media/{manga,books}` |
+| SMB share | `smb://192.168.178.34/partage` | `/data/partage` |
+
+- Immich comes from its own pinned nixpkgs (`nixpkgs-immich` in `flake.nix`): the iOS app
+  moves faster than nixos-unstable, and the app wants the same version as the server. Bump
+  the rev on purpose when the app moves on.
+- Jellyfin names: `Movies/Name (year) [imdbid-tt0000000]/Name (year) [imdbid-tt0000000].mkv`
+  and `Shows/Name (year)/Season 01/Name - S01E01.mkv`. A library of the wrong type (Shows for
+  films) gives wrong covers and no search results.
+- Kavita does not scan files at the root of a library: one folder per series or per book.
+- The first admin account of Navidrome, Jellyfin, Immich and Kavita is created in the
+  browser on the first visit.
+
 ## Not included on purpose
 
-Immich (photos), Forgejo (git), hardware video transcoding, backups. A NAS is not a
+Forgejo (git), hardware video transcoding, backups. A NAS is not a
 backup: keep a second copy of anything that matters somewhere else.

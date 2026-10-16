@@ -6,6 +6,9 @@
     # Main and development Nixpkgs
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-master.url = "github:nixos/nixpkgs/master";
+    # Only the NAS reads this one, for Immich: its mobile app moves faster than nixos-unstable
+    # (see hosts/nas/immich.nix). Bump the rev on purpose, it does not follow master.
+    nixpkgs-immich.url = "github:nixos/nixpkgs/e7f5acedbef9d0dd9d40d822668bdb08a7e4834d";
 
     # User configuration tools and managers
     home-manager = {
@@ -137,6 +140,7 @@
           # Home NAS: files, music and video, headless (see hosts/nas/README.md)
           nas = inputs.nixpkgs.lib.nixosSystem {
             inherit (publicSettings) system;
+            specialArgs.immichPackages = inputs.nixpkgs-immich.legacyPackages.${publicSettings.system};
             modules = [./hosts/nas];
           };
 
