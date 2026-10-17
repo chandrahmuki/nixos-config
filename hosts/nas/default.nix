@@ -18,6 +18,7 @@ in {
     ./kavita.nix
     ./backup.nix
     ./video2.nix
+    ./adguard.nix
     ./tailscale.nix
   ];
 
