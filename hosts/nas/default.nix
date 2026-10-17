@@ -19,6 +19,7 @@ in {
     ./backup.nix
     ./video2.nix
     ./adguard.nix
+    ./names.nix
     ./tailscale.nix
   ];
 
