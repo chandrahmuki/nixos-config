@@ -70,7 +70,19 @@ NAS (`rsync -a --exclude=.git ./ david@nas:nixos-config/`), then on the NAS
 - The first admin account of Navidrome, Jellyfin, Immich and Kavita is created in the
   browser on the first visit.
 
+## Backup
+
+`backup.nix` copies every night at 03:30 to the Toshiba 1 TB disk (btrfs, label `backup`,
+mounted on `/backup`): `/data` without the films and without the Immich thumbnails, a dump of
+the Nextcloud and Immich databases, and the settings of Jellyfin, Navidrome and Kavita. A
+read-only btrfs snapshot keeps each night, the 30 newest are kept (`/backup/snapshots`). Run
+it by hand with `sudo systemctl start nas-backup`; it refuses to run when a disk is missing.
+It is on the same machine: it does not protect against fire, theft or a power surge.
+
+To take a file back: `/backup/current/data/...` is the last night, an older night is in
+`/backup/snapshots/<date>/data/...`.
+
 ## Not included on purpose
 
-Forgejo (git), hardware video transcoding, backups. A NAS is not a
+Forgejo (git), hardware video transcoding. A NAS is not a
 backup: keep a second copy of anything that matters somewhere else.

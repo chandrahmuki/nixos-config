@@ -16,6 +16,7 @@ in {
     ./samba.nix
     ./immich.nix
     ./kavita.nix
+    ./backup.nix
     ./tailscale.nix
   ];
 
