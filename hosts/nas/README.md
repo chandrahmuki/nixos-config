@@ -55,7 +55,7 @@ NAS (`rsync -a --exclude=.git ./ david@nas:nixos-config/`), then on the NAS
 |---|---|---|
 | Nextcloud | `http://nas/` | `/data/nextcloud` |
 | Navidrome (music) | `:4533` | `/data/media/music` |
-| Jellyfin (video) | `:8096`, libraries Movies and Shows | `/data/media/video/{Movies,Shows}` |
+| Jellyfin (video) | `:8096`, libraries Movies and Shows | `/data/media/video/{Movies,Shows}` and `/video2/{Movies,Shows}` |
 | Immich (photos) | `:2283` | `/data/immich` |
 | Kavita (manga, books) | `:5000`, libraries Manga and Book | `/data/media/{manga,books}` |
 | SMB share | `smb://192.168.178.34/partage` | `/data/partage` |
@@ -69,6 +69,13 @@ NAS (`rsync -a --exclude=.git ./ david@nas:nixos-config/`), then on the NAS
 - Kavita does not scan files at the root of a library: one folder per series or per book.
 - The first admin account of Navidrome, Jellyfin, Immich and Kavita is created in the
   browser on the first visit.
+
+## Second disk part for the films
+
+The WD 2 TB disk has two parts: sdb1 (ext4, `/data`) and sdb2 (btrfs, `/video2`, 980 GB, formerly
+NTFS with old data, erased on purpose). `video2.nix` mounts it; the films are not backed up
+(`/video2` and `/data/media/video` are excluded). Add `/video2/Movies` and `/video2/Shows` to the
+Jellyfin libraries. Put new films there: it has the room.
 
 ## Backup
 

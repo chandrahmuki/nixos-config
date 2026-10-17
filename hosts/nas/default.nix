@@ -17,6 +17,7 @@ in {
     ./immich.nix
     ./kavita.nix
     ./backup.nix
+    ./video2.nix
     ./tailscale.nix
   ];
 
