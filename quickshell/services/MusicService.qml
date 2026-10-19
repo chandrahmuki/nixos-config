@@ -17,8 +17,6 @@ Item {
             return "";
         const dbusName = player.dbusName.toLowerCase();
         const desktopEntry = player.desktopEntry.toLowerCase();
-        if (dbusName.indexOf("cliamp") >= 0 || desktopEntry.indexOf("cliamp") >= 0)
-            return "cliamp";
         if (dbusName.indexOf("chromium") >= 0 || desktopEntry.indexOf("helium") >= 0)
             return "helium";
         return "";
