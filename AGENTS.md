@@ -58,6 +58,12 @@ Changer de modele ne remplace jamais un test. Une tache simple correctement test
 reste chez Terra ou Luna ; une tache mal definie ne devient pas fiable uniquement
 en passant a Sol.
 
+## NAS
+
+Toute tache sur le NAS commence par lire `hosts/nas/README.md` (section « Reference
+sheet » : machine, disques, noms, cles SSH, deploiement avec `nos` puis `nasos` / `nasw`,
+decisions, ce qui reste manuel). Le mettre a jour quand l'etat du NAS change.
+
 ## Toujours faire
 
 1. **Inspecter avant de modifier**

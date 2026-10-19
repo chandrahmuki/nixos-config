@@ -11,6 +11,8 @@
       lib,
       ...
     }: let
+      # Same album artist on every track of a downloaded album (files/music/album-artist.sh).
+      albumArtist = pkgs.writeShellScript "album-artist" (builtins.replaceStrings ["@ffmpeg@" "@ffprobe@" "@jq@"] ["${pkgs.ffmpeg}/bin/ffmpeg" "${pkgs.ffmpeg}/bin/ffprobe" "${pkgs.jq}/bin/jq"] (builtins.readFile ../files/music/album-artist.sh));
       syncCliampPlaylists = pkgs.writeShellScriptBin "sync-cliamp-playlists" ''
                 playlists_dir="$HOME/.config/cliamp/playlists"
                 mkdir -p "$playlists_dir"
@@ -79,7 +81,14 @@
       '';
 
       programs.fish.functions = {
-        yt = "yt-dlp -x --audio-format m4a $argv";
+        # Take the native m4a stream (AAC) when YouTube has one: the default "bestaudio" picks
+        # Opus and then re-encodes it to AAC, a second lossy pass for no gain.
+        yt = ''
+          set -l list (mktemp)
+          yt-dlp -f 'bestaudio[ext=m4a]/bestaudio' -x --audio-format m4a --print-to-file after_move:filepath $list $argv
+          ${albumArtist} $list
+          rm -f $list
+        '';
 
         mpno = ''
           set -l SOCKET /tmp/mpv-music.sock

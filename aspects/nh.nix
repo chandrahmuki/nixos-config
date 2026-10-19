@@ -12,6 +12,20 @@
       ${pkgs.rsync}/bin/rsync -a --delete --exclude=.git --exclude=result --exclude=.claude \
         ${settings.configDirectory}/ ${username}@nas:nixos-config/
     '';
+    musicTagCheck = pkgs.writeShellScript "music-tag-check" ''
+      music=/home/${username}/Music
+      ${pkgs.rsync}/bin/rsync -an --ignore-existing --out-format=%n "$music/" ${username}@nas:/data/media/music/ \
+        | grep -iE '\.(m4a|mp3|opus|flac|ogg|webm)$' | while IFS= read -r f; do
+        tags=$(${pkgs.ffmpeg}/bin/ffprobe -v error -show_entries format_tags=album,artist,title \
+          -of default=nw=1:nk=0 "$music/$f" 2>/dev/null)
+        missing=""
+        for t in album artist title; do
+          grep -qiE "^TAG:$t=." <<<"$tags" || missing="$missing $t"
+        done
+        [ -z "$missing" ] || echo "sans tag ($missing ) : $f"
+      done
+      true
+    '';
     nasPrebuild = pkgs.writeShellScript "nas-prebuild" ''
       set -e
       ${nasCopy}
@@ -59,6 +73,16 @@
           --debounce 5s \
           --restart \
           -- ${nasPrebuild}
+      '';
+
+      # Sends the new music of ~/Music to the NAS: only files that are not there yet, nothing
+      # overwritten or deleted. Navidrome's watcher notices them and scans by itself.
+      # Before sending, it lists the new files without an album, artist or title tag:
+      # Navidrome files those under "Unknown Album" / "Unknown Artist".
+      musync = ''
+        ${musicTagCheck}
+        and ${pkgs.rsync}/bin/rsync -a --ignore-existing --info=NAME,STATS1 \
+          /home/${username}/Music/ ${username}@nas:/data/media/music/
       '';
     };
   };

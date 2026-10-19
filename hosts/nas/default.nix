@@ -35,6 +35,7 @@ in {
     extraGroups = ["wheel" "media"];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILZrsY/ghWdJ4vtUQ2r1vxc+8h+6NLN9qQy29Z+9KvRJ muggy@muggy.com"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHcn/KGYpFIzKu5b/XIXe/7VuM3RbbMX1JJ6AUDz3yfu"
     ];
   };
 
@@ -43,6 +44,8 @@ in {
     enable = true;
     settings = {
       PasswordAuthentication = false;
+      # PAM password logins also go through keyboard-interactive: keys only.
+      KbdInteractiveAuthentication = false;
       PermitRootLogin = "no";
     };
   };
