@@ -21,7 +21,9 @@
         };
       };
 
-      programs.fish.functions.sops = "env SOPS_CONFIG=~/.config/nixos-secrets/.sops.yaml SOPS_AGE_SSH_PRIVATE_KEY_FILE=~/.ssh/id_ed25519 nix run nixpkgs#sops -- $argv";
+      # The secrets are encrypted for an age key derived from the SSH key (the same one sops-nix
+      # uses), which sops cannot read from the SSH key file directly: derive it on the fly.
+      programs.fish.functions.sops = "env SOPS_CONFIG=$HOME/.config/nixos-secrets/.sops.yaml SOPS_AGE_KEY=(nix run nixpkgs#ssh-to-age -- -private-key -i $HOME/.ssh/id_ed25519) nix run nixpkgs#sops -- $argv";
     };
   };
 }
