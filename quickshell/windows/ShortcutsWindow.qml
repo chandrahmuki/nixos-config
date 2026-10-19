@@ -24,7 +24,7 @@ Variants {
                 { keys: ["Super", "F"], label: "Plein écran" },
                 { keys: ["Super", "Espace"], label: "Maximiser" },
                 { keys: ["Super", "V"], label: "Flottante / tuilée" },
-                { keys: ["Super", "L"], label: "Verrouiller" },
+                { keys: ["Super", "Shift", "L"], label: "Verrouiller" },
                 { keys: ["Super", "Retour"], label: "Alimentation" },
                 { keys: ["Super", "Shift", "T"], label: "Thèmes" },
                 { keys: ["Super", "H"], label: "Ce panneau" }

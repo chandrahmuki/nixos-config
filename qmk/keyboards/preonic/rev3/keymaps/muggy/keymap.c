@@ -181,7 +181,33 @@ static void send_accent(uint16_t dead, uint16_t key, bool shift) {
     }
 }
 
+// "?" is Shift + "/". "/" is a layer-tap key, and the tap of such a key is only sent when
+// it is released: letting go of Shift a moment before "/" typed "/" instead of "?". The
+// Shift held when "/" went down is remembered here and given back to the tap.
+static bool shift_at_slash_press;
+static bool question_mark_sent;
+
+bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (keycode == FRENCH_KEY && record->event.pressed) {
+        shift_at_slash_press = (get_mods() | get_weak_mods()) & MOD_MASK_SHIFT;
+    }
+    return true;
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (keycode == FRENCH_KEY && record->tap.count) {
+        if (record->event.pressed && shift_at_slash_press) {
+            tap_code16(S(KC_SLSH));
+            question_mark_sent = true;
+            return false;
+        }
+        if (!record->event.pressed && question_mark_sent) {
+            question_mark_sent = false;
+            return false;
+        }
+        return true;
+    }
+
     if (keycode < SAFE_RANGE || !record->event.pressed) {
         return true;
     }

@@ -161,7 +161,9 @@ hl.bind(mod .. " + B", hl.dsp.exec_cmd("thunar"))
 hl.bind(mod .. " + F", toggle_true_fullscreen)
 hl.bind(mod .. " + SPACE", toggle_maximized)
 hl.bind(mod .. " + V", hl.dsp.window.float({ action = "toggle" }))
-hl.bind(mod .. " + L", hl.dsp.exec_cmd("loginctl lock-session"))
+-- Shift as well: Super + L alone was too easy to hit by accident (a home row Super held a
+-- moment too long before an "l" while typing).
+hl.bind(mod .. " + SHIFT + L", hl.dsp.exec_cmd("loginctl lock-session"))
 hl.bind(mod .. " + Q", hl.dsp.window.close())
 hl.bind(mod .. " + R", hl.dsp.exec_cmd("muggy-screen-record start"))
 hl.bind(mod .. " + SHIFT + R", hl.dsp.exec_cmd("muggy-screen-record stop"))

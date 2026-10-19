@@ -42,6 +42,11 @@
         runtimeInputs = [pkgs.quickshell pkgs.gnugrep pkgs.coreutils];
         text = builtins.readFile ../files/hyprland/restart-quickshell.sh;
       };
+      refocusActive = pkgs.writeShellApplication {
+        name = "refocus-active";
+        runtimeInputs = [pkgs.hyprland pkgs.jq];
+        text = builtins.readFile ../files/hyprland/refocus-active.sh;
+      };
       localWorkspace = pkgs.writeShellApplication {
         name = "local-workspace";
         runtimeInputs = [pkgs.hyprland pkgs.jq];
@@ -52,6 +57,7 @@
         muggyScreenshot
         restartQuickshell
         localWorkspace
+        refocusActive
         muggyTheme
         pkgs.grim
         pkgs.slurp
@@ -110,7 +116,9 @@
         enable = true;
         settings = {
           general = {
-            lock_cmd = "pidof hyprlock || hyprlock";
+            # hyprlock blocks until the unlock, then the active window gets its
+            # keyboard back (see files/hyprland/refocus-active.sh).
+            lock_cmd = "pidof hyprlock || { hyprlock; ${refocusActive}/bin/refocus-active; }";
             before_sleep_cmd = "loginctl lock-session";
             after_sleep_cmd = "hyprctl dispatch dpms on";
           };
