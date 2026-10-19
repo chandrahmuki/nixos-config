@@ -14,7 +14,6 @@ modules/mcp_config.json
 repomix-*.md
 *.tmp
 .tmp/
-memory/
 CLAUDE.md
 .antigravitycli/
 .sops.yaml
@@ -38,7 +37,6 @@ result-*
 !quickshell/assets/wallpapers/*.png
 scripts/muggy/muggy
 /muggy
-generated/
 GEMINI.md
 .opencode/
 .omnigraph/
