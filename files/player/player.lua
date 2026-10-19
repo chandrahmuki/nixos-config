@@ -12,7 +12,8 @@ local HELP = {
   'spc pause      n/b next / previous',
   '←→ seek        ↑↓ volume   m mute',
   'j/k browse     ⏎/l play    g/G ends',
-  '/ search       p back to the playing track',
+  '/ search tracks  a albums (esc: all)',
+  'p back to the playing track',
   's shuffle  r loop  c make playlist  q quit',
   'R radio (again: back to the music)',
   't / T          next / previous theme',
@@ -42,14 +43,48 @@ local cursor = 0 -- browsing position in the list, independent from the playing 
 local flash_text, flash_until = '', 0
 -- Fuzzy search ("/"): the query, the matching playlist indexes and the picked one.
 local searching, query, results, picked, haystack = false, '', {}, 0, {}
+-- Album search ("a"): one entry per folder of the playlist, picking one plays its first track.
+local albums = nil
+local view = nil -- an opened album: the playlist indexes of its tracks, the list shows only those
 local state_dir = os.getenv('PLAYER_STATE_DIR')
 -- Radio mode ("R"): the playlist is swapped for the stations and swapped back on the next "R".
 local radio = false
 local saved = nil -- {files, pos, time} of the music left behind
 local tags_of = {} -- station url -> its tags, searched along with the name
 
+-- Terminal columns taken by one character (its code point): 0 for combining marks and
+-- variation selectors, 2 for CJK, full-width forms and emoji, 1 otherwise.
+local function cwidth(cp)
+  if (cp >= 0x300 and cp <= 0x36F) or (cp >= 0x200B and cp <= 0x200F) or (cp >= 0xFE00 and cp <= 0xFE0F) or cp == 0x20E3 then
+    return 0
+  end
+  if (cp >= 0x1100 and cp <= 0x115F) or (cp >= 0x2E80 and cp <= 0xA4CF) or (cp >= 0xAC00 and cp <= 0xD7A3)
+    or (cp >= 0xF900 and cp <= 0xFAFF) or (cp >= 0xFE30 and cp <= 0xFE6F) or (cp >= 0xFF00 and cp <= 0xFF60)
+    or (cp >= 0xFFE0 and cp <= 0xFFE6) or (cp >= 0x1F300 and cp <= 0x1FAFF) or (cp >= 0x20000 and cp <= 0x3FFFD) then
+    return 2
+  end
+  return 1
+end
+
+local function codepoint(ch)
+  local b = ch:byte(1)
+  if b < 0x80 then
+    return b
+  end
+  local n = b >= 0xF0 and 3 or b >= 0xE0 and 2 or 1
+  local cp = b % (2 ^ (6 - n))
+  for i = 2, n + 1 do
+    cp = cp * 64 + ((ch:byte(i) or 128) % 64)
+  end
+  return cp
+end
+
+-- Display width in terminal columns (not bytes, not code points).
 local function ulen(s)
-  local _, n = s:gsub('[^\128-\191]', '')
+  local n = 0
+  for ch in s:gmatch('[%z\1-\127\194-\244][\128-\191]*') do
+    n = n + cwidth(codepoint(ch))
+  end
   return n
 end
 
@@ -59,7 +94,7 @@ local function utrunc(s, max)
   end
   local out, n = {}, 0
   for ch in s:gmatch('[%z\1-\127\194-\244][\128-\191]*') do
-    n = n + 1
+    n = n + cwidth(codepoint(ch))
     if n > max - 1 then
       break
     end
@@ -305,7 +340,7 @@ local function status_parts(ctx)
     return {
       {'accent', '/ '},
       {'alt', utrunc(query, 16) .. '▏'},
-      {'dim', string.format(' %d/%d  ↑↓ ⏎ esc', #results, ctx.count)},
+      {'dim', string.format(' %d/%d  ↑↓ ⏎ esc', #results, albums and #albums or ctx.count)},
     }, 'left'
   elseif mp.get_time() < flash_until then
     return {{'alt', '✔ ' .. utrunc(flash_text, 36)}}, 'left'
@@ -318,21 +353,33 @@ end
 -- The playlist, or the search results while searching, as rows of segments.
 local function list_rows(cfg, ctx)
   local rows = cfg.rows or 5
-  local shown = searching and #results or ctx.count
-  local selected = math.max(0, math.min(searching and picked or cursor, shown - 1))
+  local shown = searching and #results or view and #view or ctx.count
+  local at = 0
+  if view then
+    for n, index in ipairs(view) do
+      if index == cursor then
+        at = n - 1
+      end
+    end
+  end
+  local selected = math.max(0, math.min(searching and picked or view and at or cursor, shown - 1))
   local first = math.max(0, math.min(selected - math.floor(rows / 2), shown - rows))
   local out = {}
   for k = first, first + rows - 1 do
     if k >= 0 and k < shown then
-      local index = searching and results[k + 1] or k
+      local index = searching and results[k + 1] or view and view[k + 1] or k
       local is_selected, is_playing = k == selected, index == ctx.pos
+      if searching and albums then
+        local album = albums[index + 1]
+        is_playing = ctx.pos >= album.first and ctx.pos < album.first + album.count
+      end
       local text = subst(cfg.fmt or '{cursor}{play} {num} {name:34}', {
         cursor = is_selected and (cfg.cursor or '>') or ' ',
         play = is_playing and (cfg.note or '♪') or ' ',
         n = index + 1,
         -- The number padded to the width of the biggest one, so the names stay aligned.
-        num = string.format('%' .. #tostring(ctx.count) .. 'd', index + 1),
-        name = track_name(index),
+        num = string.format('%' .. #tostring(ctx.count) .. 'd', view and not searching and k + 1 or index + 1),
+        name = searching and albums and albums[index + 1].label or track_name(index),
       })
       local shade = cfg.dim or 'dim'
       if is_selected then
@@ -678,7 +725,7 @@ local function update_results()
 end
 
 local function stop_search()
-  searching = false
+  searching, albums = false, nil
   mp.remove_key_binding('player-text')
 end
 
@@ -687,8 +734,34 @@ local function type_text(text)
   update_results()
 end
 
-local function start_search()
-  haystack = {}
+local function start_search(by_album)
+  haystack, albums = {}, nil
+  if by_album and not radio then
+    albums = {}
+    local seen = {}
+    for i, entry in ipairs(mp.get_property_native('playlist') or {}) do
+      local folder = relative(entry.filename or ''):match('^(.*)/[^/]*$') or '.'
+      local album = seen[folder]
+      if not album then
+        local parent, name = folder:match('([^/]+)/([^/]+)$')
+        album = {first = i - 1, count = 0, indexes = {}, label = ((parent and parent .. ' / ' or '') .. (name or folder)):gsub('_', ' ')}
+        seen[folder] = album
+        albums[#albums + 1] = album
+        haystack[#albums] = folder:lower():gsub('_', ' ')
+      end
+      album.count = album.count + 1
+      album.indexes[#album.indexes + 1] = i - 1
+    end
+    searching, query = true, ''
+    update_results()
+    mp.add_forced_key_binding('any_unicode', 'player-text', function(event)
+      if searching and event.key_text and event.event ~= 'up' then
+        type_text(event.key_text)
+        render()
+      end
+    end, {complex = true, repeatable = true})
+    return
+  end
   for i, entry in ipairs(mp.get_property_native('playlist') or {}) do
     haystack[i] = relative(entry.filename or ''):lower()
     if radio then
@@ -716,6 +789,11 @@ local function search_key(key)
     stop_search()
   elseif key == 'ENTER' then
     local index = results[picked + 1]
+    if index and albums then
+      view = albums[index + 1].indexes
+      cursor = view[1]
+      index = nil
+    end
     stop_search()
     if index then
       cursor = index
@@ -858,14 +936,24 @@ bind('s', function()
   mp.command(shuffled and 'playlist-shuffle' or 'playlist-unshuffle')
 end)
 local function move_cursor(delta)
+  if view then
+    local at = 1
+    for n, index in ipairs(view) do
+      if index == cursor then
+        at = n
+      end
+    end
+    cursor = view[math.max(1, math.min(at + delta, #view))]
+    return
+  end
   local count = mp.get_property_number('playlist-count', 0)
   cursor = math.max(0, math.min(cursor + delta, count - 1))
 end
 
 bind('j', function() move_cursor(1) end)
 bind('k', function() move_cursor(-1) end)
-bind('g', function() cursor = 0 end)
-bind('G', function() cursor = math.max(0, mp.get_property_number('playlist-count', 1) - 1) end)
+bind('g', function() cursor = view and view[1] or 0 end)
+bind('G', function() cursor = view and view[#view] or math.max(0, mp.get_property_number('playlist-count', 1) - 1) end)
 bind('h', function() show_help = not show_help end)
 bind('p', function() cursor = mp.get_property_number('playlist-pos', 0) end)
 bind('t', function() cycle_theme(1) end)
@@ -888,8 +976,11 @@ mp.register_event('end-file', function(event)
 end)
 bind('c', make_playlist)
 bind('R', toggle_radio)
-bind('/', start_search)
-bind('ESC', function() show_help = false end)
+bind('/', function() start_search(false) end)
+bind('a', function() start_search(true) end)
+bind('ESC', function()
+  show_help, view = false, nil
+end)
 for _, key in ipairs({'BS', 'Ctrl+u', 'Ctrl+n', 'Ctrl+p'}) do
   bind(key, function() end)
 end
