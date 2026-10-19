@@ -92,7 +92,7 @@ nixos-config/
 ├── aspects/                  # Modular NixOS and Home Manager aspects
 │   ├── ai.nix                # AI tools (Antigravity, Claude, OpenCode, OmniGraph)
 │   ├── herdr.nix             # Herdr workspace manager
-│   ├── media.nix             # MPV, YT-DLP, Cliamp & playlists
+│   ├── media.nix             # MPV, YT-DLP and the album-artist tagging of downloads
 │   ├── nh.nix                # Nix Helper (nos command)
 │   ├── sops.nix              # SOPS-Nix encrypted secret management
 │   ├── terminal.nix          # Fish, Foot, Starship, Zoxide

@@ -15,7 +15,6 @@ repomix-*.md
 *.tmp
 .tmp/
 memory/
-AGENTS.md
 CLAUDE.md
 .antigravitycli/
 .sops.yaml
