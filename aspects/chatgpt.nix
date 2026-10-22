@@ -8,11 +8,11 @@
 
     chatgpt = pkgs.stdenv.mkDerivation {
       pname = "chatgpt";
-      version = "26.928.21956";
+      version = "26.1016.61520";
 
       src = pkgs.fetchurl {
         url = "https://persistent.oaistatic.com/codex-app-prod/linux/deb/latest/chatgpt_amd64.deb";
-        hash = "sha256-msjQcRtGATaNSd7dv1Co/lI1jLYbbZ96XBi0HtRQCtg=";
+        hash = "sha256-mt1iKRbF+jhhr9lQga934lSIwQjKnFQ+H2dWCzkNKNQ=";
       };
 
       nativeBuildInputs = [
@@ -48,6 +48,7 @@
         qt6.qtbase.out
         stdenv.cc.cc.lib
         systemd
+        tpm2-tss
         wayland
         xz
         libX11
