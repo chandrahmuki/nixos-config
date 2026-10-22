@@ -34,7 +34,7 @@
         cava
         ddcutil
         brightnessctl
-        aria2
+        rtorrent
         lftp
         gimp
         filezilla
@@ -42,6 +42,16 @@
         lazygit
         remmina
       ];
+
+      # rtorrent: full-screen torrent client in the terminal (state, seeding, ratio). It
+      # downloads into ~/Downloads and keeps its session (resume data) in the state folder.
+      home.file.".rtorrent.rc".text = ''
+        directory.default.set = ${config.home.homeDirectory}/Downloads
+        session.path.set = ${config.home.homeDirectory}/.local/state/rtorrent/session
+        dht.mode.set = auto
+        protocol.pex.set = yes
+      '';
+      home.file.".local/state/rtorrent/session/.keep".text = "";
 
       programs.bat = {
         enable = true;
