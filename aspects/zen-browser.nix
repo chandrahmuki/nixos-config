@@ -12,6 +12,7 @@
         DisableAppUpdate = true;
         DisableTelemetry = true;
         Preferences."browser.shell.checkDefaultBrowser" = false;
+        Preferences."browser.taskbarTabs.enabled" = true;
       };
     };
   };
