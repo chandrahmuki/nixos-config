@@ -115,6 +115,7 @@ decisions, ce qui reste manuel). Le mettre a jour quand l'etat du NAS change.
      `stop`) : la demarrer seulement le temps d'un test, puis toujours `stop`. Les
      captures se lisent avec l'outil de lecture d'images, les touches partent par QMP.
      Ne jamais tester dans la session reelle de l'utilisateur pendant qu'il travaille.
+     Setup, pieges connus et parcours type : `scripts/VM.md`.
 
 6. **Tester le vrai workflow**
    - Lancer l'application dans la session graphique reelle.

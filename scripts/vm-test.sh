@@ -129,7 +129,7 @@ case "${1:-}" in
   start) cmd_start ;;
   shot) shift; cmd_shot "$@" ;;
   key) shift; cmd_key "$@" ;;
-  exec) shift; vm_ssh "$hypr_env $*" ;;
+  exec) shift; vm_ssh "$hypr_env $wayland_env $*" ;;
   hypr) shift; vm_ssh "$hypr_env hyprctl $*" ;;
   log) shift; if [[ $# -gt 0 ]]; then vm_ssh "journalctl --user -u $1 --no-pager | tail -60"; else vm_ssh "journalctl -b --no-pager | tail -80"; fi ;;
   mouse) shift; cmd_mouse "$@" ;;
