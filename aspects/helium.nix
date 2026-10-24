@@ -33,13 +33,6 @@
         "--enable-features=VaapiVideoDecoder,VaapiVideoEncoder,WaylandWindowDecorations,WebRTCPipeWireCapturer"
       ];
     };
-    xdg.mimeApps.defaultApplications = {
-      "text/html" = ["helium.desktop"];
-      "text/xml" = ["helium.desktop"];
-      "application/xhtml+xml" = ["helium.desktop"];
-      "x-scheme-handler/http" = ["helium.desktop"];
-      "x-scheme-handler/https" = ["helium.desktop"];
-    };
     xdg.dataFile."applications/chrome-teams.cloud.microsoft__-Default.desktop".text = ''
       [Desktop Entry]
       Type=Application
