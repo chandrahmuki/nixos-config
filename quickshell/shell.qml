@@ -317,15 +317,41 @@ ShellRoot {
         // existing window, including when it lives on another monitor or
         // local workspace. Calling DesktopEntry.execute() unconditionally
         // starts a second instance and leaves focus wherever Hyprland's
-        // default placement rules put it.
-        const existing = Hyprland.toplevels.values.find(function(toplevel) {
-            return applicationMatchesToplevel(application, toplevel);
-        });
+        // default placement rules put it. The long-lived shell can keep
+        // toplevels whose window is gone (a Steam helper kept matching by
+        // title and swallowed every launch), so only windows that Hyprland
+        // still lists count as existing.
         launcherOpen = false;
-        if (existing) {
-            focusToplevel(existing);
-        } else {
-            application.execute();
+        pendingLaunch = application;
+        liveClients.running = true;
+    }
+
+    property var pendingLaunch: null
+
+    Process {
+        id: liveClients
+        command: ["hyprctl", "clients", "-j"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const application = root.pendingLaunch;
+                root.pendingLaunch = null;
+                if (!application)
+                    return;
+                let live = [];
+                try {
+                    live = JSON.parse(text).map(function(client) { return client.address; });
+                } catch (error) {
+                    console.log("Launcher: unreadable hyprctl output, launching without focus check");
+                }
+                const existing = Hyprland.toplevels.values.find(function(toplevel) {
+                    const address = toplevel.address.startsWith("0x") ? toplevel.address : "0x" + toplevel.address;
+                    return live.indexOf(address) >= 0 && root.applicationMatchesToplevel(application, toplevel);
+                });
+                if (existing)
+                    root.focusToplevel(existing);
+                else
+                    application.execute();
+            }
         }
     }
 
