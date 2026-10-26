@@ -143,11 +143,6 @@
             fish_add_path --prepend /run/wrappers/bin
               set -g fish_greeting ""
 
-            set -l _gh_token_file ~/.config/sops/github_token
-            if test -f $_gh_token_file
-              set -gx GITHUB_TOKEN (cat $_gh_token_file)
-            end
-
             set -l _opencode_key ~/.config/sops/opencode_api_key
             if test -f $_opencode_key
               set -gx OPENCODE_API_KEY (cat $_opencode_key)
