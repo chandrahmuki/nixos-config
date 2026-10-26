@@ -15,12 +15,11 @@ not be tested there is marked below.
    `/data` (Nextcloud files in `/data/nextcloud`, media in `/data/media/{music,video}`).
 2. `nixos-generate-config --show-hardware-config` and replace
    `hosts/nas/hardware-configuration.nix` with the output.
-3. Create the Nextcloud admin password, outside the repository, before the first start:
-   `install -d -m 700 /var/lib/nextcloud-secrets` then
-   `install -m 600 /dev/stdin /var/lib/nextcloud-secrets/admin-pass <<<'a long password'`
-4. `nixos-install --flake .#nas`, then set a password for `david` (`passwd`), which
-   `sudo` needs; SSH itself is key-only.
-5. Check the old 1 TB disk before trusting it: `sudo smartctl -a /dev/sdX`.
+3. `nixos-install --flake .#nas`, then set a password for `david` (`passwd`), which
+   `sudo` needs; SSH itself is key-only. Nextcloud no longer creates its admin account
+   (nixpkgs dropped `adminuser`/`adminpassFile`): create it once with
+   `nextcloud-occ user:add <name>` then `nextcloud-occ group:adduser admin <name>`.
+4. Check the old 1 TB disk before trusting it: `sudo smartctl -a /dev/sdX`.
 
 ## Remote access (not testable in the VM)
 
@@ -118,7 +117,8 @@ Read this first for any NAS task. Anything here can be stale: check the machine.
   the user scans the library in Kavita (no API access for the agent). 111 EPUB there on
   2026-10-18. Manga (CBZ) in `/data/media/manga`, one folder per series.
 - **Still manual / user side**: accounts of Navidrome and Jellyfin, `sudo tailscale up`, the
-  Nextcloud admin password (only in `/var/lib/nextcloud-secrets/admin-pass`), the Samba
+  Nextcloud admin account (lives in the database; `adminuser`/`adminpassFile` removed from
+  `nextcloud.nix` on 2026-10-26, `/var/lib/nextcloud-secrets/admin-pass` is now unused), the Samba
   password (`smbpasswd`), test of the Mac SSH key.
 - **Decisions**: keep the VPS (no website on the NAS); HTTPS with a real domain undecided;
   no Docker or VMs (NixOS modules); moving `scripts/vm-test.sh` to the NAS is feasible

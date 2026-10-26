@@ -22,9 +22,6 @@
     extraAppsEnable = true;
     config = {
       dbtype = "pgsql";
-      adminuser = "admin";
-      # Not in the repository: create it by hand before the first start (README.md).
-      adminpassFile = "/var/lib/nextcloud-secrets/admin-pass";
     };
     settings = {
       enabledPreviewProviders = [
