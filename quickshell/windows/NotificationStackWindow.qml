@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
+import Quickshell.Widgets
 import Quickshell.Services.Notifications
 
 Variants {
@@ -63,10 +64,17 @@ Variants {
                 MouseArea {
                     anchors.fill: parent
                     z: 3
-                    enabled: notificationCard.link.length > 0
-                    cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    readonly property var primaryAction: notificationStack.shell.notifications.primaryActionFor(notification)
+                    cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        notificationStack.shell.notifications.openLink(notificationCard.link);
+                        // The app's own default action takes us to the exact chat
+                        // (Teams web); a plain link is the fallback.
+                        if (primaryAction)
+                            notificationStack.shell.notifications.invokeAction(primaryAction);
+                        else if (notificationCard.link.length > 0)
+                            notificationStack.shell.notifications.openLink(notificationCard.link);
+                        else
+                            notificationStack.shell.notifications.focusSender(notification);
                         notification.dismiss();
                     }
                 }
@@ -103,13 +111,21 @@ Variants {
                         Layout.preferredHeight: 42
                         visible: animatedRecorderIcon || iconSource.length > 0
 
-                        Image {
+                        // A sender picture (Teams avatar) is round; app icons stay as is.
+                        ClippingRectangle {
                             anchors.fill: parent
                             visible: !notificationIcon.animatedRecorderIcon
-                            source: notificationIcon.iconSource
-                            sourceSize.width: 84
-                            sourceSize.height: 84
-                            fillMode: Image.PreserveAspectFit
+                            color: "transparent"
+                            radius: notification.image.length > 0 ? width / 2 : 0
+
+                            Image {
+                                anchors.fill: parent
+                                source: notificationIcon.iconSource
+                                sourceSize.width: 84
+                                sourceSize.height: 84
+                                fillMode: notification.image.length > 0
+                                    ? Image.PreserveAspectCrop : Image.PreserveAspectFit
+                            }
                         }
 
                         AnimatedImage {
@@ -140,21 +156,26 @@ Variants {
                             Layout.fillWidth: true
                             visible: notification.body.length > 0
                             text: notification.body
-                            textFormat: Text.RichText
+                            textFormat: Text.StyledText
                             color: notificationStack.shell.theme.foreground
                             linkColor: notificationStack.shell.theme.accent
                             opacity: 0.88
                             font.pixelSize: 18
                             font.family: notificationStack.shell.theme.pillFont
                             wrapMode: Text.Wrap
+                            maximumLineCount: 3
+                            elide: Text.ElideRight
                             onLinkActivated: link => notificationStack.shell.notifications.openLink(link)
                         }
 
                         Row {
                             spacing: 6
-                            visible: notification.actions.length > 0
+                            visible: visibleActions.length > 0
+                            readonly property var visibleActions: notification.actions.filter(function(action) {
+                                return action.text.length > 0 && action.identifier !== "default";
+                            })
                             Repeater {
-                                model: notification.actions
+                                model: parent.visibleActions
                                 delegate: Rectangle {
                                     required property var modelData
                                     width: actionLabel.implicitWidth + 16

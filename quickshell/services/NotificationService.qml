@@ -25,6 +25,9 @@ Item {
 
         onNotification: notification => {
             notification.tracked = true;
+            console.log("Notification:", notification.appName, "| entry:", notification.desktopEntry,
+                "| actions:", JSON.stringify(notification.actions.map(a => a.identifier)),
+                "| link:", linkFor(notification));
             notifications.active = [notification].concat(notifications.active.filter(function(item) {
                 return item.id !== notification.id;
             })).slice(0, 5);
@@ -56,6 +59,26 @@ Item {
         shell.focusToplevel(browser);
     }
 
+    // Last resort for a click: raise the window of the app that sent the
+    // notification, or the default browser (web apps such as Teams).
+    function focusSender(notification): void {
+        const wanted = [notification.desktopEntry, notification.appName].map(function(name) {
+            return (name || "").toLowerCase().replace(/\.desktop$/, "");
+        }).filter(function(name) { return name.length > 0; });
+        const sender = Hyprland.toplevels.values.find(function(toplevel) {
+            const ipc = toplevel.lastIpcObject || {};
+            const entry = shell.desktopEntryFor(toplevel);
+            const ids = [(ipc.class || ""), entry ? entry.id : ""].map(function(id) {
+                return id.toLowerCase().replace(/\.desktop$/, "");
+            });
+            return wanted.some(function(name) { return ids.indexOf(name) >= 0; });
+        });
+        if (sender)
+            shell.focusToplevel(sender);
+        else
+            focusDefaultBrowser();
+    }
+
     function openLink(link): void {
         Qt.openUrlExternally(link);
         if (/^https?:/i.test(link))
@@ -65,6 +88,12 @@ Item {
     function linkFor(notification): string {
         const match = notification.body.match(/href\s*=\s*["']([^"']+)["']/i);
         return match ? match[1] : "";
+    }
+
+    function primaryActionFor(notification) {
+        return notification.actions.find(function(action) {
+            return action.identifier === "default" || action.identifier === "open";
+        }) || null;
     }
 
     function invokeAction(action): void {
