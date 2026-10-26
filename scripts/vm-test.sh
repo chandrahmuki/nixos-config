@@ -5,6 +5,9 @@
 #   scripts/vm-test.sh start         build + boot, wait for SSH and Hyprland
 #   scripts/vm-test.sh shot [name]   screenshot -> prints the PNG path
 #   scripts/vm-test.sh key KEY...    send keys, e.g. `key meta_l-s`
+#   scripts/vm-test.sh type TEXT     type lowercase letters, digits and spaces
+#   scripts/vm-test.sh launch QUERY  open the Quickshell launcher, type QUERY, Enter
+#   scripts/vm-test.sh clients       windows of the VM: address|class|title
 #   scripts/vm-test.sh mouse click X Y | drag X1 Y1 X2 Y2 | move X Y   pointer events (guest pixels)
 #   scripts/vm-test.sh reload        restart Quickshell in the VM (it does not hot-reload the 9p checkout)
 #   scripts/vm-test.sh exec CMD...   run a command as the user inside the VM
@@ -41,10 +44,14 @@ cmd_start() {
     echo "VM already running"; return 0
   fi
   rm -f "$qmp"
-  local out
-  out="$(nix build --impure --no-link --print-out-paths --expr "
+  local out t0=$SECONDS
+  # A dead substituter (the cachyos attic cache returns 503) must not stall the
+  # evaluation with retries; the VM never needs it (generic kernel).
+  out="$(nix build --impure --no-link --print-out-paths \
+    --option connect-timeout 3 --option download-attempts 1 --expr "
     let flake = builtins.getFlake (toString $repo_root);
     in (flake.nixosConfigurations.muggy-nixos.extendModules { modules = [ $repo_root/scripts/vm-test.nix ]; }).config.system.build.vm" | tail -1)"
+  echo "build/eval: $((SECONDS - t0))s (a cached VM only pays the ~15 s evaluation)"
   local runner
   runner="$(ls "$out"/bin/run-*-vm)"
   ( cd "$state" && NIX_DISK_IMAGE="$state/disk.qcow2" setsid "$runner" >"$state/console.log" 2>&1 & )
@@ -55,7 +62,7 @@ cmd_start() {
   vm_ssh true
   for _ in $(seq 1 60); do
     if vm_ssh "$hypr_env hyprctl version" >/dev/null 2>&1; then
-      echo "Hyprland up"; return 0
+      echo "Hyprland up after $((SECONDS - t0))s"; return 0
     fi
     sleep 1
   done
@@ -85,6 +92,28 @@ cmd_key() {
     qmp_cmd "{\"execute\":\"send-key\",\"arguments\":{\"keys\":[${keys%,}]}}" >/dev/null
     sleep 0.3
   done
+}
+
+cmd_type() {
+  local text="$*" ch code
+  for ((i = 0; i < ${#text}; i++)); do
+    ch="${text:i:1}"
+    case "$ch" in
+      " ") code=spc ;;
+      [a-z0-9]) code="$ch" ;;
+      *) echo "type: unsupported character '$ch'" >&2; return 2 ;;
+    esac
+    qmp_cmd "{\"execute\":\"send-key\",\"arguments\":{\"keys\":[{\"type\":\"qcode\",\"data\":\"$code\"}]}}" >/dev/null
+    sleep 0.1
+  done
+}
+
+cmd_launch() {
+  vm_ssh "$hypr_env $wayland_env qs -c muggy ipc call shell toggleLauncher" >/dev/null
+  sleep 1
+  cmd_type "$*"
+  sleep 0.5
+  cmd_key ret
 }
 
 cmd_mouse() {
@@ -132,6 +161,9 @@ case "${1:-}" in
   exec) shift; vm_ssh "$hypr_env $wayland_env $*" ;;
   hypr) shift; vm_ssh "$hypr_env hyprctl $*" ;;
   log) shift; if [[ $# -gt 0 ]]; then vm_ssh "journalctl --user -u $1 --no-pager | tail -60"; else vm_ssh "journalctl -b --no-pager | tail -80"; fi ;;
+  type) shift; cmd_type "$@" ;;
+  launch) shift; cmd_launch "$@" ;;
+  clients) vm_ssh "$hypr_env hyprctl clients -j | jq -r '.[] | .address + \"|\" + .class + \"|\" + .title'" ;;
   mouse) shift; cmd_mouse "$@" ;;
   reload) cmd_reload ;;
   stop) cmd_stop ;;

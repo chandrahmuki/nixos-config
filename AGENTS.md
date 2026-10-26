@@ -64,6 +64,22 @@ Toute tache sur le NAS commence par lire `hosts/nas/README.md` (section « Refer
 sheet » : machine, disques, noms, cles SSH, deploiement avec `nos` puis `nasos` / `nasw`,
 decisions, ce qui reste manuel). Le mettre a jour quand l'etat du NAS change.
 
+## Session reelle de l'utilisateur : lecture seule
+
+- Dans la session reelle, seules les lectures passives sont permises (`hyprctl clients`,
+  `qs log`, `pgrep`, journaux, fichiers). Interdit : `wtype`, `hyprctl dispatch`,
+  lancer ou tuer une application, `qs ipc call` qui ouvre une interface, `notify-send`
+  de test. Toute action qui produit une fenetre, une frappe ou un focus passe par la VM.
+- Un test d'interaction (lanceur, raccourci, notification, focus, application) se fait
+  d'abord dans la VM, sans demander la permission de la demarrer. Un `start` sans
+  changement de config NixOS coute environ 15 s d'evaluation puis 15 s de boot.
+- Ne jamais mettre `scripts/vm-test.sh start` derriere un pipe (`| tail`) : la commande
+  attend la fin du pipe et bloque. Rediriger vers un fichier ou la lancer en arriere-plan.
+- Raccourcis VM : `launch QUERY` (lanceur + saisie + Entree), `type TEXT`, `clients`,
+  `reload` apres une modification QML. Arreter la VM (`stop`) en fin de test.
+- Un test qui depasse deux minutes sans resultat est dit a l'utilisateur en une phrase
+  (ce qui tourne, ce qu'on attend) au lieu de poursuivre en silence.
+
 ## Toujours faire
 
 1. **Inspecter avant de modifier**
