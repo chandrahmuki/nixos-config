@@ -1,6 +1,29 @@
 {den, ...}: {
-  den.aspects.gaming.nixos = {pkgs, ...}: {
+  den.aspects.gaming.nixos = {pkgs, ...}: let
+    # Epic's own Linux launcher (preview), published as an AppImage only.
+    epic-games-launcher = let
+      pname = "epic-games-launcher";
+      version = "0.103.0";
+      src = pkgs.fetchurl {
+        url = "https://content-download-egs.distro.on.epicgames.com/Builds/EGLv2/0.103.0%2Bg66c2498/Linux/EpicGamesLauncher-x86_64.AppImage";
+        hash = "sha256-bizh9dUNFmeOtZrfCer/ueko+uRKO9rpsQ2BDeJJV1s=";
+      };
+      contents = pkgs.appimageTools.extract {inherit pname version src;};
+    in
+      pkgs.appimageTools.wrapType2 {
+        inherit pname version src;
+        extraInstallCommands = ''
+          install -Dm444 ${contents}/EpicGamesLauncher.png \
+            $out/share/icons/hicolor/512x512/apps/EpicGamesLauncher.png
+          install -Dm444 ${contents}/epic-games-launcher.desktop \
+            $out/share/applications/epic-games-launcher.desktop
+          substituteInPlace $out/share/applications/epic-games-launcher.desktop \
+            --replace-fail "Exec=EpicGamesLauncher" "Exec=$out/bin/epic-games-launcher"
+        '';
+      };
+  in {
     environment.systemPackages = with pkgs; [
+      epic-games-launcher
       mangohud
       protonup-qt
       lutris
