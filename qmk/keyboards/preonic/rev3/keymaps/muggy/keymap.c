@@ -141,13 +141,20 @@ bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-// The Super keys sit on the pinkies, the slowest and most accident-prone fingers, so
-// they need a longer hold than the other home row mods (TAPPING_TERM, 200 ms).
+// Home row mods need a long hold: a measured "as" turned into Super+S after A was held
+// about 400 and 440 ms, and the user prefers slow mods to accidental shortcuts. The
+// accent key "/" keeps TAPPING_TERM (200 ms).
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case HM_A:
+        case HM_S:
+        case HM_D:
+        case HM_F:
+        case HM_J:
+        case HM_K:
+        case HM_L:
         case HM_SCLN:
-            return 260;
+            return 450;
     }
     return TAPPING_TERM;
 }
