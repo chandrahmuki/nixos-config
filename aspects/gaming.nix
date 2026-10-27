@@ -12,6 +12,9 @@
     in
       pkgs.appimageTools.wrapType2 {
         inherit pname version src;
+        # Wine's bcrypt/secur32/crypt32 load libgnutls for TLS and ECDSA checks;
+        # neither the AppImage nor GE-Proton ships it (MTGA: TrustFailure).
+        extraPkgs = pkgs: [pkgs.gnutls];
         extraInstallCommands = ''
           install -Dm444 ${contents}/EpicGamesLauncher.png \
             $out/share/icons/hicolor/512x512/apps/EpicGamesLauncher.png
