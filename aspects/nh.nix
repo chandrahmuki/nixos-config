@@ -43,7 +43,12 @@
     # PATH (including /run/wrappers/bin for sudo) is already ensured by
     # fish_add_path in aspects/terminal.nix, no need to repeat it here.
     home-manager.users.${username}.programs.fish.functions = {
-      nos = "nh os switch ${settings.configDirectory} --hostname ${settings.hostname} --ask -L --diff always";
+      # Brings the hand-pinned packages (Codex, ChatGPT, Antigravity CLI) to their latest
+      # release first, see scripts/update-pins.sh. A failed check never blocks the switch.
+      nos = ''
+        ${settings.configDirectory}/scripts/update-pins.sh
+        nh os switch ${settings.configDirectory} --hostname ${settings.hostname} --ask -L --diff always
+      '';
 
       # Pre-builds the system after every save so that `nos` only has to
       # activate: evaluation (~14 s) and builds are done while you work. Builds

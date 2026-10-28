@@ -81,12 +81,12 @@
           nix flake update $argv
           or return $status
 
-          if not test -x ./scripts/update-codex.sh
+          if not test -x ./scripts/update-pins.sh
             echo "nfu: lance cette commande depuis la racine de nixos-config" >&2
             return 1
           end
 
-          ./scripts/update-codex.sh
+          ./scripts/update-pins.sh
         '';
       };
     };
