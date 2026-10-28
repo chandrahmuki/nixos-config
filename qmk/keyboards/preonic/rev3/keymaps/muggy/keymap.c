@@ -115,8 +115,49 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 };
 
+// Underglow colour of the active layer: Lower purple, Raise turquoise, French pale purple. The
+// base layer and Adjust keep the user's own underglow settings (UG_* keys, saved in
+// EEPROM), so Adjust shows the effect of the keys it holds. A layer colour is a
+// temporary static light (noeeprom) and leaving the layer reloads the saved settings.
+static bool    layer_lit;
+static uint8_t layer_lit_val;
+
+static void update_layer_underglow(layer_state_t state) {
+    uint8_t hue;
+    uint8_t sat = 255;
+    switch (get_highest_layer(state)) {
+        case _LOWER:
+            hue = 191; // purple
+            break;
+        case _RAISE:
+            hue = 124; // turquoise
+            break;
+        case _FRENCH:
+            hue = 191; // pale purple, half saturation
+            sat = 120;
+            break;
+        default:
+            if (layer_lit) {
+                layer_lit = false;
+                rgblight_reload_from_eeprom();
+            }
+            return;
+    }
+    if (!rgblight_is_enabled()) {
+        return;
+    }
+    if (!layer_lit) {
+        layer_lit     = true;
+        layer_lit_val = rgblight_get_val();
+    }
+    rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
+    rgblight_sethsv_noeeprom(hue, sat, layer_lit_val);
+}
+
 layer_state_t layer_state_set_user(layer_state_t state) {
-    return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
+    state = update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
+    update_layer_underglow(state);
+    return state;
 }
 
 // Chordal Hold would read "/" plus a right-hand key as two taps (same hand), which
