@@ -7,14 +7,14 @@
     username,
     ...
   }: let
-    codexVersion = "0.165.0";
+    codexVersion = "0.166.0";
     codex = pkgs.stdenvNoCC.mkDerivation {
       pname = "codex";
       version = codexVersion;
 
       src = pkgs.fetchurl {
         url = "https://github.com/openai/codex/releases/download/rust-v${codexVersion}/codex-package-x86_64-unknown-linux-musl.tar.gz";
-        hash = "sha256-6XxEY9fxRmkqlV17DhyM9I+XzU1hbNRcXcqy6Nl0MxY=";
+        hash = "sha256-HUSyi8SsmTfX01MiZLqmilB842SVag1Ou4VvMxze4lQ=";
       };
 
       sourceRoot = ".";
@@ -68,10 +68,10 @@
 
     antigravity-cli = pkgs.stdenvNoCC.mkDerivation {
       pname = "antigravity-cli";
-      version = "1.4.9";
+      version = "1.4.12";
       src = pkgs.fetchurl {
-        url = "https://github.com/google-antigravity/antigravity-cli/releases/download/1.4.9/agy_cli_linux_x64.tar.gz";
-        hash = "sha256-PYTjpGG5y/n/yd7t4VWgGSE4DpZPUagsC8UF24CuhSU=";
+        url = "https://github.com/google-antigravity/antigravity-cli/releases/download/1.4.12/agy_cli_linux_x64.tar.gz";
+        hash = "sha256-M2jRkj/IafIeyPzoMlKoyWyJKDqsk5OViskfv3o5SeQ=";
       };
       sourceRoot = ".";
       nativeBuildInputs = [pkgs.autoPatchelfHook];
