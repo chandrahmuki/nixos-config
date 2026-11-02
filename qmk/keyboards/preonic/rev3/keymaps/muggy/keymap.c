@@ -37,22 +37,7 @@ enum custom_keycodes {
 // Tap for "/", hold for the French accent layer.
 #define FRENCH_KEY LT(_FRENCH, KC_SLSH)
 
-// Home row mods: tap for the letter, hold for the modifier. Super on the pinkies,
-// then Alt, Ctrl, Shift towards the index fingers, mirrored on the right hand.
-// Alt is the left Alt on both hands (the right Alt would be AltGr).
-#define HM_A    GUI_T(KC_A)
-#define HM_S    ALT_T(KC_S)
-#define HM_D    CTL_T(KC_D)
-#define HM_F    SFT_T(KC_F)
-#define HM_J    SFT_T(KC_J)
-#define HM_K    CTL_T(KC_K)
-#define HM_L    ALT_T(KC_L)
-#define HM_SCLN GUI_T(KC_SCLN)
-
-// Chordal Hold: a home row mod only becomes a modifier when the other key is on the
-// OTHER hand. For a shortcut such as Super+S, hold the Super of the opposite hand
-// (";" for a left-hand key, "A" for a right-hand key), or use the Super key of the
-// bottom row, which is a plain key.
+// Chordal Hold only matters for the "/" accent key (see get_chordal_hold below).
 const char chordal_hold_layout[MATRIX_ROWS][MATRIX_COLS] PROGMEM = LAYOUT_ortho_5x12(
     'L', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R', 'R', 'R', 'R',
     'L', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R', 'R', 'R', 'R',
@@ -70,7 +55,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_QWERTY] = LAYOUT_ortho_5x12(
         KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_DEL,
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC,
-        KC_ESC,  HM_A,    HM_S,    HM_D,    HM_F,    KC_G,    KC_H,    HM_J,    HM_K,    HM_L,    HM_SCLN, KC_QUOT,
+        KC_ESC,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
         KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_UP,   SC_SENT,
         UG_TOGG, KC_LCTL, KC_LALT, KC_LGUI, LOWER_KEY, KC_SPC, KC_SPC,  RAISE_KEY, FRENCH_KEY, KC_LEFT, KC_DOWN, KC_RGHT
     ),
@@ -170,53 +155,10 @@ bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t *tap_hold_record,
     return get_chordal_hold_default(tap_hold_record, other_record);
 }
 
-// Permissive Hold turns "A down, other key down and up, A up" into Super+key even
-// when it was fast typing. Super is on the pinkies, where this happens most, so it
-// is off for those two keys: a Super hold has to last the whole tapping term.
-bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
-    switch (keycode) {
-        case HM_A:
-        case HM_SCLN:
-            return false;
-    }
-    return true;
-}
-
-// Home row mods need a long hold: a measured "as" turned into Super+S after A was held
-// about 400 and 440 ms, and the user prefers slow mods to accidental shortcuts. The
-// accent key "/" keeps TAPPING_TERM (200 ms).
-uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
-    switch (keycode) {
-        case HM_A:
-        case HM_S:
-        case HM_D:
-        case HM_F:
-        case HM_J:
-        case HM_K:
-        case HM_L:
-        case HM_SCLN:
-            return 450;
-    }
-    return TAPPING_TERM;
-}
-
-// Holding a home row key or "/" a little too long, without pressing another key,
-// would type nothing. Retro tapping types the letter on release instead. A mod held
-// alone for a mouse click (Shift+click) types its letter too; use the bottom row for that.
+// Holding "/" a little too long, without pressing another key, would type nothing.
+// Retro tapping types the slash on release instead.
 bool get_retro_tapping(uint16_t keycode, keyrecord_t *record) {
-    switch (keycode) {
-        case FRENCH_KEY:
-        case HM_A:
-        case HM_S:
-        case HM_D:
-        case HM_F:
-        case HM_J:
-        case HM_K:
-        case HM_L:
-        case HM_SCLN:
-            return true;
-    }
-    return false;
+    return keycode == FRENCH_KEY;
 }
 
 // A dead key followed by a letter (dead == 0: the letter is typed with AltGr).
