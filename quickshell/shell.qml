@@ -41,6 +41,12 @@ ShellRoot {
         id: networkService
     }
 
+    // The screen recorder state; the recording indicator reads it as `shell.recording`.
+    property alias recording: recordingService
+    RecordingService {
+        id: recordingService
+    }
+
     // Notifications have their own service; widgets read it as `shell.notifications`.
     property alias notifications: notificationService
     NotificationService {
@@ -548,6 +554,10 @@ ShellRoot {
     }
 
     PillWindow {
+        shell: root
+    }
+
+    RecordingWindow {
         shell: root
     }
 

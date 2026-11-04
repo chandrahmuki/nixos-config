@@ -85,6 +85,12 @@ for _, namespace in ipairs({ "muggynix-power-menu", "muggynix-shortcuts" }) do
   })
 end
 
+-- The recording indicator must not appear in the video it reports on.
+hl.layer_rule({
+  match = { namespace = "muggynix-recording" },
+  no_screen_share = true,
+})
+
 local mod = "SUPER"
 
 -- Super+F alternates between true fullscreen and maximized instead
@@ -166,6 +172,7 @@ hl.bind(mod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mod .. " + SHIFT + L", hl.dsp.exec_cmd("loginctl lock-session"))
 hl.bind(mod .. " + Q", hl.dsp.window.close())
 hl.bind(mod .. " + R", hl.dsp.exec_cmd("muggy-screen-record start"))
+hl.bind(mod .. " + CTRL + R", hl.dsp.exec_cmd("muggy-screen-record start-screen"))
 hl.bind(mod .. " + SHIFT + R", hl.dsp.exec_cmd("muggy-screen-record stop"))
 hl.bind(mod .. " + SHIFT + S", hl.dsp.exec_cmd("muggy-screenshot"))
 hl.bind(mod .. " + left", hl.dsp.focus({ direction = "left" }))

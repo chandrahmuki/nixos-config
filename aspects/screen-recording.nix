@@ -14,6 +14,7 @@
         pkgs.hyprland
         pkgs.jq
         pkgs.libnotify
+        pkgs.slurp
         pkgs.systemd
         pkgs.xdg-user-dirs
       ];
@@ -24,6 +25,7 @@
         runtime_dir="''${XDG_RUNTIME_DIR:?XDG_RUNTIME_DIR is not set}/muggy-screen-recorder"
         socket="$runtime_dir/control.sock"
         state_file="$runtime_dir/current"
+        region_file="$runtime_dir/region"
 
         notify() {
           urgency="$1"
@@ -37,14 +39,24 @@
           gsr-cli -ipc "$socket" status >/dev/null 2>&1
         }
 
+        # `region` asks for a zone with slurp, like muggy-screenshot; `screen` films the
+        # whole focused monitor.
         start_recording() {
+          mode="$1"
           if is_recording || systemctl --user is-active --quiet "$unit"; then
             notify normal "Enregistrement déjà actif" "Utilise Super+Shift+R pour l'arrêter."
             return 0
           fi
 
+          region=""
+          if [ "$mode" = region ]; then
+            region="$(slurp -f "%wx%h+%x+%y")" || return 0
+            [ -n "$region" ] || return 0
+          fi
+
           mkdir -p "$runtime_dir"
           rm -f "$socket" "$state_file"
+          printf '%s\n' "$region" > "$region_file"
           systemctl --user reset-failed "$unit" >/dev/null 2>&1 || true
           systemctl --user start "$unit"
 
@@ -52,7 +64,8 @@
             if is_recording; then
               output="$(sed -n '1p' "$state_file")"
               monitor="$(sed -n '2p' "$state_file")"
-              notify low "Enregistrement démarré" "$monitor • audio système • $(basename "$output")"
+              area="$(sed -n '3p' "$state_file")"
+              notify low "Enregistrement démarré" "''${area:-$monitor} • audio système • $(basename "$output")"
               return 0
             fi
             sleep 0.1
@@ -88,15 +101,25 @@
           output_dir="$video_root/Recordings"
           mkdir -p "$output_dir" "$runtime_dir"
 
-          monitor="$(hyprctl monitors -j | jq -er '.[] | select(.focused == true) | .name' | head -n 1)"
+          region="$(cat "$region_file" 2>/dev/null || true)"
+          if [ -n "$region" ]; then
+            # The monitor under the top-left corner of the zone (global layout coordinates).
+            x="$(printf '%s' "$region" | sed 's/^[0-9]*x[0-9]*+\([0-9]*\)+[0-9]*$/\1/')"
+            y="$(printf '%s' "$region" | sed 's/^[0-9]*x[0-9]*+[0-9]*+\([0-9]*\)$/\1/')"
+            monitor="$(hyprctl monitors -j | jq -er --argjson x "$x" --argjson y "$y" \
+              '.[] | select(.x <= $x and $x < .x + (.width / .scale) and .y <= $y and $y < .y + (.height / .scale)) | .name' | head -n 1)"
+            capture_args=(-w region -region "$region")
+          else
+            monitor="$(hyprctl monitors -j | jq -er '.[] | select(.focused == true) | .name' | head -n 1)"
+            capture_args=(-w "$monitor" -s 2560x1440)
+          fi
           timestamp="$(date +%Y%m%d-%H%M%S)"
           output="$output_dir/recording-$timestamp.mp4"
-          printf '%s\n%s\n' "$output" "$monitor" > "$state_file.tmp"
+          printf '%s\n%s\n%s\n' "$output" "$monitor" "$region" > "$state_file.tmp"
           mv "$state_file.tmp" "$state_file"
 
           exec gpu-screen-recorder \
-            -w "$monitor" \
-            -s 2560x1440 \
+            "''${capture_args[@]}" \
             -f 60 \
             -a default_output \
             -k h264 \
@@ -112,7 +135,8 @@
         }
 
         case "''${1:-status}" in
-          start) start_recording ;;
+          start) start_recording region ;;
+          start-screen) start_recording screen ;;
           stop) stop_recording ;;
           status)
             if is_recording; then
@@ -123,7 +147,7 @@
             ;;
           run) run_recorder ;;
           *)
-            printf 'Usage: muggy-screen-record {start|stop|status}\n' >&2
+            printf 'Usage: muggy-screen-record {start|start-screen|stop|status}\n' >&2
             exit 2
             ;;
         esac

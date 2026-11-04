@@ -2,9 +2,10 @@ import QtQuick
 import Quickshell
 import Quickshell.Wayland
 
-// A small indicator on the recorded monitor while muggy-screen-record runs: blinking
-// dot, elapsed time and size of the file. Hyprland hides its namespace from screen
-// capture (no_screen_share in files/hyprland/hyprland.lua), so it is not in the video.
+// A small indicator on the recorded monitor while muggy-screen-record runs: blinking dot,
+// elapsed time and size of the file. gpu-screen-recorder films layers too (Hyprland's
+// no_screen_share does not hide it), so the indicator is in a full-screen video; a zone
+// recording (the default) leaves the top right corner out unless the zone covers it.
 Variants {
     id: recordingWindow
     required property var shell
