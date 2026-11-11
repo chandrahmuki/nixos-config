@@ -52,6 +52,63 @@
         runtimeInputs = [pkgs.hyprland pkgs.jq];
         text = builtins.readFile ../files/hyprland/local-workspace.sh;
       };
+      hyprcaffeine = pkgs.stdenvNoCC.mkDerivation {
+        pname = "hyprcaffeine";
+        version = "unstable-2026-11-11";
+        src = pkgs.fetchFromGitHub {
+          owner = "hbuddenberg";
+          repo = "hyprcaffeine";
+          rev = "60c5aabca6b1e1451d03ec97b0308c0d5c581659";
+          sha256 = "0080qq7kkcgzxjjzvpld72c6d62ch0rwqkxwac3y0sfm54x96f49";
+        };
+        nativeBuildInputs = [pkgs.makeWrapper];
+        installPhase = ''
+          runHook preInstall
+          mkdir -p $out/bin $out/share/hyprcaffeine $out/share/applications
+          cp -r scripts ui config $out/share/hyprcaffeine/
+          substituteInPlace $out/share/hyprcaffeine/ui/shell.qml \
+            --replace-fail 'Activo (Infinito)' 'Actif (illimité)' \
+            --replace-fail 'Activo (Temporizador)' 'Actif (minuteur)' \
+            --replace-fail 'Inactivo' 'Inactif' \
+            --replace-fail 'DURACIÓN PERSONALIZADA' 'DURÉE PERSONNALISÉE' \
+            --replace-fail 'Ejemplo:' 'Exemple :' \
+            --replace-fail 'Volver' 'Retour' \
+            --replace-fail 'Activar' 'Activer' \
+            --replace-fail 'TEMPORIZADORES RÁPIDOS' 'DURÉES RAPIDES' \
+            --replace-fail '1 hora' '1 heure' \
+            --replace-fail '2 horas' '2 heures' \
+            --replace-fail 'Infinito' 'Illimité' \
+            --replace-fail 'Custom...' 'Personnalisé...' \
+            --replace-fail 'OPCIONES DE HARDWARE' 'OPTIONS MATÉRIELLES' \
+            --replace-fail 'Pantalla ON' 'Écran allumé' \
+            --replace-fail 'Bloqueo Tapa' 'Bloquer le capot' \
+            --replace-fail 'Desactivar Inactividad' 'Désactiver' \
+            --replace-fail 'Cerrar' 'Fermer'
+          # Upstream starts the timer as `( bash worker & ) &`, so timer.pid holds a dead
+          # subshell and timer_stop never killed the worker: it survived `off` and later
+          # killed the next caffeine session. Kill it by script name instead.
+          substituteInPlace $out/share/hyprcaffeine/scripts/timer.sh \
+            --replace-fail 'timer_stop() {' 'timer_stop() {
+              local w
+              for w in $(pgrep -f "$HOME/.cache/hyprcaffeine/.timer_worker.sh" || true); do
+                  pkill -P "$w" 2>/dev/null || true
+                  kill "$w" 2>/dev/null || true
+              done'
+          cp bin/hyprcaffeine $out/bin/hyprcaffeine
+          patchShebangs $out/bin $out/share/hyprcaffeine/scripts
+          wrapProgram $out/bin/hyprcaffeine --prefix PATH : ${lib.makeBinPath [pkgs.bash pkgs.coreutils pkgs.gnugrep pkgs.gnused pkgs.gawk pkgs.jq pkgs.procps pkgs.systemd pkgs.libnotify pkgs.quickshell pkgs.socat pkgs.hyprland]}
+          cat > $out/share/applications/hyprcaffeine.desktop <<EOF
+          [Desktop Entry]
+          Type=Application
+          Name=HyprCaffeine
+          Comment=Keep the computer awake
+          Exec=$out/bin/hyprcaffeine menu
+          Icon=caffeine
+          Categories=Utility;
+          EOF
+          runHook postInstall
+        '';
+      };
     in {
       home.packages = [
         muggyScreenshot
@@ -59,6 +116,7 @@
         localWorkspace
         refocusActive
         muggyTheme
+        hyprcaffeine
         pkgs.grim
         pkgs.slurp
         pkgs.wl-clipboard

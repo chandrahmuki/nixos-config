@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Hyprland
+import Quickshell.Io
 import Quickshell.Wayland
 import "../components"
 
@@ -12,6 +13,24 @@ Variants {
 
     PanelWindow {
         id: pillWindow
+        property string caffeineInhibitors: ""
+        readonly property bool caffeineActive: caffeineInhibitors.split(",").includes("sleep")
+        readonly property bool caffeineDisplay: caffeineInhibitors.split(",").includes("idle")
+        readonly property bool caffeineAny: caffeineActive || caffeineDisplay
+        Process {
+            id: caffeineStatus
+            command: ["sh", "-c", "systemd-inhibit --list --no-legend | awk '$1 == \"HyprCaffeine\" {print $6}' | paste -sd, -"]
+            stdout: SplitParser {
+                onRead: line => pillWindow.caffeineInhibitors = line.trim()
+            }
+        }
+        Timer {
+            interval: 2000
+            running: true
+            repeat: true
+            triggeredOnStart: true
+            onTriggered: if (!caffeineStatus.running) caffeineStatus.running = true
+        }
         required property var modelData
         readonly property var hyprMonitor: Hyprland.monitorFor(modelData)
         readonly property int hyprMonitorId: hyprMonitor ? hyprMonitor.id : -1
@@ -57,7 +76,7 @@ Variants {
             readonly property real compactWidth: Math.min(baseRow.implicitWidth + 32, parent.width - 32)
             readonly property real expandedWidth: Math.min(pillRoot.shell.musicPanelWidth, parent.width - 32)
             readonly property bool detailPanelExpanded: musicPanel.expanded || weatherPanel.expanded
-                || clockPanel.expanded || networkPanel.expanded || audioPanel.expanded
+                || clockPanel.expanded || networkPanel.expanded || audioPanel.expanded || caffeinePanel.expanded
             width: detailPanelExpanded ? expandedWidth : compactWidth
             height: detailPanelExpanded ? 186 : 60
             radius: detailPanelExpanded ? 6 : 18
@@ -97,6 +116,8 @@ Variants {
                     networkPanel.closePanel();
                 if (exceptPanel !== audioPanel)
                     audioPanel.closePanel();
+                if (exceptPanel !== caffeinePanel)
+                    caffeinePanel.closePanel();
             }
 
             RowLayout {
@@ -213,6 +234,51 @@ Variants {
                         onCloseRequested: networkPanel.scheduleClose()
                     }
                     BluetoothHeadset { shell: pillRoot.shell; device: pillRoot.shell.connectedHeadset }
+                    Item {
+                        id: caffeineButton
+                        width: 40
+                        height: 44
+                        Rectangle {
+                            anchors.fill: parent
+                            anchors.margins: 2
+                            radius: 6
+                            color: caffeineHover.hovered ? pillRoot.shell.theme.surfaceHover : "transparent"
+                        }
+                        PixelIcon {
+                            anchors.centerIn: parent
+                            anchors.horizontalCenterOffset: 1
+                            anchors.verticalCenterOffset: -3
+                            name: "caffeine"
+                            imageCache: false
+                            color: pillWindow.caffeineAny
+                                ? pillRoot.shell.theme.pillForeground : pillRoot.shell.theme.pillSecondary
+                        }
+                        Rectangle {
+                            visible: pillWindow.caffeineAny
+                            x: parent.width - width - 5
+                            y: 5
+                            width: 6
+                            height: 6
+                            color: pillRoot.shell.theme.retroCyan
+                        }
+                        Timer {
+                            id: caffeineOpenTimer
+                            interval: 180
+                            onTriggered: {
+                                if (caffeineHover.hovered) {
+                                    islandShape.closeDetailPanels(caffeinePanel);
+                                    caffeinePanel.openPanel();
+                                }
+                            }
+                        }
+                        HoverHandler {
+                            id: caffeineHover
+                            onHoveredChanged: {
+                                if (hovered) caffeineOpenTimer.restart();
+                                else { caffeineOpenTimer.stop(); caffeinePanel.scheduleClose(); }
+                            }
+                        }
+                    }
                     AudioIndicator {
                         shell: pillRoot.shell
                         onOpenRequested: {
@@ -275,6 +341,67 @@ Variants {
                 width: islandShape.expandedWidth
                 height: 186
                 anchors.horizontalCenter: parent.horizontalCenter
+            }
+
+            CrtPanel {
+                id: caffeinePanel
+                shell: pillRoot.shell
+                width: islandShape.expandedWidth
+                height: 186
+                anchors.horizontalCenter: parent.horizontalCenter
+                title: "CAFFEINE / VEILLE"
+                status: pillWindow.caffeineActive ? "ACTIF" : "INACTIF"
+                statusColor: pillWindow.caffeineActive ? shell.theme.retroCyan : shell.theme.panelDim
+
+                RowLayout {
+                    anchors.fill: parent
+                    spacing: 12
+                    ColumnLayout {
+                        Layout.preferredWidth: 110
+                        Layout.fillHeight: true
+                        PixelIcon { name: "caffeine"; color: pillWindow.caffeineActive ? pillRoot.shell.theme.retroCyan : pillRoot.shell.theme.panelDim }
+                        Text {
+                            text: pillWindow.caffeineActive ? "ÉVEILLÉ" : "VEILLE AUTO"
+                            color: pillWindow.caffeineActive ? pillRoot.shell.theme.retroCyan : pillRoot.shell.theme.panelDim
+                            font.family: pillRoot.shell.theme.pillFont
+                            font.pixelSize: 11
+                            font.bold: true
+                        }
+                    }
+                    GridLayout {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        columns: 3
+                        columnSpacing: 6
+                        rowSpacing: 6
+                        Repeater {
+                            model: [["15 MIN", "on", "15m"], ["30 MIN", "on", "30m"], ["1 HEURE", "on", "1h"], ["2 HEURES", "on", "2h"], ["ILLIMITÉ", "on", "infinite"], ["ARRÊTER", "off"], [pillWindow.caffeineDisplay ? "ÉCRAN : ON" : "ÉCRAN : AUTO", "monitor", "toggle"]]
+                            delegate: Rectangle {
+                                required property var modelData
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                color: caffeineAction.containsMouse ? pillRoot.shell.theme.surfaceHover : "transparent"
+                                border.width: 1
+                                border.color: pillRoot.shell.theme.panelFaint
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: parent.modelData[0]
+                                    color: pillRoot.shell.theme.pillForeground
+                                    font.family: pillRoot.shell.theme.pillFont
+                                    font.pixelSize: 11
+                                    font.bold: true
+                                }
+                                MouseArea {
+                                    id: caffeineAction
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: Quickshell.execDetached(["hyprcaffeine"].concat(parent.modelData.slice(1)))
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             Connections {

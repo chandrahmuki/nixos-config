@@ -8,6 +8,7 @@ Item {
     property string name: ""
     property color color: "white"
     property int size: 32
+    property bool imageCache: true
     width: size
     height: size
 
@@ -17,6 +18,7 @@ Item {
         source: pixelIcon.name.length > 0 ? Qt.resolvedUrl("../assets/icons/" + pixelIcon.name + ".svg") : ""
         sourceSize: Qt.size(pixelIcon.size, pixelIcon.size)
         smooth: false
+        cache: pixelIcon.imageCache
         visible: false
     }
 
