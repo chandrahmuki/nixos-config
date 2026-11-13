@@ -187,9 +187,15 @@ Variants {
                                 return;
                             // The app's own default action takes us to the exact chat
                             // (Teams web); a plain link is the fallback.
-                            if (primaryAction)
+                            if (primaryAction) {
                                 notificationStack.shell.notifications.invokeAction(primaryAction, notification.summary);
-                            else if (cardItem.link.length > 0)
+                                // Invoking the action already closes a normal notification;
+                                // dismissing it again hits a destroyed object.
+                                if (notification.resident)
+                                    notification.dismiss();
+                                return;
+                            }
+                            if (cardItem.link.length > 0)
                                 notificationStack.shell.notifications.openLink(cardItem.link);
                             else
                                 notificationStack.shell.notifications.focusSender(notification);
