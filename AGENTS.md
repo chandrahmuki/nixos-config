@@ -64,6 +64,18 @@ Toute tache sur le NAS commence par lire `hosts/nas/README.md` (section « Refer
 sheet » : machine, disques, noms, cles SSH, deploiement avec `nos` puis `nasos` / `nasw`,
 decisions, ce qui reste manuel). Le mettre a jour quand l'etat du NAS change.
 
+- Envoyer des fichiers dans Nextcloud : `david` n'ecrit pas dans `/data/nextcloud/data`
+  (proprietaire `nextcloud`) et n'a pas de sudo sans mot de passe. L'agent copie donc en SSH
+  vers `/data/partage/<dossier>/` (`rsync -a --partial -e ssh SRC/ david@nas:/data/partage/<dossier>/`),
+  verifie le nombre de fichiers et le total d'octets des deux cotes, puis donne a l'utilisateur
+  la commande a lancer lui-meme (mot de passe sudo : jamais demande ni accepte) :
+  `ssh -t david@nas sudo bash -c 'mv /data/partage/<dossier> /data/nextcloud/data/Muggy/files/<dossier> && chown -R nextcloud:nextcloud /data/nextcloud/data/Muggy/files/<dossier> && nextcloud-occ files:scan --path=Muggy/files/<dossier>'`.
+  Comptes Nextcloud : `Muggy` (usage courant) et `admin`. Cette chaine n'a pas ete verifiee de
+  bout en bout (le resultat cote Nextcloud n'est pas visible depuis la session de l'agent) :
+  demander a l'utilisateur de confirmer que le dossier apparait, et ne supprimer la source locale
+  qu'apres cette confirmation. Avant de conclure qu'un fichier n'existe pas sur le NAS, se rappeler
+  que `/data/nextcloud/data` est illisible pour l'agent : une recherche SSH ne le voit pas.
+
 ## Session reelle de l'utilisateur : lecture seule
 
 - Dans la session reelle, seules les lectures passives sont permises (`hyprctl clients`,
