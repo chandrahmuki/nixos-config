@@ -12,6 +12,7 @@ Item {
 
     property var active: []
     property string defaultBrowserDesktopId: ""
+    property string pendingSummary: ""
 
     NotificationServer {
         id: notificationServer
@@ -27,7 +28,9 @@ Item {
             notification.tracked = true;
             console.log("Notification:", notification.appName, "| entry:", notification.desktopEntry,
                 "| actions:", JSON.stringify(notification.actions.map(a => a.identifier)),
-                "| link:", linkFor(notification));
+                "| link:", linkFor(notification),
+                "| image:", String(notification.image).slice(0, 80), "| appIcon:", notification.appIcon,
+                "| hints:", JSON.stringify(notification.hints), "| summary:", notification.summary);
             notifications.active = [notification].concat(notifications.active.filter(function(item) {
                 return item.id !== notification.id;
             })).slice(0, 5);
@@ -96,7 +99,27 @@ Item {
         }) || null;
     }
 
-    function invokeAction(action): void {
+    // Zen sends every web notification under its own name and without the avatar, so the
+    // sender is a guess: a web app window (Teams) that shows an unread count in its title
+    // or the chat name, otherwise the browser.
+    function focusWebApp(summary: string): void {
+        const wanted = (summary || "").toLowerCase();
+        const webapp = Hyprland.toplevels.values.find(function(toplevel) {
+            const ipc = toplevel.lastIpcObject || {};
+            if ((ipc.class || "").indexOf(".webapp-") < 0)
+                return false;
+            const title = (ipc.title || "").toLowerCase();
+            return /^\(\d+\)/.test(title) || (wanted.length > 0 && title.indexOf(wanted) >= 0);
+        });
+        console.log("Focusing web app:", webapp ? webapp.address : "none, browser");
+        if (webapp)
+            shell.focusToplevel(webapp);
+        else
+            focusDefaultBrowser();
+    }
+
+    function invokeAction(action, summary: string): void {
+        pendingSummary = summary;
         action.invoke();
         // Most web notifications call their primary action "open". Give the
         // browser a moment to handle it, then explicitly restore its focus.
@@ -107,7 +130,7 @@ Item {
     Timer {
         id: browserFocusTimer
         interval: 180
-        onTriggered: notifications.focusDefaultBrowser()
+        onTriggered: notifications.focusWebApp(notifications.pendingSummary)
     }
 
     Process {

@@ -119,7 +119,8 @@ Item {
                 id: trayMenuPopup
                 visible: trayItem.menuOpen
                 implicitWidth: 240
-                implicitHeight: 260
+                // Grows with the entries up to a limit, then the Flickable scrolls.
+                implicitHeight: Math.min(trayMenuColumn.implicitHeight + 12, 520)
                 anchor {
                     item: trayItem
                     edges: Edges.Bottom | Edges.Left
@@ -155,9 +156,18 @@ Item {
                         }
                     }
 
-                    Column {
+                    // Menus such as Steam's are longer than the popup: scroll them with the wheel.
+                    Flickable {
                         anchors.fill: parent
                         anchors.margins: 6
+                        contentWidth: width
+                        contentHeight: trayMenuColumn.implicitHeight
+                        clip: true
+                        boundsBehavior: Flickable.StopAtBounds
+
+                    Column {
+                        id: trayMenuColumn
+                        width: parent.width
                         spacing: 2
 
                         Item {
@@ -247,6 +257,7 @@ Item {
                                 }
                             }
                         }
+                    }
                     }
                 }
             }

@@ -49,6 +49,7 @@ Item {
 
     PixelIcon {
         anchors.centerIn: parent
+        anchors.verticalCenterOffset: networkControl.shell.network.type === "ethernet" ? 1 : 0
         name: networkControl.shell.network.type === "ethernet" ? "ethernet"
             : networkControl.shell.network.type === "wifi" ? "wifi" : "wifi-off"
         color: networkControl.connected
