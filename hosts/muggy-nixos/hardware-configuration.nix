@@ -54,12 +54,6 @@
     options = ["subvol=@backup" "compress=zstd:3" "noatime"];
   };
 
-  fileSystems."/mnt/storage" = {
-    device = "/dev/disk/by-uuid/c6cd6dd5-d4a5-4de4-b179-1fecd2cc9c3e";
-    fsType = "btrfs";
-    options = ["subvol=@storage" "compress=zstd:3" "noatime"];
-  };
-
   fileSystems."/mnt/games" = {
     device = "/dev/disk/by-uuid/c6cd6dd5-d4a5-4de4-b179-1fecd2cc9c3e";
     fsType = "btrfs";

@@ -1,35 +1,41 @@
 {den, ...}: {
   den.aspects.gaming.nixos = {pkgs, ...}: let
-    # Epic's own Linux launcher (preview), published as an AppImage only.
+    # Epic's own Linux launcher (preview), published as a Debian package.
     epic-games-launcher = let
       pname = "epic-games-launcher";
-      version = "0.103.0";
-      src = pkgs.fetchurl {
-        url = "https://content-download-egs.distro.on.epicgames.com/Builds/EGLv2/0.103.0%2Bg66c2498/Linux/EpicGamesLauncher-x86_64.AppImage";
-        hash = "sha256-bizh9dUNFmeOtZrfCer/ueko+uRKO9rpsQ2BDeJJV1s=";
-      };
-      contents = pkgs.appimageTools.extract {inherit pname version src;};
+      version = "0.113.0";
     in
-      pkgs.appimageTools.wrapType2 {
-        inherit pname version src;
-        # Wine's bcrypt/secur32/crypt32 load libgnutls for TLS and ECDSA checks;
-        # neither the AppImage nor GE-Proton ships it (MTGA: TrustFailure).
-        extraPkgs = pkgs: [pkgs.gnutls];
-        extraInstallCommands = ''
-          install -Dm444 ${contents}/EpicGamesLauncher.png \
-            $out/share/icons/hicolor/512x512/apps/EpicGamesLauncher.png
-          install -Dm444 ${contents}/epic-games-launcher.desktop \
-            $out/share/applications/epic-games-launcher.desktop
+      pkgs.stdenvNoCC.mkDerivation {
+        inherit pname version;
+        src = pkgs.fetchurl {
+          url = "https://launcher-public-service-prod06.ol.epicgames.com/launcher/api/installer/download/EpicGamesLauncher-x86_64.deb";
+          hash = "sha256-iE3vjeJHvCeb6lcb5vXexsVIGslMwGr2K1d2JL5WwgE=";
+        };
+        nativeBuildInputs = [pkgs.dpkg];
+        unpackPhase = "dpkg-deb -x $src .";
+        installPhase = ''
+          mkdir -p $out
+          cp -r usr/* $out/
+          mkdir -p $out/bin
+          ln -s $out/bin/EpicGamesLauncher $out/bin/epic-games-launcher
           substituteInPlace $out/share/applications/epic-games-launcher.desktop \
             --replace-fail "Exec=EpicGamesLauncher" "Exec=$out/bin/epic-games-launcher"
         '';
       };
+    pokopia-launcher = pkgs.writeShellScriptBin "pokopia-launcher" ''
+      export LD_LIBRARY_PATH="${pkgs.libgpg-error}/lib''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+      exec ${pkgs.appimage-run}/bin/appimage-run "$HOME/.local/share/pokopia-recomp/PokopiaLauncher.AppImage" "$@"
+    '';
+    dusklight-launcher = pkgs.writeShellScriptBin "dusklight-launcher" ''
+      exec ${pkgs.appimage-run}/bin/appimage-run "$HOME/.local/share/dusklight/Dusklight.AppImage" "$@"
+    '';
   in {
     environment.systemPackages = with pkgs; [
       epic-games-launcher
+      pokopia-launcher
+      dusklight-launcher
       mangohud
       protonup-qt
-      lutris
       lact
       eden
     ];

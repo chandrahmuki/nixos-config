@@ -29,9 +29,18 @@
         fsType = "9p";
         options = ["trans=virtio" "version=9p2000.L" "ro" "msize=1048576" "nofail"];
       };
+      # Muggy checkout (desktop app tests): read-only, copy it to the guest
+      # disk before running, node_modules and vite need a writable tree.
+      fileSystems."/home/${username}/muggy-src" = {
+        device = "muggy-src";
+        fsType = "9p";
+        options = ["trans=virtio" "version=9p2000.L" "ro" "msize=1048576" "nofail"];
+      };
       qemu.options = [
         "-virtfs"
         "local,path=/home/${username}/nixos-config,mount_tag=nixos-config,security_model=none,readonly=on,id=nixoscfg"
+        "-virtfs"
+        "local,path=/home/${username}/Projects/muggy,mount_tag=muggy-src,security_model=none,readonly=on,id=muggysrc"
         "-vnc"
         "unix:/tmp/muggy-vm/vnc.sock"
         "-vga"
@@ -48,7 +57,12 @@
     boot.extraModulePackages = lib.mkForce [];
     boot.kernelModules = lib.mkForce [];
     services.xserver.videoDrivers = lib.mkForce [];
-    services.scx.enable = lib.mkForce false;
+    services.scx-loader.enable = lib.mkForce false;
+
+    # Muggy desktop (Electron UI) is exercised in the guest; bun, git, socat
+    # and bubblewrap are already in the system config. ripgrep is not on PATH
+    # in a default NixOS and the skill sandbox refuses to run without it.
+    environment.systemPackages = [pkgs.electron pkgs.ripgrep];
 
     services.openssh = {
       enable = true;

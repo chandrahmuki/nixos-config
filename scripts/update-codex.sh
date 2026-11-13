@@ -38,22 +38,21 @@ fi
 }
 
 url="https://github.com/openai/codex/releases/download/rust-v${version}/codex-package-x86_64-unknown-linux-musl.tar.gz"
-prefetch_json="$(nix store prefetch-file --json "$url")"
-hash="$(jq -er '.hash' <<<"$prefetch_json")"
-
 current_version="$(sed -n 's/^[[:space:]]*codexVersion = "\([^"]*\)";.*/\1/p' "$ai_file")"
 current_hash="$(sed -n '/codexVersion = /,/^    };/{s/^[[:space:]]*hash = "\([^"]*\)";.*/\1/p;}' "$ai_file" | head -n 1)"
 
-if [[ "$current_version" == "$version" && "$current_hash" == "$hash" ]]; then
-  printf 'Codex %s is already configured with hash %s.\n' "$version" "$hash"
+if [[ "$current_version" == "$version" ]]; then
+  printf 'Codex %s is already configured.\n' "$version"
   exit 0
 fi
 
 if ((check_only)); then
-  printf 'Codex update available: %s/%s -> %s/%s\n' \
-    "$current_version" "$current_hash" "$version" "$hash"
+  printf 'Codex update available: %s -> %s\n' "$current_version" "$version"
   exit 1
 fi
+
+prefetch_json="$(nix store prefetch-file --json "$url")"
+hash="$(jq -er '.hash' <<<"$prefetch_json")"
 
 CODEX_VERSION="$version" CODEX_HASH="$hash" perl -0pi -e \
   's/(codexVersion = ")[^"]+(";\n\s+codex = .*?\n\s+src = pkgs\.fetchurl \{\n\s+url = .*?\n\s+hash = ")[^"]+/$1$ENV{CODEX_VERSION}$2$ENV{CODEX_HASH}/s' \
