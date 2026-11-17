@@ -186,13 +186,29 @@ hl.bind(mod .. " + down", hl.dsp.focus({ direction = "down" }))
 -- (previous/next column), not "+col"/"-col" (that argument form is
 -- only for "move") — moves the active column without touching any
 -- window's position.
--- While a scratchpad is shown, the layout message would land on its special workspace, and
--- scrolling the workspace underneath would hide the scratchpad or jump to another window.
--- Do nothing then: the scratchpad stays where it is, Super+S hides it, then scrolling works.
+-- While a scratchpad is shown, the layout message would land on its special workspace
+-- ("no window to focus"). With another window underneath, hide the scratchpad, scroll the
+-- workspace, then show the scratchpad again so it stays open over the new window. With nothing
+-- to scroll to, do nothing: the scratchpad stays shown.
 local function focus_column(direction)
   return function()
     local mon = hl.get_active_monitor()
-    if mon and mon.active_special_workspace then
+    local special = mon and mon.active_special_workspace
+    if special then
+      local regular = mon.active_workspace and mon.active_workspace.id
+      local tiled = 0
+      for _, w in ipairs(hl.get_windows()) do
+        if w.workspace and w.workspace.id == regular and not w.floating then
+          tiled = tiled + 1
+        end
+      end
+      if tiled < 2 then
+        return
+      end
+      local name = special.name:sub(9)
+      hl.dispatch(hl.dsp.workspace.toggle_special(name))
+      hl.dispatch(hl.dsp.layout("focus " .. direction))
+      hl.dispatch(hl.dsp.workspace.toggle_special(name))
       return
     end
     hl.dispatch(hl.dsp.layout("focus " .. direction))
