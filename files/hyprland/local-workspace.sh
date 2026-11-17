@@ -27,7 +27,24 @@ case "$action" in
     if [ "$action" = focus ]; then
       hyprctl dispatch "hl.dsp.focus({ workspace = $target })"
     else
-      hyprctl dispatch "hl.dsp.window.move({ workspace = $target })"
+      active_ws="$(hyprctl activewindow -j | jq -r '.workspace.name // ""')"
+      case "$active_ws" in
+        special:*)
+          # The scratchpad has the focus: it must stay on its special workspace, still shown.
+          # Move the most recently used regular window of this workspace instead, without
+          # giving it the focus (that would hide the scratchpad), then switch workspace.
+          current="$(hyprctl monitors -j | jq -r '.[] | select(.focused).activeWorkspace.id')"
+          address="$(hyprctl clients -j | jq -r --argjson ws "$current" \
+            '[.[] | select(.workspace.id == $ws)] | sort_by(.focusHistoryID) | .[0].address // empty')"
+          if [ -n "$address" ]; then
+            hyprctl dispatch "hl.dsp.window.move({ workspace = $target, follow = false, window = \"address:$address\" })"
+            hyprctl dispatch "hl.dsp.focus({ workspace = $target })"
+          fi
+          ;;
+        *)
+          hyprctl dispatch "hl.dsp.window.move({ workspace = $target })"
+          ;;
+      esac
     fi
     ;;
   cycle)

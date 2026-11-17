@@ -186,15 +186,14 @@ hl.bind(mod .. " + down", hl.dsp.focus({ direction = "down" }))
 -- (previous/next column), not "+col"/"-col" (that argument form is
 -- only for "move") — moves the active column without touching any
 -- window's position.
--- While a scratchpad has the focus, the active workspace is its special workspace and the
--- layout message would land there ("no window to focus"). Hide the scratchpad first, as
--- focusing any tiled window does anyway, then scroll the workspace underneath.
+-- While a scratchpad is shown, the layout message would land on its special workspace, and
+-- scrolling the workspace underneath would hide the scratchpad or jump to another window.
+-- Do nothing then: the scratchpad stays where it is, Super+S hides it, then scrolling works.
 local function focus_column(direction)
   return function()
-    local active = hl.get_active_window()
-    local name = active and active.workspace and active.workspace.name
-    if name and name:sub(1, 8) == "special:" then
-      hl.dispatch(hl.dsp.workspace.toggle_special(name:sub(9)))
+    local mon = hl.get_active_monitor()
+    if mon and mon.active_special_workspace then
+      return
     end
     hl.dispatch(hl.dsp.layout("focus " .. direction))
   end
@@ -235,6 +234,23 @@ local function scratchpad(key, name, command, size)
     hl.dispatch(hl.dsp.exec_cmd(command))
   end)
 end
+
+-- A window opened while a scratchpad is shown lands on the active workspace, which is then the
+-- special one: it would stay glued to the scratchpad and vanish with it. Send every window that
+-- is not a scratchpad back to the regular workspace underneath.
+hl.on("window.open", function(w)
+  local ws = w.workspace and w.workspace.name
+  if not ws or ws:sub(1, 8) ~= "special:" then
+    return
+  end
+  if (w.class or ""):sub(1, 8) == "scratch-" then
+    return
+  end
+  local mon = hl.get_active_monitor()
+  if mon and mon.active_workspace then
+    hl.dispatch(hl.dsp.window.move({ workspace = mon.active_workspace.id, window = w }))
+  end
+end)
 
 scratchpad("S", "term", "@kitty@/bin/kitty --class scratch-term @fish@/bin/fish")
 scratchpad("I", "irc", "@kitty@/bin/kitty --class scratch-irc weechat")
